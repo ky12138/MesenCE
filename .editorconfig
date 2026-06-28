@@ -389,3 +389,5 @@ dotnet_naming_style.pascalcase_with_i_prefix.required_prefix = I
 dotnet_naming_style.pascalcase_with_i_prefix.required_suffix = 
 dotnet_naming_style.pascalcase_with_i_prefix.word_separator = 
 dotnet_naming_style.pascalcase_with_i_prefix.capitalization = pascal_case
+
+dotnet_diagnostic.CS8019.severity = none

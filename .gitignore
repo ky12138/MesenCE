@@ -190,3 +190,6 @@ packages/*
 
 TestHelper/*
 UI/Dependencies.zip
+.vscode/
+global.json
+.editorconfig

@@ -1,0 +1,102 @@
+name: Build Mesen (Windows Debug)
+
+on:
+  workflow_dispatch:
+    inputs:
+      configuration:
+        description: "Build configuration"
+        type: choice
+        options:
+          - Debug
+          - PGO Profile
+          - PGO Optimize
+        default: "Debug"
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+
+jobs:
+  windows:
+    strategy:
+      matrix:
+        platform: [
+            #{ netversion: 6.x, targetframework: net6.0 },
+            { netversion: 8.x, targetframework: net8.0 },
+          ]
+      fail-fast: false
+    runs-on: windows-2025-vs2026
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.platform.netversion }}
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            Directory.Packages.props
+            global.json
+            **/packages.lock.json
+
+      - name: Setup MSBuild.exe
+        uses: microsoft/setup-msbuild@v3
+        with:
+          msbuild-architecture: x64
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ matrix.platform.targetframework }}-${{ hashFiles('**/*.csproj', '**/*.sln') }}
+          restore-keys: |
+            nuget-${{ matrix.platform.targetframework }}-
+            nuget-
+
+      - name: Cache build output
+        uses: actions/cache@v5
+        with:
+          path: |
+            **/bin
+            **/obj
+          key: build-${{ inputs.configuration }}-${{ matrix.platform.targetframework }}-${{ hashFiles('**/*.csproj', '**/*.sln', '**/*.cpp', '**/*.h', '**/*.cs') }}
+          restore-keys: |
+            build-${{ inputs.configuration }}-${{ matrix.platform.targetframework }}-
+            build-${{ matrix.platform.targetframework }}-
+
+      - name: Determine dotnet configuration
+        id: config
+        shell: pwsh
+        run: |
+          $cfg = "${{ inputs.configuration }}"
+          if ($cfg -in @('PGO Profile', 'PGO Optimize')) {
+            "dotnet_config=Release" | Out-File -Append $env:GITHUB_OUTPUT
+            "optimize_ui=true" | Out-File -Append $env:GITHUB_OUTPUT
+          } else {
+            "dotnet_config=Debug" | Out-File -Append $env:GITHUB_OUTPUT
+            "optimize_ui=false" | Out-File -Append $env:GITHUB_OUTPUT
+          }
+
+      - name: Restore packages
+        run: dotnet restore -p:TargetFramework="${{ matrix.platform.targetframework }}" -r win-x64 -p:PublishAot=false -p:BuildWithNetFrameworkHostedCompiler=true
+
+      - name: Write commit SHA1 to file
+        uses: ./.github/actions/build-sha1-action
+
+      - name: Build Mesen
+        run: msbuild -nologo -v:d -clp:ForceConsoleColor -m -p:Configuration="${{ inputs.configuration }}" -p:Platform=x64 -t:UI -p:TargetFramework="${{ matrix.platform.targetframework }}" -p:OptimizeUi="${{ steps.config.outputs.optimize_ui }}"
+
+      - name: Publish Mesen
+        run: dotnet publish --no-restore -c ${{ steps.config.outputs.dotnet_config }} -p:PublishAot=false -p:SelfContained=false -p:PublishSingleFile=false -p:OptimizeUi="${{ steps.config.outputs.optimize_ui }}" -p:Platform="Any CPU" -p:TargetFramework="${{ matrix.platform.targetframework }}" -r win-x64 Mesen.sln /p:PublishProfile=UI\Properties\PublishProfiles\Release.pubxml
+
+      - name: Upload Mesen
+        uses: actions/upload-artifact@v7
+        with:
+          name: Mesen (Windows - ${{ matrix.platform.targetframework }} - ${{ inputs.configuration }})
+          path: build/TmpReleaseBuild
+          retention-days: 1
