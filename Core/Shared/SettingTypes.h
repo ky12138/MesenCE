@@ -817,6 +817,7 @@ enum class GbaDisassemblyMode : uint8_t
 struct DebugConfig
 {
 	bool BreakOnUninitRead = false;
+	bool BreakOnUnidentifiedCode = false;
 
 	bool ShowJumpLabels = false;
 	bool DrawPartialFrame = false;

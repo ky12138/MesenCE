@@ -92,6 +92,9 @@ void SmsDebugger::ProcessInstruction()
 
 	if(addressInfo.Address >= 0) {
 		if(addressInfo.Type == MemoryType::SmsPrgRom) {
+			if(_settings->GetDebugConfig().BreakOnUnidentifiedCode && !_codeDataLogger->IsCode(addressInfo.Address)) {
+				_step->Break(BreakSource::BreakOnUnidentifiedCode);
+			}
 			_codeDataLogger->SetCode(addressInfo.Address, SmsDisUtils::GetOpFlags(_prevOpCode, pc, _prevProgramCounter));
 		}
 		_disassembler->BuildCache(addressInfo, 0, CpuType::Sms);

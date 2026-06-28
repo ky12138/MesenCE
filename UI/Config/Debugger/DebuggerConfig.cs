@@ -35,6 +35,7 @@ namespace Mesen.Config
 		[Reactive] public WsDebuggerConfig Ws { get; set; } = new();
 
 		[Reactive] public bool BreakOnUninitRead { get; set; } = false;
+		[Reactive] public bool BreakOnUnidentifiedCode { get; set; } = false;
 		[Reactive] public bool BreakOnOpen { get; set; } = true;
 		[Reactive] public bool BreakOnPowerCycleReset { get; set; } = true;
 

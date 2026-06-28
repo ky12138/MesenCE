@@ -120,6 +120,9 @@ void NesDebugger::ProcessInstruction()
 	bool needDisassemble = _traceLogger->IsEnabled() || _settings->CheckDebuggerFlag(DebuggerFlags::NesDebuggerEnabled);
 	if(addressInfo.Address >= 0) {
 		if(addressInfo.Type == MemoryType::NesPrgRom) {
+			if(_settings->GetDebugConfig().BreakOnUnidentifiedCode && !_codeDataLogger->IsCode(addressInfo.Address)) {
+				_step->Break(BreakSource::BreakOnUnidentifiedCode);
+			}
 			_codeDataLogger->SetCode(addressInfo.Address, NesDisUtils::GetOpFlags(_prevOpCode, pc, _prevProgramCounter));
 		}
 		if(needDisassemble) {

@@ -1384,6 +1384,7 @@
 			<Control ID="chkSpcBreakOnStpSleep">STOP / SLEEP</Control>
 			
 			<Control ID="chkBreakOnUninitRead">Uninitialized memory read</Control>
+			<Control ID="chkBreakOnUnidentifiedCode">Unidentified code execution</Control>
 			<Control ID="chkBreakOnOpen">Debugger opened</Control>
 			<Control ID="chkBreakOnPowerCycleReset">Power/reset</Control>
 

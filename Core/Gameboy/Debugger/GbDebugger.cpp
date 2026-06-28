@@ -96,6 +96,9 @@ void GbDebugger::ProcessInstruction()
 
 	if(addressInfo.Address >= 0) {
 		if(addressInfo.Type == MemoryType::GbPrgRom) {
+			if(_settings->GetDebugConfig().BreakOnUnidentifiedCode && !_codeDataLogger->IsCode(addressInfo.Address)) {
+				_step->Break(BreakSource::BreakOnUnidentifiedCode);
+			}
 			_codeDataLogger->SetCode(addressInfo.Address, GameboyDisUtils::GetOpFlags(_prevOpCode, pc, _prevProgramCounter));
 		}
 		_disassembler->BuildCache(addressInfo, 0, CpuType::Gameboy);

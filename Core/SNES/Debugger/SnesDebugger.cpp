@@ -154,6 +154,9 @@ void SnesDebugger::ProcessInstruction()
 	if(addressInfo.Address >= 0) {
 		uint8_t cpuFlags = state.PS & (ProcFlags::IndexMode8 | ProcFlags::MemoryMode8);
 		if(addressInfo.Type == MemoryType::SnesPrgRom) {
+			if(_settings->GetDebugConfig().BreakOnUnidentifiedCode && !_cdl->IsCode(addressInfo.Address)) {
+				_step->Break(BreakSource::BreakOnUnidentifiedCode);
+			}
 			_cdl->SetCode(addressInfo.Address, SnesDisUtils::GetOpFlags(_prevOpCode, pc, _prevProgramCounter) | cpuFlags);
 		}
 		if(_traceLogger->IsEnabled() || _debuggerEnabled) {

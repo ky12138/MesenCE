@@ -1564,6 +1564,7 @@ namespace Mesen.Interop
 		BreakOnStp,
 
 		BreakOnUninitMemoryRead,
+		BreakOnUnidentifiedCode,
 
 		GbInvalidOamAccess,
 		GbInvalidVramAccess,
