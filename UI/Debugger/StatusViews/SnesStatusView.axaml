@@ -6,6 +6,7 @@
 	xmlns:du="using:Mesen.Debugger.Utilities"
 	xmlns:vm="using:Mesen.Debugger.StatusViews"
 	xmlns:c="using:Mesen.Controls"
+	xmlns:l="using:Mesen.Localization"
 	mc:Ignorable="d" d:DesignWidth="350" d:DesignHeight="210"
 	VerticalAlignment="Stretch"
 	HorizontalAlignment="Stretch"
@@ -25,7 +26,7 @@
 			<DockPanel>
 				<StackPanel DockPanel.Dock="Right">
 					<StackPanel Orientation="Horizontal" IsEnabled="{Binding EditAllowed}">
-						<TextBlock Margin="0">SP:</TextBlock>
+						<TextBlock Text="{l:Translate lblSP}" Margin="0" />
 						<c:MesenNumericTextBox Value="{Binding RegSP}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 					<TextBox
@@ -42,35 +43,35 @@
 				<StackPanel DockPanel.Dock="Top" IsEnabled="{Binding EditAllowed}">
 					<WrapPanel>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock>A:</TextBlock>
+							<TextBlock Text="{l:Translate lblA}" />
 							<c:MesenNumericTextBox Value="{Binding RegA}" Hex="True" Max="0xFFFF" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock>X:</TextBlock>
+							<TextBlock Text="{l:Translate lblX}" />
 							<c:MesenNumericTextBox Value="{Binding RegX}" Hex="True" Max="0xFFFF" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock>Y:</TextBlock>
+							<TextBlock Text="{l:Translate lblY}" />
 							<c:MesenNumericTextBox Value="{Binding RegY}" Hex="True" Max="0xFFFF" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock>PC:</TextBlock>
+							<TextBlock Text="{l:Translate lblPC}" />
 							<c:MesenNumericTextBox Value="{Binding RegPC}" Hex="True" Max="0xFFFFFF" />
 						</StackPanel>
 					</WrapPanel>
 
 					<WrapPanel>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock>D:</TextBlock>
+							<TextBlock Text="{l:Translate lblD}" />
 							<c:MesenNumericTextBox Value="{Binding RegD}" Hex="True" Max="0xFFFF" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock>DB:</TextBlock>
+							<TextBlock Text="{l:Translate lblDB}" />
 							<c:MesenNumericTextBox Value="{Binding RegDBR}" Hex="True" Max="0xFF" />
 						</StackPanel>
 
 						<StackPanel Orientation="Horizontal">
-							<TextBlock>Cycle:</TextBlock>
+							<TextBlock Text="{l:Translate lblCycle}" />
 							<c:MesenNumericTextBox Width="70" Value="{Binding CycleCount}" IsEnabled="False" />
 						</StackPanel>
 					</WrapPanel>
@@ -79,39 +80,39 @@
 
 					<WrapPanel Margin="0 2 0 0" DockPanel.Dock="Top">
 						<StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Top">
-							<TextBlock>P:</TextBlock>
+							<TextBlock Text="{l:Translate lblP}" />
 							<c:MesenNumericTextBox Value="{Binding RegPS}" Hex="True" Max="0xFF" />
 						</StackPanel>
 
 						<WrapPanel>
 							<StackPanel>
-								<CheckBox IsChecked="{Binding FlagC}" Content="Carry" />
-								<CheckBox IsChecked="{Binding FlagX}" Content="Index" />
+								<CheckBox IsChecked="{Binding FlagC}" Content="{l:Translate chkCarry}" />
+								<CheckBox IsChecked="{Binding FlagX}" Content="{l:Translate chkIndex}" />
 							</StackPanel>
 							<StackPanel>
-								<CheckBox IsChecked="{Binding FlagZ}" Content="Zero" />
-								<CheckBox IsChecked="{Binding FlagM}" Content="Memory" />
+								<CheckBox IsChecked="{Binding FlagZ}" Content="{l:Translate chkZero}" />
+								<CheckBox IsChecked="{Binding FlagM}" Content="{l:Translate chkMemory}" />
 							</StackPanel>
 							<StackPanel>
-								<CheckBox IsChecked="{Binding FlagI}" Content="Interrupt" />
-								<CheckBox IsChecked="{Binding FlagV}" Content="Overflow" />
+								<CheckBox IsChecked="{Binding FlagI}" Content="{l:Translate chkInterrupt}" />
+								<CheckBox IsChecked="{Binding FlagV}" Content="{l:Translate chkOverflow}" />
 							</StackPanel>
 							<StackPanel>
-								<CheckBox IsChecked="{Binding FlagD}" Content="Decimal" />
-								<CheckBox IsChecked="{Binding FlagN}" Content="Negative" />
+								<CheckBox IsChecked="{Binding FlagD}" Content="{l:Translate chkDecimal}" />
+								<CheckBox IsChecked="{Binding FlagN}" Content="{l:Translate chkNegative}" />
 							</StackPanel>
 						</WrapPanel>
 					</WrapPanel>
 
-					<CheckBox IsChecked="{Binding FlagE}" Content="Emulation" />
+					<CheckBox IsChecked="{Binding FlagE}" Content="{l:Translate chkEmulation}" />
 
 					<Rectangle Stroke="{StaticResource MesenGrayBorderColor}" StrokeThickness="1" Margin="5 5 5 4" />
 
 					<WrapPanel>
-						<TextBlock>IRQs:</TextBlock>
-						<CheckBox IsChecked="{Binding FlagNmi}" Content="NMI" />
-						<CheckBox IsChecked="{Binding FlagIrqHvCounters}" Content="H/V" />
-						<CheckBox IsChecked="{Binding FlagIrqCoprocessor}" Content="Coprocessor" />
+						<TextBlock Text="{l:Translate lblIRQs}" />
+						<CheckBox IsChecked="{Binding FlagNmi}" Content="{l:Translate chkNMI}" />
+						<CheckBox IsChecked="{Binding FlagIrqHvCounters}" Content="{l:Translate chkHV}" />
+						<CheckBox IsChecked="{Binding FlagIrqCoprocessor}" Content="{l:Translate chkCoprocessor}" />
 					</WrapPanel>
 				</StackPanel>
 			</DockPanel>
@@ -121,20 +122,20 @@
 
 				<WrapPanel>
 					<Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" Margin="0 0 5 0">
-						<TextBlock>H Clock:</TextBlock>
+						<TextBlock Text="{l:Translate lblHClock}" />
 						<c:MesenNumericTextBox Grid.Column="1" Value="{Binding HClock}" IsEnabled="False" MinWidth="40" />
-						<TextBlock Grid.Row="1">Cycle:</TextBlock>
+						<TextBlock Grid.Row="1" Text="{l:Translate lblCycle}" />
 						<c:MesenNumericTextBox Grid.Row="1" Grid.Column="1" Value="{Binding Cycle}" IsEnabled="False" />
-						<TextBlock Grid.Row="2">Scanline:</TextBlock>
+						<TextBlock Grid.Row="2" Text="{l:Translate lblScanline}" />
 						<c:MesenNumericTextBox Grid.Row="2" Grid.Column="1" Value="{Binding Scanline}" IsEnabled="False" Min="-1" />
 					</Grid>
 					
 					<Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
-						<TextBlock>VRAM Addr.:</TextBlock>
+						<TextBlock Text="{l:Translate lblVramAddr}" />
 						<c:MesenNumericTextBox Grid.Column="1" IsEnabled="False" Hex="True" Max="0xFFFF" Value="{Binding VramAddress}" />
-						<TextBlock Grid.Row="1">OAM Addr.:</TextBlock>
+						<TextBlock Grid.Row="1" Text="{l:Translate lblOamAddr}" />
 						<c:MesenNumericTextBox Grid.Row="1" Grid.Column="1" IsEnabled="False" Max="0xFFF" Hex="True" Value="{Binding OamAddress}" />
-						<TextBlock Grid.Row="2">CGRAM Addr.:</TextBlock>
+						<TextBlock Grid.Row="2" Text="{l:Translate lblCgramAddr}" />
 						<c:MesenNumericTextBox Grid.Row="2" Grid.Column="1" IsEnabled="False" Max="0xFFF" Hex="True" Value="{Binding CgRamAddress}" />
 					</Grid>
 				</WrapPanel>

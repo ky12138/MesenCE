@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Styling;
 using Mesen.Config;
 using Mesen.Config.Shortcuts;
+using Mesen.Localization;
 using Mesen.Utilities;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -19,6 +20,17 @@ namespace Mesen.ViewModels
 		public bool IsOsx { get; }
 
 		public List<ShortcutKeyInfo> ShortcutKeys { get; set; }
+
+		public List<string> AvailableLanguages { get; set; } = new() {
+			"English",
+			"中文",
+		};
+
+		public string SelectedLanguage
+		{
+			get => Config.Language == "en" ? "English" : "中文";
+			set => Config.Language = value == "中文" ? "zh-CN" : "en";
+		}
 
 		public PreferencesConfigViewModel()
 		{
@@ -163,6 +175,9 @@ namespace Mesen.ViewModels
 			AddDisposable(ReactiveHelper.RegisterRecursiveObserver(Config, (s, e) => {
 				Config.ApplyConfig();
 				PreferencesConfig.UpdateTheme();
+				if(e.PropertyName == nameof(Config.Language)) {
+					ResourceHelper.LoadResources();
+				}
 			}));
 		}
 	}

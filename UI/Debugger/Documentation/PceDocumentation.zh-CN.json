@@ -1,0 +1,193 @@
+{
+	"instructions": [
+		{
+			"op": "sxy",
+			"name": "SXY - 交换X和Y",
+			"description": "X和Y寄存器的内容被交换。"
+		},
+		{
+			"op": "sax",
+			"name": "SAX - 交换A和X",
+			"description": "A和X寄存器的内容被交换。"
+		},
+		{
+			"op": "say",
+			"name": "SAY - 交换A和Y",
+			"description": "X和Y寄存器的内容被交换。"
+		},
+		{
+			"op": "cla",
+			"name": "CLA - 清除A",
+			"description": "清除累加器。"
+		},
+		{
+			"op": "clx",
+			"name": "CLX - 清除X",
+			"description": "清除X寄存器。"
+		},
+		{
+			"op": "cly",
+			"name": "CLY - 清除Y",
+			"description": "清除Y寄存器。"
+		},
+		{
+			"op": "st0",
+			"name": "ST0 - 存储VDC 0",
+			"description": "将立即数值写入VDC的地址寄存器(AR)"
+		},
+		{
+			"op": "st1",
+			"name": "ST1 - 存储VDC 1",
+			"description": "将立即数值写入VDC的选定寄存器(LSB)"
+		},
+		{
+			"op": "st2",
+			"name": "ST2 - 存储VDC 2",
+			"description": "将立即数值写入VDC的选定寄存器(MSB)"
+		},
+		{
+			"op": "tma",
+			"name": "TMA - 传送MPR到A",
+			"description": "将选定的MPR寄存器的值(立即数值)传送到A。"
+		},
+		{
+			"op": "tam",
+			"name": "TMA - 传送A到MPR",
+			"description": "累加器的内容被复制到选定的MPR寄存器(基于立即数值中的置位位)"
+		},
+		{
+			"op": "tst",
+			"name": "TST - 测试内存",
+			"description": "内存地址的内容与立即数值进行按位与。标志根据结果更新。",
+			"flags": ["Overflow", "Negative", "Zero"]
+		},
+		{
+			"op": "tii",
+			"name": "TII - 传送块数据",
+			"description": "根据源、目标和长度操作数传送块数据。每个字节后源地址和目标地址递增。"
+		},
+		{
+			"op": "tdd",
+			"name": "TDD - 传送块数据",
+			"description": "根据源、目标和长度操作数传送块数据。每个字节后源地址和目标地址递减。"
+		},
+		{
+			"op": "tin",
+			"name": "TIN - 传送块数据",
+			"description": "根据源、目标和长度操作数传送块数据。每个字节后源地址递增。目标地址固定。"
+		},
+		{
+			"op": "tia",
+			"name": "TIA - 传送块数据",
+			"description": "根据源、目标和长度操作数传送块数据。每个字节后源地址递增。目标地址递增然后递减(在2个地址之间交替。)"
+		},
+		{
+			"op": "tai",
+			"name": "TAI - 传送块数据",
+			"description": "根据源、目标和长度操作数传送块数据。源地址递增然后递减(在2个地址之间交替)。每个字节后目标地址递增。 "
+		},
+		{
+			"op": "tsb",
+			"name": "TSB - 测试并置位位",
+			"description": "内存值与A的内容进行按位或,标志根据结果更新。",
+			"flags": ["Zero", "Negative", "Overflow"]
+		},
+		{
+			"op": "trb",
+			"name": "TRB - 测试并重置位",
+			"description": "内存值与A的补码(~A)进行按位与,标志根据结果更新。",
+			"flags": ["Zero", "Negative", "Overflow"]
+		},
+		{
+			"op": "bsr",
+			"name": "BSR - 分支到子程序",
+			"description": "分支到指定地址。PC被压入堆栈。"
+		},
+		{
+			"op": "bra",
+			"name": "BRA - 无条件分支",
+			"description": "分支到指定地址。"
+		},
+		{
+			"op": "csl",
+			"name": "CSL - 时钟速度低",
+			"description": "将CPU时钟速度设置为约1.79MHz。"
+		},
+		{
+			"op": "csh",
+			"name": "CSH - 时钟速度高",
+			"description": "将CPU时钟速度设置为约7.16MHz。"
+		},
+		{
+			"op": "set",
+			"name": "SET - 置位T",
+			"description": "置位内存标志(T)。",
+			"flags": ["Memory"]
+		},
+		{
+			"op": "rmb",
+			"name": "RMBi - 重置内存位",
+			"description": "清除零页地址的指定位。"
+		},
+		{
+			"op": "smb",
+			"name": "SMBi - 置位内存位",
+			"description": "置位零页地址的指定位。"
+		},
+		{
+			"op": "bbr",
+			"name": "BBRi - 位重置时分支",
+			"description": "如果零页地址的指定位被清除,则分支。"
+		},
+		{
+			"op": "bbs",
+			"name": "BBSi - 位置位时分支",
+			"description": "如果零页地址的指定位被置位,则分支。"
+		},
+		{
+			"op": "stz",
+			"name": "STZ - 存储零",
+			"description": "将值0存储到内存中。"
+		},
+		{
+			"op": "phx",
+			"name": "PHX - 压入X寄存器",
+			"description": "将X寄存器的值压入堆栈。"
+		},
+		{
+			"op": "plx",
+			"name": "PLX - 弹出X寄存器",
+			"description": "从堆栈中弹出一个字节并存储到X寄存器。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "phy",
+			"name": "PHY - 压入Y寄存器",
+			"description": "将Y寄存器的值压入堆栈。"
+		},
+		{
+			"op": "ply",
+			"name": "PLY - 弹出Y寄存器",
+			"description": "从堆栈中弹出一个字节并存储到Y寄存器。",
+			"flags": ["Zero", "Negative"]
+		}
+	],
+	"addressingModes": [
+		"Imm",	"IndX",	"Imp",	"Imm",		"Zero",	"Zero",	"Zero",	"Zero",	"Imp",	"Imm",	"Acc",	"Imp",	"Abs",		"Abs",	"Abs",	"ZeroRel",
+		"Rel",	"IndY",	"ZInd",	"Imm",		"Zero",	"ZeroX",	"ZeroX",	"Zero",	"Imp",	"AbsY",	"Imp",	"Imp",	"Abs",		"AbsX",	"AbsX",	"ZeroRel",
+		"Abs",	"IndX",	"Imp",	"Imm",		"Zero",	"Zero",	"Zero",	"Zero",	"Imp",	"Imm",	"Acc",	"Imp",	"Abs",		"Abs",	"Abs",	"ZeroRel",
+		"Rel",	"IndY",	"ZInd",	"Imp",		"ZeroX",	"ZeroX",	"ZeroX",	"Zero",	"Imp",	"AbsY",	"Imp",	"Imp",	"AbsX",		"AbsX",	"AbsX",	"ZeroRel",
+		"Imp",	"IndX",	"Imp",	"Imm",		"Rel",	"Zero",	"Zero",	"Zero",	"Imp",	"Imm",	"Acc",	"Imp",	"Abs",		"Abs",	"Abs",	"ZeroRel",
+		"Rel",	"IndY",	"ZInd",	"Imm",		"Imp",	"ZeroX",	"ZeroX",	"Zero",	"Imp",	"AbsY",	"Imp",	"Imp",	"Imp",		"AbsX",	"AbsX",	"ZeroRel",
+		"Imp",	"IndX",	"Imp",	"Imp",		"Zero",	"Zero",	"Zero",	"Zero",	"Imp",	"Imm",	"Acc",	"Imp",	"Ind",		"Abs",	"Abs",	"ZeroRel",
+		"Rel",	"IndY",	"ZInd",	"Block",		"ZeroX",	"ZeroX",	"ZeroX",	"Zero",	"Imp",	"AbsY",	"Imp",	"Imp",	"AbsXInd",	"AbsX",	"AbsX",	"ZeroRel",
+		"Rel",	"IndX",	"Imp",	"ImZero",	"Zero",	"Zero",	"Zero",	"Zero",	"Imp",	"Imm",	"Imp",	"Imp",	"Abs",		"Abs",	"Abs",	"ZeroRel",
+		"Rel",	"IndY",	"ZInd",	"ImAbs",		"ZeroX",	"ZeroX",	"ZeroY",	"Zero",	"Imp",	"AbsY",	"Imp",	"Imp",	"Abs",		"AbsX",	"AbsX",	"ZeroRel",
+		"Imm",	"IndX",	"Imm",	"ImZeroX",	"Zero",	"Zero",	"Zero",	"Zero",	"Imp",	"Imm",	"Imp",	"Imp",	"Abs",		"Abs",	"Abs",	"ZeroRel",
+		"Rel",	"IndY",	"ZInd",	"ImAbsX",	"ZeroX",	"ZeroX",	"ZeroY",	"Zero",	"Imp",	"AbsY",	"Imp",	"Imp",	"AbsX",		"AbsX",	"AbsY",	"ZeroRel",
+		"Imm",	"IndX",	"Imp",	"Block",		"Zero",	"Zero",	"Zero",	"Zero",	"Imp",	"Imm",	"Imp",	"Imp",	"Abs",		"Abs",	"Abs",	"ZeroRel",
+		"Rel",	"IndY",	"ZInd",	"Block",		"Imp",	"ZeroX",	"ZeroX",	"Zero",	"Imp",	"AbsY",	"Imp",	"Imp",	"Imp",		"AbsX",	"AbsX",	"ZeroRel",
+		"Imm",	"IndX",	"Imp",	"Block",		"Zero",	"Zero",	"Zero",	"Zero",	"Imp",	"Imm",	"Imp",	"Imp",	"Abs",		"Abs",	"Abs",	"ZeroRel",
+		"Rel",	"IndY",	"ZInd",	"Block",		"Imp",	"ZeroX",	"ZeroX",	"Zero",	"Imp",	"AbsY",	"Imp",	"Imp",	"Imp",		"AbsX",	"AbsX",	"ZeroRel"
+	]
+}

@@ -1,0 +1,529 @@
+{
+	"instructions": [
+		{
+			"op": "aaa",
+			"name": "AAA - 加法后ASCII调整",
+			"description": ""
+		},
+		{
+			"op": "aad",
+			"name": "AAD - 除法前ASCII调整",
+			"description": ""
+		},
+		{
+			"op": "aam",
+			"name": "AAM - 乘法后ASCII调整",
+			"description": ""
+		},
+		{
+			"op": "aas",
+			"name": "AAS - 减法后ASCII调整",
+			"description": ""
+		},
+		{
+			"op": "adc",
+			"name": "ADC - 带进位加法",
+			"description": ""
+		},
+		{
+			"op": "ADD",
+			"name": "ADD - 加法",
+			"description": ""
+		},
+		{
+			"op": "and",
+			"name": "AND - 按位与",
+			"description": ""
+		},
+		{
+			"op": "bound",
+			"name": "BOUND - 检查数组边界",
+			"description": ""
+		},
+		{
+			"op": "call",
+			"name": "CALL - 调用过程",
+			"description": ""
+		},
+		{
+			"op": "cbw",
+			"name": "CBW - 字节转换为字",
+			"description": ""
+		},
+		{
+			"op": "clc",
+			"name": "CLC - 清除进位标志",
+			"description": ""
+		},
+		{
+			"op": "cld",
+			"name": "CLD - 清除方向标志",
+			"description": ""
+		},
+		{
+			"op": "cli",
+			"name": "CLI - 清除中断标志",
+			"description": ""
+		},
+		{
+			"op": "cmc",
+			"name": "CMC - 进位标志取反",
+			"description": ""
+		},
+		{
+			"op": "cmp",
+			"name": "CMP - 比较",
+			"description": ""
+		},
+		{
+			"op": "cmpsb",
+			"name": "CMPSB - 比较字符串字节",
+			"description": ""
+		},
+		{
+			"op": "cmpsw",
+			"name": "CMPSW - 比较字符串字",
+			"description": ""
+		},
+		{
+			"op": "cwd",
+			"name": "CWD - 字转换为双字",
+			"description": ""
+		},
+		{
+			"op": "daa",
+			"name": "DAA - 加法后十进制调整",
+			"description": ""
+		},
+		{
+			"op": "das",
+			"name": "DAS - 减法后十进制调整",
+			"description": ""
+		},
+		{
+			"op": "dec",
+			"name": "DEC - 递减",
+			"description": ""
+		},
+		{
+			"op": "div",
+			"name": "DIV - 除法",
+			"description": ""
+		},
+		{
+			"op": "enter",
+			"name": "ENTER - 建立栈帧",
+			"description": ""
+		},
+		{
+			"op": "hlt",
+			"name": "HLT - 停机",
+			"description": ""
+		},
+		{
+			"op": "idiv",
+			"name": "IDIV - 有符号除法",
+			"description": ""
+		},
+		{
+			"op": "imul",
+			"name": "IMUL - 有符号乘法",
+			"description": ""
+		},
+		{
+			"op": "in",
+			"name": "IN - 输入",
+			"description": ""
+		},
+		{
+			"op": "inc",
+			"name": "INC - 递增",
+			"description": ""
+		},
+		{
+			"op": "insb",
+			"name": "INS - 输入字符串字节",
+			"description": ""
+		},
+		{
+			"op": "insw",
+			"name": "INSW - 输入字符串字",
+			"description": ""
+		},
+		{
+			"op": "int",
+			"name": "INT - 中断",
+			"description": ""
+		},
+		{
+			"op": "into",
+			"name": "INTO - 溢出时中断(4)",
+			"description": ""
+		},
+		{
+			"op": "iret",
+			"name": "IRET - 中断返回",
+			"description": ""
+		},
+		{
+			"op": "ja",
+			"name": "JA - 高于时跳转",
+			"description": ""
+		},
+		{
+			"op": "jae",
+			"name": "JAE - 高于或等于时跳转",
+			"description": ""
+		},
+		{
+			"op": "jb",
+			"name": "JB - 低于时跳转",
+			"description": ""
+		},
+		{
+			"op": "jbe",
+			"name": "JBE - 低于或等于时跳转",
+			"description": ""
+		},
+		{
+			"op": "jcxz",
+			"name": "JCXZ - CX为零时跳转",
+			"description": ""
+		},
+		{
+			"op": "je",
+			"name": "JE - 相等时跳转",
+			"description": ""
+		},
+		{
+			"op": "jg",
+			"name": "JG - 大于时跳转",
+			"description": ""
+		},
+		{
+			"op": "jge",
+			"name": "JGE - 大于或等于时跳转",
+			"description": ""
+		},
+		{
+			"op": "jl",
+			"name": "JL - 小于时跳转",
+			"description": ""
+		},
+		{
+			"op": "jle",
+			"name": "JLE - 小于或等于时跳转",
+			"description": ""
+		},
+		{
+			"op": "jmp",
+			"name": "JMP - 跳转",
+			"description": ""
+		},
+		{
+			"op": "jnb",
+			"name": "JNB - 不低于时跳转",
+			"description": ""
+		},
+		{
+			"op": "jno",
+			"name": "JNO - 无溢出时跳转",
+			"description": ""
+		},
+		{
+			"op": "jns",
+			"name": "JNS - 无符号时跳转",
+			"description": ""
+		},
+		{
+			"op": "jnz",
+			"name": "JNZ - 不为零时跳转",
+			"description": ""
+		},
+		{
+			"op": "jo",
+			"name": "JO - 溢出时跳转",
+			"description": ""
+		},
+		{
+			"op": "jpe",
+			"name": "JPE - 偶校验时跳转",
+			"description": ""
+		},
+		{
+			"op": "jpo",
+			"name": "JPO - 奇校验时跳转",
+			"description": ""
+		},
+		{
+			"op": "js",
+			"name": "JS - 有符号时跳转",
+			"description": ""
+		},
+		{
+			"op": "jz",
+			"name": "JZ - 为零时跳转",
+			"description": ""
+		},
+		{
+			"op": "lahf",
+			"name": "LAHF - 加载AH为标志",
+			"description": ""
+		},
+		{
+			"op": "lds",
+			"name": "LDS - 加载双字到寄存器和DS",
+			"description": ""
+		},
+		{
+			"op": "lea",
+			"name": "LEA - 加载有效地址",
+			"description": ""
+		},
+		{
+			"op": "leave",
+			"name": "LEAVE - 离开栈帧",
+			"description": ""
+		},
+		{
+			"op": "les",
+			"name": "LES - 加载双字到寄存器和ES",
+			"description": ""
+		},
+		{
+			"op": "lodsb",
+			"name": "LODSB - 加载字符串字节",
+			"description": ""
+		},
+		{
+			"op": "lodsw",
+			"name": "LODSW - 加载字符串字",
+			"description": ""
+		},
+		{
+			"op": "loop",
+			"name": "LOOP - 循环",
+			"description": ""
+		},
+		{
+			"op": "loopnz",
+			"name": "LOOPNZ - 不为零时循环",
+			"description": ""
+		},
+		{
+			"op": "loopz",
+			"name": "LOOPZ - 为零时循环",
+			"description": ""
+		},
+		{
+			"op": "mov",
+			"name": "MOV - 传送",
+			"description": ""
+		},
+		{
+			"op": "movsb",
+			"name": "MOVSB - 传送字符串字节",
+			"description": ""
+		},
+		{
+			"op": "movsw",
+			"name": "MOVSW - 传送字符串字",
+			"description": ""
+		},
+		{
+			"op": "mul",
+			"name": "MUL - 乘法",
+			"description": ""
+		},
+		{
+			"op": "neg",
+			"name": "NEG - 取反",
+			"description": ""
+		},
+		{
+			"op": "nop",
+			"name": "NOP - 空操作",
+			"description": ""
+		},
+		{
+			"op": "not",
+			"name": "NOT - 非",
+			"description": ""
+		},
+		{
+			"op": "or",
+			"name": "OR - 按位或",
+			"description": ""
+		},
+		{
+			"op": "out",
+			"name": "OUT - 输出",
+			"description": ""
+		},
+		{
+			"op": "outsb",
+			"name": "OUTSB - 输出字符串字节",
+			"description": ""
+		},
+		{
+			"op": "outsw",
+			"name": "OUTSW - 输出字符串字",
+			"description": ""
+		},
+		{
+			"op": "pop",
+			"name": "POP - 弹出",
+			"description": ""
+		},
+		{
+			"op": "popa",
+			"name": "POPA - 弹出全部",
+			"description": ""
+		},
+		{
+			"op": "popf",
+			"name": "POPF - 弹出标志",
+			"description": ""
+		},
+		{
+			"op": "push",
+			"name": "PUSH - 压入",
+			"description": ""
+		},
+		{
+			"op": "pusha",
+			"name": "PUSHA - 压入全部",
+			"description": ""
+		},
+		{
+			"op": "pushf",
+			"name": "PUSHF - 压入标志",
+			"description": ""
+		},
+		{
+			"op": "rcl",
+			"name": "RCL - 带进位循环左移",
+			"description": ""
+		},
+		{
+			"op": "rcr",
+			"name": "RCR - 带进位循环右移",
+			"description": ""
+		},
+		{
+			"op": "repnz",
+			"name": "REPNZ - 不为零时重复",
+			"description": ""
+		},
+		{
+			"op": "repz",
+			"name": "REPZ - 为零时重复",
+			"description": ""
+		},
+		{
+			"op": "ret",
+			"name": "RET - 返回",
+			"description": ""
+		},
+		{
+			"op": "retf",
+			"name": "RETF - 远返回",
+			"description": ""
+		},
+		{
+			"op": "rol",
+			"name": "ROL - 循环左移",
+			"description": ""
+		},
+		{
+			"op": "ror",
+			"name": "ROR - 循环右移",
+			"description": ""
+		},
+		{
+			"op": "sahf",
+			"name": "SAHF - 存储AH到标志",
+			"description": ""
+		},
+		{
+			"op": "sar",
+			"name": "SAR - 算术右移",
+			"description": ""
+		},
+		{
+			"op": "sbb",
+			"name": "SBB - 带借位减法",
+			"description": ""
+		},
+		{
+			"op": "scasb",
+			"name": "SCASB - 字符串比较AL与ES字节",
+			"description": ""
+		},
+		{
+			"op": "scasw",
+			"name": "SCASW - 字符串比较AX与ES字",
+			"description": ""
+		},
+		{
+			"op": "shl",
+			"name": "SHL - 逻辑左移",
+			"description": ""
+		},
+		{
+			"op": "shr",
+			"name": "SHR - 逻辑右移",
+			"description": ""
+		},
+		{
+			"op": "stc",
+			"name": "STC - 置位进位标志",
+			"description": ""
+		},
+		{
+			"op": "std",
+			"name": "STD - 置位方向标志",
+			"description": ""
+		},
+		{
+			"op": "sti",
+			"name": "STI - 置位中断标志",
+			"description": ""
+		},
+		{
+			"op": "stosb",
+			"name": "STOSB - 存储字符串字节",
+			"description": ""
+		},
+		{
+			"op": "stosw",
+			"name": "STOSW - 存储字符串字",
+			"description": ""
+		},
+		{
+			"op": "sub",
+			"name": "SUB - 减法",
+			"description": ""
+		},
+		{
+			"op": "test",
+			"name": "TEST - 测试",
+			"description": ""
+		},
+		{
+			"op": "xchg",
+			"name": "XCHG - 交换",
+			"description": ""
+		},
+		{
+			"op": "xlatb",
+			"name": "XLATB - 转换字节",
+			"description": ""
+		},
+		{
+			"op": "xor",
+			"name": "XOR - 异或",
+			"description": ""
+		}
+	]
+}

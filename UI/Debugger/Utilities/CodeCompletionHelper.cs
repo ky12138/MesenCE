@@ -1,5 +1,6 @@
 ﻿using Mesen.Interop;
 using Mesen.Localization;
+using Mesen.Config;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +20,33 @@ namespace Mesen.Debugger.Utilities
 
 		static CodeCompletionHelper()
 		{
-			using StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Mesen.Debugger.Documentation.LuaDocumentation.json")!);
+			string resourceName = "Mesen.Debugger.Documentation.LuaDocumentation.json";
+			string lang = "en";
+			try {
+				lang = ConfigManager.Config.Preferences.Language;
+			} catch {
+			}
+
+			if(lang != "en") {
+				try {
+					string localizedResource = "Mesen.Debugger.Documentation.LuaDocumentation." + lang + ".json";
+					Stream? stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(localizedResource);
+					if(stream != null) {
+						using StreamReader localizedReader = new StreamReader(stream);
+						DocEntryViewModel[] localizedDocs = (DocEntryViewModel[]?)JsonSerializer.Deserialize(localizedReader.ReadToEnd(), typeof(DocEntryViewModel[]), MesenCamelCaseSerializerContext.Default) ?? Array.Empty<DocEntryViewModel>();
+						if(localizedDocs.Length > 0) {
+							_documentation = new Dictionary<string, DocEntryViewModel>();
+							foreach(DocEntryViewModel entry in localizedDocs) {
+								_documentation[entry.Name] = entry;
+							}
+							return;
+						}
+					}
+				} catch {
+				}
+			}
+
+			using StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName)!);
 			DocEntryViewModel[] documentation = (DocEntryViewModel[]?)JsonSerializer.Deserialize(reader.ReadToEnd(), typeof(DocEntryViewModel[]), MesenCamelCaseSerializerContext.Default) ?? Array.Empty<DocEntryViewModel>();
 
 			_documentation = new Dictionary<string, DocEntryViewModel>();

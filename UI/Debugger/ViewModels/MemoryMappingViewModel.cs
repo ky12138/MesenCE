@@ -2,6 +2,7 @@
 using Avalonia.Media;
 using Mesen.Debugger.Controls;
 using Mesen.Interop;
+using Mesen.Localization;
 using Mesen.ViewModels;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -102,8 +103,8 @@ namespace Mesen.Debugger.ViewModels
 
 			List<MemoryMappingBlock> mappings = new();
 
-			mappings.Add(new MemoryMappingBlock() { Name = "Internal RAM", Length = 0x2000, Color = Color.FromRgb(222, 222, 222) });
-			mappings.Add(new MemoryMappingBlock() { Name = "Registers", Length = 0x2020, Color = Color.FromRgb(222, 222, 222) });
+			mappings.Add(new MemoryMappingBlock() { Name = ResourceHelper.GetMessage("MemMap_InternalRam"), Length = 0x2000, Color = Color.FromRgb(222, 222, 222) });
+			mappings.Add(new MemoryMappingBlock() { Name = ResourceHelper.GetMessage("MemMap_Registers"), Length = 0x2020, Color = Color.FromRgb(222, 222, 222) });
 
 			NesPrgMemoryType? memoryType = null;
 			NesMemoryAccessType accessType = NesMemoryAccessType.Unspecified;

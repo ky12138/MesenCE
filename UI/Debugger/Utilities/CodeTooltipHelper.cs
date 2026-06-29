@@ -8,6 +8,7 @@ using Mesen.Debugger.Labels;
 using Mesen.Interop;
 using Mesen.Localization;
 using System;
+using System.Collections.Generic;
 
 namespace Mesen.Debugger.Utilities
 {
@@ -188,7 +189,7 @@ namespace Mesen.Debugger.Utilities
 				addressField += "$" + absAddr.Address.ToString("X" + cpuType.GetAddressSize()) + " (" + absAddr.Type.GetShortName() + ")";
 			}
 
-			items.AddEntry("Address", addressField, true);
+			items.AddEntry(ResourceHelper.GetMessage("TooltipAddress"), addressField, true);
 
 			bool isCode = false;
 			if(address >= 0) {
@@ -198,13 +199,13 @@ namespace Mesen.Debugger.Utilities
 			}
 
 			if(isCode) {
-				items.AddEntry("Byte code", seg.Data.ByteCodeStr, true);
+				items.AddEntry(ResourceHelper.GetMessage("TooltipByteCode"), seg.Data.ByteCodeStr, true);
 			}
 
 			return new DynamicTooltip() { Items = items };
 		}
 
-		public static DynamicTooltip GetCodeAddressTooltip(CpuType cpuType, LocationInfo codeLoc, bool useAbsAddress = false)
+		public static DynamicTooltip GetCodeAddressTooltip(CpuType cpuType, LocationInfo codeLoc, bool useAbsAddress = false, List<MemoryMappingBlock>? mappingBlocks = null)
 		{
 			int relAddress = codeLoc.RelAddress?.Address ?? -1;
 			AddressInfo? absAddress = codeLoc.AbsAddress ?? (codeLoc.RelAddress.HasValue ? DebugApi.GetAbsoluteAddress(codeLoc.RelAddress.Value) : null);
@@ -214,9 +215,9 @@ namespace Mesen.Debugger.Utilities
 			TooltipEntries items = new();
 
 			if(codeLoc.Symbol != null) {
-				items.AddEntry("Symbol", codeLoc.Symbol.Value.Name + (codeLoc.LabelAddressOffset != null ? ("+" + codeLoc.LabelAddressOffset) : ""));
+				items.AddEntry(ResourceHelper.GetMessage("TooltipSymbol"), codeLoc.Symbol.Value.Name + (codeLoc.LabelAddressOffset != null ? ("+" + codeLoc.LabelAddressOffset) : ""));
 			} else if(codeLoc.Label != null) {
-				items.AddEntry("Label", codeLoc.Label.Label + (codeLoc.LabelAddressOffset != null ? ("+" + codeLoc.LabelAddressOffset) : ""));
+				items.AddEntry(ResourceHelper.GetMessage("TooltipLabel"), codeLoc.Label.Label + (codeLoc.LabelAddressOffset != null ? ("+" + codeLoc.LabelAddressOffset) : ""));
 			}
 
 			bool showPreview = false;
@@ -258,8 +259,8 @@ namespace Mesen.Debugger.Utilities
 					mainPanel.Children.Add(GetHexDecPanel(dwordValue, "X8", monoFont, fontSize));
 				}
 
-				items.AddEntry("Address", GetAddressField(relAddress, absAddress, cpuType, monoFont, fontSize), true);
-				items.AddEntry("Value", mainPanel);
+				items.AddEntry(ResourceHelper.GetMessage("TooltipAddress"), GetAddressField(relAddress, absAddress, cpuType, monoFont, fontSize), true);
+				items.AddEntry(ResourceHelper.GetMessage("TooltipValue"), mainPanel);
 
 				if(counters.ReadCounter > 0 || counters.WriteCounter > 0 || counters.ExecCounter > 0) {
 					TimingInfo timing = EmuApi.GetTimingInfo(cpuType);
@@ -271,12 +272,12 @@ namespace Mesen.Debugger.Utilities
 						(counters.ExecCounter > 0 ? ($"X: {FormatCount(counters.ExecCounter)} - {FormatFrameCount(counters.ExecStamp, timing.MasterClock, clocksPerFrame)}") : "")
 					).Trim('\n', '\r');
 
-					items.AddEntry("Stats", accessData);
+					items.AddEntry(ResourceHelper.GetMessage("TooltipStats"), accessData);
 				}
 			} else if(codeLoc.Symbol?.Address != null) {
 				AddressInfo? symbolAddr = DebugWorkspaceManager.SymbolProvider?.GetSymbolAddressInfo(codeLoc.Symbol.Value);
 				if(symbolAddr == null) {
-					items.AddEntry("Constant", "$" + codeLoc.Symbol.Value.Address.Value.ToString("X" + cpuType.GetAddressSize()));
+					items.AddEntry(ResourceHelper.GetMessage("TooltipConstant"), "$" + codeLoc.Symbol.Value.Address.Value.ToString("X" + cpuType.GetAddressSize()));
 				} else {
 					int byteValue = DebugApi.GetMemoryValue(symbolAddr.Value.Type, (uint)symbolAddr.Value.Address);
 					int wordValue = (DebugApi.GetMemoryValue(symbolAddr.Value.Type, (uint)symbolAddr.Value.Address + 1) << 8) | byteValue;
@@ -284,13 +285,13 @@ namespace Mesen.Debugger.Utilities
 					StackPanel mainPanel = new StackPanel() { Spacing = -4 };
 					mainPanel.Children.Add(GetHexDecPanel(byteValue, "X2", monoFont, ConfigManager.Config.Debug.Fonts.OtherMonoFont.FontSize));
 					mainPanel.Children.Add(GetHexDecPanel(wordValue, "X4", monoFont, ConfigManager.Config.Debug.Fonts.OtherMonoFont.FontSize));
-					items.AddEntry("Address", "$" + symbolAddr.Value.Address.ToString("X" + cpuType.GetAddressSize()) + " (" + symbolAddr.Value.Type.GetShortName() + ")", true);
-					items.AddEntry("Value", mainPanel);
+					items.AddEntry(ResourceHelper.GetMessage("TooltipAddress"), "$" + symbolAddr.Value.Address.ToString("X" + cpuType.GetAddressSize()) + " (" + symbolAddr.Value.Type.GetShortName() + ")", true);
+					items.AddEntry(ResourceHelper.GetMessage("TooltipValue"), mainPanel);
 				}
 			}
 
 			if(codeLoc.Label?.Comment.Length > 0) {
-				items.AddEntry("Comment", codeLoc.Label.Comment, true);
+				items.AddEntry(ResourceHelper.GetMessage("TooltipComment"), codeLoc.Label.Comment, true);
 			}
 
 			if(relAddress >= 0 && showPreview) {
@@ -321,11 +322,11 @@ namespace Mesen.Debugger.Utilities
 			MemoryOperationInfo operation = progress.LastMemOperation;
 
 			TooltipEntries items = new();
-			items.AddEntry("Type", ResourceHelper.GetEnumText(operation.Type), true);
-			items.AddEntry("Cycle", seg.Progress.Current.ToString(), true);
+			items.AddEntry(ResourceHelper.GetMessage("TooltipType"), ResourceHelper.GetEnumText(operation.Type), true);
+			items.AddEntry(ResourceHelper.GetMessage("TooltipCycle"), seg.Progress.Current.ToString(), true);
 			if(operation.Type != MemoryOperationType.Idle) {
-				items.AddEntry("Address", "$" + operation.Address.ToString("X" + cpuType.GetAddressSize()), true);
-				items.AddEntry("Value", "$" + operation.Value.ToString("X2"), true);
+				items.AddEntry(ResourceHelper.GetMessage("TooltipAddress"), "$" + operation.Address.ToString("X" + cpuType.GetAddressSize()), true);
+				items.AddEntry(ResourceHelper.GetMessage("TooltipValue"), "$" + operation.Value.ToString("X2"), true);
 			}
 
 			return new DynamicTooltip() { Items = items };
@@ -382,7 +383,7 @@ namespace Mesen.Debugger.Utilities
 				return "n/a";
 			}
 
-			return FormatValue((masterClock - stamp) / clocksPerFrame) + " frames";
+			return FormatValue((masterClock - stamp) / clocksPerFrame) + " " + ResourceHelper.GetMessage("TooltipFrames");
 		}
 	}
 }

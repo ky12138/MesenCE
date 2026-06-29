@@ -639,29 +639,29 @@ namespace Mesen.Debugger.ViewModels
 			void addRow(string text) { panel.Children.Add(new TextBlock() { Text = text }); }
 			void addBoldRow(string text) { panel.Children.Add(new TextBlock() { Text = text, FontWeight = Avalonia.Media.FontWeight.Bold }); }
 
-			addBoldRow("Notes");
-			addRow("You can customize the output by enabling the 'Use custom format' option and manually editing the format.");
+			addBoldRow(ResourceHelper.GetMessage("TraceLogTooltip_Notes"));
+			addRow(ResourceHelper.GetMessage("TraceLogTooltip_CustomizeFormat"));
 			addRow(" ");
-			addRow("Tags can have their display format configured by using a comma and specifying the format options. e.g:");
-			addRow("  [Scanline,3] - display scanline in decimal, pad to always be 3 characters wide");
-			addRow("  [Scanline,h] - display scanline in hexadecimal");
-			addRow("  [Scanline,3h] - display scanline in decimal, pad to always be 3 characters wide");
+			addRow(ResourceHelper.GetMessage("TraceLogTooltip_FormatConfig"));
+			addRow(ResourceHelper.GetMessage("TraceLogTooltip_FormatExample1"));
+			addRow(ResourceHelper.GetMessage("TraceLogTooltip_FormatExample2"));
+			addRow(ResourceHelper.GetMessage("TraceLogTooltip_FormatExample3"));
 			addRow(" ");
-			addBoldRow("Common tags (all CPUs)");
-			addRow("  [ByteCode] - byte code for the instruction (1 to 3 bytes)");
-			addRow("  [Disassembly] - disassembly for the current instruction");
-			addRow("  [EffectiveAddress] - effective address used for indirect addressing modes");
-			addRow("  [MemoryValue] - value stored at the memory location referred to by the instruction");
-			addRow("  [PC] - program counter");
-			addRow("  [Cycle] - current horizontal cycle (H)");
-			addRow("  [HClock] - current horizontal cycle (H, in master clocks)");
-			addRow("  [Scanline] - current scanline (V)");
-			addRow("  [FrameCount] - current frame number");
-			addRow("  [CycleCount] - current CPU cycle (64-bit unsigned value)");
-			addRow("  [Align,X] - add spaces to ensure the line is X characters long");
+			addBoldRow(ResourceHelper.GetMessage("TraceLogTooltip_CommonTags"));
+			addRow(ResourceHelper.GetMessage("TraceLogTooltip_TagByteCode"));
+			addRow(ResourceHelper.GetMessage("TraceLogTooltip_TagDisassembly"));
+			addRow(ResourceHelper.GetMessage("TraceLogTooltip_TagEffectiveAddress"));
+			addRow(ResourceHelper.GetMessage("TraceLogTooltip_TagMemoryValue"));
+			addRow(ResourceHelper.GetMessage("TraceLogTooltip_TagPC"));
+			addRow(ResourceHelper.GetMessage("TraceLogTooltip_TagCycle"));
+			addRow(ResourceHelper.GetMessage("TraceLogTooltip_TagHClock"));
+			addRow(ResourceHelper.GetMessage("TraceLogTooltip_TagScanline"));
+			addRow(ResourceHelper.GetMessage("TraceLogTooltip_TagFrameCount"));
+			addRow(ResourceHelper.GetMessage("TraceLogTooltip_TagCycleCount"));
+			addRow(ResourceHelper.GetMessage("TraceLogTooltip_TagAlign"));
 			addRow(" ");
 
-			addBoldRow("CPU-specific tags (" + ResourceHelper.GetEnumText(CpuType) + ")");
+			addBoldRow(ResourceHelper.GetMessage("TraceLogTooltip_CpuTags", ResourceHelper.GetEnumText(CpuType)));
 
 			string[] tokens = CpuType switch {
 				CpuType.Snes or CpuType.Sa1 => new string[] { "A", "X", "Y", "D", "DB", "P", "SP" },

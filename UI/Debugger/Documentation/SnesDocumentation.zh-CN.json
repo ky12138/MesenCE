@@ -1,0 +1,221 @@
+{
+	"instructions": [
+		{
+			"op": "cop",
+			"name": "COP - 协处理器",
+			"description": "跳转到COP向量的地址。"
+		},
+		{
+			"op": "jml",
+			"name": "JML - 长跳转",
+			"description": "跳转到指定的24位地址"
+		},
+		{
+			"op": "jsl",
+			"name": "JSL - 长跳转到子程序",
+			"description": "跳转到指定的子程序(24位地址)"
+		},
+		{
+			"op": "mvn",
+			"name": "MVN - 负向块移动",
+			"description": ""
+		},
+		{
+			"op": "mvp",
+			"name": "MVP - 正向块移动",
+			"description": ""
+		},
+		{
+			"op": "pea",
+			"name": "PEA - 压入绝对地址",
+			"description": "将指定的16位立即数值压入堆栈。"
+		},
+		{
+			"op": "pei",
+			"name": "PEI - 压入间接地址",
+			"description": "将指定地址中包含的16位值压入堆栈。"
+		},
+		{
+			"op": "per",
+			"name": "PER - 压入PC相对地址",
+			"description": "将基于当前PC加上指定相对值的相对地址压入堆栈。"
+		},
+		{
+			"op": "rep",
+			"name": "REP - 重置状态位",
+			"description": "清除指定的状态位。"
+		},
+		{
+			"op": "sep",
+			"name": "SEP - 置位状态位",
+			"description": "置位指定的状态位"
+		},
+		{
+			"op": "rtl",
+			"name": "RTL - 从长子程序返回",
+			"description": "从子程序返回(与JSL配合使用)"
+		},
+		{
+			"op": "stp",
+			"name": "STP - 停止",
+			"description": "停止CPU直到复位。"
+		},
+		{
+			"op": "wai",
+			"name": "WAI - 等待中断",
+			"description": "停止CPU直到发生IRQ。"
+		},
+		{
+			"op": "wdm",
+			"name": "WDM - 保留(NOP)",
+			"description": ""
+		},
+		{
+			"op": "tcd",
+			"name": "TCD - 传送C累加器到直接寄存器",
+			"description": "",
+			"flags":  ["Zero", "Negative"]
+		},
+		{
+			"op": "tcs",
+			"name": "TCS - 传送C累加器到堆栈寄存器",
+			"description": ""
+		},
+		{
+			"op": "tdc",
+			"name": "TDC - 传送直接寄存器到C累加器",
+			"description": "",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "tsc",
+			"name": "TSC - 传送堆栈寄存器到C累加器",
+			"description": "",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "tsx",
+			"name": "TSX - 传送堆栈寄存器到X",
+			"description": "",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "txy",
+			"name": "TXY - 传送X到Y",
+			"description": "",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "tyx",
+			"name": "TYX - 传送Y到X",
+			"description": "",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "xba",
+			"name": "XBA - 交换B和A累加器",
+			"description": "",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "xce",
+			"name": "XCE - 交换进位和仿真标志",
+			"description": "",
+			"flags": ["Carry", "Emulation"]
+		},
+		{
+			"op": "tsb",
+			"name": "TSB - 测试并置位位",
+			"description": "内存值与A的内容进行按位或,标志根据结果更新。",
+			"flags": ["Zero", "Negative", "Overflow"]
+		},
+		{
+			"op": "trb",
+			"name": "TRB - 测试并重置位",
+			"description": "内存值与A的补码(~A)进行按位与,标志根据结果更新。",
+			"flags": ["Zero", "Negative", "Overflow"]
+		},
+		{
+			"op": "bra",
+			"name": "BRA - 无条件分支",
+			"description": "分支到指定地址。"
+		},
+		{
+			"op": "brl",
+			"name": "BRL - 长无条件分支",
+			"description": "分支到指定地址。"
+		},
+		{
+			"op": "stz",
+			"name": "STZ - 存储零",
+			"description": "将值0存储到内存中。"
+		},
+		{
+			"op": "phx",
+			"name": "PHX - 压入X寄存器",
+			"description": "将X寄存器的值压入堆栈。"
+		},
+		{
+			"op": "plx",
+			"name": "PLX - 弹出X寄存器",
+			"description": "从堆栈中弹出一个字节并存储到X寄存器。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "phy",
+			"name": "PHY - 压入Y寄存器",
+			"description": "将Y寄存器的值压入堆栈。"
+		},
+		{
+			"op": "ply",
+			"name": "PLY - 弹出Y寄存器",
+			"description": "从堆栈中弹出一个字节并存储到Y寄存器。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "phb",
+			"name": "PHB - 压入数据 bank 寄存器",
+			"description": "将数据 bank(B)寄存器的值压入堆栈。"
+		},
+		{
+			"op": "phd",
+			"name": "PHD - 压入直接寄存器",
+			"description": "将直接(D)寄存器的值压入堆栈。"
+		},
+		{
+			"op": "phk",
+			"name": "PHK - 压入程序 bank 寄存器",
+			"description": "将程序 bank(K)寄存器的值压入堆栈。"
+		},
+		{
+			"op": "plb",
+			"name": "PLB - 弹出数据 bank 寄存器",
+			"description": "从堆栈中弹出并存储到数据 bank(B)寄存器。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "pld",
+			"name": "PLD - 弹出直接寄存器",
+			"description": "从堆栈中弹出并存储到直接(D)寄存器。",
+			"flags": ["Zero", "Negative"]
+		}
+	],
+	"addressingModes": [
+		"Imm8",  "DirIdxIndX", "Imm8",     "StkRel",        "Dir",     "Dir",     "Dir",     "DirIndLng",     "Stk", "ImmM",    "Acc", "Stk", "Abs",        "Abs",     "Abs",     "AbsLng",
+		"Rel",   "DirIndIdxY", "DirInd",   "StkRelIndIdxY", "Dir",     "DirIdxX", "DirIdxX", "DirIndLngIdxY", "Imp", "AbsIdxY", "Acc", "Imp", "Abs",        "AbsIdxX", "AbsIdxX", "AbsLngIdxX",
+		"Abs",   "DirIdxIndX", "AbsLng",   "StkRel",        "Dir",     "Dir",     "Dir",     "DirIndLng",     "Stk", "ImmM",    "Acc", "Stk", "Abs",        "Abs",     "Abs",     "AbsLng",
+		"Rel",   "DirIndIdxY", "DirInd",   "StkRelIndIdxY", "DirIdxX", "DirIdxX", "DirIdxX", "DirIndLngIdxY", "Imp", "AbsIdxY", "Acc", "Imp", "AbsIdxX",    "AbsIdxX", "AbsIdxX", "AbsLngIdxX",
+		"Stk",   "DirIdxIndX", "Imm8",     "StkRel",        "BlkMov",  "Dir",     "Dir",     "DirIndLng",     "Stk", "ImmM",    "Acc", "Stk", "Abs",        "Abs",     "Abs",     "AbsLng",
+		"Rel",   "DirIndIdxY", "DirInd",   "StkRelIndIdxY", "BlkMov",  "DirIdxX", "DirIdxX", "DirIndLngIdxY", "Imp", "AbsIdxY", "Stk", "Imp", "AbsLng",     "AbsIdxX", "AbsIdxX", "AbsLngIdxX",
+		"Stk",   "DirIdxIndX", "RelLng",   "StkRel",        "Dir",     "Dir",     "Dir",     "DirIndLng",     "Stk", "ImmM",    "Acc", "Stk", "AbsInd",     "Abs",     "Abs",     "AbsLng",
+		"Rel",   "DirIndIdxY", "DirInd",   "StkRelIndIdxY", "DirIdxX", "DirIdxX", "DirIdxX", "DirIndLngIdxY", "Imp", "AbsIdxY", "Stk", "Imp", "AbsIdxXInd", "AbsIdxX", "AbsIdxX", "AbsLngIdxX",
+		"Rel",   "DirIdxIndX", "RelLng",   "StkRel",        "Dir",     "Dir",     "Dir",     "DirIndLng",     "Imp", "ImmM",    "Imp", "Stk", "Abs",        "Abs",     "Abs",     "AbsLng",
+		"Rel",   "DirIndIdxY", "DirInd",   "StkRelIndIdxY", "DirIdxX", "DirIdxX", "DirIdxY", "DirIndLngIdxY", "Imp", "AbsIdxY", "Imp", "Imp", "Abs",        "AbsIdxX", "AbsIdxX", "AbsLngIdxX",
+		"ImmX",  "DirIdxIndX", "ImmX",     "StkRel",        "Dir",     "Dir",     "Dir",     "DirIndLng",     "Imp", "ImmM",    "Imp", "Stk", "Abs",        "Abs",     "Abs",     "AbsLng",
+		"Rel",   "DirIndIdxY", "DirInd",   "StkRelIndIdxY", "DirIdxX", "DirIdxX", "DirIdxY", "DirIndLngIdxY", "Imp", "AbsIdxY", "Imp", "Imp", "AbsIdxX",    "AbsIdxX", "AbsIdxY", "AbsLngIdxX",
+		"ImmX",  "DirIdxIndX", "Imm8",     "StkRel",        "Dir",     "Dir",     "Dir",     "DirIndLng",     "Imp", "ImmM",    "Imp", "Imp", "Abs",        "Abs",     "Abs",     "AbsLng",
+		"Rel",   "DirIndIdxY", "DirInd",   "StkRelIndIdxY", "Dir",     "DirIdxX", "DirIdxX", "DirIndLngIdxY", "Imp", "AbsIdxY", "Stk", "Imp", "AbsIndLng",  "AbsIdxX", "AbsIdxX", "AbsLngIdxX",
+		"ImmX",  "DirIdxIndX", "Imm8",     "StkRel",        "Dir",     "Dir",     "Dir",     "DirIndLng",     "Imp", "ImmM",    "Imp", "Imp", "Abs",        "Abs",     "Abs",     "AbsLng",
+		"Rel",   "DirIndIdxY", "DirInd",   "StkRelIndIdxY", "Imm16",   "DirIdxX", "DirIdxX", "DirIndLngIdxY", "Imp", "AbsIdxY", "Stk", "Imp", "AbsIdxXInd", "AbsIdxX", "AbsIdxX", "AbsLngIdxX"
+	]
+}

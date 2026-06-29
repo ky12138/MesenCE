@@ -6,6 +6,7 @@
 	xmlns:du="using:Mesen.Debugger.Utilities"
 	xmlns:vm="using:Mesen.Debugger.StatusViews"
 	xmlns:c="using:Mesen.Controls"
+	xmlns:l="using:Mesen.Localization"
 	mc:Ignorable="d" d:DesignWidth="350"
 	VerticalAlignment="Stretch"
 	HorizontalAlignment="Stretch"
@@ -34,70 +35,70 @@
 					</WrapPanel.Styles>
 					
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>R0:</TextBlock>
+						<TextBlock Text="{l:Translate lblR0}" />
 						<c:MesenNumericTextBox Value="{Binding Reg0}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>R1:</TextBlock>
+						<TextBlock Text="{l:Translate lblR1}" />
 						<c:MesenNumericTextBox Value="{Binding Reg1}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>R2:</TextBlock>
+						<TextBlock Text="{l:Translate lblR2}" />
 						<c:MesenNumericTextBox Value="{Binding Reg2}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>R3:</TextBlock>
+						<TextBlock Text="{l:Translate lblR3}" />
 						<c:MesenNumericTextBox Value="{Binding Reg3}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 					
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>R4:</TextBlock>
+						<TextBlock Text="{l:Translate lblR4}" />
 						<c:MesenNumericTextBox Value="{Binding Reg4}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>R5:</TextBlock>
+						<TextBlock Text="{l:Translate lblR5}" />
 						<c:MesenNumericTextBox Value="{Binding Reg5}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>R6:</TextBlock>
+						<TextBlock Text="{l:Translate lblR6}" />
 						<c:MesenNumericTextBox Value="{Binding Reg6}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>R7:</TextBlock>
+						<TextBlock Text="{l:Translate lblR7}" />
 						<c:MesenNumericTextBox Value="{Binding Reg7}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>R8:</TextBlock>
+						<TextBlock Text="{l:Translate lblR8}" />
 						<c:MesenNumericTextBox Value="{Binding Reg8}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>R9:</TextBlock>
+						<TextBlock Text="{l:Translate lblR9}" />
 						<c:MesenNumericTextBox Value="{Binding Reg9}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>R10:</TextBlock>
+						<TextBlock Text="{l:Translate lblR10}" />
 						<c:MesenNumericTextBox Value="{Binding Reg10}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>R11:</TextBlock>
+						<TextBlock Text="{l:Translate lblR11}" />
 						<c:MesenNumericTextBox Value="{Binding Reg11}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>R12:</TextBlock>
+						<TextBlock Text="{l:Translate lblR12}" />
 						<c:MesenNumericTextBox Value="{Binding Reg12}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>R13:</TextBlock>
+						<TextBlock Text="{l:Translate lblR13}" />
 						<c:MesenNumericTextBox Value="{Binding Reg13}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>R14:</TextBlock>
+						<TextBlock Text="{l:Translate lblR14}" />
 						<c:MesenNumericTextBox Value="{Binding Reg14}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>R15:</TextBlock>
+						<TextBlock Text="{l:Translate lblR15}" />
 						<c:MesenNumericTextBox Value="{Binding Reg15}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 				</WrapPanel>
@@ -106,32 +107,32 @@
 
 				<WrapPanel Margin="0 5">
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>SRC:</TextBlock>
+						<TextBlock Text="{l:Translate lblSRC}" />
 						<c:MesenNumericTextBox Value="{Binding RegSrc}" Hex="True" Max="0xFF" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>DST:</TextBlock>
+						<TextBlock Text="{l:Translate lblDST}" />
 						<c:MesenNumericTextBox Value="{Binding RegDst}" Hex="True" Max="0xFF" />
 					</StackPanel>
 				</WrapPanel>
 				
 				<WrapPanel Margin="0 5">
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>PBR:</TextBlock>
+						<TextBlock Text="{l:Translate lblPBR}" />
 						<c:MesenNumericTextBox Value="{Binding RegPbr}" Hex="True" Max="0xFF" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>ROMBR:</TextBlock>
+						<TextBlock Text="{l:Translate lblROMBR}" />
 						<c:MesenNumericTextBox Value="{Binding RomBank}" Hex="True" Max="0xFF" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>RAMBR:</TextBlock>
+						<TextBlock Text="{l:Translate lblRAMBR}" />
 						<c:MesenNumericTextBox Value="{Binding RamBank}" Hex="True" Max="0xFF" />
 					</StackPanel>
 				</WrapPanel>
 				<WrapPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>RAM ADDR:</TextBlock>
+						<TextBlock Text="{l:Translate lblRAMADDR}" />
 						<c:MesenNumericTextBox Value="{Binding RamAddrCache}" Hex="True" Max="0xFFFF" />
 					</StackPanel>
 				</WrapPanel>
@@ -139,57 +140,57 @@
 
 				<WrapPanel Margin="0 2 0 0" DockPanel.Dock="Top">
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>SFR:</TextBlock>
+						<TextBlock Text="{l:Translate lblSFR}" />
 						<c:MesenNumericTextBox Value="{Binding RegSfr}" Hex="True" Max="0xFFFF" IsEnabled="False" />
 					</StackPanel>
 					<WrapPanel>
 						<StackPanel>
-							<CheckBox IsChecked="{Binding FlagZero}" Content="Zero" />
-							<CheckBox IsChecked="{Binding FlagCarry}" Content="Carry" />
+							<CheckBox IsChecked="{Binding FlagZero}" Content="{l:Translate chkZero}" />
+							<CheckBox IsChecked="{Binding FlagCarry}" Content="{l:Translate chkCarry}" />
 						</StackPanel>
 						<StackPanel>
-							<CheckBox IsChecked="{Binding FlagSign}" Content="Sign" />
-							<CheckBox IsChecked="{Binding FlagOverflow}" Content="Overflow" />
+							<CheckBox IsChecked="{Binding FlagSign}" Content="{l:Translate chkSign}" />
+							<CheckBox IsChecked="{Binding FlagOverflow}" Content="{l:Translate chkOverflow}" />
 						</StackPanel>
 						<StackPanel>
-							<CheckBox IsChecked="{Binding FlagRunning}" Content="Running" />
-							<CheckBox IsChecked="{Binding FlagRomReadPending}" Content="ROM Read" />
+							<CheckBox IsChecked="{Binding FlagRunning}" Content="{l:Translate chkRunning}" />
+							<CheckBox IsChecked="{Binding FlagRomReadPending}" Content="{l:Translate chkRomRead}" />
 						</StackPanel>
 						<StackPanel>
-							<CheckBox IsChecked="{Binding FlagAlt1}" Content="Alt1" />
-							<CheckBox IsChecked="{Binding FlagAlt2}" Content="Alt2" />
+							<CheckBox IsChecked="{Binding FlagAlt1}" Content="{l:Translate chkAlt1}" />
+							<CheckBox IsChecked="{Binding FlagAlt2}" Content="{l:Translate chkAlt2}" />
 						</StackPanel>
 						<StackPanel>
 							<CheckBox IsChecked="{Binding FlagImmLow}" Content="IL" IsVisible="False" />
 							<CheckBox IsChecked="{Binding FlagImmHigh}" Content="IH" IsVisible="False" />
 						</StackPanel>
 						<StackPanel>
-							<CheckBox IsChecked="{Binding FlagPrefix}" Content="Prefix" />
-							<CheckBox IsChecked="{Binding FlagIrq}" Content="IRQ" />
+							<CheckBox IsChecked="{Binding FlagPrefix}" Content="{l:Translate chkPrefix}" />
+							<CheckBox IsChecked="{Binding FlagIrq}" Content="{l:Translate chkIRQ}" />
 						</StackPanel>
 					</WrapPanel>
 				</WrapPanel>
 				<Rectangle Stroke="{StaticResource MesenGrayBorderColor}" StrokeThickness="1" Margin="5 5 5 2" />
 				<WrapPanel Margin="0 2 0 0" DockPanel.Dock="Top">
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>COLOR:</TextBlock>
+						<TextBlock Text="{l:Translate lblCOLOR}" />
 						<c:MesenNumericTextBox Value="{Binding RegColor}" Hex="True" Max="0xFF" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock>POR:</TextBlock>
+						<TextBlock Text="{l:Translate lblPOR}" />
 						<c:MesenNumericTextBox Value="{Binding RegPor}" Hex="True" Max="0xFF" IsEnabled="False" />
 					</StackPanel>
 					<WrapPanel>
 						<StackPanel>
-							<CheckBox IsChecked="{Binding FlagPlotTransparent}" Content="Plot Transparent" />
-							<CheckBox IsChecked="{Binding FlagPlotDither}" Content="Plot Dither" />
+							<CheckBox IsChecked="{Binding FlagPlotTransparent}" Content="{l:Translate chkPlotTransparent}" />
+							<CheckBox IsChecked="{Binding FlagPlotDither}" Content="{l:Translate chkPlotDither}" />
 						</StackPanel>
 						<StackPanel>
-							<CheckBox IsChecked="{Binding FlagColorHighNibble}" Content="Color Src High" />
-							<CheckBox IsChecked="{Binding FlagColorFreezeHigh}" Content="Color Freeze High" />
+							<CheckBox IsChecked="{Binding FlagColorHighNibble}" Content="{l:Translate chkColorSrcHigh}" />
+							<CheckBox IsChecked="{Binding FlagColorFreezeHigh}" Content="{l:Translate chkColorFreezeHigh}" />
 						</StackPanel>
 						<StackPanel>
-							<CheckBox IsChecked="{Binding FlagObjMode}" Content="Obj Mode" />
+							<CheckBox IsChecked="{Binding FlagObjMode}" Content="{l:Translate chkObjMode}" />
 						</StackPanel>
 					</WrapPanel>
 				</WrapPanel>
