@@ -1,16 +1,12 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using DataBoxControl;
-using Mesen.Config;
 using Mesen.Debugger;
 using Mesen.Debugger.Utilities;
 using Mesen.Debugger.ViewModels;
 using Mesen.Debugger.Windows;
-using Mesen.Utilities;
-using Mesen.ViewModels;
+using Mesen.Interop;
 using System;
 using System.Linq;
 using static Mesen.Debugger.ViewModels.BreakpointListViewModel;
@@ -65,7 +61,21 @@ namespace Mesen.Debugger.Views
 
 		private void OnCellDoubleClick(DataBoxCell cell)
 		{
-			if(cell.DataContext is BreakpointViewModel vm) {
+			if(cell.DataContext is not BreakpointViewModel vm) {
+				return;
+			}
+
+			string? colName = cell.Column?.ColumnName;
+			if(colName == "Address") {
+				if(vm.Breakpoint.SupportsExec) {
+					int addr = vm.Breakpoint.GetRelativeAddress();
+					if(addr >= 0 && DataContext is BreakpointListViewModel listModel) {
+						listModel.Debugger.ScrollToAddress(addr);
+						return;
+					}
+				}
+				MemoryToolsWindow.ShowInMemoryTools(vm.Breakpoint.MemoryType, (int)vm.Breakpoint.StartAddress);
+			} else {
 				BreakpointEditWindow.EditBreakpoint(vm.Breakpoint, this);
 			}
 		}

@@ -1,11 +1,11 @@
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using DataBoxControl;
 using Mesen.Debugger.Labels;
 using Mesen.Debugger.ViewModels;
 using Mesen.Debugger.Windows;
+using Mesen.Interop;
 using System;
 using static Mesen.Debugger.ViewModels.LabelListViewModel;
 
@@ -33,8 +33,25 @@ namespace Mesen.Debugger.Views
 
 		private void OnCellDoubleClick(DataBoxCell cell)
 		{
-			if(DataContext is LabelListViewModel listModel && cell.DataContext is LabelViewModel label) {
+			if(DataContext is not LabelListViewModel listModel || cell.DataContext is not LabelViewModel label) {
+				return;
+			}
+
+			string? colName = cell.Column?.ColumnName;
+			if(colName == "Label") {
 				LabelEditWindow.EditLabel(listModel.CpuType, this, label.Label);
+			} else if(colName == "Comment") {
+				LabelEditWindow.EditLabel(listModel.CpuType, this, label.Label, focusComment: true);
+			} else if(colName == "RelAddr") {
+				AddressInfo addr = label.Label.GetRelativeAddress(listModel.CpuType);
+				if(addr.Address >= 0) {
+					listModel.Debugger.ScrollToAddress(addr.Address);
+				}
+			} else if(colName == "AbsAddr") {
+				AddressInfo addr = label.Label.GetAbsoluteAddress();
+				if(addr.Address >= 0) {
+					MemoryToolsWindow.ShowInMemoryTools(addr.Type, addr.Address);
+				}
 			}
 		}
 	}

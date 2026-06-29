@@ -133,7 +133,11 @@ namespace Mesen.Debugger.ViewModels
 			}
 
 			WatchValueInfo entry = WatchEntries[Selection.SelectedIndex];
+			return GetLocationForEntry(entry);
+		}
 
+		internal LocationInfo? GetLocationForEntry(WatchValueInfo entry)
+		{
 			Match match = _watchAddressOrLabel.Match(entry.Expression);
 			if(match.Success) {
 				string address = match.Groups[3].Value;

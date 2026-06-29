@@ -8,10 +8,11 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using DataBoxControl;
+using Mesen.Debugger.Disassembly;
 using Mesen.Debugger.ViewModels;
+using Mesen.Debugger.Windows;
 using Mesen.Utilities;
 using System;
-using System.Linq;
 
 namespace Mesen.Debugger.Views
 {
@@ -160,7 +161,11 @@ namespace Mesen.Debugger.Views
 			if(grid != null && DataContext is WatchValueInfo watch && _listView != null) {
 				//When clicking the textbox, select the row, too
 				ISelectionModel selection = _listView.Model.Selection;
-				if(!selection.SelectedItems.Contains(watch) || selection.SelectedItems.Count > 1) {
+				bool alreadySelected = false;
+				foreach(object? item in selection.SelectedItems) {
+					if(item == watch) { alreadySelected = true; break; }
+				}
+				if(!alreadySelected || selection.SelectedItems.Count > 1) {
 					selection.BeginBatchUpdate();
 					if(e.KeyModifiers != KeyModifiers.Shift && e.KeyModifiers != KeyModifiers.Control) {
 						selection.Clear();

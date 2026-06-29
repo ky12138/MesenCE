@@ -14,16 +14,18 @@ namespace Mesen.Debugger.Windows
 	public class LabelEditWindow : MesenWindow
 	{
 		private LabelEditViewModel _model;
+		private bool _focusComment;
 
 		[Obsolete("For designer only")]
 		public LabelEditWindow() : this(new()) { }
 
-		public LabelEditWindow(LabelEditViewModel model)
+		public LabelEditWindow(LabelEditViewModel model, bool focusComment = false)
 		{
 			InitializeComponent();
 
 			DataContext = model;
 			_model = model;
+			_focusComment = focusComment;
 
 #if DEBUG
 			this.AttachDevTools();
@@ -38,10 +40,14 @@ namespace Mesen.Debugger.Windows
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
-			this.GetControl<TextBox>("txtLabel").FocusAndSelectAll();
+			if(_focusComment) {
+				this.GetControl<TextBox>("txtComment").Focus();
+			} else {
+				this.GetControl<TextBox>("txtLabel").FocusAndSelectAll();
+			}
 		}
 
-		public static async void EditLabel(CpuType cpuType, Control parent, CodeLabel label)
+		public static async void EditLabel(CpuType cpuType, Control parent, CodeLabel label, bool focusComment = false)
 		{
 			LabelEditViewModel model;
 			CodeLabel? copy = null;
@@ -52,7 +58,7 @@ namespace Mesen.Debugger.Windows
 				model = new LabelEditViewModel(cpuType, label, null);
 			}
 
-			LabelEditWindow wnd = new LabelEditWindow(model);
+			LabelEditWindow wnd = new LabelEditWindow(model, focusComment);
 
 			bool result = await wnd.ShowCenteredDialog<bool>(parent);
 			if(result) {

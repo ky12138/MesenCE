@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using DataBoxControl;
@@ -33,8 +32,23 @@ namespace Mesen.Debugger.Views
 
 		private void OnCellDoubleClick(DataBoxCell cell)
 		{
-			if(DataContext is FunctionListViewModel listModel && cell.DataContext is FunctionViewModel vm && vm.RelAddress >= 0) {
-				listModel.Debugger.ScrollToAddress(vm.RelAddress);
+			if(DataContext is not FunctionListViewModel listModel || cell.DataContext is not FunctionViewModel vm) {
+				return;
+			}
+
+			string? colName = cell.Column?.ColumnName;
+			if(colName == "Function") {
+				CodeLabel? label = vm.Label;
+				if(label == null) {
+					label = new CodeLabel(vm.FuncAddr);
+				}
+				LabelEditWindow.EditLabel(listModel.CpuType, this, label);
+			} else if(colName == "RelAddr") {
+				if(vm.RelAddress >= 0) {
+					listModel.Debugger.ScrollToAddress(vm.RelAddress);
+				}
+			} else if(colName == "AbsAddr") {
+				MemoryToolsWindow.ShowInMemoryTools(vm.FuncAddr.Type, vm.FuncAddr.Address);
 			}
 		}
 	}

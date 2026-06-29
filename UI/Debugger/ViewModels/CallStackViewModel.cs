@@ -141,6 +141,17 @@ namespace Mesen.Debugger.ViewModels
 						}
 					}
 				},
+
+				new ContextMenuAction() {
+					ActionType = ActionType.ViewInMemoryViewer,
+					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CallStack_GoToLocation),
+					IsEnabled = () => Selection.SelectedItem is StackInfo entry && entry.Address.Address >= 0,
+					OnClick = () => {
+						if(Selection.SelectedItem is StackInfo entry && entry.Address.Address >= 0) {
+							MemoryToolsWindow.ShowInMemoryTools(entry.Address.Type, entry.Address.Address);
+						}
+					}
+				},
 			}));
 		}
 	}
