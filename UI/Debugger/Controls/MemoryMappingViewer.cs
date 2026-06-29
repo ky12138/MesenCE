@@ -6,6 +6,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Mesen.Config;
+using Mesen.Debugger.Windows;
 using Mesen.Interop;
 using Mesen.Localization;
 using Mesen.Utilities;
@@ -70,23 +71,7 @@ namespace Mesen.Debugger.Controls
 		{
 			base.OnPointerMoved(e);
 
-			List<MemoryMappingBlock> mappings = new(Mappings);
-
-			int totalSize = mappings.Sum(m => m.Length);
-			Size size = Bounds.Size;
-			double pixelsPerByte = size.Width / totalSize;
-			double x = e.GetCurrentPoint(this).Position.X;
-			double pos = 0;
-			MemoryMappingBlock? hoveredMapping = null;
-			int start = 0;
-			foreach(MemoryMappingBlock mapping in mappings) {
-				pos += mapping.Length * pixelsPerByte;
-				if(pos >= x) {
-					hoveredMapping = mapping;
-					break;
-				}
-				start += mapping.Length;
-			}
+			var (hoveredMapping, start) = GetBlockAtPosition(e.GetCurrentPoint(this).Position.X);
 
 			if(_prevTooltipMapping == hoveredMapping) {
 				return;
@@ -100,11 +85,14 @@ namespace Mesen.Debugger.Controls
 				entries.AddEntry(ResourceHelper.GetMessage("MemMap_Entry"), GetBlockText(hoveredMapping));
 				int end = start + hoveredMapping.Length - 1;
 				entries.AddEntry(ResourceHelper.GetMessage("MemMap_Range", MemType.GetShortName()), "$" + start.ToString("X4") + " - $" + end.ToString("X4"));
+				entries.AddEntry(ResourceHelper.GetMessage("MemMap_Size", MemType.GetShortName()), "$" + hoveredMapping.Length.ToString("X4") + " (" + FormatSize(hoveredMapping.Length) + ")");
 
 				AddressInfo absStart = DebugApi.GetAbsoluteAddress(new AddressInfo() { Address = start, Type = MemType });
 				AddressInfo absEnd = DebugApi.GetAbsoluteAddress(new AddressInfo() { Address = end, Type = MemType });
 				if(absStart.Address >= 0 && absEnd.Address >= 0 && absStart.Type == absEnd.Type) {
+					int absTotalSize = DebugApi.GetMemorySize(absStart.Type);
 					entries.AddEntry(ResourceHelper.GetMessage("MemMap_Range", absStart.Type.GetShortName()), "$" + absStart.Address.ToString("X4") + " - $" + absEnd.Address.ToString("X4"));
+					entries.AddEntry(ResourceHelper.GetMessage("MemMap_TotalSize", absStart.Type.GetShortName()),"$" + absTotalSize.ToString("X4") + " (" + FormatSize(absTotalSize) + ")");
 				}
 
 				if(hoveredMapping.Note.StartsWith("RW")) {
@@ -124,11 +112,48 @@ namespace Mesen.Debugger.Controls
 			}
 		}
 
+		protected override void OnPointerPressed(PointerPressedEventArgs e)
+		{
+			base.OnPointerPressed(e);
+
+			if(e.ClickCount == 2 && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) {
+				var (block, startAddress) = GetBlockAtPosition(e.GetCurrentPoint(this).Position.X);
+				if(block == null) {
+					return;
+				}
+
+				CpuType cpuType = MemType.ToCpuType();
+				if(MemType == cpuType.ToMemoryType()) {
+					DebuggerWindow.OpenWindowAtAddress(cpuType, startAddress);
+				} else {
+					MemoryToolsWindow.ShowInMemoryTools(MemType, startAddress);
+				}
+			}
+		}
+
 		protected override void OnPointerExited(PointerEventArgs e)
 		{
 			base.OnPointerExited(e);
 			_prevTooltipMapping = null;
 			TooltipHelper.HideTooltip(this);
+		}
+
+		private (MemoryMappingBlock? block, int startAddress) GetBlockAtPosition(double x)
+		{
+			List<MemoryMappingBlock> mappings = new(Mappings);
+			int totalSize = mappings.Sum(m => m.Length);
+			double pixelsPerByte = Bounds.Size.Width / totalSize;
+
+			double pos = 0;
+			int start = 0;
+			foreach(MemoryMappingBlock mapping in mappings) {
+				pos += mapping.Length * pixelsPerByte;
+				if(pos >= x) {
+					return (mapping, start);
+				}
+				start += mapping.Length;
+			}
+			return (null, 0);
 		}
 
 		private FormattedText GetFormattedText(string text, Typeface typeface, double size)
@@ -210,5 +235,16 @@ namespace Mesen.Debugger.Controls
 				return block.Name;
 			}
 		}
+
+		private static string FormatSize(int bytes)
+		{
+			if(bytes >= 1024 * 1024) {
+				return (bytes / (1024.0 * 1024.0)).ToString("0.##") + " MB";
+			} else if(bytes >= 1024) {
+				return (bytes / 1024.0).ToString("0.##") + " KB";
+			}
+			return bytes.ToString() + " bytes";
+		}
+
 	}
 }

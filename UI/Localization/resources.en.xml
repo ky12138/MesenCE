@@ -2469,6 +2469,8 @@ E
 
 		<Message ID="MemMap_Entry">Entry</Message>
 		<Message ID="MemMap_Range">Range ({0})</Message>
+		<Message ID="MemMap_Size">Size ({0})</Message>
+		<Message ID="MemMap_TotalSize">Total Size ({0})</Message>
 		<Message ID="MemMap_Access">Access</Message>
 		<Message ID="MemMap_AccessReadWrite">Read/Write</Message>
 		<Message ID="MemMap_AccessReadOnly">Read-only</Message>

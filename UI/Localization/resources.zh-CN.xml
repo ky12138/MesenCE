@@ -1651,7 +1651,7 @@
 
 			<Control ID="colAddress">地址</Control>
 			<Control ID="colValue">值</Control>
-			<Control ID="colPrevValue">上一个值</Control>
+			<Control ID="colPrevValue">先前值</Control>
 			<Control ID="colReadCount">读取</Control>
 			<Control ID="colWriteCount">写入</Control>
 			<Control ID="colExecCount">执行</Control>
@@ -2476,6 +2476,8 @@ E
 
 		<Message ID="MemMap_Entry">条目</Message>
 		<Message ID="MemMap_Range">范围 ({0})</Message>
+		<Message ID="MemMap_Size">分页大小 ({0})</Message>
+		<Message ID="MemMap_TotalSize">物理大小 ({0})</Message>
 		<Message ID="MemMap_Access">访问</Message>
 		<Message ID="MemMap_AccessReadWrite">读/写</Message>
 		<Message ID="MemMap_AccessReadOnly">只读</Message>
