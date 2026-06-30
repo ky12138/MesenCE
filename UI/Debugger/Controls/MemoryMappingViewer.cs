@@ -225,7 +225,7 @@ namespace Mesen.Debugger.Controls
 			}
 		}
 
-		private static string GetBlockText(MemoryMappingBlock block)
+		internal static string GetBlockText(MemoryMappingBlock block)
 		{
 			if(string.IsNullOrEmpty(block.Name)) {
 				return block.Page >= 0 ? $"${block.Page:X2}" : "";

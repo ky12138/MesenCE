@@ -19,6 +19,54 @@ namespace Mesen.Debugger.ViewModels
 
 		public bool HasSpecificBreakOptions { get; }
 
+		public bool ShowCpuAddress
+		{
+			get => Config.AddressDisplayType.HasFlag(AddressDisplayType.CpuAddress);
+			set {
+				if(value) {
+					Config.AddressDisplayType |= AddressDisplayType.CpuAddress;
+				} else {
+					Config.AddressDisplayType &= ~AddressDisplayType.CpuAddress;
+				}
+			}
+		}
+
+		public bool ShowAbsAddress
+		{
+			get => Config.AddressDisplayType.HasFlag(AddressDisplayType.AbsAddress);
+			set {
+				if(value) {
+					Config.AddressDisplayType |= AddressDisplayType.AbsAddress;
+				} else {
+					Config.AddressDisplayType &= ~AddressDisplayType.AbsAddress;
+				}
+			}
+		}
+
+		public bool ShowMapping
+		{
+			get => Config.AddressDisplayType.HasFlag(AddressDisplayType.Mapping);
+			set {
+				if(value) {
+					Config.AddressDisplayType |= AddressDisplayType.Mapping;
+				} else {
+					Config.AddressDisplayType &= ~AddressDisplayType.Mapping;
+				}
+			}
+		}
+
+		public bool CompactAddress
+		{
+			get => Config.AddressDisplayType.HasFlag(AddressDisplayType.Compact);
+			set {
+				if(value) {
+					Config.AddressDisplayType |= AddressDisplayType.Compact;
+				} else {
+					Config.AddressDisplayType &= ~AddressDisplayType.Compact;
+				}
+			}
+		}
+
 		public DebuggerOptionsViewModel() : this(new DebuggerConfig(), CpuType.Snes) { }
 
 		public DebuggerOptionsViewModel(DebuggerConfig config, CpuType cpuType)

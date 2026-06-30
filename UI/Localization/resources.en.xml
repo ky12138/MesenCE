@@ -1364,7 +1364,11 @@
 			<Control ID="lblDisassemblyOptions">Disassembly settings</Control>
 			<Control ID="lblVerifiedData">Data:</Control>
 			<Control ID="lblUnidentifiedBlock">Unidentified:</Control>
-			<Control ID="lblAddressDisplay">Margin:</Control>
+			<Control ID="lblAddressDisplay">Address display:</Control>
+			<Control ID="chkCpuAddress">CPU address</Control>
+			<Control ID="chkAbsAddress">ROM address</Control>
+			<Control ID="chkMapping">Mapping</Control>
+			<Control ID="chkCompact">Compact</Control>
 			<Control ID="chkShowByteCode">Show byte code</Control>
 			<Control ID="chkShowMemoryValues">Show memory values</Control>
 			<Control ID="chkUseLowerCaseDisassembly">Use lower case</Control>
@@ -3704,10 +3708,11 @@ E
 			<Value ID="Disassemble">Disassemble</Value>
 		</Enum>
 		<Enum ID="AddressDisplayType">
+			<Value ID="None">None</Value>
 			<Value ID="CpuAddress">CPU address</Value>
 			<Value ID="AbsAddress">ROM address</Value>
-			<Value ID="Both">Both</Value>
-			<Value ID="BothCompact">Both (compact)</Value>
+			<Value ID="Mapping">Mapping</Value>
+			<Value ID="Compact">Compact</Value>
 		</Enum>
 		<Enum ID="MemorySearchFormat">
 			<Value ID="Hex">Hex</Value>

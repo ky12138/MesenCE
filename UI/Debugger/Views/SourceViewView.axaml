@@ -57,6 +57,7 @@
 						FontSize="{DynamicResource MesenDisassemblyFontSize}"
 						ShowByteCode="{Binding Config.Debugger.ShowByteCode}"
 						AddressDisplayType="{Binding Config.Debugger.AddressDisplayType}"
+						MappingBlocks="{Binding Debugger.MemoryMappings.CpuMappings}"
 					/>
 
 					<dv:QuickSearchView

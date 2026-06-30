@@ -72,7 +72,12 @@
 				
 				<DockPanel Grid.Row="3" Grid.ColumnSpan="2">
 					<TextBlock VerticalAlignment="Center" Text="{l:Translate lblAddressDisplay}" />
-					<c:EnumComboBox SelectedItem="{Binding Config.AddressDisplayType}" />
+					<Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto">
+						<CheckBox Grid.Row="0" Grid.Column="0" Content="{l:Translate chkCpuAddress}" IsChecked="{Binding ShowCpuAddress}" />
+						<CheckBox Grid.Row="0" Grid.Column="1" Content="{l:Translate chkAbsAddress}" IsChecked="{Binding ShowAbsAddress}" />
+						<CheckBox Grid.Row="1" Grid.Column="0" Content="{l:Translate chkMapping}" IsChecked="{Binding ShowMapping}" />
+						<CheckBox Grid.Row="1" Grid.Column="1" Content="{l:Translate chkCompact}" IsChecked="{Binding CompactAddress}" />
+					</Grid>
 				</DockPanel>
 			</Grid>
 			

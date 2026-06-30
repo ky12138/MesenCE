@@ -1370,7 +1370,7 @@
 			<Control ID="chkCpuAddress">CPU</Control>
 			<Control ID="chkAbsAddress">ROM</Control>
 			<Control ID="chkMapping">映射</Control>
-			<Control ID="chkCompact">简洁</Control>
+			<Control ID="chkCompact">紧凑</Control>
 			<Control ID="chkShowByteCode">显示字节码</Control>
 			<Control ID="chkShowMemoryValues">显示内存值</Control>
 			<Control ID="chkUseLowerCaseDisassembly">使用小写</Control>
@@ -3712,10 +3712,11 @@ E
 			<Value ID="Disassemble">反汇编</Value>
 		</Enum>
 		<Enum ID="AddressDisplayType">
-			<Value ID="CpuAddress">CPU 地址</Value>
-			<Value ID="AbsAddress">ROM 地址</Value>
-			<Value ID="Both">两者</Value>
-			<Value ID="BothCompact">两者（简洁）</Value>
+			<Value ID="None">无</Value>
+			<Value ID="CpuAddress">CPU</Value>
+			<Value ID="AbsAddress">ROM</Value>
+			<Value ID="Mapping">映射</Value>
+			<Value ID="Compact">紧凑</Value>
 		</Enum>
 		<Enum ID="MemorySearchFormat">
 			<Value ID="Hex">十六进制</Value>

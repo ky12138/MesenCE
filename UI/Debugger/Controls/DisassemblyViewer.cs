@@ -26,6 +26,7 @@ namespace Mesen.Debugger.Controls
 		public static readonly StyledProperty<double> FontSizeProperty = AvaloniaProperty.Register<DisassemblyViewer, double>(nameof(FontSize), 12);
 		public static readonly StyledProperty<bool> ShowByteCodeProperty = AvaloniaProperty.Register<DisassemblyViewer, bool>(nameof(ShowByteCode), false);
 		public static readonly StyledProperty<AddressDisplayType> AddressDisplayTypeProperty = AvaloniaProperty.Register<DisassemblyViewer, AddressDisplayType>(nameof(AddressDisplayType), AddressDisplayType.CpuAddress);
+		public static readonly StyledProperty<List<MemoryMappingBlock>> MappingBlocksProperty = AvaloniaProperty.Register<DisassemblyViewer, List<MemoryMappingBlock>>(nameof(MappingBlocks), new());
 
 		public static readonly StyledProperty<int> VisibleRowCountProperty = AvaloniaProperty.Register<DisassemblyViewer, int>(nameof(VisibleRowCount), 0);
 		public static readonly StyledProperty<double> HorizontalScrollPositionProperty = AvaloniaProperty.Register<DisassemblyViewer, double>(nameof(HorizontalScrollPosition), 0, defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
@@ -103,6 +104,12 @@ namespace Mesen.Debugger.Controls
 			set { SetValue(AddressDisplayTypeProperty, value); }
 		}
 
+		public List<MemoryMappingBlock> MappingBlocks
+		{
+			get { return GetValue(MappingBlocksProperty); }
+			set { SetValue(MappingBlocksProperty, value); }
+		}
+
 		public delegate void RowClickedEventHandler(DisassemblyViewer sender, RowClickedEventArgs args);
 		public event RowClickedEventHandler? RowClicked;
 
@@ -123,7 +130,7 @@ namespace Mesen.Debugger.Controls
 			AffectsRender<DisassemblyViewer>(
 				FontFamilyProperty, FontSizeProperty, StyleProviderProperty, ShowByteCodeProperty,
 				LinesProperty, SearchStringProperty, AddressDisplayTypeProperty, HorizontalScrollPositionProperty,
-				MouseOverRowNumberProperty
+				MouseOverRowNumberProperty, MappingBlocksProperty
 			);
 		}
 
@@ -260,13 +267,35 @@ namespace Mesen.Debugger.Controls
 			string searchString = this.SearchString;
 			AddressDisplayType addressDisplayType = AddressDisplayType;
 
-			int addressMaxCharCount = addressDisplayType switch {
-				AddressDisplayType.CpuAddress => StyleProvider.AddressSize,
-				AddressDisplayType.AbsAddress => 6,
-				AddressDisplayType.Both => StyleProvider.AddressSize + 6 + 3,
-				AddressDisplayType.BothCompact => StyleProvider.AddressSize + 3 + 3,
-				_ => throw new NotImplementedException()
-			};
+			int addressMaxCharCount = 0;
+			if(addressDisplayType.HasFlag(AddressDisplayType.CpuAddress)) {
+				addressMaxCharCount += StyleProvider.AddressSize;
+			}
+			if(addressDisplayType.HasFlag(AddressDisplayType.AbsAddress)) {
+				addressMaxCharCount += addressDisplayType.HasFlag(AddressDisplayType.Compact) ? 3 : 6;
+				if(addressDisplayType.HasFlag(AddressDisplayType.CpuAddress)) {
+					addressMaxCharCount += 3;
+				}
+			}
+			bool showMapping = addressDisplayType.HasFlag(AddressDisplayType.Mapping);
+			bool showCpu = addressDisplayType.HasFlag(AddressDisplayType.CpuAddress);
+			Dictionary<int, string>? mappingLookup = null;
+			int maxMappingLen = 0;
+			if(showMapping && MappingBlocks.Count > 0) {
+				mappingLookup = new();
+				int pos = 0;
+				foreach(var block in MappingBlocks) {
+					string blockName = MemoryMappingViewer.GetBlockText(block);
+					maxMappingLen = blockName.Length;
+					for(int a = 0; a < block.Length; a++) {
+						mappingLookup[pos + a] = blockName;
+					}
+					pos += block.Length;
+				}
+			}
+			if(showMapping) {
+				addressMaxCharCount += maxMappingLen + (showCpu ? 1 : 0);
+			}
 
 			double symbolMargin = Math.Floor(LetterSize.Width * 2.5);
 			double addressMargin = Math.Floor(LetterSize.Width * addressMaxCharCount) + 9;
@@ -317,7 +346,8 @@ namespace Mesen.Debugger.Controls
 
 				//Draw address in margin
 				string addressText = line.HasAddress ? line.Address.ToString(addrFormat) : "";
-				text = FormatText(line.GetAddressText(addressDisplayType, addrFormat), ColorHelper.GetBrush(Colors.Gray));
+				string mappingName = (showMapping && mappingLookup != null && line.HasAddress) ? (mappingLookup.TryGetValue(line.Address, out string? name) ? name : "") : "";
+				text = FormatText(line.GetAddressText(addressDisplayType, addrFormat, mappingName), ColorHelper.GetBrush(Colors.Gray));
 
 				Point marginAddressPos = new Point(addressMargin - text.Width - 4, y);
 				context.DrawText(text, marginAddressPos);

@@ -12,6 +12,7 @@ using Mesen.ViewModels;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -339,6 +340,20 @@ namespace Mesen.Debugger.ViewModels
 			int endAddress = 0;
 			CodeLineData? prevLine = null;
 			AddressDisplayType addressDisplayType = Config.Debugger.AddressDisplayType;
+			bool showMapping = addressDisplayType.HasFlag(AddressDisplayType.Mapping);
+			List<MemoryMappingBlock> mappingBlocks = Debugger.MemoryMappings?.CpuMappings ?? new();
+			Dictionary<int, string>? mappingLookup = null;
+			if(showMapping && mappingBlocks.Count > 0) {
+				mappingLookup = new();
+				int pos = 0;
+				foreach(var block in mappingBlocks) {
+					string blockName = MemoryMappingViewer.GetBlockText(block);
+					for(int a = 0; a < block.Length; a++) {
+						mappingLookup[pos + a] = blockName;
+					}
+					pos += block.Length;
+				}
+			}
 			do {
 				CodeLineData[] data = dp.GetCodeLines(i, 5000);
 				for(int j = 0; j < data.Length; j++) {
@@ -379,7 +394,8 @@ namespace Mesen.Debugger.ViewModels
 						line = lineData.ByteCodeStr.PadRight(13) + line;
 					}
 					if(getAddresses) {
-						string addressText = lineData.GetAddressText(addressDisplayType, addrFormat);
+						string mappingName = (showMapping && mappingLookup != null && lineData.HasAddress) ? (mappingLookup.TryGetValue(lineData.Address, out string? name) ? name : "") : "";
+						string addressText = lineData.GetAddressText(addressDisplayType, addrFormat, mappingName);
 						line = addressText.PadRight(addrSize) + "  " + line;
 					}
 					if(getComments && !string.IsNullOrWhiteSpace(lineData.Comment)) {
