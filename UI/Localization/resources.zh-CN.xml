@@ -1318,8 +1318,11 @@
 		</Form>
 
 		<Form ID="BreakpointListView">
-			<Control ID="colEnabled">E</Control>
-			<Control ID="colMarked">M</Control>
+			<Control ID="colEnabled">开关</Control>
+			<Control ID="colMarked">编辑</Control>
+			<Control ID="colRead">读</Control>
+			<Control ID="colWrite">写</Control>
+			<Control ID="colExec">执行</Control>
 			<Control ID="colType">类型</Control>
 			<Control ID="colAddress">地址</Control>
 			<Control ID="colCondition">条件</Control>

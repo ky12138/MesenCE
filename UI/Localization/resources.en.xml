@@ -1318,6 +1318,9 @@
 		<Form ID="BreakpointListView">
 			<Control ID="colEnabled">E</Control>
 			<Control ID="colMarked">M</Control>
+			<Control ID="colRead">R</Control>
+			<Control ID="colWrite">W</Control>
+			<Control ID="colExec">X</Control>
 			<Control ID="colType">Type</Control>
 			<Control ID="colAddress">Address</Control>
 			<Control ID="colCondition">Condition</Control>

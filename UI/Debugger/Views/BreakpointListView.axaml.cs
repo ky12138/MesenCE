@@ -37,18 +37,27 @@ namespace Mesen.Debugger.Views
 		{
 			if(DataContext is BreakpointListViewModel bpList && cell.DataContext is BreakpointViewModel) {
 				string? header = cell.Column?.Header?.ToString() ?? "";
-				if(header == "E" || header == "M") {
-					bool isEnabledColumn = header == "E";
-					bool newValue = !bpList.Selection.SelectedItems.Any(bp => (isEnabledColumn ? bp?.Breakpoint.Enabled : bp?.Breakpoint.MarkEvent) == true);
+				if(header == "E" || header == "M" || header == "R" || header == "W" || header == "X") {
+					bool newValue = !bpList.Selection.SelectedItems.Any(bp => {
+						if(bp == null) return false;
+						return header switch {
+							"E" => bp.Breakpoint.Enabled,
+							"M" => bp.Breakpoint.MarkEvent,
+							"R" => bp.Breakpoint.BreakOnRead,
+							"W" => bp.Breakpoint.BreakOnWrite,
+							"X" => bp.Breakpoint.BreakOnExec,
+							_ => false,
+						};
+					});
 
 					foreach(BreakpointViewModel? bp in bpList.Selection.SelectedItems) {
-						if(bp != null) {
-							if(isEnabledColumn) {
-								bp.Breakpoint.Enabled = newValue;
-							} else {
-								if(!bp.Breakpoint.Forbid) {
-									bp.Breakpoint.MarkEvent = newValue;
-								}
+						if(bp != null && !bp.Breakpoint.Forbid) {
+							switch(header) {
+								case "E": bp.Breakpoint.Enabled = newValue; break;
+								case "M": bp.Breakpoint.MarkEvent = newValue; break;
+								case "R": bp.Breakpoint.BreakOnRead = newValue; break;
+								case "W": bp.Breakpoint.BreakOnWrite = newValue; break;
+								case "X": bp.Breakpoint.BreakOnExec = newValue; break;
 							}
 						}
 					}
