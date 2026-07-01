@@ -59,7 +59,7 @@
 
 				<c:OptionSection Header="{l:Translate lblSearchFilter}">
 					<c:GroupBox Header="{l:Translate lblCompareTo}">
-						<Grid ColumnDefinitions="Auto,5,*" RowDefinitions="Auto,Auto,Auto,Auto">
+						<Grid ColumnDefinitions="Auto,5,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
 							<c:EnumRadioButton
 								Grid.ColumnSpan="3"
 								Value="{Binding CompareTo}"
@@ -102,9 +102,36 @@
 								Min="0"
 								Max="{Binding MaxAddress}"
 							/>
+							<c:EnumRadioButton
+								Grid.Row="4"
+								Value="{Binding CompareTo}"
+								CheckedWhen="{x:Static dvm:MemorySearchCompareTo.Expression}"
+							/>
+							<Grid Grid.Row="4" Grid.Column="2">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="Auto" />
+								</Grid.ColumnDefinitions>
+								<TextBox
+									Grid.Column="0"
+									IsEnabled="{Binding IsExpressionEnabled}"
+									Text="{Binding FilterExpression}"
+									MinWidth="120"
+									Watermark="e.g. rc &gt; 100"
+								/>
+								<Image
+									Grid.Column="1"
+									Stretch="None"
+									Source="/Assets/Help.png"
+									ToolTip.Tip="{Binding HelpTooltip}"
+									ToolTip.Placement="Right"
+									ToolTip.ShowDelay="100"
+									IsVisible="{Binding IsExpressionMode}"
+								/>
+							</Grid>
 						</Grid>
 					</c:GroupBox>
-					<c:GroupBox Header="{l:Translate lblOperator}">
+					<c:GroupBox Header="{l:Translate lblOperator}" IsVisible="{Binding !IsExpressionMode}">
 						<StackPanel>
 							<c:EnumRadioButton 
 								Value="{Binding Operator}"

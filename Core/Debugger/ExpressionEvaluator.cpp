@@ -7,6 +7,7 @@
 #include "Debugger/Debugger.h"
 #include "Debugger/IDebugger.h"
 #include "Debugger/MemoryDumper.h"
+#include "Debugger/MemoryAccessCounter.h"
 #include "Debugger/Disassembler.h"
 #include "Debugger/LabelManager.h"
 #include "Debugger/DebugUtilities.h"
@@ -149,6 +150,18 @@ int64_t ExpressionEvaluator::ProcessSharedTokens(string token)
 		return EvalValues::IsDummy;
 	} else if(token == "oppc") {
 		return EvalValues::OpProgramCounter;
+	} else if(token == "rc") {
+		return EvalValues::ReadCounter;
+	} else if(token == "wc") {
+		return EvalValues::WriteCounter;
+	} else if(token == "ec") {
+		return EvalValues::ExecCounter;
+	} else if(token == "rd") {
+		return EvalValues::LastRead;
+	} else if(token == "lw") {
+		return EvalValues::LastWrite;
+	} else if(token == "le") {
+		return EvalValues::LastExec;
 	}
 	return -1;
 }
@@ -410,6 +423,37 @@ int64_t ExpressionEvaluator::Evaluate(ExpressionData& data, EvalResultType& resu
 					case EvalValues::IsDummy: token = operationInfo.Type == MemoryOperationType::DummyRead || operationInfo.Type == MemoryOperationType::DummyWrite; break;
 					case EvalValues::OpProgramCounter: token = _cpuDebugger->GetProgramCounter(true); break;
 
+					case EvalValues::ReadCounter: {
+						uint32_t addr = (uint32_t)operationInfo.Address;
+						token = (addr < _counterCount && _counters) ? _counters[addr].ReadCounter : 0;
+						break;
+					}
+					case EvalValues::WriteCounter: {
+						uint32_t addr = (uint32_t)operationInfo.Address;
+						token = (addr < _counterCount && _counters) ? _counters[addr].WriteCounter : 0;
+						break;
+					}
+					case EvalValues::ExecCounter: {
+						uint32_t addr = (uint32_t)operationInfo.Address;
+						token = (addr < _counterCount && _counters) ? _counters[addr].ExecCounter : 0;
+						break;
+					}
+					case EvalValues::LastRead: {
+						uint32_t addr = (uint32_t)operationInfo.Address;
+						token = (addr < _counterCount && _counters) ? _counters[addr].ReadStamp : 0;
+						break;
+					}
+					case EvalValues::LastWrite: {
+						uint32_t addr = (uint32_t)operationInfo.Address;
+						token = (addr < _counterCount && _counters) ? _counters[addr].WriteStamp : 0;
+						break;
+					}
+					case EvalValues::LastExec: {
+						uint32_t addr = (uint32_t)operationInfo.Address;
+						token = (addr < _counterCount && _counters) ? _counters[addr].ExecStamp : 0;
+						break;
+					}
+
 					default:
 						if(!_cpuDebugger) {
 							token = 0;
@@ -541,6 +585,19 @@ ExpressionEvaluator::ExpressionEvaluator(Debugger* debugger, IDebugger* cpuDebug
 	_labelManager = debugger->GetLabelManager();
 	_cpuType = cpuType;
 	_cpuMemory = DebugUtilities::GetCpuMemoryType(cpuType);
+}
+
+void ExpressionEvaluator::SetAddressCounters(AddressCounters* counters, uint32_t count)
+{
+	_counters = counters;
+	_counterCount = count;
+}
+
+int64_t ExpressionEvaluator::EvaluateForAddress(ExpressionData& data, EvalResultType& resultType, uint32_t address)
+{
+	MemoryOperationInfo opInfo { address, 0, MemoryOperationType::Read, _cpuMemory };
+	AddressInfo addrInfo = { (int32_t)address, _cpuMemory };
+	return Evaluate(data, resultType, opInfo, addrInfo);
 }
 
 bool ExpressionEvaluator::ReturnBool(int64_t value, EvalResultType& resultType)

@@ -104,6 +104,7 @@ Debugger::Debugger(Emulator* emu, IConsole* console)
 		}
 
 		_debuggers[(int)type].Evaluator.reset(new ExpressionEvaluator(this, _debuggers[(int)type].Debugger.get(), type));
+		_debuggers[(int)type].MemorySearchEvaluator.reset(new ExpressionEvaluator(this, _debuggers[(int)type].Debugger.get(), type));
 	}
 
 	for(CpuType type : _cpuTypes) {
@@ -673,6 +674,50 @@ int64_t Debugger::EvaluateExpression(string expression, CpuType cpuType, EvalRes
 
 	resultType = EvalResultType::Invalid;
 	return 0;
+}
+
+int64_t Debugger::EvaluateExpressionForAddress(string expression, CpuType cpuType, uint32_t address, AddressCounters* counters, uint32_t counterCount, EvalResultType& resultType)
+{
+	if(!_debuggers[(int)cpuType].Debugger || !_debuggers[(int)cpuType].MemorySearchEvaluator) {
+		resultType = EvalResultType::Invalid;
+		return 0;
+	}
+
+	// Use dedicated memory search evaluator (not shared with breakpoints/trace)
+	auto& evaluator = _debuggers[(int)cpuType].MemorySearchEvaluator;
+	evaluator->SetAddressCounters(counters, counterCount);
+
+	// GetRpnList uses internal cache - first call parses, subsequent calls reuse
+	bool success = true;
+	ExpressionData data = evaluator->GetRpnList(expression, success);
+	if(!success) {
+		resultType = EvalResultType::Invalid;
+		return 0;
+	}
+
+	return evaluator->EvaluateForAddress(data, resultType, address);
+}
+
+void Debugger::EvaluateExpressionForRange(string expression, CpuType cpuType, uint32_t startAddr, uint32_t endAddr, AddressCounters* counters, uint32_t counterCount, uint8_t* results)
+{
+	if(!_debuggers[(int)cpuType].Debugger || !_debuggers[(int)cpuType].MemorySearchEvaluator) {
+		return;
+	}
+
+	auto& evaluator = _debuggers[(int)cpuType].MemorySearchEvaluator;
+	evaluator->SetAddressCounters(counters, counterCount);
+
+	bool success = true;
+	ExpressionData data = evaluator->GetRpnList(expression, success);
+	if(!success) {
+		return;
+	}
+
+	EvalResultType resultType;
+	for(uint32_t addr = startAddr; addr <= endAddr; addr++) {
+		int64_t result = evaluator->EvaluateForAddress(data, resultType, addr);
+		results[addr - startAddr] = (resultType == EvalResultType::Invalid || resultType == EvalResultType::DivideBy0) ? 1 : (result != 0 ? 1 : 0);
+	}
 }
 
 void Debugger::Run()

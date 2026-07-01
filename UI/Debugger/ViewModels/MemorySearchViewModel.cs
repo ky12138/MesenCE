@@ -52,6 +52,12 @@ public class MemorySearchViewModel : DisposableViewModel
 	[Reactive] public bool IsUndoEnabled { get; set; } = false;
 	[Reactive] public bool IsSpecificValueEnabled { get; set; } = false;
 	[Reactive] public bool IsSpecificAddressEnabled { get; set; } = false;
+	[Reactive] public bool IsExpressionMode { get; set; } = false;
+	[Reactive] public bool IsExpressionEnabled { get; set; } = false;
+	[Reactive] public string FilterExpression { get; set; } = "";
+	[Reactive] public bool IsExpressionValid { get; set; } = true;
+
+	public Control HelpTooltip => ExpressionTooltipHelper.GetHelpTooltip(MemoryType.ToCpuType(), false, true);
 
 	public int[] AddressLookup => _addressLookup;
 	public byte[] MemoryState => _memoryState;
@@ -70,7 +76,11 @@ public class MemorySearchViewModel : DisposableViewModel
 	private byte[] _memoryState = Array.Empty<byte>();
 	private byte[] _prevMemoryState = Array.Empty<byte>();
 
+	private AddressCounters[] _currentCounters = Array.Empty<AddressCounters>();
+	private byte[] _expressionMatchResults = Array.Empty<byte>();
+
 	private bool _isRefreshing;
+	private bool _isFiltering;
 
 	public MemorySearchViewModel()
 	{
@@ -90,6 +100,8 @@ public class MemorySearchViewModel : DisposableViewModel
 		AddDisposable(this.WhenAnyValue(x => x.Operator, x => x.CompareTo, x => x.ValueSize, x => x.Format).Subscribe(x => {
 			IsSpecificValueEnabled = CompareTo == MemorySearchCompareTo.SpecificValue;
 			IsSpecificAddressEnabled = CompareTo == MemorySearchCompareTo.SpecificAddress;
+			IsExpressionMode = CompareTo == MemorySearchCompareTo.Expression;
+			IsExpressionEnabled = CompareTo == MemorySearchCompareTo.Expression;
 
 			IsValueHex = Format == MemorySearchFormat.Hex;
 			bool isSigned = Format == MemorySearchFormat.Signed;
@@ -114,6 +126,17 @@ public class MemorySearchViewModel : DisposableViewModel
 
 		AddDisposable(this.WhenAnyValue(x => x.SpecificValue, x => x.SpecificAddress).Subscribe(x => {
 			RefreshList(false);
+		}));
+
+		AddDisposable(this.WhenAnyValue(x => x.FilterExpression).Subscribe(expr => {
+			if(string.IsNullOrWhiteSpace(expr)) {
+				IsExpressionValid = true;
+				return;
+			}
+			CpuType cpuType = MemoryType.ToCpuType();
+			EvalResultType resultType;
+			DebugApi.EvaluateExpression(expr, cpuType, out resultType, false);
+			IsExpressionValid = resultType != EvalResultType.Invalid;
 		}));
 	}
 
@@ -254,6 +277,10 @@ public class MemorySearchViewModel : DisposableViewModel
 
 	public bool IsMatch(int address)
 	{
+		if(IsExpressionMode) {
+			return EvaluateExpressionMatch(address);
+		}
+
 		long value = GetValue(address, _memoryState);
 
 		long compareValue = CompareTo switch {
@@ -275,24 +302,79 @@ public class MemorySearchViewModel : DisposableViewModel
 		};
 	}
 
-	public void AddFilter()
+	private bool EvaluateExpressionMatch(int address)
 	{
+		if(_expressionMatchResults.Length > 0 && address < _expressionMatchResults.Length) {
+			return _expressionMatchResults[address] != 0;
+		}
+
+		if(string.IsNullOrWhiteSpace(FilterExpression) || !IsExpressionValid) {
+			return true;
+		}
+
+		CpuType cpuType = MemoryType.ToCpuType();
+		EvalResultType resultType;
+		long result = DebugApi.EvaluateExpressionForAddress(
+			FilterExpression, cpuType, (uint)address,
+			_currentCounters, (uint)_currentCounters.Length, out resultType);
+
+		if(resultType == EvalResultType.Invalid || resultType == EvalResultType.DivideBy0) {
+			return true;
+		}
+
+		return result != 0;
+	}
+
+	public async void AddFilter()
+	{
+		if(_isFiltering) {
+			return;
+		}
+		_isFiltering = true;
+
 		_undoHistory.Add(new SearchHistory(_hiddenAddresses, _lastSearchSnapshot));
 		IsUndoEnabled = true;
 
-		int count = _lastSearchSnapshot.Length;
-		for(int i = 0; i < count; i++) {
-			if(_hiddenAddresses.Contains(i)) {
-				continue;
-			} else if(!IsMatch(i)) {
-				_hiddenAddresses.Add(i);
+		if(IsExpressionMode && !string.IsNullOrWhiteSpace(FilterExpression) && IsExpressionValid) {
+			MemoryType memType = MemoryType;
+			string expr = FilterExpression;
+			int count = _lastSearchSnapshot.Length;
+			AddressCounters[] counters = DebugApi.GetMemoryAccessCounts(memType);
+			byte[] results = new byte[count];
+
+			// Compute expression results in background (avoids UI freeze)
+			await Task.Run(() => {
+				CpuType cpuType = memType.ToCpuType();
+				DebugApi.EvaluateExpressionForRange(
+					expr, cpuType, 0, (uint)(count - 1),
+					counters, (uint)counters.Length, results);
+			});
+
+			// Apply results on UI thread (safe access to _hiddenAddresses)
+			_currentCounters = counters;
+			_expressionMatchResults = results;
+
+			for(int i = 0; i < count; i++) {
+				if(results[i] == 0 && !_hiddenAddresses.Contains(i)) {
+					_hiddenAddresses.Add(i);
+				}
+			}
+		} else {
+			// Non-expression or invalid expression: use existing logic
+			int count = _lastSearchSnapshot.Length;
+			for(int i = 0; i < count; i++) {
+				if(_hiddenAddresses.Contains(i)) {
+					continue;
+				} else if(!IsMatch(i)) {
+					_hiddenAddresses.Add(i);
+				}
 			}
 		}
 
 		UpdateAddressLookup();
-
 		_lastSearchSnapshot = DebugApi.GetMemoryState(MemoryType);
 		RefreshList(true);
+		_isFiltering = false;
 	}
 
 	public void UpdateValues()
@@ -329,6 +411,7 @@ public class MemorySearchViewModel : DisposableViewModel
 		MaxAddress = Math.Max(0, _lastSearchSnapshot.Length - 1);
 		_hiddenAddresses.Clear();
 		_undoHistory.Clear();
+		_expressionMatchResults = Array.Empty<byte>();
 		IsUndoEnabled = false;
 		_memoryState = DebugApi.GetMemoryState(MemoryType);
 		RefreshData(true);
@@ -528,7 +611,8 @@ public enum MemorySearchCompareTo
 	PreviousSearchValue,
 	PreviousRefreshValue,
 	SpecificValue,
-	SpecificAddress
+	SpecificAddress,
+	Expression
 }
 
 public enum MemorySearchOperator

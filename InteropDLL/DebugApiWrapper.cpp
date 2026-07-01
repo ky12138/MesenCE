@@ -161,6 +161,16 @@ extern "C"
 		return WithDebugger(int64_t, EvaluateExpression(expression, cpuType, *resultType, useCache));
 	}
 
+	DllExport int64_t __stdcall EvaluateExpressionForAddress(const char* expression, CpuType cpuType, uint32_t address, AddressCounters* counters, uint32_t counterCount, EvalResultType* resultType)
+	{
+		return WithDebugger(int64_t, EvaluateExpressionForAddress(expression, cpuType, address, counters, counterCount, *resultType));
+	}
+
+	DllExport void __stdcall EvaluateExpressionForRange(const char* expression, CpuType cpuType, uint32_t startAddr, uint32_t endAddr, AddressCounters* counters, uint32_t counterCount, uint8_t* results)
+	{
+		WithDebugger(void, EvaluateExpressionForRange(expression, cpuType, startAddr, endAddr, counters, counterCount, results));
+	}
+
 	DllExport void __stdcall GetCallstack(CpuType cpuType, StackFrameInfo* callstackArray, uint32_t& callstackSize)
 	{
 		callstackSize = 0;

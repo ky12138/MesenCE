@@ -2480,6 +2480,13 @@ E
 		<Message ID="ExprTooltip_Example2">  {{$FFEA}} -- NMI处理程序的地址。</Message>
 		<Message ID="ExprTooltip_Example3">  #r0 -- 返回r0所存地址处的32位值。</Message>
 		<Message ID="ExprTooltip_Example4">  #(r0+20) -- 返回r0所存地址偏移20处的32位值。</Message>
+		<Message ID="ExprTooltip_AccessCounters">访问计数器（用于内存搜索）</Message>
+		<Message ID="ExprTooltip_ReadCount">  rc: 当前地址的读取次数</Message>
+		<Message ID="ExprTooltip_WriteCount">  wc: 当前地址的写入次数</Message>
+		<Message ID="ExprTooltip_ExecCount">  ec: 当前地址的执行次数</Message>
+		<Message ID="ExprTooltip_LastRead">  rd: 上次读取时间戳 (master clock)</Message>
+		<Message ID="ExprTooltip_LastWrite">  lw: 上次写入时间戳 (master clock)</Message>
+		<Message ID="ExprTooltip_LastExec">  le: 上次执行时间戳 (master clock)</Message>
 
 		<Message ID="MemMap_Entry">条目</Message>
 		<Message ID="MemMap_Range">范围 ({0})</Message>
@@ -3740,6 +3747,7 @@ E
 			<Value ID="PreviousRefreshValue">上次刷新值</Value>
 			<Value ID="SpecificValue">指定值：</Value>
 			<Value ID="SpecificAddress">指定地址：</Value>
+			<Value ID="Expression">表达式：</Value>
 		</Enum>
 		<Enum ID="MemorySearchOperator">
 			<Value ID="Equal">等于</Value>

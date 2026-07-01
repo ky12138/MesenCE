@@ -11,7 +11,7 @@ namespace Mesen.Debugger.Utilities
 {
 	public static class ExpressionTooltipHelper
 	{
-		public static StackPanel GetHelpTooltip(CpuType cpuType, bool forWatch)
+		public static StackPanel GetHelpTooltip(CpuType cpuType, bool forWatch, bool forMemorySearch = false)
 		{
 			StackPanel panel = new();
 
@@ -62,6 +62,17 @@ namespace Mesen.Debugger.Utilities
 				addRow(ResourceHelper.GetMessage("ExprTooltip_IsDummy"));
 			}
 
+			if(forMemorySearch) {
+				addRow(" ");
+				addBoldRow(ResourceHelper.GetMessage("ExprTooltip_AccessCounters"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_ReadCount"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_WriteCount"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_ExecCount"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_LastRead"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_LastWrite"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_LastExec"));
+			}
+
 			addRow(" ");
 			addBoldRow(ResourceHelper.GetMessage("ExprTooltip_AccessingMemory"));
 			addRow(ResourceHelper.GetMessage("ExprTooltip_Memory8Bit"));
@@ -78,6 +89,12 @@ namespace Mesen.Debugger.Utilities
 			addRow(ResourceHelper.GetMessage("ExprTooltip_Example2"));
 			addRow(ResourceHelper.GetMessage("ExprTooltip_Example3"));
 			addRow(ResourceHelper.GetMessage("ExprTooltip_Example4"));
+
+			if(forMemorySearch) {
+				addRow("  rc > 100");
+				addRow("  wc > 0 && rc == 0");
+				addRow("  [$300] == $FF && rc > 10");
+			}
 
 			return panel;
 		}

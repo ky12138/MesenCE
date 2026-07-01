@@ -149,6 +149,13 @@ enum EvalValues : int64_t
 	IsDummy,
 	OpProgramCounter,
 
+	ReadCounter,
+	WriteCounter,
+	ExecCounter,
+	LastRead,
+	LastWrite,
+	LastExec,
+
 	RegPS_Carry,
 	RegPS_Zero,
 	RegPS_Interrupt,
@@ -248,6 +255,9 @@ private:
 	CpuType _cpuType;
 	MemoryType _cpuMemory;
 
+	AddressCounters* _counters = nullptr;
+	uint32_t _counterCount = 0;
+
 	bool IsOperator(string token, int& precedence, bool unaryOperator);
 	EvalOperators GetOperator(string token, bool unaryOperator);
 	unordered_map<string, int64_t>* GetAvailableTokens();
@@ -305,6 +315,9 @@ public:
 	int64_t Evaluate(ExpressionData& data, EvalResultType& resultType, MemoryOperationInfo& operationInfo, AddressInfo& addressInfo);
 	int64_t Evaluate(string expression, EvalResultType& resultType, MemoryOperationInfo& operationInfo, AddressInfo& addressInfo);
 	ExpressionData GetRpnList(string expression, bool& success);
+
+	void SetAddressCounters(AddressCounters* counters, uint32_t count);
+	int64_t EvaluateForAddress(ExpressionData& data, EvalResultType& resultType, uint32_t address);
 
 	void GetTokenList(char* tokenList);
 

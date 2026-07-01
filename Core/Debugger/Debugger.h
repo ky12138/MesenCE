@@ -49,6 +49,7 @@ struct CpuInfo
 {
 	unique_ptr<IDebugger> Debugger;
 	unique_ptr<ExpressionEvaluator> Evaluator;
+	unique_ptr<ExpressionEvaluator> MemorySearchEvaluator;
 };
 
 class Debugger
@@ -130,6 +131,8 @@ public:
 
 	void GetTokenList(CpuType cpuType, char* tokenList);
 	int64_t EvaluateExpression(string expression, CpuType cpuType, EvalResultType& resultType, bool useCache);
+	int64_t EvaluateExpressionForAddress(string expression, CpuType cpuType, uint32_t address, AddressCounters* counters, uint32_t counterCount, EvalResultType& resultType);
+	void EvaluateExpressionForRange(string expression, CpuType cpuType, uint32_t startAddr, uint32_t endAddr, AddressCounters* counters, uint32_t counterCount, uint8_t* results);
 
 	void Run();
 	void PauseOnNextFrame();

@@ -197,6 +197,10 @@ namespace Mesen.Interop
 
 		[DllImport(DllPath)] public static extern Int64 EvaluateExpression([MarshalAs(UnmanagedType.LPUTF8Str)] string expression, CpuType cpuType, out EvalResultType resultType, [MarshalAs(UnmanagedType.I1)] bool useCache);
 
+		[DllImport(DllPath)] public static extern Int64 EvaluateExpressionForAddress([MarshalAs(UnmanagedType.LPUTF8Str)] string expression, CpuType cpuType, UInt32 address, [In] AddressCounters[] counters, UInt32 counterCount, out EvalResultType resultType);
+
+		[DllImport(DllPath)] public static extern void EvaluateExpressionForRange([MarshalAs(UnmanagedType.LPUTF8Str)] string expression, CpuType cpuType, UInt32 startAddr, UInt32 endAddr, [In] AddressCounters[] counters, UInt32 counterCount, [Out] byte[] results);
+
 		[DllImport(DllPath)] public static extern DebuggerFeatures GetDebuggerFeatures(CpuType type);
 		[DllImport(DllPath)] public static extern CpuInstructionProgress GetInstructionProgress(CpuType type);
 
