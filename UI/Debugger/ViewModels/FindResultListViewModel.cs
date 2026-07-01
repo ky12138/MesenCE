@@ -108,14 +108,14 @@ public class FindResultListViewModel : DisposableViewModel
 				OnClick = () => {
 					if(Selection.SelectedItem is FindResultViewModel vm) {
 						if(vm.Location.AbsAddress?.Address > 0) {
-							BreakpointManager.ToggleBreakpoint(vm.Location.AbsAddress.Value, Debugger.CpuType);
+							BreakpointManager.EditBreakpointAtAddress(vm.Location.AbsAddress.Value, Debugger.CpuType, parent);
 						} else if(vm.Location.RelAddress?.Address > 0) {
 							AddressInfo relAddress = vm.Location.RelAddress.Value;
 							AddressInfo absAddress = DebugApi.GetAbsoluteAddress(relAddress);
 							if(absAddress.Address >= 0) {
-								BreakpointManager.ToggleBreakpoint(absAddress, Debugger.CpuType);
+								BreakpointManager.EditBreakpointAtAddress(absAddress, Debugger.CpuType, parent);
 							} else if(relAddress.Address >= 0) {
-								BreakpointManager.ToggleBreakpoint(relAddress, Debugger.CpuType);
+								BreakpointManager.EditBreakpointAtAddress(relAddress, Debugger.CpuType, parent);
 							}
 						}
 					}

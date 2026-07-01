@@ -190,7 +190,7 @@ namespace Mesen.Debugger.ViewModels
 					OnClick = () => {
 						if(SelectedEvent != null) {
 							int addr = (int)SelectedEvent.Value.ProgramCounter;
-							BreakpointManager.ToggleBreakpoint(new AddressInfo() { Address = addr, Type = CpuType.ToMemoryType() }, CpuType);
+							BreakpointManager.EditBreakpointAtAddress(new AddressInfo() { Address = addr, Type = CpuType.ToMemoryType() }, CpuType, _picViewer);
 						}
 					}
 				},
@@ -201,7 +201,7 @@ namespace Mesen.Debugger.ViewModels
 					OnClick = () => {
 						if(SelectedEvent?.Flags.HasFlag(EventFlags.ReadWriteOp) == true) {
 							int addr = (int)SelectedEvent.Value.Operation.Address;
-							BreakpointManager.ToggleBreakpoint(new AddressInfo() { Address = addr, Type = CpuType.ToMemoryType() }, CpuType);
+							BreakpointManager.EditBreakpointAtAddress(new AddressInfo() { Address = addr, Type = CpuType.ToMemoryType() }, CpuType, _picViewer);
 						}
 					}
 				},

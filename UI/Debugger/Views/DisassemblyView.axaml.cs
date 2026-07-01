@@ -110,9 +110,9 @@ namespace Mesen.Debugger.Views
 					OnClick = () => {
 						LocationInfo loc = ActionLocation;
 						if(loc.AbsAddress != null) {
-							BreakpointManager.ToggleBreakpoint(loc.AbsAddress.Value, CpuType);
+							BreakpointManager.EditBreakpointAtAddress(loc.AbsAddress.Value, CpuType, this);
 						} else if(loc.RelAddress != null) {
-							BreakpointManager.ToggleBreakpoint(loc.RelAddress.Value, CpuType);
+							BreakpointManager.EditBreakpointAtAddress(loc.RelAddress.Value, CpuType, this);
 						}
 					}
 				},

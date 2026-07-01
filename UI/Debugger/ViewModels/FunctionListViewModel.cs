@@ -88,7 +88,7 @@ namespace Mesen.Debugger.ViewModels
 					IsEnabled = () => Selection.SelectedItems.Count == 1,
 					OnClick = () => {
 						if(Selection.SelectedItem is FunctionViewModel vm) {
-							BreakpointManager.ToggleBreakpoint(vm.FuncAddr, CpuType);
+							BreakpointManager.EditBreakpointAtAddress(vm.FuncAddr, CpuType, parent);
 						}
 					}
 				},
