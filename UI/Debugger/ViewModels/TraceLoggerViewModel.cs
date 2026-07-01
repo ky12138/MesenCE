@@ -256,6 +256,7 @@ namespace Mesen.Debugger.ViewModels
 					Enabled = romInfo.CpuTypes.Count == 1 || cfg.Enabled,
 					UseLabels = cfg.UseLabels,
 					IndentCode = cfg.IndentCode,
+					UniqueAddressesOnly = cfg.UniqueAddressesOnly,
 					Format = Encoding.UTF8.GetBytes(cfg.UseCustomFormat ? cfg.Format : TraceLoggerOptionTab.GetAutoFormat(cfg, cpuType)),
 					Condition = Encoding.UTF8.GetBytes(cfg.Condition)
 				};
@@ -280,6 +281,12 @@ namespace Mesen.Debugger.ViewModels
 					ScrollToBottom(false);
 				}
 			});
+		}
+
+		public void ResetAddressCache()
+		{
+			DebugApi.ClearTraceAddressCache();
+			UpdateLog();
 		}
 
 		public void SetSelectedRow(int rowNumber)

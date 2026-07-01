@@ -167,6 +167,8 @@ protected:
 	uint64_t* _rowIds = nullptr;
 	TraceLogPpuState* _ppuState = nullptr;
 
+	unordered_set<uint32_t> _seenAddresses;
+
 	unique_ptr<ExpressionEvaluator> _expEvaluator;
 	ExpressionData _conditionData;
 
@@ -447,6 +449,12 @@ public:
 	{
 		_currentPos = 0;
 		memset(_rowIds, 0, sizeof(uint64_t) * BaseTraceLogger::ExecutionLogSize);
+		_seenAddresses.clear();
+	}
+
+	void ClearAddressCache() override
+	{
+		_seenAddresses.clear();
 	}
 
 	void LogNonExec(MemoryOperationInfo& operation, AddressInfo& addressInfo)
@@ -458,6 +466,13 @@ public:
 			}
 
 			if(ConditionMatches(_lastDisassemblyInfo, operation, addressInfo)) {
+				if(_options.UniqueAddressesOnly) {
+					uint32_t pc = ((TraceLoggerType*)this)->GetProgramCounter(_lastState);
+					if(!_seenAddresses.insert(pc).second) {
+						_pendingLog = false;
+						return;
+					}
+				}
 				AddRow(_lastState, _lastDisassemblyInfo);
 				_pendingLog = false;
 			}
@@ -469,6 +484,12 @@ public:
 		if(_enabled) {
 			//For the sake of performance, only log data for the CPUs we're actively displaying/logging
 			if(ConditionMatches(disassemblyInfo, operation, addressInfo)) {
+				if(_options.UniqueAddressesOnly) {
+					uint32_t pc = ((TraceLoggerType*)this)->GetProgramCounter(cpuState);
+					if(!_seenAddresses.insert(pc).second) {
+						return;
+					}
+				}
 				AddRow(cpuState, disassemblyInfo);
 			} else {
 				_pendingLog = true;

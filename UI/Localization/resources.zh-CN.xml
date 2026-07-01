@@ -1273,6 +1273,7 @@
 
 			<Control ID="chkUseLabels">使用标签</Control>
 			<Control ID="chkIndentCode">根据堆栈指针缩进</Control>
+			<Control ID="chkUniqueAddresses">仅记录唯一地址</Control>
 			
 			<Control ID="lblConditionError">条件包含无效语法或符号。</Control>
 
@@ -1285,6 +1286,7 @@
 			<Control ID="btnStart">记录到文件...</Control>
 			<Control ID="btnStop">停止记录</Control>
 			<Control ID="btnClear">清除日志</Control>
+			<Control ID="btnResetAddresses">重置已记录地址</Control>
 		</Form>
 
 		<Form ID="EventViewerWindow">

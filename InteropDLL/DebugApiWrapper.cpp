@@ -121,6 +121,11 @@ extern "C"
 		WithDebugger(void, ClearExecutionTrace());
 	}
 
+	DllExport void __stdcall ClearTraceAddressCache()
+	{
+		WithDebugger(void, ClearTraceAddressCache());
+	}
+
 	DllExport void __stdcall StartLogTraceToFile(const char* filename)
 	{
 		WithDebugger(void, GetTraceLogFileSaver()->StartLogging(filename));

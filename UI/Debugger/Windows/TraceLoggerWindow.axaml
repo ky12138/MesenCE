@@ -46,12 +46,19 @@
 			<dc:ActionToolbar Items="{Binding ToolbarItems}" />
 		</StackPanel>
 
-		<Grid ColumnDefinitions="Auto,*,Auto,Auto" RowDefinitions="Auto" DockPanel.Dock="Bottom">
+		<Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" RowDefinitions="Auto" DockPanel.Dock="Bottom">
 			<c:ButtonWithIcon
 				Grid.Column="0"
 				Click="OnClearClick"
 				Icon="Assets/Close.png"
 				Text="{l:Translate btnClear}"
+			/>
+
+			<c:ButtonWithIcon
+				Grid.Column="1"
+				Click="OnResetAddressCacheClick"
+				Icon="Assets/Close.png"
+				Text="{l:Translate btnResetAddresses}"
 			/>
 
 			<c:ButtonWithIcon
@@ -92,7 +99,7 @@
 				<DataTemplate DataType="vm:TraceLoggerOptionTab">
 					<c:GroupBox Header="{Binding LogOptionsTitle}">
 						<StackPanel>
-							<Grid ColumnDefinitions="Auto,3,Auto,10,Auto,10,Auto" RowDefinitions="Auto,Auto,Auto" Margin="0 0 0 5">
+							<Grid ColumnDefinitions="Auto,3,Auto,10,Auto,10,Auto" RowDefinitions="Auto,Auto,Auto,Auto" Margin="0 0 0 5">
 								<CheckBox Content="{l:Translate chkRegisters}" IsChecked="{Binding Options.ShowRegisters}" IsEnabled="{Binding !Options.UseCustomFormat}" />
 								<CheckBox Grid.Row="1" Content="{l:Translate chkStatusFlags}" IsChecked="{Binding Options.ShowStatusFlags}" IsEnabled="{Binding !Options.UseCustomFormat}" />
 								<StackPanel Grid.Row="2" Orientation="Horizontal" IsVisible="{Binding ShowStatusFormat}" Margin="0 -1 0 0" IsEnabled="{Binding !Options.UseCustomFormat}">
@@ -110,6 +117,7 @@
 
 								<CheckBox Grid.Column="6" Grid.Row="0" Content="{l:Translate chkUseLabels}" IsChecked="{Binding Options.UseLabels}" />
 								<CheckBox Grid.Column="6" Grid.Row="1" Content="{l:Translate chkIndentCode}" IsChecked="{Binding Options.IndentCode}" IsVisible="{Binding ShowIndentCode}" />
+								<CheckBox Grid.Column="6" Grid.Row="2" Content="{l:Translate chkUniqueAddresses}" IsChecked="{Binding Options.UniqueAddressesOnly}" />
 							</Grid>
 
 							<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">

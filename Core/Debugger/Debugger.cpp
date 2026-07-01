@@ -1125,6 +1125,15 @@ void Debugger::ClearExecutionTrace()
 	}
 }
 
+void Debugger::ClearTraceAddressCache()
+{
+	DebugBreakHelper helper(this);
+	for(CpuType cpuType : _cpuTypes) {
+		ITraceLogger* logger = GetTraceLogger(cpuType);
+		logger->ClearAddressCache();
+	}
+}
+
 uint32_t Debugger::GetExecutionTrace(TraceRow output[], uint32_t startOffset, uint32_t maxLineCount)
 {
 	DebugBreakHelper helper(this);

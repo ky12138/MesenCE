@@ -181,6 +181,7 @@ public:
 	bool SaveRomToDisk(string filename, bool saveAsIps, CdlStripOption stripOption);
 
 	void ClearExecutionTrace();
+	void ClearTraceAddressCache();
 	uint32_t GetExecutionTrace(TraceRow output[], uint32_t startOffset, uint32_t maxLineCount);
 
 	CpuType GetMainCpuType() { return _mainCpuType; }

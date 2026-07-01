@@ -20,6 +20,7 @@ namespace Mesen.Config
 
 		[Reactive] public bool UseLabels { get; set; } = true;
 		[Reactive] public bool IndentCode { get; set; } = false;
+		[Reactive] public bool UniqueAddressesOnly { get; set; } = false;
 
 		[Reactive] public bool UseCustomFormat { get; set; } = false;
 		[Reactive] public string Format { get; set; } = "";
