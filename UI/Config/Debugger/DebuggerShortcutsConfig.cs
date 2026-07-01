@@ -158,6 +158,7 @@ namespace Mesen.Config
 			Add(new() { Shortcut = DebuggerShortcut.GoToCpuVector5, KeyBinding = new() });
 
 			Add(new() { Shortcut = DebuggerShortcut.CodeWindow_ViewInMemoryViewer, KeyBinding = new(Key.F1) });
+			Add(new() { Shortcut = DebuggerShortcut.CodeWindow_ViewInMemoryViewerAbsAddr, KeyBinding = new() });
 			Add(new() { Shortcut = DebuggerShortcut.CodeWindow_AddToWatch, KeyBinding = new() });
 			Add(new() { Shortcut = DebuggerShortcut.CodeWindow_GoToLocation, KeyBinding = new() });
 			Add(new() { Shortcut = DebuggerShortcut.CodeWindow_MoveProgramCounter, KeyBinding = new(KeyModifiers.Control | KeyModifiers.Shift, Key.F10) });
@@ -166,6 +167,7 @@ namespace Mesen.Config
 			Add(new() { Shortcut = DebuggerShortcut.CodeWindow_EditLabel, KeyBinding = new(Key.F2) });
 			Add(new() { Shortcut = DebuggerShortcut.CodeWindow_EditComment, KeyBinding = new(Key.OemSemicolon) });
 			Add(new() { Shortcut = DebuggerShortcut.CodeWindow_ToggleBreakpoint, KeyBinding = new(Key.F9) });
+			Add(new() { Shortcut = DebuggerShortcut.CodeWindow_ToggleBreakpointAbsAddr, KeyBinding = new() });
 			Add(new() { Shortcut = DebuggerShortcut.CodeWindow_SwitchView, KeyBinding = new(KeyModifiers.Control, Key.Q) });
 
 			Add(new() { Shortcut = DebuggerShortcut.CodeWindow_NavigateBack, KeyBinding = new(KeyModifiers.Control, Key.OemMinus) });
@@ -313,6 +315,7 @@ namespace Mesen.Config
 		SaveAsPng,
 		ToggleSettingsPanel,
 		CodeWindow_ViewInMemoryViewer,
+		CodeWindow_ViewInMemoryViewerAbsAddr,
 		MemoryViewer_ViewInDebugger,
 		OpenAssembler,
 		OpenDebugger,
@@ -371,6 +374,7 @@ namespace Mesen.Config
 		CodeWindow_NavigateBack,
 		CodeWindow_NavigateForward,
 		CodeWindow_ToggleBreakpoint,
+		CodeWindow_ToggleBreakpointAbsAddr,
 		CodeWindow_SwitchView,
 		LabelList_Add,
 		LabelList_Edit,

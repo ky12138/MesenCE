@@ -87,15 +87,26 @@ namespace Mesen.Debugger.Views
 				new ContextMenuAction() {
 					ActionType = ActionType.ToggleBreakpoint,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CodeWindow_ToggleBreakpoint),
-					HintText = () => GetHint(ActionLocation),
-					IsVisible = () => !IsMarginClick,
-					IsEnabled = () => ActionLocation.RelAddress != null || ActionLocation.AbsAddress != null,
+					HintText = () => GetHint(ActionLocation, true),
+					IsVisible = () => !IsMarginClick && ActionLocation.RelAddress != null,
+					IsEnabled = () => ActionLocation.RelAddress != null,
+					OnClick = () => {
+						LocationInfo loc = ActionLocation;
+						if(loc.RelAddress != null) {
+							BreakpointManager.EditBreakpointAtAddress(loc.RelAddress.Value, CpuType, this);
+						}
+					}
+				},
+				new ContextMenuAction() {
+					ActionType = ActionType.ToggleBreakpoint,
+					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CodeWindow_ToggleBreakpointAbsAddr),
+					HintText = () => GetHint(ActionLocation, true, true),
+					IsVisible = () => !IsMarginClick && ActionLocation.AbsAddress != null,
+					IsEnabled = () => ActionLocation.AbsAddress != null,
 					OnClick = () => {
 						LocationInfo loc = ActionLocation;
 						if(loc.AbsAddress != null) {
 							BreakpointManager.EditBreakpointAtAddress(loc.AbsAddress.Value, CpuType, this);
-						} else if(loc.RelAddress != null) {
-							BreakpointManager.EditBreakpointAtAddress(loc.RelAddress.Value, CpuType, this);
 						}
 					}
 				},
@@ -137,14 +148,25 @@ namespace Mesen.Debugger.Views
 				new ContextMenuAction() {
 					ActionType = ActionType.ViewInMemoryViewer,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CodeWindow_ViewInMemoryViewer),
-					HintText = () => GetHint(ActionLocation),
-					IsVisible = () => !IsMarginClick,
-					IsEnabled = () => ActionLocation.RelAddress != null || ActionLocation.AbsAddress != null,
+					HintText = () => GetHint(ActionLocation,true),
+					IsVisible = () => !IsMarginClick && ActionLocation.RelAddress != null,
+					IsEnabled = () => ActionLocation.RelAddress != null,
 					OnClick = () => {
 						LocationInfo loc = ActionLocation;
 						if(loc.RelAddress != null) {
 							MemoryToolsWindow.ShowInMemoryTools(loc.RelAddress.Value.Type, loc.RelAddress.Value.Address);
-						} else if(loc.AbsAddress != null) {
+						}
+					}
+				},
+				new ContextMenuAction() {
+					ActionType = ActionType.ViewInMemoryViewer,
+					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CodeWindow_ViewInMemoryViewerAbsAddr),
+					HintText = () => GetHint(ActionLocation,true,true),
+					IsVisible = () => !IsMarginClick && ActionLocation.AbsAddress != null,
+					IsEnabled = () => ActionLocation.AbsAddress != null,
+					OnClick = () => {
+						LocationInfo loc = ActionLocation;
+						if(loc.AbsAddress != null) {
 							MemoryToolsWindow.ShowInMemoryTools(loc.AbsAddress.Value.Type, loc.AbsAddress.Value.Address);
 						}
 					}
@@ -358,21 +380,32 @@ namespace Mesen.Debugger.Views
 			return CpuType.ToMemoryType().GetFormatString();
 		}
 
-		private string GetHint(LocationInfo? loc)
+		private string GetHint(LocationInfo? loc, bool winthType = false, bool isAbs = false)
 		{
 			if(loc == null) {
 				return string.Empty;
 			}
-
-			if(loc?.Symbol != null) {
-				return loc.Symbol.Value.Name + (loc.LabelAddressOffset > 0 ? ("+" + loc.LabelAddressOffset) : "");
-			} else if(loc?.RelAddress != null) {
-				return "$" + loc.RelAddress.Value.Address.ToString(GetFormatString());
+			string hint = string.Empty;
+			string addrType = string.Empty;
+			
+			if(loc?.Label != null && isAbs == false) {
+				hint = loc.Label.Label + (loc.LabelAddressOffset > 0 ? ("+" + loc.LabelAddressOffset) : "");
+				if(winthType == true) {
+					addrType = loc.RelAddress != null ? " [" + loc.RelAddress.Value.Type.GetShortName() + "]" : string.Empty;
+				}
+			} else if(loc?.RelAddress != null && isAbs == false) {
+				hint =  "$" + loc.RelAddress.Value.Address.ToString(GetFormatString());
+				if(winthType == true) {
+					addrType = loc.RelAddress != null ? " [" + loc.RelAddress.Value.Type.GetShortName() + "]" : string.Empty;
+				}
 			} else if(loc?.AbsAddress != null) {
-				return "[$" + loc.AbsAddress.Value.Address.ToString(GetFormatString()) + "]";
+				hint =  "[$" + loc.AbsAddress.Value.Address.ToString(GetFormatString()) + "]";
+				if(winthType == true) {
+					addrType = loc.AbsAddress != null ? " [" + loc.AbsAddress.Value.Type.GetShortName() + "]" : string.Empty;
+				}
 			}
 
-			return string.Empty;
+			return hint + addrType;
 		}
 
 		private void InitializeComponent()

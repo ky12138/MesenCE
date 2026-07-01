@@ -205,7 +205,7 @@ namespace Mesen.Debugger.Controls
 								fragment = fragments.Where(frag => p.X >= frag.XPosition && p.X < frag.XPosition + frag.Width).FirstOrDefault();
 							}
 						}
-						CodePointerMoved?.Invoke(this, new CodePointerMovedEventArgs(rowNumber, e, lineData, codeSegment, fragments, fragment));
+						CodePointerMoved?.Invoke(this, new CodePointerMovedEventArgs(rowNumber, e, lineData, codeSegment, marginClicked, fragments, fragment));
 						_prevPointerOverSegment = codeSegment;
 					}
 					return;
@@ -213,7 +213,7 @@ namespace Mesen.Debugger.Controls
 			}
 
 			_prevPointerOverSegment = null;
-			CodePointerMoved?.Invoke(this, new CodePointerMovedEventArgs(rowNumber, e, lineData, null));
+			CodePointerMoved?.Invoke(this, new CodePointerMovedEventArgs(rowNumber, e, lineData, null, marginClicked));
 		}
 
 		protected override void OnPointerExited(PointerEventArgs e)
@@ -221,7 +221,7 @@ namespace Mesen.Debugger.Controls
 			base.OnPointerExited(e);
 			_previousPointerPos = new Point(0, 0);
 			_prevPointerOverSegment = null;
-			CodePointerMoved?.Invoke(this, new CodePointerMovedEventArgs(-1, e, null, null));
+			CodePointerMoved?.Invoke(this, new CodePointerMovedEventArgs(-1, e, null, null, false));
 			MouseOverRowNumber = -1;
 		}
 
@@ -618,11 +618,12 @@ namespace Mesen.Debugger.Controls
 
 	public class CodePointerMovedEventArgs : EventArgs
 	{
-		public CodePointerMovedEventArgs(int rowNumber, PointerEventArgs pointerEvent, CodeLineData? lineData, CodeSegmentInfo? codeSegment, List<TextFragment>? fragments = null, TextFragment? fragment = null)
+		public CodePointerMovedEventArgs(int rowNumber, PointerEventArgs pointerEvent, CodeLineData? lineData, CodeSegmentInfo? codeSegment, bool marginClicked, List<TextFragment>? fragments = null, TextFragment? fragment = null)
 		{
 			RowNumber = rowNumber;
 			Data = lineData;
 			CodeSegment = codeSegment;
+			MarginClicked = marginClicked;
 			Fragments = fragments;
 			Fragment = fragment;
 			PointerEvent = pointerEvent;
@@ -631,6 +632,7 @@ namespace Mesen.Debugger.Controls
 		public PointerEventArgs PointerEvent { get; }
 		public CodeLineData? Data { get; }
 		public CodeSegmentInfo? CodeSegment { get; }
+		public bool MarginClicked { get; }
 		public List<TextFragment>? Fragments { get; }
 		public TextFragment? Fragment { get; }
 		public int RowNumber { get; }
