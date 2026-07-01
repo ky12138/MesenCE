@@ -59,6 +59,20 @@
 					CanUserResize="True"
 					InitialWidth="80"
 				/>
+				<DataBoxTextColumn
+					ColumnName="ExecCount"
+					Header="{l:Translate colExecCount}"
+					Binding="{Binding ExecCount, DataType={x:Type vm:FunctionViewModel}}"
+					CanUserResize="True"
+					InitialWidth="80"
+				/>
+				<DataBoxTextColumn
+					ColumnName="LastExec"
+					Header="{l:Translate colLastExec}"
+					Binding="{Binding LastExec, DataType={x:Type vm:FunctionViewModel}}"
+					CanUserResize="True"
+					InitialWidth="80"
+				/>
 			</DataBox.Columns>
 		</DataBox>
 	</Border>

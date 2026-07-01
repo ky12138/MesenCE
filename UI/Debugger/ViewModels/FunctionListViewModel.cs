@@ -51,6 +51,8 @@ namespace Mesen.Debugger.ViewModels
 			{ "Function", (a, b) => string.Compare(a.LabelName, b.LabelName, StringComparison.OrdinalIgnoreCase) },
 			{ "RelAddr", (a, b) => a.RelAddress.CompareTo(b.RelAddress) },
 			{ "AbsAddr", (a, b) => a.AbsAddress.CompareTo(b.AbsAddress) },
+			{ "ExecCount", (a, b) => a.ExecCountValue.CompareTo(b.ExecCountValue) },
+			{ "LastExec", (a, b) => a.LastExecValue.CompareTo(b.LastExecValue) },
 		};
 
 		public void UpdateFunctionList()
@@ -59,6 +61,20 @@ namespace Mesen.Debugger.ViewModels
 
 			MemoryType prgMemType = CpuType.GetPrgRomMemoryType();
 			List<FunctionViewModel> sortedFunctions = DebugApi.GetCdlFunctions(CpuType.GetPrgRomMemoryType()).Select(f => new FunctionViewModel(new AddressInfo() { Address = (int)f, Type = prgMemType }, CpuType)).ToList();
+
+			// Batch-fetch memory access counters for all functions
+			int memSize = DebugApi.GetMemorySize(prgMemType);
+			if(memSize > 0) {
+				AddressCounters[] counters = DebugApi.GetMemoryAccessCounts((uint)0, (uint)memSize, prgMemType);
+				UInt64 masterClock = EmuApi.GetTimingInfo(CpuType).MasterClock;
+
+				foreach(FunctionViewModel vm in sortedFunctions) {
+					int addr = vm.AbsAddress;
+					if(addr >= 0 && addr < counters.Length) {
+						vm.SetCounters(counters[addr], masterClock);
+					}
+				}
+			}
 
 			SortHelper.SortList(sortedFunctions, SortState.SortOrder, _comparers, "AbsAddr");
 
@@ -155,6 +171,11 @@ namespace Mesen.Debugger.ViewModels
 		public CodeLabel? Label => LabelManager.GetLabel(FuncAddr);
 		public string LabelName => Label?.Label ?? "<no label>";
 
+		public string ExecCount { get; private set; }
+		public string LastExec { get; private set; }
+		public UInt64 ExecCountValue { get; private set; }
+		public UInt64 LastExecValue { get; private set; }
+
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public void Refresh()
@@ -170,6 +191,23 @@ namespace Mesen.Debugger.ViewModels
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LabelName)));
 		}
 
+		public void SetCounters(AddressCounters counters, UInt64 masterClock)
+		{
+			ExecCount = CodeTooltipHelper.FormatCount(counters.ExecCounter);
+			ExecCountValue = counters.ExecCounter;
+
+			if(counters.ExecStamp == 0) {
+				LastExec = "n/a";
+				LastExecValue = 0;
+			} else {
+				LastExecValue = masterClock - counters.ExecStamp;
+				LastExec = CodeTooltipHelper.FormatCount(LastExecValue);
+			}
+
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExecCount)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LastExec)));
+		}
+
 		public FunctionViewModel(AddressInfo funcAddr, CpuType cpuType)
 		{
 			FuncAddr = funcAddr;
@@ -178,6 +216,9 @@ namespace Mesen.Debugger.ViewModels
 			_format = "X" + cpuType.GetAddressSize();
 
 			AbsAddressDisplay = "$" + FuncAddr.Address.ToString(_format);
+
+			ExecCount = "";
+			LastExec = "";
 		}
 	}
 }

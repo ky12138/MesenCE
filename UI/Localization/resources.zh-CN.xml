@@ -1319,7 +1319,7 @@
 
 		<Form ID="BreakpointListView">
 			<Control ID="colEnabled">开关</Control>
-			<Control ID="colMarked">编辑</Control>
+			<Control ID="colMarked">标记</Control>
 			<Control ID="colRead">读</Control>
 			<Control ID="colWrite">写</Control>
 			<Control ID="colExec">执行</Control>
@@ -1343,6 +1343,8 @@
 			<Control ID="colFunction">函数</Control>
 			<Control ID="colCpuAddr">CPU地址</Control>
 			<Control ID="colRomAddr">ROM地址</Control>
+			<Control ID="colExecCount">执行次数</Control>
+			<Control ID="colLastExec">上次执行</Control>
 		</Form>
 
 		<Form ID="LabelListView">
