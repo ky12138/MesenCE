@@ -57,7 +57,7 @@ public class MemorySearchViewModel : DisposableViewModel
 	[Reactive] public string FilterExpression { get; set; } = "";
 	[Reactive] public bool IsExpressionValid { get; set; } = true;
 
-	public Control HelpTooltip => ExpressionTooltipHelper.GetHelpTooltip(MemoryType.ToCpuType(), false, true);
+	public Control HelpTooltip => ExpressionTooltipHelper.GetHelpTooltip(MemoryType.ToCpuType(), false);
 
 	public int[] AddressLookup => _addressLookup;
 	public byte[] MemoryState => _memoryState;

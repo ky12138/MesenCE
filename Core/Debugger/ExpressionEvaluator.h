@@ -301,6 +301,8 @@ private:
 
 	bool ReturnBool(int64_t value, EvalResultType& resultType);
 
+	AddressCounters GetCountersForAddress(uint32_t address);
+
 	int64_t ProcessSharedTokens(string token);
 
 	string GetNextToken(string expression, size_t& pos, ExpressionData& data, bool& success, bool previousTokenIsOp);

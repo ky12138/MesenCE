@@ -11,7 +11,7 @@ namespace Mesen.Debugger.Utilities
 {
 	public static class ExpressionTooltipHelper
 	{
-		public static StackPanel GetHelpTooltip(CpuType cpuType, bool forWatch, bool forMemorySearch = false)
+		public static StackPanel GetHelpTooltip(CpuType cpuType, bool forWatch)
 		{
 			StackPanel panel = new();
 
@@ -60,9 +60,7 @@ namespace Mesen.Debugger.Utilities
 				addRow(ResourceHelper.GetMessage("ExprTooltip_IsWrite"));
 				addRow(ResourceHelper.GetMessage("ExprTooltip_IsDma"));
 				addRow(ResourceHelper.GetMessage("ExprTooltip_IsDummy"));
-			}
 
-			if(forMemorySearch) {
 				addRow(" ");
 				addBoldRow(ResourceHelper.GetMessage("ExprTooltip_AccessCounters"));
 				addRow(ResourceHelper.GetMessage("ExprTooltip_ReadCount"));
@@ -90,7 +88,7 @@ namespace Mesen.Debugger.Utilities
 			addRow(ResourceHelper.GetMessage("ExprTooltip_Example3"));
 			addRow(ResourceHelper.GetMessage("ExprTooltip_Example4"));
 
-			if(forMemorySearch) {
+			if(!forWatch) {
 				addRow("  rc > 100");
 				addRow("  wc > 0 && rc == 0");
 				addRow("  [$300] == $FF && rc > 10");

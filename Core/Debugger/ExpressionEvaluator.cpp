@@ -424,33 +424,27 @@ int64_t ExpressionEvaluator::Evaluate(ExpressionData& data, EvalResultType& resu
 					case EvalValues::OpProgramCounter: token = _cpuDebugger->GetProgramCounter(true); break;
 
 					case EvalValues::ReadCounter: {
-						uint32_t addr = (uint32_t)operationInfo.Address;
-						token = (addr < _counterCount && _counters) ? _counters[addr].ReadCounter : 0;
+						token = GetCountersForAddress((uint32_t)operationInfo.Address).ReadCounter;
 						break;
 					}
 					case EvalValues::WriteCounter: {
-						uint32_t addr = (uint32_t)operationInfo.Address;
-						token = (addr < _counterCount && _counters) ? _counters[addr].WriteCounter : 0;
+						token = GetCountersForAddress((uint32_t)operationInfo.Address).WriteCounter;
 						break;
 					}
 					case EvalValues::ExecCounter: {
-						uint32_t addr = (uint32_t)operationInfo.Address;
-						token = (addr < _counterCount && _counters) ? _counters[addr].ExecCounter : 0;
+						token = GetCountersForAddress((uint32_t)operationInfo.Address).ExecCounter;
 						break;
 					}
 					case EvalValues::LastRead: {
-						uint32_t addr = (uint32_t)operationInfo.Address;
-						token = (addr < _counterCount && _counters) ? _counters[addr].ReadStamp : 0;
+						token = GetCountersForAddress((uint32_t)operationInfo.Address).ReadStamp;
 						break;
 					}
 					case EvalValues::LastWrite: {
-						uint32_t addr = (uint32_t)operationInfo.Address;
-						token = (addr < _counterCount && _counters) ? _counters[addr].WriteStamp : 0;
+						token = GetCountersForAddress((uint32_t)operationInfo.Address).WriteStamp;
 						break;
 					}
 					case EvalValues::LastExec: {
-						uint32_t addr = (uint32_t)operationInfo.Address;
-						token = (addr < _counterCount && _counters) ? _counters[addr].ExecStamp : 0;
+						token = GetCountersForAddress((uint32_t)operationInfo.Address).ExecStamp;
 						break;
 					}
 
@@ -591,6 +585,19 @@ void ExpressionEvaluator::SetAddressCounters(AddressCounters* counters, uint32_t
 {
 	_counters = counters;
 	_counterCount = count;
+}
+
+AddressCounters ExpressionEvaluator::GetCountersForAddress(uint32_t address)
+{
+	if(_counters && address < _counterCount) {
+		return _counters[address];
+	}
+	if(_debugger && _debugger->GetMemoryAccessCounter()) {
+		AddressCounters result = {};
+		_debugger->GetMemoryAccessCounter()->GetAccessCounts(address, 1, _cpuMemory, &result);
+		return result;
+	}
+	return {};
 }
 
 int64_t ExpressionEvaluator::EvaluateForAddress(ExpressionData& data, EvalResultType& resultType, uint32_t address)

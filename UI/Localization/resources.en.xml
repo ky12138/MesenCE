@@ -2477,7 +2477,7 @@ E
 		<Message ID="ExprTooltip_Example2">  {{$FFEA}} -- NMI handler's address.</Message>
 		<Message ID="ExprTooltip_Example3">  #r0 -- Returns the 32-bit value stored at the address stored in r0.</Message>
 		<Message ID="ExprTooltip_Example4">  #(r0+20) -- Returns the 32-bit value stored at the address stored in r0, offset by 20.</Message>
-		<Message ID="ExprTooltip_AccessCounters">Access counter values (for memory search)</Message>
+		<Message ID="ExprTooltip_AccessCounters">Access counter values</Message>
 		<Message ID="ExprTooltip_ReadCount">  rc: Read count for the current address</Message>
 		<Message ID="ExprTooltip_WriteCount">  wc: Write count for the current address</Message>
 		<Message ID="ExprTooltip_ExecCount">  ec: Exec count for the current address</Message>

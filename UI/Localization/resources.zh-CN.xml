@@ -2480,7 +2480,7 @@ E
 		<Message ID="ExprTooltip_Example2">  {{$FFEA}} -- NMI处理程序的地址。</Message>
 		<Message ID="ExprTooltip_Example3">  #r0 -- 返回r0所存地址处的32位值。</Message>
 		<Message ID="ExprTooltip_Example4">  #(r0+20) -- 返回r0所存地址偏移20处的32位值。</Message>
-		<Message ID="ExprTooltip_AccessCounters">访问计数器（用于内存搜索）</Message>
+		<Message ID="ExprTooltip_AccessCounters">访问计数器</Message>
 		<Message ID="ExprTooltip_ReadCount">  rc: 当前地址的读取次数</Message>
 		<Message ID="ExprTooltip_WriteCount">  wc: 当前地址的写入次数</Message>
 		<Message ID="ExprTooltip_ExecCount">  ec: 当前地址的执行次数</Message>
