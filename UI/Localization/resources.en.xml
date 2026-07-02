@@ -2430,6 +2430,7 @@ E
 		<Message ID="DockCallStack">Call Stack</Message>
 		<Message ID="DockLabels">Labels</Message>
 		<Message ID="DockFunctions">Functions</Message>
+		<Message ID="DockCallerCallee">Caller/Callee</Message>
 		<Message ID="DockFindResults">Find Results</Message>
 		<Message ID="DockControllers">Controllers</Message>
 

@@ -2433,6 +2433,7 @@ E
 		<Message ID="DockCallStack">调用堆栈</Message>
 		<Message ID="DockLabels">标签</Message>
 		<Message ID="DockFunctions">函数</Message>
+		<Message ID="DockCallerCallee">调用者/被调用者</Message>
 		<Message ID="DockFindResults">查找结果</Message>
 		<Message ID="DockControllers">控制器</Message>
 

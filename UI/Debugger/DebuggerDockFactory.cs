@@ -24,6 +24,7 @@ namespace Mesen.Debugger
 		public ToolContainerViewModel<CallStackViewModel> CallStackTool { get; private set; }
 		public ToolContainerViewModel<LabelListViewModel> LabelListTool { get; private set; }
 		public ToolContainerViewModel<FunctionListViewModel> FunctionListTool { get; private set; }
+		public ToolContainerViewModel<CallerCalleeViewModel> CallerCalleeTool { get; private set; }
 		public ToolContainerViewModel<FindResultListViewModel> FindResultListTool { get; private set; }
 		public ToolContainerViewModel<ControllerListViewModel> ControllerListTool { get; private set; }
 
@@ -42,6 +43,7 @@ namespace Mesen.Debugger
 			CallStackTool = new(ResourceHelper.GetMessage("DockCallStack"));
 			LabelListTool = new(ResourceHelper.GetMessage("DockLabels"));
 			FunctionListTool = new(ResourceHelper.GetMessage("DockFunctions"));
+			CallerCalleeTool = new(ResourceHelper.GetMessage("DockCallerCallee"));
 			FindResultListTool = new(ResourceHelper.GetMessage("DockFindResults"));
 			ControllerListTool = new(ResourceHelper.GetMessage("DockControllers"));
 
@@ -90,7 +92,7 @@ namespace Mesen.Debugger
 									new MesenProportionalDockSplitter(),
 									new ToolDock {
 										Proportion = 0.5,
-										VisibleDockables = CreateList<IDockable>(LabelListTool, FunctionListTool, FindResultListTool, ControllerListTool)
+										VisibleDockables = CreateList<IDockable>(LabelListTool, FunctionListTool, CallerCalleeTool, FindResultListTool, ControllerListTool)
 									}
 								)
 							}
@@ -217,6 +219,7 @@ namespace Mesen.Debugger
 						case nameof(CallStackViewModel): return CallStackTool;
 						case nameof(LabelListViewModel): return LabelListTool;
 						case nameof(FunctionListViewModel): return FunctionListTool;
+						case nameof(CallerCalleeViewModel): return CallerCalleeTool;
 						case nameof(FindResultListViewModel): return FindResultListTool;
 						case nameof(ControllerListViewModel): return ControllerListTool;
 					}

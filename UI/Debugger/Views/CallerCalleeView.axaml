@@ -1,0 +1,97 @@
+<UserControl
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:l="using:Mesen.Localization"
+	xmlns:vm="using:Mesen.Debugger.ViewModels"
+	xmlns:c="using:Mesen.Debugger.Controls"
+	xmlns:du="using:Mesen.Debugger.Utilities"
+	mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="300"
+	VerticalAlignment="Stretch"
+	HorizontalAlignment="Stretch"
+	x:DataType="vm:CallerCalleeViewModel"
+	x:Class="Mesen.Debugger.Views.CallerCalleeView"
+>
+	<Design.DataContext>
+		<vm:CallerCalleeViewModel />
+	</Design.DataContext>
+
+	<Border BorderThickness="0 1 0 0" BorderBrush="{StaticResource MesenGrayBorderColor}">
+		<Grid RowDefinitions="Auto,Auto,*,Auto,*,Auto">
+			<!-- Callers Header -->
+			<TextBlock Grid.Row="0" Margin="4,4,4,2" FontWeight="Bold" Text="Callers" />
+			<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="4,0,4,2">
+				<TextBlock Text="{Binding SelectedFunctionName}" FontStyle="Italic" Opacity="0.7" />
+			</StackPanel>
+
+			<!-- Callers DataBox -->
+			<DataBox
+				Grid.Row="2"
+				Items="{Binding Callers}"
+				Selection="{Binding CallerSelection}"
+				GridLinesVisibility="All"
+				CellDoubleClick="OnCallerCellDoubleClick"
+				ColumnWidths="{Binding CallerColumnWidths}"
+			>
+				<DataBox.Columns>
+					<DataBoxTextColumn
+						ColumnName="Function"
+						Header="{l:Translate colFunction}"
+						Binding="{Binding FunctionName, DataType={x:Type vm:CallerCalleeEntryModel}}"
+						InitialWidth="100"
+					/>
+					<DataBoxTextColumn
+						ColumnName="Address"
+						Header="{l:Translate colRomAddr}"
+						Binding="{Binding AddressDisplay, DataType={x:Type vm:CallerCalleeEntryModel}}"
+						InitialWidth="80"
+					/>
+					<DataBoxTextColumn
+						ColumnName="CallCount"
+						Header="Count"
+						Binding="{Binding CallCount, DataType={x:Type vm:CallerCalleeEntryModel}}"
+						InitialWidth="80"
+					/>
+				</DataBox.Columns>
+			</DataBox>
+
+			<!-- Callees Header -->
+			<TextBlock Grid.Row="3" Margin="4,8,4,2" FontWeight="Bold" Text="Callees" />
+
+			<!-- Callees DataBox -->
+			<DataBox
+				Grid.Row="4"
+				Items="{Binding Callees}"
+				Selection="{Binding CalleeSelection}"
+				GridLinesVisibility="All"
+				CellDoubleClick="OnCalleeCellDoubleClick"
+				ColumnWidths="{Binding CalleeColumnWidths}"
+			>
+				<DataBox.Columns>
+					<DataBoxTextColumn
+						ColumnName="Function"
+						Header="{l:Translate colFunction}"
+						Binding="{Binding FunctionName, DataType={x:Type vm:CallerCalleeEntryModel}}"
+						InitialWidth="100"
+					/>
+					<DataBoxTextColumn
+						ColumnName="Address"
+						Header="{l:Translate colRomAddr}"
+						Binding="{Binding AddressDisplay, DataType={x:Type vm:CallerCalleeEntryModel}}"
+						InitialWidth="80"
+					/>
+					<DataBoxTextColumn
+						ColumnName="CallCount"
+						Header="Count"
+						Binding="{Binding CallCount, DataType={x:Type vm:CallerCalleeEntryModel}}"
+						InitialWidth="80"
+					/>
+				</DataBox.Columns>
+			</DataBox>
+
+			<!-- Spacer -->
+			<Panel Grid.Row="5" />
+		</Grid>
+	</Border>
+</UserControl>

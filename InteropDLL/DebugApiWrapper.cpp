@@ -17,6 +17,8 @@
 #include "Core/Debugger/LabelManager.h"
 #include "Core/Debugger/ScriptManager.h"
 #include "Core/Debugger/Profiler.h"
+#include "Core/Debugger/CallerCalleeTracker.h"
+#include "Core/Debugger/DebugBreakHelper.h"
 #include "Core/Debugger/IAssembler.h"
 #include "Core/Debugger/BaseEventManager.h"
 #include "Core/Debugger/ITraceLogger.h"
@@ -186,6 +188,18 @@ extern "C"
 	DllExport void __stdcall ResetProfiler(CpuType cpuType)
 	{
 		WithToolVoid(GetCallstackManager(cpuType), GetProfiler()->Reset());
+	}
+
+	DllExport void __stdcall GetCallerCallee(CpuType cpuType, AddressInfo funcAddr, CallerCalleeRecord* output)
+	{
+		output->CallerCount = 0;
+		output->CalleeCount = 0;
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
+			if(dbg->GetCallstackManager(cpuType)) {
+				DebugBreakHelper helper(dbg);
+				dbg->GetCallstackManager(cpuType)->GetProfiler()->GetCallerCalleeTracker()->GetCallerCalleeData(funcAddr, *output);
+			}
+		});
 	}
 
 	DllExport void __stdcall GetConsoleState(BaseState& state, ConsoleType consoleType)

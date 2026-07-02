@@ -254,6 +254,9 @@
     <Compile Update="Debugger\Views\FunctionListView.axaml.cs">
       <DependentUpon>FunctionListView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Debugger\Views\CallerCalleeView.axaml.cs">
+      <DependentUpon>CallerCalleeView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Debugger\Views\GbaEventViewerConfigView.axaml.cs">
       <DependentUpon>GbaEventViewerConfigView.axaml</DependentUpon>
     </Compile>

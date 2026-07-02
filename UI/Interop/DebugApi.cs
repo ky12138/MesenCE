@@ -454,6 +454,47 @@ namespace Mesen.Interop
 			return (int)functionCount;
 		}
 
+		[DllImport(DllPath, EntryPoint = "GetCallerCallee")] private static extern void GetCallerCalleeWrapper(CpuType type, AddressInfo funcAddr, IntPtr output);
+		public static CallerCalleeRecord GetCallerCallee(CpuType type, AddressInfo funcAddr)
+		{
+			int entrySize = 16;
+			int bufferSize = 64 * entrySize + 4 + 64 * entrySize + 4;
+			IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
+			try {
+				DebugApi.GetCallerCalleeWrapper(type, funcAddr, buffer);
+
+				CallerCalleeRecord record = new CallerCalleeRecord();
+				record.Callers = new CallerCalleeEntry[64];
+				record.Callees = new CallerCalleeEntry[64];
+
+				IntPtr ptr = buffer;
+				for(int i = 0; i < 64; i++) {
+					AddressInfo addr;
+					addr.Address = Marshal.ReadInt32(ptr);
+					addr.Type = (MemoryType)Marshal.ReadInt32(ptr, 4);
+					UInt64 count = (UInt64)Marshal.ReadInt64(ptr, 8);
+					record.Callers[i] = new CallerCalleeEntry() { Address = addr, CallCount = count };
+					ptr = new IntPtr(ptr.ToInt64() + entrySize);
+				}
+				record.CallerCount = (UInt32)Marshal.ReadInt32(ptr);
+				ptr = new IntPtr(ptr.ToInt64() + 4);
+
+				for(int i = 0; i < 64; i++) {
+					AddressInfo addr;
+					addr.Address = Marshal.ReadInt32(ptr);
+					addr.Type = (MemoryType)Marshal.ReadInt32(ptr, 4);
+					UInt64 count = (UInt64)Marshal.ReadInt64(ptr, 8);
+					record.Callees[i] = new CallerCalleeEntry() { Address = addr, CallCount = count };
+					ptr = new IntPtr(ptr.ToInt64() + entrySize);
+				}
+				record.CalleeCount = (UInt32)Marshal.ReadInt32(ptr);
+
+				return record;
+			} finally {
+				Marshal.FreeHGlobal(buffer);
+			}
+		}
+
 		[DllImport(DllPath, EntryPoint = "GetTokenList")] private static extern void GetTokenListWrapper(CpuType cpuType, IntPtr tokenListBuffer);
 		public static unsafe string[] GetTokenList(CpuType type)
 		{
@@ -1513,6 +1554,20 @@ namespace Mesen.Interop
 		public AddressInfo AbsReturn;
 		public StackFrameFlags Flags;
 	};
+
+	public struct CallerCalleeEntry
+	{
+		public AddressInfo Address;
+		public UInt64 CallCount;
+	}
+
+	public struct CallerCalleeRecord
+	{
+		public CallerCalleeEntry[] Callers;
+		public UInt32 CallerCount;
+		public CallerCalleeEntry[] Callees;
+		public UInt32 CalleeCount;
+	}
 
 	public enum StackFrameFlags
 	{

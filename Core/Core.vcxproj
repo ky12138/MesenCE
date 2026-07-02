@@ -41,6 +41,7 @@
     <ClInclude Include="Debugger\DisassemblySearch.h" />
     <ClInclude Include="Debugger\FrozenAddressManager.h" />
     <ClInclude Include="Debugger\StepBackManager.h" />
+    <ClInclude Include="Debugger\CallerCalleeTracker.h" />
     <ClInclude Include="Gameboy\APU\GbChannelDac.h" />
     <ClInclude Include="Gameboy\APU\GbEnvelope.h" />
     <ClInclude Include="Gameboy\Carts\Eeprom93Lc56.h" />
@@ -827,6 +828,7 @@
     <ClCompile Include="Debugger\ExpressionEvaluator.Snes.cpp" />
     <ClCompile Include="Debugger\ExpressionEvaluator.Spc.cpp" />
     <ClCompile Include="Debugger\StepBackManager.cpp" />
+    <ClCompile Include="Debugger\CallerCalleeTracker.cpp" />
     <ClCompile Include="Gameboy\Debugger\DummyGbCpu.cpp" />
     <ClCompile Include="Gameboy\Debugger\GbTraceLogger.cpp" />
     <ClCompile Include="Gameboy\Debugger\GbPpuTools.cpp" />

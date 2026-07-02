@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "Debugger/DebugTypes.h"
+#include "Debugger/CallerCalleeTracker.h"
 
 class Debugger;
 class IDebugger;
@@ -32,6 +33,8 @@ private:
 	uint64_t _prevMasterClock = 0;
 	int32_t _currentFunction = -1;
 
+	CallerCalleeTracker _callerCalleeTracker;
+
 	void InternalReset();
 	void UpdateCycles();
 
@@ -45,4 +48,5 @@ public:
 	void Reset();
 	void ResetState();
 	void GetProfilerData(ProfiledFunction* profilerData, uint32_t& functionCount);
+	CallerCalleeTracker* GetCallerCalleeTracker();
 };

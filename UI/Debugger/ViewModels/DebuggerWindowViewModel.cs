@@ -41,6 +41,7 @@ namespace Mesen.Debugger.ViewModels
 		[Reactive] public BaseConsoleStatusViewModel? ConsoleStatus { get; private set; }
 		[Reactive] public LabelListViewModel LabelList { get; private set; }
 		[Reactive] public FunctionListViewModel? FunctionList { get; private set; }
+		[Reactive] public CallerCalleeViewModel? CallerCallee { get; private set; }
 		[Reactive] public CallStackViewModel CallStack { get; private set; }
 		[Reactive] public SourceViewViewModel? SourceView { get; private set; }
 		[Reactive] public MemoryMappingViewModel? MemoryMappings { get; private set; }
@@ -110,6 +111,7 @@ namespace Mesen.Debugger.ViewModels
 			ControllerList = new ControllerListViewModel(consoleType);
 			if(CpuType.SupportsFunctionList()) {
 				FunctionList = AddDisposable(new FunctionListViewModel(CpuType, this));
+				CallerCallee = AddDisposable(new CallerCalleeViewModel(CpuType, this));
 			}
 			CallStack = AddDisposable(new CallStackViewModel(CpuType, this));
 			WatchList = AddDisposable(new WatchListViewModel(CpuType));
@@ -135,6 +137,7 @@ namespace Mesen.Debugger.ViewModels
 			DockFactory.BreakpointListTool.Model = BreakpointList;
 			DockFactory.LabelListTool.Model = LabelList;
 			DockFactory.FunctionListTool.Model = FunctionList;
+			DockFactory.CallerCalleeTool.Model = CallerCallee;
 			DockFactory.CallStackTool.Model = CallStack;
 			DockFactory.WatchListTool.Model = WatchList;
 			DockFactory.FindResultListTool.Model = FindResultList;
@@ -160,6 +163,17 @@ namespace Mesen.Debugger.ViewModels
 			LabelManager.OnLabelUpdated += LabelManager_OnLabelUpdated;
 			BreakpointManager.BreakpointsChanged += BreakpointManager_BreakpointsChanged;
 			BreakpointManager.AddCpuType(CpuType);
+
+			if(FunctionList != null && CallerCallee != null) {
+				FunctionList.Selection.SelectionChanged += (s, e) => {
+					if(FunctionList.Selection.SelectedItem is FunctionViewModel vm) {
+						CallerCallee.UpdateForFunction(vm.FuncAddr);
+					} else {
+						CallerCallee.UpdateForFunction(new AddressInfo() { Address = -1, Type = MemoryType.None });
+					}
+				};
+			}
+
 			ConfigApi.SetDebuggerFlag(CpuType.GetDebuggerFlag(), true);
 		}
 
@@ -170,12 +184,29 @@ namespace Mesen.Debugger.ViewModels
 			if(FunctionList == null) {
 				DockFactory.CloseDockable(DockFactory.FunctionListTool);
 			}
+			if(CallerCallee == null) {
+				DockFactory.CloseDockable(DockFactory.CallerCalleeTool);
+			}
+
+			// Inject CallerCalleeTool into the layout if saved layout doesn't include it
+			if(CallerCallee != null && !IsToolVisible(DockFactory.CallerCalleeTool)) {
+				InjectToolIntoSameDockAs(DockFactory.CallerCalleeTool, DockFactory.FunctionListTool);
+			}
 
 			if(Design.IsDesignMode) {
 				return;
 			}
 
 			UpdateSourceViewState();
+		}
+
+		private void InjectToolIntoSameDockAs(Tool toolToInject, Tool referenceTool)
+		{
+			if(referenceTool.Owner is IDock parentDock && parentDock.VisibleDockables != null) {
+				if(!parentDock.VisibleDockables.Contains(toolToInject)) {
+					DockFactory.AddDockable(parentDock, toolToInject);
+				}
+			}
 		}
 
 		public void ScrollToAddress(int address)
