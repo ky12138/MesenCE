@@ -110,6 +110,30 @@ namespace Mesen.Controls
 			});
 		}
 
+		protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
+		{
+			base.OnPointerWheelChanged(e);
+
+			Enum[]? values = AvailableValues?.Length > 0 ? AvailableValues : InternalItems as Enum[];
+			if(values == null || values.Length == 0) {
+				return;
+			}
+
+			int currentIndex = Array.IndexOf(values, SelectedItem ?? values[0]);
+			if(currentIndex < 0) {
+				currentIndex = 0;
+			}
+
+			int delta = e.Delta.Y > 0 ? -1 : 1;
+			int newIndex = currentIndex + delta;
+			if(newIndex < 0 || newIndex >= values.Length) {
+				return;
+			}
+
+			SelectedItem = values[newIndex];
+			e.Handled = true;
+		}
+
 		private bool _isPressed = false;
 		private void PointerPressedHandler(object? sender, RoutedEventArgs e)
 		{
