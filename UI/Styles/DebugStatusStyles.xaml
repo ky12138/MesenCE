@@ -8,31 +8,33 @@
 		<Setter Property="VerticalAlignment" Value="Center" />
 		<Setter Property="Margin" Value="4 0 1 0" />
 		<Setter Property="Padding" Value="0" />
+		<Setter Property="FontSize" Value="12" />
 	</Style>
 
 	<Style Selector="CheckBox">
 		<Setter Property="Padding" Value="-2,0,2,0" />
 		<Setter Property="Margin" Value="0,-2,0,-2" />
+		<Setter Property="FontSize" Value="12" />
 	</Style>
 	<Style Selector="CheckBox TextBlock">
 		<Setter Property="Margin" Value="0" />
 		<Setter Property="Padding" Value="0" />
 	</Style>
 	<Style Selector="CheckBox /template/ Grid">
-		<Setter Property="Height" Value="12" />
-		<Setter Property="MaxHeight" Value="12" />
+		<Setter Property="Height" Value="14" />
+		<Setter Property="MaxHeight" Value="14" />
 	</Style>
 	<Style Selector="CheckBox /template/ Grid > Grid">
-		<Setter Property="Height" Value="12" />
-		<Setter Property="MaxHeight" Value="12" />
+		<Setter Property="Height" Value="14" />
+		<Setter Property="MaxHeight" Value="14" />
 	</Style>
 	<Style Selector="CheckBox /template/ Border#NormalRectangle">
-		<Setter Property="MaxWidth" Value="12" />
-		<Setter Property="MaxHeight" Value="12" />
+		<Setter Property="MaxWidth" Value="14" />
+		<Setter Property="MaxHeight" Value="14" />
 	</Style>
 	<Style Selector="CheckBox /template/ Grid > Grid > Viewbox > Panel">
-		<Setter Property="Height" Value="10" />
-		<Setter Property="Width" Value="10" />
+		<Setter Property="Height" Value="12" />
+		<Setter Property="Width" Value="12" />
 	</Style>
 
 	<Style Selector="TextBox">
@@ -40,8 +42,8 @@
 		<Setter Property="FontSize" Value="{DynamicResource MesenMonospaceFontSize}" />
 		<Setter Property="MinWidth" Value="19" />
 
-		<Setter Property="Height" Value="16" />
-		<Setter Property="MinHeight" Value="16" />
+		<Setter Property="Height" Value="21" />
+		<Setter Property="MinHeight" Value="21" />
 
 		<Setter Property="IsUndoEnabled" Value="False" />
 	</Style>
