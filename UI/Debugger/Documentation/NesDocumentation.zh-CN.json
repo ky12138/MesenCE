@@ -1,0 +1,374 @@
+{
+	"instructions": [
+		{
+			"op": "adc",
+			"name": "ADC - 加法带进位",
+			"description": "将指定内存地址的值加上累加器加上进位位。溢出时,进位位被置位。",
+			"flags": ["Carry", "Zero", "Overflow", "Negative"]
+		},
+		{
+			"op": "and",
+			"name": "AND - 按位与",
+			"description": "对累加器和指定内存地址的值执行按位与操作。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "asl",
+			"name": "ASL - 算术左移",
+			"description": "将累加器(或指定内存地址的字节)的所有位左移1位。位0被设置为0,进位标志(C)取位7的值(移位前)。",
+			"flags": ["Carry", "Zero", "Negative"]
+		},
+		{
+			"op": "bcc",
+			"name": "BCC - 进位清除时分支",
+			"description": "如果进位标志(C)被清除,跳转到指定位置。"
+		},
+		{
+			"op": "bcs",
+			"name": "BCS - 进位置位时分支",
+			"description": "如果进位标志(C)被置位,跳转到指定位置。"
+		},
+		{
+			"op": "beq",
+			"name": "BEQ - 相等时分支",
+			"description": "如果零标志(Z)被置位,跳转到指定位置。"
+		},
+		{
+			"op": "bit",
+			"name": "BIT - 位测试",
+			"description": "指定内存地址字节的位6和位7被复制到负数标志(N)和溢出标志(V)。如果累加器的值与该字节进行按位与的结果为0,则零标志(Z)被置位(否则被清除)。",
+			"flags": ["Zero", "Overflow", "Negative"]
+		},
+		{
+			"op": "bmi",
+			"name": "BMI - 负数时分支",
+			"description": "如果负数标志(N)被置位,跳转到指定位置。"
+		},
+		{
+			"op": "bne",
+			"name": "BNE - 不相等时分支",
+			"description": "如果零标志(Z)被清除,跳转到指定位置。"
+		},
+		{
+			"op": "bpl",
+			"name": "BPL - 正数时分支",
+			"description": "如果负数标志(N)被清除,跳转到指定位置。"
+		},
+		{
+			"op": "brk",
+			"name": "BRK - 中断",
+			"description": "BRK指令使CPU跳转到IRQ向量,就像发生了中断一样。程序计数器和状态标志被压入堆栈。"
+		},
+		{
+			"op": "bvc",
+			"name": "BVC - 溢出清除时分支",
+			"description": "如果溢出标志(V)被清除,跳转到指定位置。"
+		},
+		{
+			"op": "bvs",
+			"name": "BVS - 溢出置位时分支",
+			"description": "如果溢出标志(V)被置位,跳转到指定位置。"
+		},
+		{
+			"op": "clc",
+			"name": "CLC - 清除进位标志",
+			"description": "清除进位标志(C)。",
+			"flags": ["Carry"]
+		},
+		{
+			"op": "cld",
+			"name": "CLD - 清除十进制模式",
+			"description": "清除十进制模式标志(D)。",
+			"flags": ["Decimal"]
+		},
+		{
+			"op": "cli",
+			"name": "CLI - 清除中断禁止",
+			"description": "清除中断禁止标志(I)。",
+			"flags": ["Interrupt"]
+		},
+		{
+			"op": "clv",
+			"name": "CLV - 清除溢出标志",
+			"description": "清除溢出标志(V)。",
+			"flags": ["Overflow"]
+		},
+		{
+			"op": "cmp",
+			"name": "CMP - 比较",
+			"description": "将累加器与指定内存地址的字节进行比较。",
+			"flags":["Zero", "Carry", "Negative"]
+		},
+		{
+			"op": "cpx",
+			"name": "CPX - 比较X寄存器",
+			"description": "将X寄存器与指定内存地址的字节进行比较。",
+			"flags":[ "Zero", "Carry", "Negative"]
+		},
+		{
+			"op": "cpy",
+			"name": "CPY - 比较Y寄存器",
+			"description": "将Y寄存器与指定内存地址的字节进行比较。",
+			"flags": ["Zero", "Carry", "Negative"]
+		},
+		{
+			"op": "dec",
+			"name": "DEC - 内存递减",
+			"description": "将指定内存地址的字节减一。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "dex",
+			"name": "DEX - X寄存器递减",
+			"description": "将X寄存器减一。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "dey",
+			"name": "DEY - Y寄存器递减",
+			"description": "将Y寄存器减一。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "eor",
+			"name": "EOR - 异或",
+			"description": "对累加器和指定内存地址的字节执行异或操作。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "inc",
+			"name": "INC - 内存递增",
+			"description": "将指定内存地址的字节加一。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "inx",
+			"name": "INX - X寄存器递增",
+			"description": "将X寄存器加一。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "iny",
+			"name": "INY - Y寄存器递增",
+			"description": "将Y寄存器加一。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "jmp",
+			"name": "JMP - 跳转",
+			"description": "跳转到指定位置(改变程序计数器)"
+		},
+		{
+			"op": "jsr",
+			"name": "JSR - 跳转到子程序",
+			"description": "将下一条指令的地址(减一)压入堆栈,然后跳转到目标地址。"
+		},
+		{
+			"op": "lda",
+			"name": "LDA - 加载累加器",
+			"description": "从指定内存地址加载一个字节到累加器。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "ldx",
+			"name": "LDX - 加载X寄存器",
+			"description": "从指定内存地址加载一个字节到X寄存器。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "ldy",
+			"name": "LDY - 加载Y寄存器",
+			"description": "从指定内存地址加载一个字节到Y寄存器。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "lsr",
+			"name": "LSR - 逻辑右移",
+			"description": "将累加器(或指定内存地址的字节)的所有位右移1位。位7被设置为0,进位标志(C)取位0的值(移位前)。",
+			"flags": ["Carry", "Zero", "Negative"]
+		},
+		{
+			"op": "nop",
+			"name": "NOP - 空操作",
+			"description": "不执行任何操作,只是将下一条指令的执行延迟2个周期。"
+		},
+		{
+			"op": "ora",
+			"name": "ORA - 按位或",
+			"description": "对累加器和指定内存地址的字节执行按位或操作。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "pha",
+			"name": "PHA - 压入累加器",
+			"description": "将累加器的值压入堆栈。"
+		},
+		{
+			"op": "php",
+			"name": "PHP - 压入处理器状态",
+			"description": "将状态标志的值压入堆栈。"
+		},
+		{
+			"op": "pla",
+			"name": "PLA - 弹出累加器",
+			"description": "从堆栈中弹出一个字节并存储到累加器。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "plp",
+			"name": "PLP - 弹出处理器状态",
+			"description": "从堆栈中弹出一个字节并存储到处理器标志中。标志将根据弹出的值进行修改。",
+			"flags": ["Carry", "Decimal", "Interrupt", "Negative", "Overflow", "Zero"]
+		},
+		{
+			"op": "rol",
+			"name": "ROL - 循环左移",
+			"description": "将所有位左移1位。最右边的位取当前进位标志(C)的值。最左边的位被存储到进位标志(C)。",
+			"flags": ["Carry", "Zero", "Negative"]
+		},
+		{
+			"op": "ror",
+			"name": "ROR - 循环右移",
+			"description": "将所有位右移1位。最左边的位取当前进位标志(C)的值。最右边的位被存储到进位标志(C)。",
+			"flags": ["Carry", "Zero", "Negative"]
+		},
+		{
+			"op": "rti",
+			"name": "RTI - 从中断返回",
+			"description": "RTI指令在中断处理程序结束时用于返回到原始位置。它从堆栈中弹出状态标志和程序计数器。"
+		},
+		{
+			"op": "rts",
+			"name": "RTS - 从子程序返回",
+			"description": "RTS指令在子程序结束时用于返回到调用函数。它从堆栈中弹出状态标志和程序计数器(减1)。"
+		},
+		{
+			"op": "sbc",
+			"name": "SBC - 带借位减法",
+			"description": "从累加器的值中减去指定内存地址的字节(受进位标志(C)影响)。",
+			"flags": ["Carry", "Zero", "Overflow", "Negative"]
+		},
+		{
+			"op": "sec",
+			"name": "SEC - 置位进位标志",
+			"description": "置位进位标志(C)。",
+			"flags": ["Carry"]
+		},
+		{
+			"op": "sed",
+			"name": "SED - 置位十进制标志",
+			"description": "置位十进制模式标志(D)。",
+			"flags": ["Decimal"]
+		},
+		{
+			"op": "sei",
+			"name": "SEI - 置位中断禁止",
+			"description": "置位中断禁止标志(I)。",
+			"flags": ["Interrupt"]
+		},
+		{
+			"op": "sta",
+			"name": "STA - 存储累加器",
+			"description": "将累加器的值存储到内存中。"
+		},
+		{
+			"op": "stx",
+			"name": "STX - 存储X寄存器",
+			"description": "将X寄存器的值存储到内存中。"
+		},
+		{
+			"op": "sty",
+			"name": "STY - 存储Y寄存器",
+			"description": "将Y寄存器的值存储到内存中。"
+		},
+		{
+			"op": "tax",
+			"name": "TAX - 传送A到X",
+			"description": "将累加器复制到X寄存器。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "tay",
+			"name": "TAY - 传送A到Y",
+			"description": "将累加器复制到Y寄存器。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "tsx",
+			"name": "TSX - 传送SP到X",
+			"description": "将堆栈指针复制到X寄存器。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "txa",
+			"name": "TXA - 传送X到A",
+			"description": "将X寄存器复制到累加器。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "txs",
+			"name": "TXS - 传送X到SP",
+			"description": "将X寄存器复制到堆栈指针。"
+		},
+		{
+			"op": "tya",
+			"name": "TYA - 传送Y到A",
+			"description": "将Y寄存器复制到累加器。",
+			"flags": ["Zero", "Negative"]
+		}
+	],
+	"addressingModes": [
+		"Imp", "IndX", "None", "IndX", "Zero",  "Zero",  "Zero",  "Zero",  "Imp", "Imm",  "Acc", "Imm",  "Abs",  "Abs",  "Abs",  "Abs",
+		"Rel", "IndY", "None", "IndY", "ZeroX", "ZeroX", "ZeroX", "ZeroX", "Imp", "AbsY", "Imp", "AbsY", "AbsX", "AbsX", "AbsX", "AbsX",
+		"Abs", "IndX", "None", "IndX", "Zero",  "Zero",  "Zero",  "Zero",  "Imp", "Imm",  "Acc", "Imm",  "Abs",  "Abs",  "Abs",  "Abs",
+		"Rel", "IndY", "None", "IndY", "ZeroX", "ZeroX", "ZeroX", "ZeroX", "Imp", "AbsY", "Imp", "AbsY", "AbsX", "AbsX", "AbsX", "AbsX",
+		"Imp", "IndX", "None", "IndX", "Zero",  "Zero",  "Zero",  "Zero",  "Imp", "Imm",  "Acc", "Imm",  "Abs",  "Abs",  "Abs",  "Abs",
+		"Rel", "IndY", "None", "IndY", "ZeroX", "ZeroX", "ZeroX", "ZeroX", "Imp", "AbsY", "Imp", "AbsY", "AbsX", "AbsX", "AbsX", "AbsX",
+		"Imp", "IndX", "None", "IndX", "Zero",  "Zero",  "Zero",  "Zero",  "Imp", "Imm",  "Acc", "Imm",  "Ind",  "Abs",  "Abs",  "Abs",
+		"Rel", "IndY", "None", "IndY", "ZeroX", "ZeroX", "ZeroX", "ZeroX", "Imp", "AbsY", "Imp", "AbsY", "AbsX", "AbsX", "AbsX", "AbsX",
+		"Imm", "IndX", "Imm",  "IndX", "Zero",  "Zero",  "Zero",  "Zero",  "Imp", "Imm",  "Imp", "Imm",  "Abs",  "Abs",  "Abs",  "Abs",
+		"Rel", "IndY", "None", "IndY", "ZeroX", "ZeroX", "ZeroY", "ZeroY", "Imp", "AbsY", "Imp", "AbsY", "AbsX", "AbsX", "AbsY", "AbsY",
+		"Imm", "IndX", "Imm",  "IndX", "Zero",  "Zero",  "Zero",  "Zero",  "Imp", "Imm",  "Imp", "Imm",  "Abs",  "Abs",  "Abs",  "Abs",
+		"Rel", "IndY", "None", "IndY", "ZeroX", "ZeroX", "ZeroY", "ZeroY", "Imp", "AbsY", "Imp", "AbsY", "AbsX", "AbsX", "AbsY", "AbsY",
+		"Imm", "IndX", "Imm",  "IndX", "Zero",  "Zero",  "Zero",  "Zero",  "Imp", "Imm",  "Imp", "Imm",  "Abs",  "Abs",  "Abs",  "Abs",
+		"Rel", "IndY", "None", "IndY", "ZeroX", "ZeroX", "ZeroX", "ZeroX", "Imp", "AbsY", "Imp", "AbsY", "AbsX", "AbsX", "AbsX", "AbsX",
+		"Imm", "IndX", "Imm",  "IndX", "Zero",  "Zero",  "Zero",  "Zero",  "Imp", "Imm",  "Imp", "Imm",  "Abs",  "Abs",  "Abs",  "Abs",
+		"Rel", "IndY", "None", "IndY", "ZeroX", "ZeroX", "ZeroX", "ZeroX", "Imp", "AbsY", "Imp", "AbsY", "AbsX", "AbsX", "AbsX", "AbsX"
+	],
+	"minCycles": [
+		7, 6, 2, 8, 3, 3, 5, 5, 3, 2, 2, 2, 4, 4, 6, 6,
+		2, 5, 2, 8, 4, 4, 6, 6, 2, 4, 2, 7, 4, 4, 7, 7,
+		6, 6, 2, 8, 3, 3, 5, 5, 4, 2, 2, 2, 4, 4, 6, 6,
+		2, 5, 2, 8, 4, 4, 6, 6, 2, 4, 2, 7, 4, 4, 7, 7,
+		6, 6, 2, 8, 3, 3, 5, 5, 3, 2, 2, 2, 3, 4, 6, 6,
+		2, 5, 2, 8, 4, 4, 6, 6, 2, 4, 2, 7, 4, 4, 7, 7,
+		6, 6, 2, 8, 3, 3, 5, 5, 4, 2, 2, 2, 5, 4, 6, 6,
+		2, 5, 2, 8, 4, 4, 6, 6, 2, 4, 2, 7, 4, 4, 7, 7,
+		2, 6, 2, 6, 3, 3, 3, 3, 2, 2, 2, 2, 4, 4, 4, 4,
+		2, 6, 2, 6, 4, 4, 4, 4, 2, 5, 2, 5, 5, 5, 5, 5,
+		2, 6, 2, 6, 3, 3, 3, 3, 2, 2, 2, 2, 4, 4, 4, 4,
+		2, 5, 2, 5, 4, 4, 4, 4, 2, 4, 2, 4, 4, 4, 4, 4,
+		2, 6, 2, 8, 3, 3, 5, 5, 2, 2, 2, 2, 4, 4, 6, 6,
+		2, 5, 2, 8, 4, 4, 6, 6, 2, 4, 2, 7, 4, 4, 7, 7,
+		2, 6, 3, 8, 3, 3, 5, 5, 2, 2, 2, 2, 4, 4, 6, 6,
+		2, 5, 2, 8, 4, 4, 6, 6, 2, 4, 2, 7, 4, 4, 7, 7
+	],
+	"maxCycles": [
+		7, 6, 2, 8, 3, 3, 5, 5, 3, 2, 2, 2, 4, 4, 6, 6,
+		3, 6, 2, 8, 4, 4, 6, 6, 2, 5, 2, 7, 5, 5, 7, 7,
+		6, 6, 2, 8, 3, 3, 5, 5, 4, 2, 2, 2, 4, 4, 6, 6,
+		3, 6, 2, 8, 4, 4, 6, 6, 2, 5, 2, 7, 5, 5, 7, 7,
+		6, 6, 2, 8, 3, 3, 5, 5, 3, 2, 2, 2, 3, 4, 6, 6,
+		3, 6, 2, 8, 4, 4, 6, 6, 2, 5, 2, 7, 5, 5, 7, 7,
+		6, 6, 2, 8, 3, 3, 5, 5, 4, 2, 2, 2, 5, 4, 6, 6,
+		3, 6, 2, 8, 4, 4, 6, 6, 2, 5, 2, 7, 5, 5, 7, 7,
+		2, 6, 2, 6, 3, 3, 3, 3, 2, 2, 2, 2, 4, 4, 4, 4,
+		3, 6, 2, 6, 4, 4, 4, 4, 2, 5, 2, 5, 5, 5, 5, 5,
+		2, 6, 2, 6, 3, 3, 3, 3, 2, 2, 2, 2, 4, 4, 4, 4,
+		3, 6, 2, 5, 4, 4, 4, 4, 2, 5, 2, 5, 5, 5, 5, 5,
+		2, 6, 2, 8, 3, 3, 5, 5, 2, 2, 2, 2, 4, 4, 6, 6,
+		3, 6, 2, 8, 4, 4, 6, 6, 2, 5, 2, 7, 5, 5, 7, 7,
+		2, 6, 3, 8, 3, 3, 5, 5, 2, 2, 2, 2, 4, 4, 6, 6,
+		3, 6, 2, 8, 4, 4, 6, 6, 2, 5, 2, 7, 5, 5, 7, 7
+	]
+}

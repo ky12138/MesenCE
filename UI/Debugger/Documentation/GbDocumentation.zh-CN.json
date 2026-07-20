@@ -1,0 +1,251 @@
+{
+	"instructions": [
+		{
+			"op": "nop",
+			"name": "NOP - 空操作",
+			"description": ""
+		},
+		{
+			"op": "stop",
+			"name": "STOP - 停止",
+			"description": "暂停CPU和LCD,直到按下按钮。"
+		},
+		{
+			"op": "ld",
+			"name": "LD - 加载",
+			"description": "LD 目标, 源\n将源指定的值加载到目标中。"
+		},
+		{
+			"op": "inc",
+			"name": "INC - 递增",
+			"description": "将指定值递增",
+			"flags": ["Zero", "Negative", "HalfCarry"]
+		},
+		{
+			"op": "dec",
+			"name": "DEC - 递减",
+			"description": "将指定值递减",
+			"flags": ["Zero", "Negative", "HalfCarry"]
+		},
+		{
+			"op": "rlca",
+			"name": "RLCA - 累加器循环左移",
+			"description": "将累加器的位向左循环移动。最高位移到最低位,并同时设置进位标志。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "rla",
+			"name": "RLA - 累加器带进位循环左移",
+			"description": "将累加器的位向左循环移动。最高位移到进位标志,最低位设置为进位标志的值。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "rrca",
+			"name": "RRCA - 累加器循环右移",
+			"description": "将累加器的位向右循环移动。最低位移到最高位,并同时设置进位标志。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "rra",
+			"name": "RRA - 累加器带进位循环右移",
+			"description": "将累加器的位向右循环移动。最低位移到进位标志,最高位设置为进位标志的值。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "add",
+			"name": "ADD - 加法",
+			"description": "将两个操作数的值相加,结果存储在第一个操作数中。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "adc",
+			"name": "ADC - 带进位加法",
+			"description": "将累加器、进位标志和第二个操作数相加,结果存储在累加器中。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "jr",
+			"name": "JR - 相对跳转",
+			"description": "跳转到指定的相对地址。当指定条件时,仅在条件为真时跳转。"
+		},
+		{
+			"op": "daa",
+			"name": "DAA - 累加器十进制调整",
+			"description": "调整累加器的值以用于BCD加法和减法运算。",
+			"flags": ["Zero", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "scf",
+			"name": "SCF - 置位进位标志",
+			"description": "设置进位标志,清除负数和半进位标志。",
+			"flags": ["Carry", "Negative", "HalfCarry"]
+		},
+		{
+			"op": "ccf",
+			"name": "CCF - 进位标志取反",
+			"description": "反转进位标志的值。清除负数和半进位标志。",
+			"flags": ["Carry", "Negative", "HalfCarry"]
+		},
+		{
+			"op": "cpl",
+			"name": "CPL - 累加器取反",
+			"description": "反转累加器中的所有位。",
+			"flags": ["Negative", "HalfCarry"]
+		},
+		{
+			"op": "halt",
+			"name": "HALT - 停机",
+			"description": "暂停CPU,直到下一个中断或复位。"
+		},
+		{
+			"op": "sub",
+			"name": "SUB - 减法",
+			"description": "从累加器中减去第二个操作数的值,结果存储在累加器中。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "sbc",
+			"name": "SBC - 带借位减法",
+			"description": "从累加器中减去第二个操作数和进位标志的值,结果存储在累加器中。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "and",
+			"name": "AND - 按位与",
+			"description": "对操作数和累加器的值执行按位与运算,结果存储在累加器中。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "or",
+			"name": "OR - 按位或",
+			"description": "对操作数和累加器的值执行按位或运算,结果存储在累加器中。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "xor",
+			"name": "XOR - 按位异或",
+			"description": "对操作数和累加器的值执行按位异或运算,结果存储在累加器中。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "cp",
+			"name": "CP - 比较",
+			"description": "将操作数的内容与累加器进行比较(A - 操作数)并更新标志。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "ret",
+			"name": "RET - 返回",
+			"description": "从CALL调用的子程序返回。当指定条件时,仅在条件为真时返回。"
+		},
+		{
+			"op": "pop",
+			"name": "POP - 弹出",
+			"description": "从栈中弹出2个字节,存储到操作数中。"
+		},
+		{
+			"op": "jp",
+			"name": "JP - 跳转",
+			"description": "跳转到指定地址。当指定条件时,仅在条件为真时跳转。"
+		},
+		{
+			"op": "call",
+			"name": "CALL - 调用",
+			"description": "调用子程序。当指定条件时,仅在条件为真时跳转到子程序。"
+		},
+		{
+			"op": "push",
+			"name": "PUSH - 压入",
+			"description": "将操作数的值(2个字节)压入栈中。"
+		},
+		{
+			"op": "rst",
+			"name": "RST - 重启",
+			"description": "调用预定义地址(操作数)处的子程序。"
+		},
+		{
+			"op": "reti",
+			"name": "RETI - 中断返回",
+			"description": "从中断处理程序返回。"
+		},
+		{
+			"op": "ei",
+			"name": "EI - 开中断",
+			"description": "启用中断。"
+		},
+		{
+			"op": "di",
+			"name": "DI - 关中断",
+			"description": "禁用中断。"
+		},
+		{
+			"op": "ldh",
+			"name": "LDH - 高位加载",
+			"description": "根据操作数读取(或写入)$FFxx处的"高位RAM"中的值。"
+		},
+		{
+			"op": "rlc",
+			"name": "RLC - 带进位循环左移",
+			"description": "将操作数的位向左循环移动。最高位移到最低位,并同时设置进位标志。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "rrc",
+			"name": "RRC - 带进位循环右移",
+			"description": "将操作数的位向右循环移动。最低位移到最高位,并同时设置进位标志。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "rl",
+			"name": "RL - 循环左移",
+			"description": "将操作数的位向左循环移动。最高位移到进位标志,最低位设置为进位标志的值。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "rr",
+			"name": "RR - 循环右移",
+			"description": "将操作数的位向右循环移动。最低位移到进位标志,最高位设置为进位标志的值。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "sla",
+			"name": "SLA - 算术左移",
+			"description": "将操作数的内容向左移位。最高位移到进位标志,最低位设置为0。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "sra",
+			"name": "SRA - 算术右移",
+			"description": "将操作数的内容向右移位。最低位移到进位标志,最高位不变。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "srl",
+			"name": "SRL - 逻辑右移",
+			"description": "将操作数的内容向右移位。最低位移到进位标志,最高位设置为0。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "swap",
+			"name": "SWAP - 交换",
+			"description": "交换操作数的高低四位。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Carry"]
+		},
+		{
+			"op": "bit",
+			"name": "BIT - 测试位",
+			"description": "测试指定值的指定位。如果位为清零则设置零标志,如果位置位则清除零标志。",
+			"flags": ["Zero", "Negative", "HalfCarry"]
+		},
+		{
+			"op": "res",
+			"name": "RES - 复位位",
+			"description": "清除操作数值的指定位。"
+		},
+		{
+			"op": "set",
+			"name": "SET - 置位位",
+			"description": "设置操作数值的指定位。"
+		}
+	]
+}

@@ -1,0 +1,375 @@
+{
+	"instructions": [
+		{
+			"op": "adc",
+			"name": "ADC - 带进位加法",
+			"description": "将指定内存地址的值加上累加器的值再加上进位位。溢出时,进位位被置位。",
+			"flags": ["Carry", "Zero", "Overflow", "Negative", "HalfCarry"]
+		},
+		{
+			"op": "addw",
+			"name": "ADDW - 加法(16位)",
+			"description": "将两个操作数相加,并将结果存储在 YA 中。",
+			"flags": ["Carry", "Zero", "Overflow", "Negative", "HalfCarry"]
+		},
+		{
+			"op": "and",
+			"name": "AND - 按位与",
+			"description": "对累加器和指定内存地址的值执行与操作。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "and1",
+			"name": "AND1 - 带进位按位与",
+			"description": "对进位标志和指定内存地址的特定位执行与操作。将结果存储在进位标志中。",
+			"flags": ["Carry"]
+		},
+		{
+			"op": "asl",
+			"name": "ASL - 算术左移",
+			"description": "将累加器(或指定内存地址的字节)的所有位左移1位。第0位将被设置为0,进位标志(C)将取第7位的值(移位前)。",
+			"flags": ["Carry", "Zero", "Negative"]
+		},
+		{
+			"op": "bbc",
+			"name": "BBC - 位清除时分支",
+			"description": "如果指定内存地址的特定位为0,则跳转到相对地址。"
+		},
+		{
+			"op": "bbs",
+			"name": "BBS - 位置位时分支",
+			"description": "如果指定内存地址的特定位为1,则跳转到相对地址。"
+		},
+		{
+			"op": "bcc",
+			"name": "BCC - 进位清除时分支",
+			"description": "如果进位标志(C)被清除,则跳转到指定位置。"
+		},
+		{
+			"op": "bcs",
+			"name": "BCS - 进位置位时分支",
+			"description": "如果进位标志(C)被置位,则跳转到指定位置。"
+		},
+		{
+			"op": "beq",
+			"name": "BEQ - 相等时分支",
+			"description": "如果零标志(Z)被置位,则跳转到指定位置。"
+		},
+		{
+			"op": "bmi",
+			"name": "BMI - 负数时分支",
+			"description": "如果负数标志(N)被置位,则跳转到指定位置。"
+		},
+		{
+			"op": "bne",
+			"name": "BNE - 不相等时分支",
+			"description": "如果零标志(Z)被清除,则跳转到指定位置。"
+		},
+		{
+			"op": "bpl",
+			"name": "BPL - 正数时分支",
+			"description": "如果负数标志(N)被清除,则跳转到指定位置。"
+		},
+		{
+			"op": "bra",
+			"name": "BRA - 无条件分支",
+			"description": "跳转到指定位置。"
+		},
+		{
+			"op": "brk",
+			"name": "BRK - 中断",
+			"description": "BRK 指令使 CPU 跳转到其中断向量,就像发生了中断一样。PC 和状态标志被压入堆栈。"
+		},
+		{
+			"op": "bvc",
+			"name": "BVC - 溢出清除时分支",
+			"description": "如果溢出标志(V)被清除,则跳转到指定位置。"
+		},
+		{
+			"op": "bvs",
+			"name": "BVS - 溢出置位时分支",
+			"description": "如果溢出标志(V)被置位,则跳转到指定位置。"
+		},
+		{
+			"op": "call",
+			"name": "CALL - 调用子程序",
+			"description": "将下一条指令的地址(减1)压入堆栈,然后跳转到目标地址。"
+		},
+		{
+			"op": "cbne",
+			"name": "CBNE - 比较并分支(不相等时)",
+			"description": "将累加器与第一个操作数的值进行比较,如果值不相等,则跳转到第二个操作数指定的地址。"
+		},
+		{
+			"op": "clr1",
+			"name": "CLR1 - 清除位",
+			"description": "清除指定地址的特定位。"
+		},
+		{
+			"op": "clrc",
+			"name": "CLRC - 清除进位标志",
+			"description": "清除进位标志(C)。",
+			"flags": ["Carry"]
+		},
+		{
+			"op": "clrp",
+			"name": "CLRP - 清除直接页标志",
+			"description": "清除直接页(P)标志。",
+			"flags": ["DirectPage"]
+		},
+		{
+			"op": "clrv",
+			"name": "CLRV - 清除溢出标志",
+			"description": "清除溢出(V)和半进位(H)标志。",
+			"flags": ["Overflow", "HalfCarry"]
+		},
+		{
+			"op": "cmp",
+			"name": "CMP - 比较",
+			"description": "将操作数与指定内存地址的字节进行比较。",
+			"flags": ["Zero", "Carry", "Negative"]
+		},
+		{
+			"op": "cmpw",
+			"name": "CMPW - 比较(16位)",
+			"description": "将 YA 的内容与指定内存地址进行比较。",
+			"flags": ["Zero", "Carry", "Negative"]
+		},
+		{
+			"op": "daa",
+			"name": "DAA - 加法十进制调整",
+			"description": "对 BCD 加法的结果进行十进制调整。",
+			"flags": ["Zero", "Carry", "Negative"]
+		},
+		{
+			"op": "das",
+			"name": "DAS - 减法十进制调整",
+			"description": "对 BCD 减法的结果进行十进制调整。",
+			"flags": ["Zero", "Carry", "Negative"]
+		},
+		{
+			"op": "dbnz",
+			"name": "DBNZ - 减量并分支(非零时)",
+			"description": "将第一个操作数减量,如果零标志被置位,则跳转到目标地址。"
+		},
+		{
+			"op": "dec",
+			"name": "DEC - 减量",
+			"description": "将操作数减1。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "decw",
+			"name": "DECW - 减量(16位)",
+			"description": "将指定地址的16位值减1。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "di",
+			"name": "DI - 禁用中断",
+			"description": "设置中断禁用标志(I)。",
+			"flags": ["Interrupt"]
+		},
+		{
+			"op": "div",
+			"name": "DIV - 除法",
+			"description": "将 YA 除以 X,结果存储在 A 中,余数存储在 Y 中。",
+			"flags": ["Zero", "Negative", "HalfCarry", "Overflow"]
+		},
+		{
+			"op": "ei",
+			"name": "EI - 启用中断",
+			"description": "清除中断禁用标志(I)。",
+			"flags": ["Interrupt"]
+		},
+		{
+			"op": "eor",
+			"name": "EOR - 异或",
+			"description": "对累加器和指定内存地址的字节执行异或操作。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "eor1",
+			"name": "EOR1 - 带进位异或",
+			"description": "对进位标志和指定内存地址的特定位执行异或操作。将结果存储在进位标志中。",
+			"flags": ["Carry"]
+		},
+		{
+			"op": "inc",
+			"name": "INC - 增量",
+			"description": "将操作数加1。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "incw",
+			"name": "INCW - 增量(16位)",
+			"description": "将指定地址的16位值加1。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "jmp",
+			"name": "JMP - 跳转",
+			"description": "跳转到指定位置(改变程序计数器)"
+		},
+		{
+			"op": "lsr",
+			"name": "LSR - 逻辑右移",
+			"description": "将累加器(或指定内存地址的字节)的所有位右移1位。第7位将被设置为0,进位标志(C)将取第0位的值(移位前)。",
+			"flags": ["Carry", "Zero", "Negative"]
+		},
+		{
+			"op": "mov",
+			"name": "MOV - 移动",
+			"description": "将源操作数(第二个操作数)的值移动到目标操作数(第一个操作数)。当用于将值加载到寄存器时,零标志和负数标志会被更新。"
+		},
+		{
+			"op": "mov1",
+			"name": "MOV1 - 移动1位",
+			"description": "将位从源移动到目标。其中一个操作数必须是进位标志。",
+			"flags": ["Carry"]
+		},
+		{
+			"op": "movw",
+			"name": "MOVW - 移动(16位)",
+			"description": "在 YA 和指定地址之间移动指定的16位值。"
+		},
+		{
+			"op": "mul",
+			"name": "MUL - 乘法",
+			"description": "将 Y 和 A 相乘,结果存储在 YA 中。",
+			"flags": ["Negative", "Zero"]
+		},
+		{
+			"op": "nop",
+			"name": "NOP - 空操作",
+			"description": "不执行任何操作,只是将下一条指令的执行延迟2个周期。"
+		},
+		{
+			"op": "not1",
+			"name": "NOT1 - 取反1位",
+			"description": "对指定地址的特定位的值取反。"
+		},
+		{
+			"op": "notc",
+			"name": "NOTC - 取反进位标志",
+			"description": "对进位标志的值取反。",
+			"flags": ["Carry"]
+		},
+		{
+			"op": "or",
+			"name": "OR - 或",
+			"description": "对操作数执行或操作,并将结果存储在第一个操作数中。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "or1",
+			"name": "OR1 - 带进位或",
+			"description": "对进位标志和指定内存地址的特定位执行或操作。将结果存储在进位标志中。",
+			"flags": ["Carry"]
+		},
+		{
+			"op": "pcall",
+			"name": "PCALL",
+			"description": "跳转到指定的子程序($FFxx)"
+		},
+		{
+			"op": "pop",
+			"name": "POP - 出栈",
+			"description": "从堆栈中弹出一个值,并存储到指定的寄存器中。"
+		},
+		{
+			"op": "push",
+			"name": "PUSH - 入栈",
+			"description": "将指定寄存器的值压入堆栈。"
+		},
+		{
+			"op": "pull",
+			"name": "PULL - 拉取",
+			"description": "从堆栈中拉取一个字节,并存储到操作数中。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "ret",
+			"name": "RET - 从子程序返回",
+			"description": "RET 指令在子程序结束时使用,将执行返回到调用函数。它从堆栈中弹出状态标志和程序计数器(减1)。"
+		},
+		{
+			"op": "ret1",
+			"name": "RET1 - 从中断返回",
+			"description": "从中断处理程序返回。"
+		},
+		{
+			"op": "rol",
+			"name": "ROL - 循环左移",
+			"description": "将所有位左移1位。最右边的位取当前进位标志(C)的值。最左边的位存储到进位标志(C)中。",
+			"flags": ["Carry", "Zero", "Negative"]
+		},
+		{
+			"op": "ror",
+			"name": "ROR - 循环右移",
+			"description": "将所有位右移1位。最左边的位取当前进位标志(C)的值。最右边的位存储到进位标志(C)中。",
+			"flags": ["Carry", "Zero", "Negative"]
+		},
+		{
+			"op": "sbc",
+			"name": "SBC - 带进位减法",
+			"description": "从累加器的值中减去指定内存地址的字节(受进位标志(C)影响)。",
+			"flags": ["Carry", "Zero", "Overflow", "Negative"]
+		},
+		{
+			"op": "set1",
+			"name": "SET1 - 置位",
+			"description": "设置指定地址的特定位。"
+		},
+		{
+			"op": "setc",
+			"name": "SETC - 设置进位标志",
+			"description": "设置进位标志(C)。",
+			"flags": ["Carry"]
+		},
+		{
+			"op": "setp",
+			"name": "SETP - 设置直接页标志",
+			"description": "设置直接页标志(P)。"
+		},
+		{
+			"op": "sleep",
+			"name": "SLEEP - 休眠",
+			"description": "暂停处理器。"
+		},
+		{
+			"op": "stop",
+			"name": "STOP - 停止",
+			"description": "暂停处理器。"
+		},
+		{
+			"op": "subw",
+			"name": "SUBW - 减法(16位)",
+			"description": "从 YA 中减去指定地址的16位值,并将结果存储在 YA 中。",
+			"flags": ["Carry", "Zero", "Overflow", "Negative", "HalfCarry"]
+		},
+		{
+			"op": "tcall",
+			"name": "TCALL",
+			"description": "跳转到 [$FFC0+2*操作数] 处的指定子程序"
+		},
+		{
+			"op": "tclr1",
+			"name": "TCLR1 - 测试并清除位",
+			"description": "比较累加器和操作数值。清除 A 中设置的位,然后将结果写回内存。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "tset1",
+			"name": "TSET1 - 测试并置位",
+			"description": "比较累加器和操作数值。设置 A 中设置的位,然后将结果写回内存。",
+			"flags": ["Zero", "Negative"]
+		},
+		{
+			"op": "xcn",
+			"name": "XCH - 交换",
+			"description": "交换累加器的高低半字节。",
+			"flags": ["Zero", "Negative"]
+		}
+	]
+}

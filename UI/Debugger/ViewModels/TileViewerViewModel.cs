@@ -10,6 +10,7 @@ using Mesen.Debugger.Controls;
 using Mesen.Debugger.Utilities;
 using Mesen.Debugger.Windows;
 using Mesen.Interop;
+using Mesen.Localization;
 using Mesen.Utilities;
 using Mesen.ViewModels;
 using System;
@@ -550,22 +551,22 @@ namespace Mesen.Debugger.ViewModels
 
 			PixelSize tileSize = Config.Format.GetTileSize();
 			PixelRect cropRect = new PixelRect(p.X / tileSize.Width * tileSize.Width, p.Y / tileSize.Height * tileSize.Height, tileSize.Width, tileSize.Height);
-			entries.AddPicture("Tile", ViewerBitmap, 6, cropRect);
+			entries.AddPicture(ResourceHelper.GetMessage("TilemapViewer_Tile"), ViewerBitmap, 6, cropRect);
 
 			int address = GetTileAddress(cropRect.TopLeft);
 			if(Config.Source.IsRelativeMemory()) {
-				entries.AddEntry("Tile address (" + Config.Source.GetShortName() + ")", FormatAddress(address, Config.Source));
+				entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_TileAddressMemType", Config.Source.GetShortName()), FormatAddress(address, Config.Source));
 
 				AddressInfo absAddress = DebugApi.GetAbsoluteAddress(new AddressInfo() { Address = address, Type = Config.Source });
 				if(absAddress.Address >= 0) {
-					entries.AddEntry("Tile address (" + absAddress.Type.GetShortName() + ")", FormatAddress(absAddress.Address, absAddress.Type));
+					entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_TileAddressMemType", absAddress.Type.GetShortName()), FormatAddress(absAddress.Address, absAddress.Type));
 				}
 			} else {
-				entries.AddEntry("Tile address", FormatAddress(address, Config.Source));
+				entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_TileAddress"), FormatAddress(address, Config.Source));
 			}
 
 			if(ShowNesTileIndex) {
-				entries.AddEntry("Tile index", "$" + ((address >> 4) & 0xFF).ToString("X2"));
+				entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_TileIndex"), "$" + ((address >> 4) & 0xFF).ToString("X2"));
 			}
 
 			entries.EndUpdate();

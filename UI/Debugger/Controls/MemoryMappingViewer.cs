@@ -7,6 +7,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using Mesen.Config;
 using Mesen.Interop;
+using Mesen.Localization;
 using Mesen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -96,24 +97,24 @@ namespace Mesen.Debugger.Controls
 			if(hoveredMapping != null) {
 				TooltipEntries entries = new TooltipEntries();
 				DynamicTooltip dynTooltip = new DynamicTooltip();
-				entries.AddEntry("Entry", GetBlockText(hoveredMapping));
+				entries.AddEntry(ResourceHelper.GetMessage("MemMap_Entry"), GetBlockText(hoveredMapping));
 				int end = start + hoveredMapping.Length - 1;
-				entries.AddEntry($"Range ({MemType.GetShortName()})", "$" + start.ToString("X4") + " - $" + end.ToString("X4"));
+				entries.AddEntry(ResourceHelper.GetMessage("MemMap_Range", MemType.GetShortName()), "$" + start.ToString("X4") + " - $" + end.ToString("X4"));
 
 				AddressInfo absStart = DebugApi.GetAbsoluteAddress(new AddressInfo() { Address = start, Type = MemType });
 				AddressInfo absEnd = DebugApi.GetAbsoluteAddress(new AddressInfo() { Address = end, Type = MemType });
 				if(absStart.Address >= 0 && absEnd.Address >= 0 && absStart.Type == absEnd.Type) {
-					entries.AddEntry($"Range ({absStart.Type.GetShortName()})", "$" + absStart.Address.ToString("X4") + " - $" + absEnd.Address.ToString("X4"));
+					entries.AddEntry(ResourceHelper.GetMessage("MemMap_Range", absStart.Type.GetShortName()), "$" + absStart.Address.ToString("X4") + " - $" + absEnd.Address.ToString("X4"));
 				}
 
 				if(hoveredMapping.Note.StartsWith("RW")) {
-					entries.AddEntry("Access", "Read/Write");
+					entries.AddEntry(ResourceHelper.GetMessage("MemMap_Access"), ResourceHelper.GetMessage("MemMap_AccessReadWrite"));
 				} else if(hoveredMapping.Note.StartsWith("R")) {
-					entries.AddEntry("Access", "Read-only");
+					entries.AddEntry(ResourceHelper.GetMessage("MemMap_Access"), ResourceHelper.GetMessage("MemMap_AccessReadOnly"));
 				} else if(hoveredMapping.Note.StartsWith("W")) {
-					entries.AddEntry("Access", "Write-only");
+					entries.AddEntry(ResourceHelper.GetMessage("MemMap_Access"), ResourceHelper.GetMessage("MemMap_AccessWriteOnly"));
 				} else if(hoveredMapping.Note.StartsWith("OB")) {
-					entries.AddEntry("Access", "Open bus (unmapped)");
+					entries.AddEntry(ResourceHelper.GetMessage("MemMap_Access"), ResourceHelper.GetMessage("MemMap_AccessOpenBus"));
 				}
 				dynTooltip.Items = entries;
 

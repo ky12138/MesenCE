@@ -1762,6 +1762,498 @@
 			<Control ID="btnSelect">Select...</Control>
 			<Control ID="btnDelete">Delete file</Control>
 		</Form>
+
+		<Form ID="NesStatusView">
+			<Control ID="lblSP">SP:</Control>
+			<Control ID="lblA">A:</Control>
+			<Control ID="lblX">X:</Control>
+			<Control ID="lblY">Y:</Control>
+			<Control ID="lblPC">PC:</Control>
+			<Control ID="lblCycle">Cycle:</Control>
+			<Control ID="lblP">P:</Control>
+			<Control ID="chkCarry">Carry</Control>
+			<Control ID="chkZero">Zero</Control>
+			<Control ID="chkInterrupt">Interrupt</Control>
+			<Control ID="chkOverflow">Overflow</Control>
+			<Control ID="chkDecimal">Decimal</Control>
+			<Control ID="chkNegative">Negative</Control>
+			<Control ID="lblIRQs">IRQs:</Control>
+			<Control ID="chkNMI">NMI</Control>
+			<Control ID="chkCart">Cart</Control>
+			<Control ID="chkFrameCounter">Frame Counter</Control>
+			<Control ID="chkDMC">DMC</Control>
+			<Control ID="lblScanline">Scanline:</Control>
+			<Control ID="lblBus">Bus:</Control>
+			<Control ID="lblV">V:</Control>
+			<Control ID="lblT">T:</Control>
+			<Control ID="lblScrollX">X:</Control>
+			<Control ID="chkSprite0Hit">Sprite 0 Hit</Control>
+			<Control ID="chkSpriteOverflow">Sprite Overflow</Control>
+			<Control ID="chkVerticalBlank">Vertical Blank</Control>
+			<Control ID="chkWriteToggle">Write Toggle</Control>
+			<Control ID="chkLargeSprites">Large Sprites</Control>
+			<Control ID="chkVerticalWrite">Vertical Write</Control>
+			<Control ID="chkNmiOnVBlank">NMI on VBlank</Control>
+			<Control ID="chkBgAt1000">BG at $1000</Control>
+			<Control ID="chkSpritesAt1000">Sprites at $1000</Control>
+			<Control ID="chkBgEnabled">BG Enabled</Control>
+			<Control ID="chkSpritesEnabled">Sprites Enabled</Control>
+			<Control ID="chkBgMask">BG Mask</Control>
+			<Control ID="chkSpriteMask">Sprite Mask</Control>
+			<Control ID="chkGrayscale">Grayscale</Control>
+			<Control ID="chkIntensifyRed">Intensify Red</Control>
+			<Control ID="chkIntensifyGreen">Intensify Green</Control>
+			<Control ID="chkIntensifyBlue">Intensify Blue</Control>
+		</Form>
+
+		<Form ID="SnesStatusView">
+			<Control ID="lblSP">SP:</Control>
+			<Control ID="lblA">A:</Control>
+			<Control ID="lblX">X:</Control>
+			<Control ID="lblY">Y:</Control>
+			<Control ID="lblPC">PC:</Control>
+			<Control ID="lblD">D:</Control>
+			<Control ID="lblDB">DB:</Control>
+			<Control ID="lblCycle">Cycle:</Control>
+			<Control ID="lblP">P:</Control>
+			<Control ID="chkCarry">Carry</Control>
+			<Control ID="chkIndex">Index</Control>
+			<Control ID="chkZero">Zero</Control>
+			<Control ID="chkMemory">Memory</Control>
+			<Control ID="chkInterrupt">Interrupt</Control>
+			<Control ID="chkOverflow">Overflow</Control>
+			<Control ID="chkDecimal">Decimal</Control>
+			<Control ID="chkNegative">Negative</Control>
+			<Control ID="chkEmulation">Emulation</Control>
+			<Control ID="lblIRQs">IRQs:</Control>
+			<Control ID="chkNMI">NMI</Control>
+			<Control ID="chkHV">H/V</Control>
+			<Control ID="chkCoprocessor">Coprocessor</Control>
+			<Control ID="lblHClock">H Clock:</Control>
+			<Control ID="lblScanline">Scanline:</Control>
+			<Control ID="lblVramAddr">VRAM Addr.:</Control>
+			<Control ID="lblOamAddr">OAM Addr.:</Control>
+			<Control ID="lblCgramAddr">CGRAM Addr.:</Control>
+		</Form>
+
+		<Form ID="GbStatusView">
+			<Control ID="lblSP">SP:</Control>
+			<Control ID="lblA">A:</Control>
+			<Control ID="lblF">F:</Control>
+			<Control ID="lblB">B:</Control>
+			<Control ID="lblC">C:</Control>
+			<Control ID="lblD">D:</Control>
+			<Control ID="lblE">E:</Control>
+			<Control ID="lblH">H:</Control>
+			<Control ID="lblL">L:</Control>
+			<Control ID="lblPC">PC:</Control>
+			<Control ID="lblCycle">Cycle:</Control>
+			<Control ID="chkCarry">Carry</Control>
+			<Control ID="chkHalfCarry">Half Carry</Control>
+			<Control ID="chkAddSub">Add/Sub (N)</Control>
+			<Control ID="chkZero">Zero</Control>
+			<Control ID="chkHalted">Halted</Control>
+			<Control ID="chkIME">IME</Control>
+			<Control ID="lblScanline">Scanline:</Control>
+		</Form>
+
+		<Form ID="GbaStatusView">
+			<Control ID="lblR0">R0:</Control>
+			<Control ID="lblR1">R1:</Control>
+			<Control ID="lblR2">R2:</Control>
+			<Control ID="lblR3">R3:</Control>
+			<Control ID="lblR4">R4:</Control>
+			<Control ID="lblR5">R5:</Control>
+			<Control ID="lblR6">R6:</Control>
+			<Control ID="lblR7">R7:</Control>
+			<Control ID="lblR8">R8:</Control>
+			<Control ID="lblR9">R9:</Control>
+			<Control ID="lblR10">R10:</Control>
+			<Control ID="lblR11">R11:</Control>
+			<Control ID="lblR12">R12:</Control>
+			<Control ID="lblSPReg">SP (R13):</Control>
+			<Control ID="lblLRReg">LR (R14):</Control>
+			<Control ID="lblPCReg">PC (R15):</Control>
+			<Control ID="lblStack">Stack: </Control>
+			<Control ID="lblMode">Mode:</Control>
+			<Control ID="lblCPSR">CPSR:</Control>
+			<Control ID="chkNegative">Negative</Control>
+			<Control ID="chkZero">Zero</Control>
+			<Control ID="chkCarry">Carry</Control>
+			<Control ID="chkOverflow">Overflow</Control>
+			<Control ID="chkIrqDisabled">IRQ Disabled</Control>
+			<Control ID="chkFiqDisabled">FIQ Disabled</Control>
+			<Control ID="chkThumb">Thumb</Control>
+			<Control ID="lblScanline">Scanline:</Control>
+			<Control ID="lblCycle">Cycle:</Control>
+		</Form>
+
+		<Form ID="PceStatusView">
+			<Control ID="lblSP">SP:</Control>
+			<Control ID="lblA">A:</Control>
+			<Control ID="lblX">X:</Control>
+			<Control ID="lblY">Y:</Control>
+			<Control ID="lblPC">PC:</Control>
+			<Control ID="lblCycle">Cycle:</Control>
+			<Control ID="lblP">P:</Control>
+			<Control ID="chkCarry">Carry</Control>
+			<Control ID="chkZero">Zero</Control>
+			<Control ID="chkMemory">Memory</Control>
+			<Control ID="chkInterrupt">Interrupt</Control>
+			<Control ID="chkOverflow">Overflow</Control>
+			<Control ID="chkDecimal">Decimal</Control>
+			<Control ID="chkNegative">Negative</Control>
+			<Control ID="lblScanline">Scanline:</Control>
+		</Form>
+
+		<Form ID="SmsStatusView">
+			<Control ID="lblSP">SP:</Control>
+			<Control ID="lblA">A:</Control>
+			<Control ID="lblF">F:</Control>
+			<Control ID="lblB">B:</Control>
+			<Control ID="lblC">C:</Control>
+			<Control ID="lblD">D:</Control>
+			<Control ID="lblE">E:</Control>
+			<Control ID="lblH">H:</Control>
+			<Control ID="lblL">L:</Control>
+			<Control ID="lblPC">PC:</Control>
+			<Control ID="lblIX">IX:</Control>
+			<Control ID="lblIY">IY:</Control>
+			<Control ID="lblCycle">Cycle:</Control>
+			<Control ID="chkCarry">Carry</Control>
+			<Control ID="chkHalfCarry">Half Carry</Control>
+			<Control ID="chkSubN">Sub (N)</Control>
+			<Control ID="chkF5">F5</Control>
+			<Control ID="chkParity">Parity</Control>
+			<Control ID="chkZero">Zero</Control>
+			<Control ID="chkF3">F3</Control>
+			<Control ID="chkSign">Sign</Control>
+			<Control ID="lblAltA">A':</Control>
+			<Control ID="lblAltF">F':</Control>
+			<Control ID="lblAltB">B':</Control>
+			<Control ID="lblAltC">C':</Control>
+			<Control ID="lblAltD">D':</Control>
+			<Control ID="lblAltE">E':</Control>
+			<Control ID="lblAltH">H':</Control>
+			<Control ID="lblAltL">L':</Control>
+			<Control ID="lblI">I:</Control>
+			<Control ID="lblR">R:</Control>
+			<Control ID="lblIM">IM:</Control>
+			<Control ID="chkHalted">Halted</Control>
+			<Control ID="chkIFF1">IFF1</Control>
+			<Control ID="chkIFF2">IFF2</Control>
+			<Control ID="lblScanline">Scanline:</Control>
+		</Form>
+
+		<Form ID="SpcStatusView">
+			<Control ID="lblSP">SP:</Control>
+			<Control ID="lblA">A:</Control>
+			<Control ID="lblX">X:</Control>
+			<Control ID="lblY">Y:</Control>
+			<Control ID="lblPC">PC:</Control>
+			<Control ID="lblCycle">Cycle:</Control>
+			<Control ID="lblP">P:</Control>
+			<Control ID="chkCarry">Carry</Control>
+			<Control ID="chkZero">Zero</Control>
+			<Control ID="chkIRQ">IRQ</Control>
+			<Control ID="chkHalf">Half</Control>
+			<Control ID="chkBreak">Break</Control>
+			<Control ID="chkDirPage">Dir. Page</Control>
+			<Control ID="chkOverflow">Overflow</Control>
+			<Control ID="chkNegative">Negative</Control>
+		</Form>
+
+		<Form ID="WsStatusView">
+			<Control ID="lblSS">SS:</Control>
+			<Control ID="lblSP">SP:</Control>
+			<Control ID="lblAX">AX:</Control>
+			<Control ID="lblBX">BX:</Control>
+			<Control ID="lblCX">CX:</Control>
+			<Control ID="lblDX">DX:</Control>
+			<Control ID="lblDS">DS:</Control>
+			<Control ID="lblES">ES:</Control>
+			<Control ID="lblSI">SI:</Control>
+			<Control ID="lblDI">DI:</Control>
+			<Control ID="lblCS">CS:</Control>
+			<Control ID="lblIP">IP:</Control>
+			<Control ID="lblBP">BP:</Control>
+			<Control ID="lblCycle">Cycle:</Control>
+			<Control ID="lblF">F:</Control>
+			<Control ID="chkCarry">Carry</Control>
+			<Control ID="chkParity">Parity</Control>
+			<Control ID="chkAuxCarry">Aux Carry</Control>
+			<Control ID="chkZero">Zero</Control>
+			<Control ID="chkSign">Sign</Control>
+			<Control ID="chkTrap">Trap</Control>
+			<Control ID="chkIRQ">IRQ</Control>
+			<Control ID="chkDirection">Direction</Control>
+			<Control ID="chkOverflow">Overflow</Control>
+			<Control ID="chkMode">Mode</Control>
+			<Control ID="chkHalted">Halted</Control>
+			<Control ID="lblScanline">Scanline:</Control>
+		</Form>
+
+		<Form ID="GsuStatusView">
+			<Control ID="lblR0">R0:</Control>
+			<Control ID="lblR1">R1:</Control>
+			<Control ID="lblR2">R2:</Control>
+			<Control ID="lblR3">R3:</Control>
+			<Control ID="lblR4">R4:</Control>
+			<Control ID="lblR5">R5:</Control>
+			<Control ID="lblR6">R6:</Control>
+			<Control ID="lblR7">R7:</Control>
+			<Control ID="lblR8">R8:</Control>
+			<Control ID="lblR9">R9:</Control>
+			<Control ID="lblR10">R10:</Control>
+			<Control ID="lblR11">R11:</Control>
+			<Control ID="lblR12">R12:</Control>
+			<Control ID="lblR13">R13:</Control>
+			<Control ID="lblR14">R14:</Control>
+			<Control ID="lblR15">R15:</Control>
+			<Control ID="lblSRC">SRC:</Control>
+			<Control ID="lblDST">DST:</Control>
+			<Control ID="lblPBR">PBR:</Control>
+			<Control ID="lblROMBR">ROMBR:</Control>
+			<Control ID="lblRAMBR">RAMBR:</Control>
+			<Control ID="lblRAMADDR">RAM ADDR:</Control>
+			<Control ID="lblSFR">SFR:</Control>
+			<Control ID="chkZero">Zero</Control>
+			<Control ID="chkCarry">Carry</Control>
+			<Control ID="chkSign">Sign</Control>
+			<Control ID="chkOverflow">Overflow</Control>
+			<Control ID="chkRunning">Running</Control>
+			<Control ID="chkRomRead">ROM Read</Control>
+			<Control ID="chkAlt1">Alt1</Control>
+			<Control ID="chkAlt2">Alt2</Control>
+			<Control ID="chkPrefix">Prefix</Control>
+			<Control ID="chkIRQ">IRQ</Control>
+			<Control ID="lblCOLOR">COLOR:</Control>
+			<Control ID="lblPOR">POR:</Control>
+			<Control ID="chkPlotTransparent">Plot Transparent</Control>
+			<Control ID="chkPlotDither">Plot Dither</Control>
+			<Control ID="chkColorSrcHigh">Color Src High</Control>
+			<Control ID="chkColorFreezeHigh">Color Freeze High</Control>
+			<Control ID="chkObjMode">Obj Mode</Control>
+		</Form>
+
+		<Form ID="Cx4StatusView">
+			<Control ID="lblR0">R0:</Control>
+			<Control ID="lblR1">R1:</Control>
+			<Control ID="lblR2">R2:</Control>
+			<Control ID="lblR3">R3:</Control>
+			<Control ID="lblR4">R4:</Control>
+			<Control ID="lblR5">R5:</Control>
+			<Control ID="lblR6">R6:</Control>
+			<Control ID="lblR7">R7:</Control>
+			<Control ID="lblR8">R8:</Control>
+			<Control ID="lblR9">R9:</Control>
+			<Control ID="lblR10">R10:</Control>
+			<Control ID="lblR11">R11:</Control>
+			<Control ID="lblR12">R12:</Control>
+			<Control ID="lblR13">R13:</Control>
+			<Control ID="lblR14">R14:</Control>
+			<Control ID="lblR15">R15:</Control>
+			<Control ID="lblMDR">MDR:</Control>
+			<Control ID="lblMAR">MAR:</Control>
+			<Control ID="lblDPR">DPR:</Control>
+			<Control ID="lblROM">ROM:</Control>
+			<Control ID="lblRAM">RAM:</Control>
+			<Control ID="lblPB">PB:</Control>
+			<Control ID="lblP">P:</Control>
+			<Control ID="lblPC">PC:</Control>
+			<Control ID="lblSP">SP:</Control>
+			<Control ID="lblA">A:</Control>
+			<Control ID="chkZero">Zero</Control>
+			<Control ID="chkCarry">Carry</Control>
+			<Control ID="chkNegative">Negative</Control>
+			<Control ID="chkOverflow">Overflow</Control>
+			<Control ID="chkIRQ">IRQ</Control>
+		</Form>
+
+		<Form ID="NecDspStatusView">
+			<Control ID="lblTR">TR:</Control>
+			<Control ID="lblTRB">TRB:</Control>
+			<Control ID="lblPC">PC:</Control>
+			<Control ID="lblSP">SP:</Control>
+			<Control ID="lblRP">RP:</Control>
+			<Control ID="lblDP">DP:</Control>
+			<Control ID="lblDR">DR:</Control>
+			<Control ID="lblSR">SR:</Control>
+			<Control ID="lblK">K:</Control>
+			<Control ID="lblL">L:</Control>
+			<Control ID="lblM">M:</Control>
+			<Control ID="lblN">N:</Control>
+			<Control ID="lblA">A:</Control>
+			<Control ID="chkCarry">Carry</Control>
+			<Control ID="chkZero">Zero</Control>
+			<Control ID="chkOverflow0">Overflow 0</Control>
+			<Control ID="chkOverflow1">Overflow 1</Control>
+			<Control ID="chkSign0">Sign 0</Control>
+			<Control ID="chkSign1">Sign 1</Control>
+			<Control ID="lblB">B:</Control>
+		</Form>
+
+		<Form ID="St018StatusView">
+			<Control ID="lblR0">R0:</Control>
+			<Control ID="lblR1">R1:</Control>
+			<Control ID="lblR2">R2:</Control>
+			<Control ID="lblR3">R3:</Control>
+			<Control ID="lblR4">R4:</Control>
+			<Control ID="lblR5">R5:</Control>
+			<Control ID="lblR6">R6:</Control>
+			<Control ID="lblR7">R7:</Control>
+			<Control ID="lblR8">R8:</Control>
+			<Control ID="lblR9">R9:</Control>
+			<Control ID="lblR10">R10:</Control>
+			<Control ID="lblR11">R11:</Control>
+			<Control ID="lblR12">R12:</Control>
+			<Control ID="lblSPReg">SP (R13):</Control>
+			<Control ID="lblLRReg">LR (R14):</Control>
+			<Control ID="lblPCReg">PC (R15):</Control>
+			<Control ID="lblStack">Stack: </Control>
+			<Control ID="lblMode">Mode:</Control>
+			<Control ID="lblCPSR">CPSR:</Control>
+			<Control ID="chkNegative">Negative</Control>
+			<Control ID="chkZero">Zero</Control>
+			<Control ID="chkCarry">Carry</Control>
+			<Control ID="chkOverflow">Overflow</Control>
+			<Control ID="chkIrqDisabled">IRQ Disabled</Control>
+			<Control ID="chkFiqDisabled">FIQ Disabled</Control>
+		</Form>
+
+		<Form ID="NesEventViewerConfigView">
+			<Control ID="secPpuWrites">PPU Writes</Control>
+			<Control ID="secPpuReads">PPU Reads</Control>
+			<Control ID="secOtherWrites">Other Writes</Control>
+			<Control ID="secOtherReads">Other Reads</Control>
+			<Control ID="lblMapper">Mapper</Control>
+			<Control ID="lblController">Controller</Control>
+			<Control ID="secOtherEvents">Other events</Control>
+			<Control ID="lblDmcDmaRead">DMC DMA Read</Control>
+			<Control ID="lblOamOtherDmaReads">OAM/Other DMA Reads</Control>
+			<Control ID="lblSpriteZeroHit">Sprite Zero Hit</Control>
+			<Control ID="lblMarkedBreakpoints">Marked Breakpoints</Control>
+			<Control ID="chkShowPreviousFrameEvents">Show previous frame events</Control>
+			<Control ID="chkShowNtscBorders">Show NTSC borders</Control>
+		</Form>
+
+		<Form ID="SnesEventViewerConfigView">
+			<Control ID="secPpuRegisterWrites">PPU Register Writes</Control>
+			<Control ID="lblMode7">Mode 7</Control>
+			<Control ID="lblBgOptions">BG Options</Control>
+			<Control ID="lblBgScroll">BG Scroll</Control>
+			<Control ID="lblWindow">Window</Control>
+			<Control ID="lblOthers">Others</Control>
+			<Control ID="secOtherEvents">Other events</Control>
+			<Control ID="lblPpuRegRead">PPU Reg. Read</Control>
+			<Control ID="lblSpcRegRead">SPC Reg. Read</Control>
+			<Control ID="lblCpuRegRead">CPU Reg. Read</Control>
+			<Control ID="lblWramRegRead">WRAM Reg. Read</Control>
+			<Control ID="lblSpcRegWrite">SPC Reg. Write</Control>
+			<Control ID="lblCpuRegWrite">CPU Reg. Write</Control>
+			<Control ID="lblWramRegWrite">WRAM Reg. Write</Control>
+			<Control ID="lblMarkedBreakpoints">Marked Breakpoints</Control>
+			<Control ID="secDmaFilters">DMA Filters</Control>
+			<Control ID="lblChannel0">Channel 0</Control>
+			<Control ID="lblChannel1">Channel 1</Control>
+			<Control ID="lblChannel2">Channel 2</Control>
+			<Control ID="lblChannel3">Channel 3</Control>
+			<Control ID="lblChannel4">Channel 4</Control>
+			<Control ID="lblChannel5">Channel 5</Control>
+			<Control ID="lblChannel6">Channel 6</Control>
+			<Control ID="lblChannel7">Channel 7</Control>
+			<Control ID="chkShowPreviousFrameEvents">Show previous frame events</Control>
+		</Form>
+
+		<Form ID="GbEventViewerConfigView">
+			<Control ID="secLcdWrites">LCD writes</Control>
+			<Control ID="secLcdReads">LCD reads</Control>
+			<Control ID="lblPalette">Palette</Control>
+			<Control ID="lblBgScroll">BG Scroll</Control>
+			<Control ID="lblWindow">Window</Control>
+			<Control ID="lblOthers">Others</Control>
+			<Control ID="secRegisterWrites">Register writes</Control>
+			<Control ID="secRegisterReads">Register reads</Control>
+			<Control ID="lblInput">Input</Control>
+			<Control ID="lblTimer">Timer</Control>
+			<Control ID="lblSerial">Serial</Control>
+			<Control ID="lblOther">Other</Control>
+			<Control ID="secOtherEvents">Other events</Control>
+			<Control ID="lblMarkedBreakpoints">Marked Breakpoints</Control>
+			<Control ID="chkShowPreviousFrameEvents">Show previous frame events</Control>
+		</Form>
+
+		<Form ID="GbaEventViewerConfigView">
+			<Control ID="secLcdWrites">LCD writes</Control>
+			<Control ID="secLcdReads">LCD reads</Control>
+			<Control ID="lblPalette">Palette</Control>
+			<Control ID="lblBgScroll">BG Scroll</Control>
+			<Control ID="lblWindow">Window</Control>
+			<Control ID="lblOthers">Others</Control>
+			<Control ID="secRegisterWrites">Register writes</Control>
+			<Control ID="secRegisterReads">Register reads</Control>
+			<Control ID="lblInput">Input</Control>
+			<Control ID="lblTimer">Timer</Control>
+			<Control ID="lblSerial">Serial</Control>
+			<Control ID="lblOther">Other</Control>
+			<Control ID="secOtherEvents">Other events</Control>
+			<Control ID="lblMarkedBreakpoints">Marked Breakpoints</Control>
+			<Control ID="chkShowPreviousFrameEvents">Show previous frame events</Control>
+		</Form>
+
+		<Form ID="PceEventViewerConfigView">
+			<Control ID="secVdcWrites">VDC writes</Control>
+			<Control ID="secVdcReads">VDC reads</Control>
+			<Control ID="lblRegSelect">Reg. Select</Control>
+			<Control ID="lblControl">Control</Control>
+			<Control ID="lblXYScroll">X/Y Scroll</Control>
+			<Control ID="lblMemoryWidth">Memory Width</Control>
+			<Control ID="lblHvDisplay">H/V Display</Control>
+			<Control ID="lblDmaControl">DMA Control</Control>
+			<Control ID="lblStatus">Status</Control>
+			<Control ID="secRegisterWrites">Register writes</Control>
+			<Control ID="secRegisterReads">Register reads</Control>
+			<Control ID="lblTimer">Timer</Control>
+			<Control ID="lblArcade">Arcade</Control>
+			<Control ID="secOtherEvents">Other events</Control>
+			<Control ID="lblMarkedBreakpoints">Marked Breakpoints</Control>
+			<Control ID="chkShowPreviousFrameEvents">Show previous frame events</Control>
+		</Form>
+
+		<Form ID="SmsEventViewerConfigView">
+			<Control ID="secVdpWrites">VDP writes</Control>
+			<Control ID="secVdpReads">VDP reads</Control>
+			<Control ID="lblControl">Control</Control>
+			<Control ID="lblPalette">Palette</Control>
+			<Control ID="lblHCounter">H Counter</Control>
+			<Control ID="lblVCounter">V Counter</Control>
+			<Control ID="secRegisterWrites">Register writes</Control>
+			<Control ID="secRegisterReads">Register reads</Control>
+			<Control ID="lblGameGear">Game Gear</Control>
+			<Control ID="secOtherEvents">Other events</Control>
+			<Control ID="lblMarkedBreakpoints">Marked Breakpoints</Control>
+			<Control ID="chkShowPreviousFrameEvents">Show previous frame events</Control>
+		</Form>
+
+		<Form ID="WsEventViewerConfigView">
+			<Control ID="secPpuWrites">PPU writes</Control>
+			<Control ID="secPpuReads">PPU reads</Control>
+			<Control ID="lblScroll">Scroll</Control>
+			<Control ID="lblWindow">Window</Control>
+			<Control ID="lblPalette">Palette</Control>
+			<Control ID="lblOthers">Others</Control>
+			<Control ID="lblVCounter">V. Counter</Control>
+			<Control ID="secPortWrites">Port writes</Control>
+			<Control ID="secPortReads">Port reads</Control>
+			<Control ID="lblAudio">Audio</Control>
+			<Control ID="lblCart">Cart</Control>
+			<Control ID="lblInput">Input</Control>
+			<Control ID="lblSerial">Serial</Control>
+			<Control ID="lblTimer">Timer</Control>
+			<Control ID="secOtherEvents">Other events</Control>
+			<Control ID="lblMarkedBreakpoints">Marked Breakpoints</Control>
+			<Control ID="chkShowPreviousFrameEvents">Show previous frame events</Control>
+		</Form>
 	</Forms>
 	<Messages>
 		<Message ID="LastSession">Last Session</Message>
@@ -1868,6 +2360,1964 @@ E
 		<Message ID="LabelOrCommentRequired">A label or a comment must be specified.</Message>
 		<Message ID="AddressOutOfRange">The address is out of range.</Message>
 		<Message ID="AddressHasOtherLabel">Another label exists for this address: {0}</Message>
+
+		<Message ID="TooltipByteCode">Byte Code</Message>
+		<Message ID="TooltipMode">Mode</Message>
+		<Message ID="TooltipCycleCount">Cycle Count</Message>
+		<Message ID="TooltipAffectedFlags">Affected Flags</Message>
+		<Message ID="TooltipAddress">Address</Message>
+		<Message ID="TooltipSymbol">Symbol</Message>
+		<Message ID="TooltipLabel">Label</Message>
+		<Message ID="TooltipValue">Value</Message>
+		<Message ID="TooltipStats">Stats</Message>
+		<Message ID="TooltipConstant">Constant</Message>
+		<Message ID="TooltipComment">Comment</Message>
+		<Message ID="TooltipType">Type</Message>
+		<Message ID="TooltipCycle">Cycle</Message>
+		<Message ID="TooltipFrames">frames</Message>
+
+		<Message ID="DockDisassembly">Disassembly</Message>
+		<Message ID="DockSourceView">Source View</Message>
+		<Message ID="DockStatus">Status</Message>
+		<Message ID="DockBreakpoints">Breakpoints</Message>
+		<Message ID="DockWatch">Watch</Message>
+		<Message ID="DockCallStack">Call Stack</Message>
+		<Message ID="DockLabels">Labels</Message>
+		<Message ID="DockFunctions">Functions</Message>
+		<Message ID="DockFindResults">Find Results</Message>
+		<Message ID="DockControllers">Controllers</Message>
+
+		<Message ID="TraceLogTooltip_Notes">Notes</Message>
+		<Message ID="TraceLogTooltip_CustomizeFormat">You can customize the output by enabling the 'Use custom format' option and manually editing the format.</Message>
+		<Message ID="TraceLogTooltip_FormatConfig">Tags can have their display format configured by using a comma and specifying the format options. e.g:</Message>
+		<Message ID="TraceLogTooltip_FormatExample1">  [Scanline,3] - display scanline in decimal, pad to always be 3 characters wide</Message>
+		<Message ID="TraceLogTooltip_FormatExample2">  [Scanline,h] - display scanline in hexadecimal</Message>
+		<Message ID="TraceLogTooltip_FormatExample3">  [Scanline,3h] - display scanline in hexadecimal, pad to always be 3 characters wide</Message>
+		<Message ID="TraceLogTooltip_CommonTags">Common tags (all CPUs)</Message>
+		<Message ID="TraceLogTooltip_CpuTags">CPU-specific tags ({0})</Message>
+		<Message ID="TraceLogTooltip_TagByteCode">[ByteCode] - byte code for the instruction (1 to 3 bytes)</Message>
+		<Message ID="TraceLogTooltip_TagDisassembly">[Disassembly] - disassembly for the current instruction</Message>
+		<Message ID="TraceLogTooltip_TagEffectiveAddress">[EffectiveAddress] - effective address used for indirect addressing modes</Message>
+		<Message ID="TraceLogTooltip_TagMemoryValue">[MemoryValue] - value stored at the memory location referred to by the instruction</Message>
+		<Message ID="TraceLogTooltip_TagPC">[PC] - program counter</Message>
+		<Message ID="TraceLogTooltip_TagCycle">[Cycle] - current horizontal cycle (H)</Message>
+		<Message ID="TraceLogTooltip_TagHClock">[HClock] - current horizontal cycle (H, in master clocks)</Message>
+		<Message ID="TraceLogTooltip_TagScanline">[Scanline] - current scanline (V)</Message>
+		<Message ID="TraceLogTooltip_TagFrameCount">[FrameCount] - current frame number</Message>
+		<Message ID="TraceLogTooltip_TagCycleCount">[CycleCount] - current CPU cycle (64-bit unsigned value)</Message>
+		<Message ID="TraceLogTooltip_TagAlign">[Align,X] - add spaces to ensure the line is X characters long</Message>
+
+		<Message ID="ExprTooltip_Notes">Notes</Message>
+		<Message ID="ExprTooltip_SyntaxCpp">  -Use C++ syntax - most expressions/operators are accepted.</Message>
+		<Message ID="ExprTooltip_HexPrefix">  -Use the $ or 0x prefixes to denote hexadecimal values.</Message>
+		<Message ID="ExprTooltip_Labels">  -Labels can be used in expressions</Message>
+		<Message ID="ExprTooltip_AvailableValues">Available values ({0})</Message>
+		<Message ID="ExprTooltip_OtherValues">Other values</Message>
+		<Message ID="ExprTooltip_OpPc">  OpPc: Program counter of the first byte of the current instruction</Message>
+		<Message ID="ExprTooltip_Address">  Address: CPU memory address being read/written</Message>
+		<Message ID="ExprTooltip_MemAddress">  MemAddress: RAM or ROM address (byte offset) being read/written (-1 if not mapped to RAM/ROM)</Message>
+		<Message ID="ExprTooltip_Value">  Value: Value being read/written</Message>
+		<Message ID="ExprTooltip_IsRead">  IsRead: True if the CPU is reading data</Message>
+		<Message ID="ExprTooltip_IsWrite">  IsWrite: True if the CPU is writing data</Message>
+		<Message ID="ExprTooltip_IsDma">  IsDma: True if the operation was triggered by DMA</Message>
+		<Message ID="ExprTooltip_IsDummy">  IsDummy: True if this is a "dummy" read or write</Message>
+		<Message ID="ExprTooltip_AccessingMemory">Accessing memory</Message>
+		<Message ID="ExprTooltip_Memory8Bit">  [&lt;address&gt;] - 8-bit memory value at &lt;address&gt;</Message>
+		<Message ID="ExprTooltip_Memory16Bit">  {{&lt;address&gt;}} - 16-bit memory value at &lt;address&gt;</Message>
+		<Message ID="ExprTooltip_Memory32Bit">  #&lt;address&gt; - 32-bit memory value at &lt;address&gt;</Message>
+		<Message ID="ExprTooltip_RomRamAddress">  :&lt;address&gt; - Returns the ROM/RAM address for the specified CPU address</Message>
+		<Message ID="ExprTooltip_Examples">Examples</Message>
+		<Message ID="ExprTooltip_Example1">  [[$15] + y] -- Read value at $15, add Y to it and return the value stored at the resulting address.</Message>
+		<Message ID="ExprTooltip_Example2">  {{$FFEA}} -- NMI handler's address.</Message>
+		<Message ID="ExprTooltip_Example3">  #r0 -- Returns the 32-bit value stored at the address stored in r0.</Message>
+		<Message ID="ExprTooltip_Example4">  #(r0+20) -- Returns the 32-bit value stored at the address stored in r0, offset by 20.</Message>
+
+		<Message ID="MemMap_Entry">Entry</Message>
+		<Message ID="MemMap_Range">Range ({0})</Message>
+		<Message ID="MemMap_Access">Access</Message>
+		<Message ID="MemMap_AccessReadWrite">Read/Write</Message>
+		<Message ID="MemMap_AccessReadOnly">Read-only</Message>
+		<Message ID="MemMap_AccessWriteOnly">Write-only</Message>
+		<Message ID="MemMap_AccessOpenBus">Open bus (unmapped)</Message>
+		<Message ID="MemMap_InternalRam">Internal RAM</Message>
+		<Message ID="MemMap_Registers">Registers</Message>
+
+		<Message ID="TilemapViewer_Size">Size</Message>
+		<Message ID="TilemapViewer_SizePx">Size (px)</Message>
+		<Message ID="TilemapViewer_TilemapAddress">Tilemap Address</Message>
+		<Message ID="TilemapViewer_TilesetAddress">Tileset Address</Message>
+		<Message ID="TilemapViewer_TileFormat">Tile Format</Message>
+		<Message ID="TilemapViewer_Mirroring">Mirroring</Message>
+		<Message ID="TilemapViewer_Priority">Priority</Message>
+		<Message ID="TilemapViewer_Tile">Tile</Message>
+		<Message ID="TilemapViewer_Palette">Palette</Message>
+		<Message ID="TilemapViewer_ColumnRow">Column, Row</Message>
+		<Message ID="TilemapViewer_XY">X, Y</Message>
+		<Message ID="TilemapViewer_TilemapAddressValue">Tilemap address</Message>
+		<Message ID="TilemapViewer_TileIndex">Tile index</Message>
+		<Message ID="TilemapViewer_TileAddressMemType">Tile address ({0})</Message>
+		<Message ID="TilemapViewer_TileAddress">Tile address</Message>
+		<Message ID="TilemapViewer_PaletteIndex">Palette index</Message>
+		<Message ID="TilemapViewer_PaletteAddress">Palette address</Message>
+		<Message ID="TilemapViewer_AttributeAddress">Attribute address</Message>
+		<Message ID="TilemapViewer_AttributeData">Attribute data</Message>
+		<Message ID="TilemapViewer_PixelData">Pixel data</Message>
+		<Message ID="TilemapViewer_HorizontalMirror">Horizontal mirror</Message>
+		<Message ID="TilemapViewer_VerticalMirror">Vertical mirror</Message>
+		<Message ID="TilemapViewer_HighPriority">High priority</Message>
+
+		<Message ID="SnesReg_INIDISP">Screen Display Register</Message>
+		<Message ID="SnesReg_OBSEL">Object Size and Character Size Register</Message>
+		<Message ID="SnesReg_OAMADDL">OAM Address Registers (Low)</Message>
+		<Message ID="SnesReg_OAMADDH">OAM Address Registers (High)</Message>
+		<Message ID="SnesReg_OAMDATA">OAM Data Write Register</Message>
+		<Message ID="SnesReg_BGMODE">BG Mode and Character Size Register</Message>
+		<Message ID="SnesReg_MOSAIC">Mosaic Register</Message>
+		<Message ID="SnesReg_BG1SC">BG Tilemap Address Registers (BG1)</Message>
+		<Message ID="SnesReg_BG2SC">BG Tilemap Address Registers (BG2)</Message>
+		<Message ID="SnesReg_BG3SC">BG Tilemap Address Registers (BG3)</Message>
+		<Message ID="SnesReg_BG4SC">BG Tilemap Address Registers (BG4)</Message>
+		<Message ID="SnesReg_BG12NBA">BG Character Address Registers (BG1&amp;2)</Message>
+		<Message ID="SnesReg_BG34NBA">BG Character Address Registers (BG3&amp;4)</Message>
+		<Message ID="SnesReg_BGScrollBG1">BG Scroll Registers (BG1)</Message>
+		<Message ID="SnesReg_BGScrollBG2">BG Scroll Registers (BG2)</Message>
+		<Message ID="SnesReg_BGScrollBG3">BG Scroll Registers (BG3)</Message>
+		<Message ID="SnesReg_BGScrollBG4">BG Scroll Registers (BG4)</Message>
+		<Message ID="SnesReg_VMAIN">Video Port Control Register</Message>
+		<Message ID="SnesReg_VMADDL">VRAM Address Registers (Low)</Message>
+		<Message ID="SnesReg_VMADDH">VRAM Address Registers (High)</Message>
+		<Message ID="SnesReg_VMDATAL">VRAM Data Write Registers (Low)</Message>
+		<Message ID="SnesReg_VMDATAH">VRAM Data Write Registers (High)</Message>
+		<Message ID="SnesReg_M7SEL">Mode 7 Settings Register</Message>
+		<Message ID="SnesReg_Mode7Matrix">Mode 7 Matrix Registers</Message>
+		<Message ID="SnesReg_CGADD">CGRAM Address Register</Message>
+		<Message ID="SnesReg_CGDATA">CGRAM Data Write Register</Message>
+		<Message ID="SnesReg_WindowMaskSettings">Window Mask Settings Registers</Message>
+		<Message ID="SnesReg_WH0">Window Position Registers (WH0)</Message>
+		<Message ID="SnesReg_WH1">Window Position Registers (WH1)</Message>
+		<Message ID="SnesReg_WH2">Window Position Registers (WH2)</Message>
+		<Message ID="SnesReg_WH3">Window Position Registers (WH3)</Message>
+		<Message ID="SnesReg_WBGLOG">Window Mask Logic registers (BG)</Message>
+		<Message ID="SnesReg_WOBJLOG">Window Mask Logic registers (OBJ)</Message>
+		<Message ID="SnesReg_ScreenDestination">Screen Destination Registers</Message>
+		<Message ID="SnesReg_WindowMaskDestination">Window Mask Destination Registers</Message>
+		<Message ID="SnesReg_ColorMath">Color Math Registers</Message>
+		<Message ID="SnesReg_SETINI">Screen Mode Select Register</Message>
+		<Message ID="SnesReg_MultiplicationResult">Multiplication Result Registers</Message>
+		<Message ID="SnesReg_SLHV">Software Latch Register</Message>
+		<Message ID="SnesReg_OAMDATAREAD">OAM Data Read Register</Message>
+		<Message ID="SnesReg_VMDATALREAD">VRAM Data Read Register (Low)</Message>
+		<Message ID="SnesReg_VMDATAHREAD">VRAM Data Read Register (High)</Message>
+		<Message ID="SnesReg_CGDATAREAD">CGRAM Data Read Register</Message>
+		<Message ID="SnesReg_OPHCT">Scanline Location Registers (Horizontal)</Message>
+		<Message ID="SnesReg_OPVCT">Scanline Location Registers (Vertical)</Message>
+		<Message ID="SnesReg_PPUStatus">PPU Status Register</Message>
+		<Message ID="SnesReg_APUIO">APU IO Registers</Message>
+		<Message ID="SnesReg_WMDATA">WRAM Data Register</Message>
+		<Message ID="SnesReg_WMADD">WRAM Address Registers</Message>
+		<Message ID="SnesReg_OldJoypad">Old Style Joypad Registers</Message>
+		<Message ID="SnesReg_NMITIMEN">Interrupt Enable Register</Message>
+		<Message ID="SnesReg_WRIO">IO Port Write Register</Message>
+		<Message ID="SnesReg_Multiplicand">Multiplicand Registers</Message>
+		<Message ID="SnesReg_DivisorDividend">Divisor &amp; Dividend Registers</Message>
+		<Message ID="SnesReg_HTIMEL">IRQ Timer Registers (Horizontal - Low)</Message>
+		<Message ID="SnesReg_HTIMEH">IRQ Timer Registers (Horizontal - High)</Message>
+		<Message ID="SnesReg_VTIMEL">IRQ Timer Registers (Vertical - Low)</Message>
+		<Message ID="SnesReg_VTIMEH">IRQ Timer Registers (Vertical - High)</Message>
+		<Message ID="SnesReg_MDMAEN">DMA Enable Register</Message>
+		<Message ID="SnesReg_HDMAEN">HDMA Enable Register</Message>
+		<Message ID="SnesReg_MEMSEL">ROM Speed Register</Message>
+		<Message ID="SnesReg_InterruptFlag">Interrupt Flag Registers</Message>
+		<Message ID="SnesReg_RDIO">IO Port Read Register</Message>
+		<Message ID="SnesReg_MulDivResultL">Multiplication Or Divide Result Registers (Low)</Message>
+		<Message ID="SnesReg_MulDivResultH">Multiplication Or Divide Result Registers (High)</Message>
+		<Message ID="SnesReg_JOY1L">Controller Port Data Registers (Pad 1 - Low)</Message>
+		<Message ID="SnesReg_JOY1H">Controller Port Data Registers (Pad 1 - High)</Message>
+		<Message ID="SnesReg_JOY2L">Controller Port Data Registers (Pad 2 - Low)</Message>
+		<Message ID="SnesReg_JOY2H">Controller Port Data Registers (Pad 2 - High)</Message>
+		<Message ID="SnesReg_JOY3L">Controller Port Data Registers (Pad 3 - Low)</Message>
+		<Message ID="SnesReg_JOY3H">Controller Port Data Registers (Pad 3 - High)</Message>
+		<Message ID="SnesReg_JOY4L">Controller Port Data Registers (Pad 4 - Low)</Message>
+		<Message ID="SnesReg_JOY4H">Controller Port Data Registers (Pad 4 - High)</Message>
+		<Message ID="SnesReg_DMAP">(H)DMA Control</Message>
+		<Message ID="SnesReg_BBAD">(H)DMA B-Bus Address</Message>
+		<Message ID="SnesReg_A1TL">DMA A-Bus Address / HDMA Table Address (Low)</Message>
+		<Message ID="SnesReg_A1TH">DMA A-Bus Address / HDMA Table Address (High)</Message>
+		<Message ID="SnesReg_A1B">DMA A-Bus Address / HDMA Table Address (Bank)</Message>
+		<Message ID="SnesReg_DASL">DMA Size / HDMA Indirect Address (Low)</Message>
+		<Message ID="SnesReg_DASH">DMA Size / HDMA Indirect Address (High)</Message>
+		<Message ID="SnesReg_DASB">HDMA Indirect Address (Bank)</Message>
+		<Message ID="SnesReg_A2AL">HDMA Mid Frame Table Address (Low)</Message>
+		<Message ID="SnesReg_A2AH">HDMA Mid Frame Table Address (High)</Message>
+		<Message ID="SnesReg_NTLR">HDMA Line Counter</Message>
+		<Message ID="SnesReg_TEST">Testing functions</Message>
+		<Message ID="SnesReg_CONTROL">I/O and Timer Control</Message>
+		<Message ID="SnesReg_DSPADDR">DSP Address</Message>
+		<Message ID="SnesReg_DSPDATA">DSP Data</Message>
+		<Message ID="SnesReg_CPUIO0">CPU I/O 0</Message>
+		<Message ID="SnesReg_CPUIO1">CPU I/O 1</Message>
+		<Message ID="SnesReg_CPUIO2">CPU I/O 2</Message>
+		<Message ID="SnesReg_CPUIO3">CPU I/O 3</Message>
+		<Message ID="SnesReg_RAMREG1">Memory Register 1</Message>
+		<Message ID="SnesReg_RAMREG2">Memory Register 2</Message>
+		<Message ID="SnesReg_T0TARGET">Timer 0 scaling target</Message>
+		<Message ID="SnesReg_T1TARGET">Timer 1 scaling target</Message>
+		<Message ID="SnesReg_T2TARGET">Timer 2 scaling target</Message>
+		<Message ID="SnesReg_T0OUT">Timer 0 output</Message>
+		<Message ID="SnesReg_T1OUT">Timer 1 output</Message>
+		<Message ID="SnesReg_T2OUT">Timer 2 output</Message>
+
+		<Message ID="GbReg_LCDC">LCD Control</Message>
+		<Message ID="GbReg_STAT">LCD Status</Message>
+		<Message ID="GbReg_SCY">Scroll Y</Message>
+		<Message ID="GbReg_SCX">Scroll X</Message>
+		<Message ID="GbReg_LY">LCD Y-Coordinate</Message>
+		<Message ID="GbReg_LYC">LY Compare</Message>
+		<Message ID="GbReg_BGP">BG Palette Data</Message>
+		<Message ID="GbReg_OBP0">Object Palette 0 Data</Message>
+		<Message ID="GbReg_OBP1">Object Palette 1 Data</Message>
+		<Message ID="GbReg_WY">Window Y Position</Message>
+		<Message ID="GbReg_WX">Window X Position</Message>
+		<Message ID="GbReg_NR10">Channel 1 Sweep</Message>
+		<Message ID="GbReg_NR11">Channel 1 Length/Wave Pattern Duty</Message>
+		<Message ID="GbReg_NR12">Channel 1 Volume Envelope</Message>
+		<Message ID="GbReg_NR13">Channel 1 Frequency Low</Message>
+		<Message ID="GbReg_NR14">Channel 1 Frequency High</Message>
+		<Message ID="GbReg_NR21">Channel 2 Length/Wave Pattern Duty</Message>
+		<Message ID="GbReg_NR22">Channel 2 Volume Envelope</Message>
+		<Message ID="GbReg_NR23">Channel 2 Frequency Low</Message>
+		<Message ID="GbReg_NR24">Channel 2 Frequency High</Message>
+		<Message ID="GbReg_NR30">Channel 3 On/Off</Message>
+		<Message ID="GbReg_NR31">Channel 3 Length</Message>
+		<Message ID="GbReg_NR32">Channel 3 Output Level</Message>
+		<Message ID="GbReg_NR33">Channel 3 Frequency Low</Message>
+		<Message ID="GbReg_NR34">Channel 3 Frequency High</Message>
+		<Message ID="GbReg_NR41">Channel 4 Length</Message>
+		<Message ID="GbReg_NR42">Channel 4 Volume Envelope</Message>
+		<Message ID="GbReg_NR43">Channel 4 Polynomial Counter</Message>
+		<Message ID="GbReg_NR44">Channel 4 Loop</Message>
+		<Message ID="GbReg_NR50">Channel Volume</Message>
+		<Message ID="GbReg_NR51">Channel Left/Right</Message>
+		<Message ID="GbReg_NR52">Channel On/Off</Message>
+		<Message ID="GbReg_JOYP">Joypad</Message>
+		<Message ID="GbReg_SB">Serial Data</Message>
+		<Message ID="GbReg_SC">Serial Control</Message>
+		<Message ID="GbReg_DIV">Divider</Message>
+		<Message ID="GbReg_TIMA">Timer Counter</Message>
+		<Message ID="GbReg_TMA">Timer Modulo</Message>
+		<Message ID="GbReg_TAC">Timer Control</Message>
+		<Message ID="GbReg_IF">Interrupt Flag</Message>
+		<Message ID="GbReg_IE">Interrupt Enable</Message>
+		<Message ID="GbReg_DMA">OAM DMA Start</Message>
+
+		<Message ID="NesReg_PpuControl">7  bit  0
+---- ----
+VPHB SINN
+|||| ||||
+|||| ||++- Base nametable address
+|||| ||    (0 = $2000; 1 = $2400; 2 = $2800; 3 = $2C00)
+|||| |+--- VRAM address increment per CPU read/write of PPUDATA
+|||| |     (0: add 1, going across; 1: add 32, going down)
+|||| +---- Sprite pattern table address for 8x8 sprites
+||||       (0: $0000; 1: $1000; ignored in 8x16 mode)
+|||+------ Background pattern table address (0: $0000; 1: $1000)
+||+------- Sprite size (0: 8x8; 1: 8x16)
+|+-------- PPU master/slave select
+|          (0: read backdrop from EXT pins; 1: output color on EXT pins)
++--------- Generate an NMI at the start of the
+           vertical blanking interval (0: off; 1: on)</Message>
+		<Message ID="NesReg_PpuMask">7  bit  0
+---- ----
+BGRs bMmG
+|||| ||||
+|||| |||+- Display type: (0: color, 1: grayscale)
+|||| ||+-- 1: Show background in leftmost 8 pixels of screen, 0: Hide
+|||| |+--- 1: Show sprites in leftmost 8 pixels of screen, 0: Hide
+|||| +---- 1: Show background
+|||+------ 1: Show sprites
+||+------- Emphasize red
+|+-------- Emphasize green
++--------- Emphasize blue</Message>
+		<Message ID="NesReg_PpuStatus">7  bit  0
+---- ----
+VSO. ....
+|||| ||||
+|||+-++++- Least significant bits previously written into a PPU register
+|||        (due to register not being updated for this address)
+||+------- Sprite overflow. The intent was for this flag to be set
+||         whenever more than eight sprites appear on a scanline, but a
+||         hardware bug causes the actual behavior to be more complicated
+||         and generate false positives as well as false negatives; see
+||         PPU sprite evaluation. This flag is set during sprite
+||         evaluation and cleared at dot 1 (the second dot) of the
+||         pre-render line.
+|+-------- Sprite 0 Hit.  Set when a nonzero pixel of sprite 0 overlaps
+|          a nonzero background pixel; cleared at dot 1 of the pre-render
+|          line.  Used for raster timing.
++--------- Vertical blank has started (0: not in vblank; 1: in vblank).
+           Set at dot 1 of line 241 (the line *after* the post-render
+           line); cleared after reading $2002 and at dot 1 of the
+           pre-render line.</Message>
+		<Message ID="NesReg_OamAddr">Set OAM address - Write only</Message>
+		<Message ID="NesReg_OamData">Read/Write OAM data</Message>
+		<Message ID="NesReg_PpuScroll">Set PPU scroll, write twice - Write only</Message>
+		<Message ID="NesReg_PpuAddr">Set PPU address, write twice - Write only</Message>
+		<Message ID="NesReg_PpuData">Read/Write VRAM</Message>
+		<Message ID="NesReg_SqDuty">DDLC VVVV
+Duty (D), envelope loop / length counter halt (L), constant volume (C), volume/envelope (V)</Message>
+		<Message ID="NesReg_SqSweep">EPPP NSSS
+Sweep unit: enabled (E), period (P), negate (N), shift (S)</Message>
+		<Message ID="NesReg_SqTimer">TTTT TTTT
+Timer low (T)</Message>
+		<Message ID="NesReg_SqLength">LLLL LTTT
+Length counter load (L), timer high (T)</Message>
+		<Message ID="NesReg_TrgLinear">CRRR RRRR
+Length counter halt / linear counter control (C), linear counter load (R)</Message>
+		<Message ID="NesReg_NoiseVolume">--LC VVVV
+Envelope loop / length counter halt (L), constant volume (C), volume/envelope (V)</Message>
+		<Message ID="NesReg_NoisePeriod">L--- PPPP
+Loop noise (L), noise period (P)</Message>
+		<Message ID="NesReg_NoiseLength">LLLL L---
+Length counter load (L)</Message>
+		<Message ID="NesReg_DmcFreq">IL-- RRRR
+IRQ enable (I), loop (L), frequency (R)</Message>
+		<Message ID="NesReg_DmcCounter">-DDD DDDD
+Load counter (D)</Message>
+		<Message ID="NesReg_DmcAddress">AAAA AAAA
+Sample address (A)</Message>
+		<Message ID="NesReg_DmcLength">LLLL LLLL
+Sample length (L)</Message>
+		<Message ID="NesReg_SpriteDma">Writing $XX will upload 256 bytes of data from CPU page $XX00-$XXFF to the internal PPU OAM.</Message>
+		<Message ID="NesReg_ApuStatus">Read:
+IF-D NT21
+DMC interrupt (I), frame interrupt (F), DMC active (D), length counter &gt; 0 (N/T/2/1)
+
+Write:
+---D NT21
+Enable DMC (D), noise (N), triangle (T), and pulse channels (2/1)</Message>
+		<Message ID="NesReg_Ctrl1">Read (NES - input):
+---4 3210
+Read data from controller port #1.
+
+Write:
+---- ---A
+Output data (strobe) to both controllers.</Message>
+		<Message ID="NesReg_Ctrl2">Read (NES - input):
+---4 3210
+Read data from controller port #2.
+
+Write (Frame counter): MI-- ----
+Mode (M, 0 = 4-step, 1 = 5-step), IRQ inhibit flag (I)</Message>
+		<Message ID="NesFds_LoadFiles">Input: Direct pointer = Disk ID, Direct pointer = File List
+Output: A = error #, Y = # of files loaded
+Desc: Loads files specified by DiskID into memory from disk, attempting twice before returning any errors. Load addresses are decided by the file's header.</Message>
+		<Message ID="NesFds_AppendFile">Input: Direct pointer = Disk ID, Direct pointer = File Header
+Output: A = error #
+Desc: Appends the file data given by Disk ID to the disk, attempting twice before returning any errors. This means that the file is tacked onto the end of the disk, and the disk file count is incremented. The file is then read back to verify the write. If an error occurs during verification, the disk's file count is decremented (logically hiding the written file).</Message>
+		<Message ID="NesFds_WriteFile">Input: Direct pointer = Disk ID, Direct pointer = File Header, A = file #
+Output: A = error #
+Desc: Same as "AppendFile", but instead of writing the file to the end of the disk, A specifies the sequential position on the disk to write the file (0 is the first). This also has the effect of setting the disk's file count to the A value, therefore logically hiding any other files that may reside after the written one.</Message>
+		<Message ID="NesFds_CheckFileCount">Input: Direct pointer = Disk ID, A = # to set file count to
+Output: A = error #
+Desc: Reads in disk's file count, compares it to A, then sets the disk's file count to A.</Message>
+		<Message ID="NesFds_AdjustFileCount">Input: Direct pointer = Disk ID, A = number to reduce current file count by
+Output: A = error #
+Desc: Reads in disk's file count, decrements it by A, then writes the new value back.</Message>
+		<Message ID="NesFds_SetFileCount1">Input: Direct pointer = Disk ID, A = file count minus one = # of the last file
+Output: A = error #
+Desc: Set the file count to A + 1</Message>
+		<Message ID="NesFds_SetFileCount">Input: Direct pointer = Disk ID, A = file count
+Output: A = error #
+Desc: Set the file count to A</Message>
+		<Message ID="NesFds_GetDiskInfo">Input: Direct pointer = Disk Info
+Output: A = error #
+Desc: Fills DiskInfo up with data read off the current disk.</Message>
+		<Message ID="NesFds_CheckDiskHeader">Input: $00-$01 = Pointer to 10 byte string
+Output:
+Desc: Checks that the '*NINTENDO-HVC*' string is present on the current disk, then compares the Disk ID structure to data pointed to by Ptr($00). To bypass the checking of any byte, a -1 can be placed in the equivalent place in the compare string. If the comparison fails, an appropriate error will be generated.</Message>
+		<Message ID="NesFds_GetNumFiles">Input:
+Output: $06 = # of files
+Desc: Reads the number of files from the file amount block.</Message>
+		<Message ID="NesFds_SetNumFiles">Input: A = # of files
+Output:
+Desc: Writes the new number of files to the file amount block.</Message>
+		<Message ID="NesFds_FileMatchTest">Input: $02-$03 = Pointer to File ID list
+Output:
+Desc: Uses a byte string pointed at by Ptr($02) to tell the disk system which files to load. The file ID's number is searched for in the string. If an exact match is found, [$09] is 0'd, and [$0e] is incremented. If no matches are found after 20 bytes, or a -1 entry is encountered, [$09] is set to -1. If the first byte in the string is -1, the BootID number is used for matching files (any FileID that is not greater than the BootID qualifies as a match).</Message>
+		<Message ID="NesFds_SkipFiles">Input: $06 = # of files to skip
+Output:
+Desc: Skips over a specified number of files.</Message>
+		<Message ID="NesFds_Delay131">Input:
+Output:
+Affects:
+Desc: 131 clock cycle delay (including the JSR instruction to call it) used by the "BIOS acknowledge and delay" IRQ handler.</Message>
+		<Message ID="NesFds_Delayms">Input: Y = Delay in ms (approximate)
+Output:
+Affects: X, Y
+Desc: Delay routine, where the time in CPU cycles is 1790*Y+5. Y = 0 is treated as 256.</Message>
+		<Message ID="NesFds_DisPFObj">Input: $fe = PPUMASK value
+Output:
+Affects: A, $fe
+Desc: Disable rendering for both sprites and background.</Message>
+		<Message ID="NesFds_EnPFObj">Input: $fe = PPUMASK value
+Output:
+Affects: A, $fe
+Desc: Enable rendering for both sprites and background.</Message>
+		<Message ID="NesFds_DisObj">Input: $fe = PPUMASK value
+Output:
+Affects: A, $fe
+Desc: Disable sprite rendering.</Message>
+		<Message ID="NesFds_EnObj">Input: $fe = PPUMASK value
+Output:
+Affects: A, $fe
+Desc: Enable sprite rendering.</Message>
+		<Message ID="NesFds_DisPF">Input: $fe = PPUMASK value
+Output:
+Affects: A, $fe
+Desc: Disable background rendering.</Message>
+		<Message ID="NesFds_EnPF">Input: $fe = PPUMASK value
+Output:
+Affects: A, $fe
+Desc: Enable background rendering.</Message>
+		<Message ID="NesFds_VINTWait">Input: $ff = PPUCTRL value
+Output:
+Affects: $ff
+Desc: Wait until next vblank NMI fires, disable NMIs, read PPUSTATUS to clear the vblank flag, then return (for programs which do "everything in main"). NMI vector selection at $100 is preserved, but further NMIs are disabled. It is recommended to clear the vblank flag before calling this if its state is unknown. The Interrupt Disable Flag is not restored, instead remaining set from NMI entry.</Message>
+		<Message ID="NesFds_VRAMStructWrite">Input: Direct pointer = VRAM struct to be written, $ff = PPUCTRL value
+Output:
+Affects: A, X, Y, $00, $01, $ff
+Desc: Set VRAM increment to 1 (clear PPUCTRL/$ff bit 2), and write a VRAM struct to VRAM. Refer to NESdev Wiki for information on the structure.</Message>
+		<Message ID="NesFds_FetchDirectPtr">Input:
+Output: $00, $01 = pointer fetched
+Affects: A, X, Y, $05, $06
+Desc: Fetch a direct pointer from the stack (the pointer should be placed after the return address of the routine that calls this one), save the pointer at ($00), and fix the return address.</Message>
+		<Message ID="NesFds_WriteVRAMBuffer">Input: $ff = PPUCTRL value, $0302-$03ff = VRAM write buffer
+Output:
+Affects: A, X, Y, $0301, $0302
+Desc: Write the VRAM Buffer at $0302 to VRAM. Refer to NESdev Wiki for information on the structure.</Message>
+		<Message ID="NesFds_ReadVRAMBuffer">Input: X = Starting address of VRAM read buffer, Y = # of bytes to read from VRAM, $0300-$03ff = VRAM read buffer
+Output:
+Affects: A, X, Y, $0300-$03ff
+Desc: Read individual bytes from VRAM to the VRAM read buffer at $0300+X. (see notes on NESdev Wiki)</Message>
+		<Message ID="NesFds_PrepareVRAMString">Input: A = High VRAM address, X = Low VRAM address, Y = string length, Direct Pointer = data to be written to VRAM
+Output: A = $ff : success, A = $01 : string didn't fit in buffer
+Affects: A, X, Y, $00-$06, $0301, $0302-$03ff
+Desc: Copy pointed data into the VRAM write buffer at $0302. Data which does not fit in the buffer (according to the max index variable defined in $0300) is rejected. (see notes on NESdev Wiki)</Message>
+		<Message ID="NesFds_PrepareVRAMStrings">Input: A = High VRAM address, X = Low VRAM address, Direct pointer = data to be written to VRAM
+Output: A = $ff : success, A = $01 : data didn't fit in buffer
+Affects: A, X, Y, $00-$06, $0301, $0302-$03ff
+Desc: Copy a 2D string into the VRAM write buffer at $0302 as multiple 1D strings. The first byte of the data determines the width and height of the 2D string (in tiles): Upper nybble = height, lower nybble = width. Data which does not fit in the buffer (according to the max index variable defined in $0300) is rejected. (see notes on NESdev Wiki)</Message>
+		<Message ID="NesFds_GetVRAMBufferByte">Input: X = Starting address of read buffer, Y = VRAM read structure to check (starting at 1), $00 = High VRAM address, $01 = Low VRAM address, $0300-$03ff = VRAM read buffer
+Output: carry clear : a previously read byte was returned in A, carry set : no byte was read, program must call ReadVRAMBuffer
+Affects: A, X, Y, $0300-$03ff
+Desc: This routine was likely intended for avoiding repeated VRAM reads (see notes on NESdev Wiki). It compares the target VRAM address in ($00) with the Yth structure in the VRAM read buffer ($0300+X+(Y-1)*3). If the addresses match, the carry is cleared and the corresponding data byte is returned in A. Otherwise, the target VRAM address is overwritten with the contents of ($00) and the routine exits with the carry set to indicate that the program must call ReadVRAMBuffer to obtain the desired data.</Message>
+		<Message ID="NesFds_Pixel2NamConv">Input: $02 = Pixel X cord, $03 = Pixel Y cord
+Output: $00 = High nametable address, $01 = Low nametable address
+Affects: A
+Desc: Convert pixel screen coordinates to corresponding nametable address (assumes no scrolling, and points to first nametable at $2000-$23ff).</Message>
+		<Message ID="NesFds_Nam2PixelConv">Input: $00 = High nametable address, $01 = Low nametable address
+Output: $02 = Pixel X cord, $03 = Pixel Y cord
+Affects: A
+Desc: Convert a nametable address to corresponding pixel coordinates (assume no scrolling).</Message>
+		<Message ID="NesFds_Random">Input: X = Starting zero-page address of shift register bytes, Y = # of shift register bytes (normally $02)
+Output:
+Affects: A, X, Y, $00
+Desc: This is a shift register-based pseudo-random number generator which normally takes 2 bytes. Programs should seed the bytes with nonzero values before use. Each call of this routine will shift the bytes right by one bit.</Message>
+		<Message ID="NesFds_SpriteDMA">Input:
+Output:
+Affects: A
+Desc: Perform OAM DMA from RAM $0200-$02ff.</Message>
+		<Message ID="NesFds_CounterLogic">Input: A, Y = Ending zero-page address of counters, X = Starting zero-page address of counters
+Output:
+Affects: A, X, $00
+Desc: This decrements several counters in zero-page. The first counter, at X, is a decimal counter 9 -> 8 -> 7 -> ... -> 1 -> 0 -> 9 -> ... Counters X+1...A are simply decremented and stay at 0. Counters A+1...Y are decremented when the first counter does a 0 -> 9 transition, and stay at 0.</Message>
+		<Message ID="NesFds_ReadPads">Input: $fb = Controller latch bits
+Output: $f5 = Joypad #1 data, $f6 = Joypad #2 data, $00 = Expansion #1 data, $01 = Expansion #2 data
+Affects: A, X
+Desc: Read hardwired/expansion port joypads. Expansion port reads should be placed/used elsewhere if needed after calling this routine, otherwise they will be clobbered by other BIOS calls.</Message>
+		<Message ID="NesFds_OrPads">Input: $f5 = Joypad #1 data, $f6 = Joypad #2 data, $00 = Expansion #1 data, $01 = Expansion #2 data
+Output: $f5 = Joypad #1 OR Expansion #1, $f6 = Joypad #2 OR Expansion #2
+Affects: A
+Desc: Combine inputs from hardwired/expansion port joypads. Intended to be called after ReadPads.</Message>
+		<Message ID="NesFds_ReadDownPads">Input: $fb = Controller latch bits
+Output: $f5 = Joypad #1 up->down transitions, $f6 = Joypad #2 up->down transitions $f7 = Joypad #1 data, $f8 = Joypad #2 data
+Affects: A, X, $00, $01
+Desc: Read hardwired joypads and detect up->down button transitions.</Message>
+		<Message ID="NesFds_ReadOrDownPads">Input: $fb = Controller latch bits
+Output: $f5 = Joypad #1 up->down transitions, $f6 = Joypad #2 up->down transitions $f7 = Joypad #1 data, $f8 = Joypad #2 data
+Affects: A, X, $00, $01
+Desc: Read both hardwired/expansion port joypads and detect up->down button transitions.</Message>
+		<Message ID="NesFds_ReadDownVerifyPads">Input: $fb = Controller latch bits
+Output: $f5 = Joypad #1 up->down transitions, $f6 = Joypad #2 up->down transitions $f7 = Joypad #1 data, $f8 = Joypad #2 data
+Affects: A, X, $00, $01
+Desc: Read hardwired joypads and detect up->down button transitions. Data is read until two consecutive reads match to work around DMC conflicts.</Message>
+		<Message ID="NesFds_ReadOrDownVerifyPads">Input: $fb = Controller latch bits
+Output: $f5 = Joypad #1 up->down transitions, $f6 = Joypad #2 up->down transitions $f7 = Joypad #1 data, $f8 = Joypad #2 data
+Affects: A, X, $00, $01
+Desc: Read both hardwired/expansion port joypads and detect up->down button transitions. Data is read until two consecutive reads match to work around DMC conflicts.</Message>
+		<Message ID="NesFds_ReadDownExpPads">Input: $fb = Controller latch bits
+Output: $f1-$f4 = up->down transitions, $f5-$f8 = Joypad data in the order : Pad1, Pad2, Expansion1, Expansion2
+Affects: A, X, $00, $01
+Desc: Read both hardwired/expansion port joypads and process up->down button transitions, but store their data separately instead of ORing them together like the other routines do. This routine is not DMC-safe.</Message>
+		<Message ID="NesFds_VRAMFill">Input: A = High VRAM Address (aka tile row #), X = Fill value, Y = # of tile rows OR attribute fill data, $ff = PPUCTRL value
+Output:
+Affects: A, X, Y, $00-$02, $ff
+Desc: This routine does 2 things: If A &lt; $20, it fills pattern table data with the value in X for 16 * Y tiles. If A &gt;= $20, it fills the corresponding nametable with the value in X and attribute table with the value in Y.</Message>
+		<Message ID="NesFds_MemFill">Input: A = fill value, X = first page #, Y = last page #
+Output:
+Affects: A, X, Y, $00, $01
+Desc: Fill RAM pages with the value in A.</Message>
+		<Message ID="NesFds_SetScroll">Input: $fc = Y scroll position, $fd = X scroll position, $ff = PPUCTRL value
+Output:
+Affects: A
+Desc: Read PPUSTATUS to clear the internal w register and the vblank flag, then set the PPU scroll registers as follows: PPUSCROLL = [$fd], PPUSCROLL = [$fc], PPUCTRL = [$ff]. Should typically be called in vblank after VRAM updates.</Message>
+		<Message ID="NesFds_JumpEngine">Input: A = Jump table entry
+Output:
+Affects: A, X, Y, $00, $01
+Desc: The instruction calling this is supposed to be followed by a jump table (16-bit pointers little endian, up to 128 pointers). A is the entry # to jump to, return address on stack is used to get jump table entries.</Message>
+		<Message ID="NesFds_ReadKeyboard">Input: $fb = Controller latch bits
+Output: A = $ff : success, A = $00 : no keyboard connected, $00-$08 = keyboard data
+Affects: A, X, Y, $00-$08, $fb
+Desc: This attempts to read the Family BASIC Keyboard, returning with A=0 if nothing is connected. Keyboard data is stored at $00-$08 starting from row 8 in descending order ($00 = row 8, $01 = row 7, and so on), with each byte containing column 0's data in the lower nybble and column 1's data in the upper nybble. A set bit means that a key was pressed.</Message>
+		<Message ID="NesFds_LoadTileset">Input: A = Low VRAM Address &amp; Flags, Y = Hi VRAM Address, X = # of tiles to transfer to/from VRAM, $ff = PPUCTRL value
+Output:
+Affects: A, X, Y, $00-$04, $ff
+Desc: Read/write 2BP and 1BP tilesets to/from VRAM. See appendix on NESdev Wiki regarding the flags.</Message>
+		<Message ID="NesFds_UploadObject">Input: $00-$01 = Pointer to object structure
+Output:
+Affects: A, X, Y, $02-$0c
+Upload an object to RAM $0200-$02ff. (see object structure on NESdev Wiki)</Message>
+		<Message ID="PceReg_VDC_AR">Address Register (W) / Status Register (R)</Message>
+		<Message ID="PceReg_VDC_DATA_LO">Data (low byte)</Message>
+		<Message ID="PceReg_VDC_DATA_HI">Data (high byte) + Latch</Message>
+		<Message ID="PceReg_VCE_CONTROL">VCE Control Register</Message>
+		<Message ID="PceReg_VCE_ADDR_LO">Color Table Address Register (LSB)</Message>
+		<Message ID="PceReg_VCE_ADDR_HI">Color Table Address Register (MSB)</Message>
+		<Message ID="PceReg_VCE_DATA_LO">Color Table Data Register (LSB)</Message>
+		<Message ID="PceReg_VCE_DATA_HI">Color Table Data Register (MSB)</Message>
+		<Message ID="PceReg_PSG_CHANSELECT">PSG channel select ($00-$05)</Message>
+		<Message ID="PceReg_PSG_GLOBALVOL">Global Sound Volume (top 4 bits: Left; bottom 4 bits: Right)</Message>
+		<Message ID="PceReg_PSG_FREQLO">Frequency (LSB)</Message>
+		<Message ID="PceReg_PSG_FREQHI">Frequency (MSB - 4 bits)</Message>
+		<Message ID="PceReg_PSG_CHANCTRL">Channel on/off, DDA on/off, Channel volume</Message>
+		<Message ID="PceReg_PSG_CHANPAN">Channel sound balance/panning (Left/Right)</Message>
+		<Message ID="PceReg_PSG_CHANDATA">Channel sound data (5 bits)</Message>
+		<Message ID="PceReg_PSG_NOISE">Noise enable, Noise frequency</Message>
+		<Message ID="PceReg_PSG_LFOFREQ">LFO frequency</Message>
+		<Message ID="PceReg_PSG_LFOCONTROL">LFO trigger, LFO control</Message>
+		<Message ID="PceReg_TIMER_COUNTER">Timer Counter (read)/latch (write)</Message>
+		<Message ID="PceReg_TIMER_CONTROL">Timer Control</Message>
+		<Message ID="PceReg_JOYPAD">Joypad I/O</Message>
+		<Message ID="PceReg_IRQ_DISABLE">IRQ Disable toggle</Message>
+		<Message ID="PceReg_IRQ_STATUS">IRQ Status (Read); Acknowledge Timer interrupt (write)</Message>
+		<Message ID="GbaReg_DISPCNT">Display Control</Message>
+		<Message ID="GbaReg_DISPSTAT">Display Status</Message>
+		<Message ID="GbaReg_BG0CNT">BG0 Control</Message>
+		<Message ID="GbaReg_BG1CNT">BG1 Control</Message>
+		<Message ID="GbaReg_BG2CNT">BG2 Control</Message>
+		<Message ID="GbaReg_BG3CNT">BG3 Control</Message>
+		<Message ID="GbaReg_BG0HOFS">BG0 X Scroll Offset</Message>
+		<Message ID="GbaReg_BG0VOFS">BG0 Y Scroll Offset</Message>
+		<Message ID="GbaReg_BG1HOFS">BG1 X Scroll Offset</Message>
+		<Message ID="GbaReg_BG1VOFS">BG1 Y Scroll Offset</Message>
+		<Message ID="GbaReg_BG2HOFS">BG2 X Scroll Offset</Message>
+		<Message ID="GbaReg_BG2VOFS">BG2 Y Scroll Offset</Message>
+		<Message ID="GbaReg_BG3HOFS">BG3 X Scroll Offset</Message>
+		<Message ID="GbaReg_BG3VOFS">BG3 Y Scroll Offset</Message>
+		<Message ID="GbaReg_BG2PA">BG2 Transform Param A</Message>
+		<Message ID="GbaReg_BG2PB">BG2 Transform Param B</Message>
+		<Message ID="GbaReg_BG2PC">BG2 Transform Param C</Message>
+		<Message ID="GbaReg_BG2PD">BG2 Transform Param D</Message>
+		<Message ID="GbaReg_BG2X">BG2 Origin X</Message>
+		<Message ID="GbaReg_BG2Y">BG2 Origin Y</Message>
+		<Message ID="GbaReg_BG3PA">BG3 Transform Param A</Message>
+		<Message ID="GbaReg_BG3PB">BG3 Transform Param B</Message>
+		<Message ID="GbaReg_BG3PC">BG3 Transform Param C</Message>
+		<Message ID="GbaReg_BG3PD">BG3 Transform Param D</Message>
+		<Message ID="GbaReg_BG3X">BG3 Origin X</Message>
+		<Message ID="GbaReg_BG3Y">BG3 Origin Y</Message>
+		<Message ID="GbaReg_WIN0H">Window 0 Start/End X</Message>
+		<Message ID="GbaReg_WIN1H">Window 1 Start/End X</Message>
+		<Message ID="GbaReg_WIN0V">Window 0 Start/End Y</Message>
+		<Message ID="GbaReg_WIN1V">Window 1 Start/End Y</Message>
+		<Message ID="GbaReg_WININ">Window 0/1 Config</Message>
+		<Message ID="GbaReg_WINOUT">OBJ Window/Outside Window Config</Message>
+		<Message ID="GbaReg_MOSAIC">Mosaic Size</Message>
+		<Message ID="GbaReg_BLDCNT">Blend Control</Message>
+		<Message ID="GbaReg_BLDALPHA">Blend Coefficients</Message>
+		<Message ID="GbaReg_BLDY">Brightness Coefficient</Message>
+		<Message ID="GbaReg_SOUNDCNT_H">Mixing Control</Message>
+		<Message ID="GbaReg_WAVERAM">Channel 3 Wave RAM</Message>
+		<Message ID="GbaReg_FIFO_A">Channel A FIFO</Message>
+		<Message ID="GbaReg_FIFO_B">Channel B FIFO</Message>
+		<Message ID="GbaReg_DMA0SAD">DMA 0 Source Address</Message>
+		<Message ID="GbaReg_DMA0DAD">DMA 0 Destination Address</Message>
+		<Message ID="GbaReg_DMA0CNT_L">DMA 0 Length</Message>
+		<Message ID="GbaReg_DMA0CNT_H">DMA 0 Control</Message>
+		<Message ID="GbaReg_DMA1SAD">DMA 1 Source Address</Message>
+		<Message ID="GbaReg_DMA1DAD">DMA 1 Destination Address</Message>
+		<Message ID="GbaReg_DMA1CNT_L">DMA 1 Length</Message>
+		<Message ID="GbaReg_DMA1CNT_H">DMA 1 Control</Message>
+		<Message ID="GbaReg_DMA2SAD">DMA 2 Source Address</Message>
+		<Message ID="GbaReg_DMA2DAD">DMA 2 Destination Address</Message>
+		<Message ID="GbaReg_DMA2CNT_L">DMA 2 Length</Message>
+		<Message ID="GbaReg_DMA2CNT_H">DMA 2 Control</Message>
+		<Message ID="GbaReg_DMA3SAD">DMA 3 Source Address</Message>
+		<Message ID="GbaReg_DMA3DAD">DMA 3 Destination Address</Message>
+		<Message ID="GbaReg_DMA3CNT_L">DMA 3 Length</Message>
+		<Message ID="GbaReg_DMA3CNT_H">DMA 3 Control</Message>
+		<Message ID="GbaReg_TM0CNT_L">Timer 0 Counter/Reload</Message>
+		<Message ID="GbaReg_TM0CNT_H">Timer 0 Control</Message>
+		<Message ID="GbaReg_TM1CNT_L">Timer 1 Counter/Reload</Message>
+		<Message ID="GbaReg_TM1CNT_H">Timer 1 Control</Message>
+		<Message ID="GbaReg_TM2CNT_L">Timer 2 Counter/Reload</Message>
+		<Message ID="GbaReg_TM2CNT_H">Timer 2 Control</Message>
+		<Message ID="GbaReg_TM3CNT_L">Timer 3 Counter/Reload</Message>
+		<Message ID="GbaReg_TM3CNT_H">Timer 3 Control</Message>
+		<Message ID="GbaReg_SIODATA32">Serial I/O Data (32-bit)</Message>
+		<Message ID="GbaReg_SIOMULTI2">Serial I/O Multiplayer Data 2</Message>
+		<Message ID="GbaReg_SIOMULTI3">Serial I/O Multiplayer Data 3</Message>
+		<Message ID="GbaReg_SIOCNT">Serial I/O Control</Message>
+		<Message ID="GbaReg_SIODATA8">Serial I/O Data (8-bit)</Message>
+		<Message ID="GbaReg_KEYINPUT">Key Status</Message>
+		<Message ID="GbaReg_KEYCNT">Key IRQ Control</Message>
+		<Message ID="GbaReg_RNT">Serial I/O Mode Select</Message>
+		<Message ID="GbaReg_JOYCNT">Serial I/O JOY Bus Control</Message>
+		<Message ID="GbaReg_JOYRECV">Serial I/O JOY Bus Receive Data</Message>
+		<Message ID="GbaReg_JOYSEND">Serial I/O JOY Bus Send Data</Message>
+		<Message ID="GbaReg_JOYSTAT">Serial I/O JOY Bus Status</Message>
+		<Message ID="GbaReg_IE">IRQ Enable</Message>
+		<Message ID="GbaReg_IF">IRQ Flags</Message>
+		<Message ID="GbaReg_WAITCNT">Waitstate Control</Message>
+		<Message ID="GbaReg_IME">IRQ Master Enable</Message>
+		<Message ID="GbaReg_POSTFLG">Post Boot Flag</Message>
+		<Message ID="GbaReg_HALTCNT">Halt Control</Message>
+
+		<Message ID="WsReg_CART_BANK_ROML_PORT">Linear ROM (0x40000 - 0xFFFFF) bank address.</Message>
+		<Message ID="WsReg_CART_BANK_RAM_PORT">RAM (0x10000 - 0x1FFFF) bank address (up to 16 MiB).</Message>
+		<Message ID="WsReg_CART_BANK_ROM0_PORT">ROM0 (0x20000 - 0x2FFFF) bank address (up to 16 MiB).</Message>
+		<Message ID="WsReg_CART_BANK_ROM1_PORT">ROM1 (0x30000 - 0x3FFFF) bank address (up to 16 MiB).</Message>
+		<Message ID="WsReg_CART_BANK_FLASH_PORT">Control ROM/Flash access in RAM bank area.</Message>
+		<Message ID="WsReg_CART_EXTBANK_ROML_PORT">Linear ROM (0x40000 - 0xFFFFF) bank address.</Message>
+		<Message ID="WsReg_CART_EXTBANK_RAM_PORT">RAM (0x10000 - 0x1FFFF) bank address (up to 4 GiB).</Message>
+		<Message ID="WsReg_CART_EXTBANK_ROM0_PORT">ROM0 (0x20000 - 0x2FFFF) bank address (up to 4 GiB).</Message>
+		<Message ID="WsReg_CART_EXTBANK_ROM1_PORT">ROM1 (0x30000 - 0x3FFFF) bank address (up to 4 GiB).</Message>
+		<Message ID="WsReg_CART_EEP_DATA_PORT">Cartridge EEPROM data.</Message>
+		<Message ID="WsReg_CART_EEP_COMMAND_PORT">Cartridge EEPROM command.</Message>
+		<Message ID="WsReg_DISPLAY_BACK_PORT">The display's background shade/color.</Message>
+		<Message ID="WsReg_DISPLAY_LINE_PORT">The current line being drawn by the display.  Note that final color translation is applied with a one-line delay; for changing LCD shade or color palette values, subtract 1 from this value.</Message>
+		<Message ID="WsReg_DISPLAY_LINE_IRQ_PORT">The line on the start of which the line interurpt should be requested.</Message>
+		<Message ID="WsReg_SPR_BASE_PORT">Base address of sprite table data.</Message>
+		<Message ID="WsReg_SPR_FIRST_PORT">First sprite to draw from the sprite table (0 - 127).</Message>
+		<Message ID="WsReg_SPR_COUNT_PORT">Number of consecutive sprites to draw from the sprite table (1 - 128).</Message>
+		<Message ID="WsReg_SCR_BASE_PORT">Base address of screen layer data.</Message>
+		<Message ID="WsReg_SCR2_WIN_X1_PORT">Left-most pixel of the Screen 2 window.</Message>
+		<Message ID="WsReg_SCR2_WIN_Y1_PORT">Top-most pixel of the Screen 2 window.</Message>
+		<Message ID="WsReg_SCR2_WIN_X2_PORT">Right-most pixel of the Screen 2 window.</Message>
+		<Message ID="WsReg_SCR2_WIN_Y2_PORT">Bottom-most pixel of the Screen 2 window.</Message>
+		<Message ID="WsReg_SPR_WIN_X1_PORT">Left-most pixel of the sprite window.</Message>
+		<Message ID="WsReg_SPR_WIN_Y1_PORT">Top-most pixel of the sprite window.</Message>
+		<Message ID="WsReg_SPR_WIN_X2_PORT">Right-most pixel of the sprite window.</Message>
+		<Message ID="WsReg_SPR_WIN_Y2_PORT">Bottom-most pixel of the sprite window.</Message>
+		<Message ID="WsReg_SCR1_SCRL_X_PORT">X drawing offset of the Screen 1 layer.</Message>
+		<Message ID="WsReg_SCR1_SCRL_Y_PORT">Y drawing offset of the Screen 1 layer.</Message>
+		<Message ID="WsReg_SCR2_SCRL_X_PORT">X drawing offset of the Screen 2 layer.</Message>
+		<Message ID="WsReg_SCR2_SCRL_Y_PORT">Y drawing offset of the Screen 2 layer.</Message>
+		<Message ID="WsReg_LCD_CTRL_PORT">Controls LCD driver functionality.</Message>
+		<Message ID="WsReg_LCD_ICON_PORT">Controls the visibility of LCD sidebar icons.</Message>
+		<Message ID="WsReg_LCD_VTOTAL_PORT">The final line preceding line counter restart and the beginning of active display. By default, this is set to 158, which equals 159 total lines per frame.  For safety reasons, this should only be set to even values.</Message>
+		<Message ID="WsReg_LCD_STN_VSYNC_PORT">On STN models (WS/WSC), this controls the start of the vertical back porch. For compatibility, this should always be set to 3 less than LCD_VTOTAL.</Message>
+		<Message ID="WsReg_LCD_NEXT_LINE_PORT">The next line to start drawing on. Write-only. Not recommended for use.</Message>
+		<Message ID="WsReg_LCD_ICON_LATCH_PORT">Latched (SoC-controlled) icon status/control.</Message>
+		<Message ID="WsReg_GDMA_SOURCE_L_PORT">Low 16 bits of the linear GDMA source address.</Message>
+		<Message ID="WsReg_GDMA_SOURCE_H_PORT">High 4 bits of the linear GDMA source address.</Message>
+		<Message ID="WsReg_GDMA_DEST_PORT">Linear GDMA destination address in IRAM.</Message>
+		<Message ID="WsReg_GDMA_LENGTH_PORT">GDMA length, in bytes; must be a multiple of two.</Message>
+		<Message ID="WsReg_GDMA_CTRL_PORT">Control GDMA functionality.</Message>
+		<Message ID="WsReg_SDMA_SOURCE_L_PORT">Low 16 bits of the linear sound DMA source address.</Message>
+		<Message ID="WsReg_SDMA_SOURCE_H_PORT">High 4 bits of the linear sound DMA source address.</Message>
+		<Message ID="WsReg_SDMA_LENGTH_L_PORT">Low 16 bits of the sound DMA transfer length.</Message>
+		<Message ID="WsReg_SDMA_LENGTH_H_PORT">High 4 bits of the sound DMA transfer length.</Message>
+		<Message ID="WsReg_IEEP_DATA_PORT">Internal EEPROM data.</Message>
+		<Message ID="WsReg_IEEP_COMMAND_PORT">Internal EEPROM command.</Message>
+		<Message ID="WsReg_INT_VECTOR_PORT">Currently requested interrupt vector, if any. Bits 3-7 are writable and serve as the vector's offset.</Message>
+		<Message ID="WsReg_INT_NMI_CTRL_PORT">Controls NMI (non-maskable interrupt) functionality.</Message>
+		<Message ID="WsReg_KEY_SCAN_PORT">Controls keypad scanning.</Message>
+		<Message ID="WsReg_SOUND_FREQ_CH1_PORT">Sound channel 1 frequency, stored as a divisor. Every `2048 - divisor` cycles, the index of the sample to be fetched from the wavetable is incremented.  The resulting frequency is calculated as follows: `sample rate = 3072000 Hz / (2048 - divisor)`.  Note that this refers to the sample rate of each sample in the wavetable, and needs to be scaled accordingly for a given waveform. For example, a 50% duty square wave (16 samples of 0 followed by 16 samples of 15) will have an effective sample rate of `(3072000 / 32) Hz / (2048 - divisor)`, or `96000 Hz / (2048 - divisor)`.</Message>
+		<Message ID="WsReg_SOUND_FREQ_CH2_PORT">Sound channel 2 frequency, stored as a divisor. Ignored in voice mode.</Message>
+		<Message ID="WsReg_SOUND_FREQ_CH3_PORT">Sound channel 3 frequency, stored as a divisor.</Message>
+		<Message ID="WsReg_SOUND_FREQ_CH4_PORT">Sound channel 4 frequency, stored as a divisor.</Message>
+		<Message ID="WsReg_SOUND_VOL_CH1_PORT">Sound channel 1 volume.</Message>
+		<Message ID="WsReg_SOUND_VOL_CH3_PORT">Sound channel 3 volume.</Message>
+		<Message ID="WsReg_SOUND_VOL_CH4_PORT">Sound channel 4 volume.</Message>
+		<Message ID="WsReg_SOUND_SWEEP_PORT">Signed 8-bit value to be added to or subtracted from the channel 3 frequency port every sweep tick.</Message>
+		<Message ID="WsReg_SOUND_SWEEP_TIME_PORT">Number of 375 Hz ticks between frequency sweep changes, minus one.</Message>
+		<Message ID="WsReg_SOUND_WAVE_BASE_PORT">Sound wavetable base address.</Message>
+		<Message ID="WsReg_SOUND_CH_CTRL_PORT">Controls sound channels.</Message>
+		<Message ID="WsReg_SOUND_OUT_CTRL_PORT">Controls sound output circuitry.</Message>
+		<Message ID="WsReg_SOUND_NOISE_LFSR_PORT">Current state of the noise channel LFSR.</Message>
+		<Message ID="WsReg_SOUND_TEST_PORT">Sound test port.</Message>
+		<Message ID="WsReg_SOUND_TEST_CHOUT_R_PORT">Sound test port: synthesizer (channel 1-4) right channel output sample in bits 0-9.</Message>
+		<Message ID="WsReg_SOUND_TEST_CHOUT_L_PORT">Sound test port: synthesizer (channel 1-4) left channel output sample in bits 0-9.</Message>
+		<Message ID="WsReg_SOUND_TEST_CHOUT_M_PORT">Sound test port: synthesizer (channel 1-4) sum of output samples in bits 0-10.</Message>
+		<Message ID="WsReg_SOUND_SPEAKER_VOL_PORT">Controls the internal speaker volume.</Message>
+		<Message ID="WsReg_TIMER_HBL_RELOAD_PORT">Reload value for horizontal blank timer.</Message>
+		<Message ID="WsReg_TIMER_VBL_RELOAD_PORT">Reload value for vertical blank timer.</Message>
+		<Message ID="WsReg_TIMER_HBL_COUNTER_PORT">Current counter value for horizontal blank timer.</Message>
+		<Message ID="WsReg_TIMER_VBL_COUNTER_PORT">Current counter value for vertical blank timer.</Message>
+		<Message ID="WsReg_SOUND_VOL_CH2_PORT">Sound channel 2 volume, or unsigned PCM sample in voice mode.</Message>
+		<Message ID="WsReg_SCR_PAL_0_PORT">Palette 0.</Message>
+		<Message ID="WsReg_SCR_PAL_1_PORT">Palette 1.</Message>
+		<Message ID="WsReg_SCR_PAL_2_PORT">Palette 2.</Message>
+		<Message ID="WsReg_SCR_PAL_3_PORT">Palette 3.</Message>
+		<Message ID="WsReg_SCR_PAL_4_PORT">Palette 4.</Message>
+		<Message ID="WsReg_SCR_PAL_5_PORT">Palette 5.</Message>
+		<Message ID="WsReg_SCR_PAL_6_PORT">Palette 6.</Message>
+		<Message ID="WsReg_SCR_PAL_7_PORT">Palette 7.</Message>
+		<Message ID="WsReg_SCR_PAL_8_PORT">Palette 8 (sprite palette 0).</Message>
+		<Message ID="WsReg_SCR_PAL_9_PORT">Palette 9 (sprite palette 1).</Message>
+		<Message ID="WsReg_SCR_PAL_10_PORT">Palette 10 (sprite palette 2).</Message>
+		<Message ID="WsReg_SCR_PAL_11_PORT">Palette 11 (sprite palette 3).</Message>
+		<Message ID="WsReg_SCR_PAL_12_PORT">Palette 12 (sprite palette 4).</Message>
+		<Message ID="WsReg_SCR_PAL_13_PORT">Palette 13 (sprite palette 5).</Message>
+		<Message ID="WsReg_SCR_PAL_14_PORT">Palette 14 (sprite palette 6).</Message>
+		<Message ID="WsReg_SCR_PAL_15_PORT">Palette 15 (sprite palette 7).</Message>
+
+		<Message ID="PaletteHelper_Color">Color</Message>
+		<Message ID="PaletteHelper_Index">Index</Message>
+		<Message ID="PaletteHelper_Value">Value</Message>
+		<Message ID="PaletteHelper_ColorCodeHex">Color Code (Hex)</Message>
+		<Message ID="PaletteHelper_ColorCodeRGB">Color Code (RGB)</Message>
+
+		<!-- RegisterViewer localization strings -->
+		<Message ID="RegView_Common_8Bpp">8 BPP</Message>
+		<Message ID="RegView_Common_8x16">8x16</Message>
+		<Message ID="RegView_Common_8x8">8x8</Message>
+		<Message ID="RegView_Common_Ack">Ack</Message>
+		<Message ID="RegView_Common_APUEnabled">APU Enabled</Message>
+		<Message ID="RegView_Common_BackgroundEnabled">Background Enabled</Message>
+		<Message ID="RegView_Common_ChannelEnabled">Channel Enabled</Message>
+		<Message ID="RegView_Common_Control">Control</Message>
+		<Message ID="RegView_Common_CycleH">Cycle (H)</Message>
+		<Message ID="RegView_Common_Destination">Destination</Message>
+		<Message ID="RegView_Common_Divider">Divider</Message>
+		<Message ID="RegView_Common_Divisor">Divisor</Message>
+		<Message ID="RegView_Common_Duty">Duty</Message>
+		<Message ID="RegView_Common_DutyPosition">Duty Position</Message>
+		<Message ID="RegView_Common_Enabled">Enabled</Message>
+		<Message ID="RegView_Common_EnabledIRQs">Enabled IRQs</Message>
+		<Message ID="RegView_Common_EnvelopeIncreaseVolume">Envelope Increase Volume</Message>
+		<Message ID="RegView_Common_EnvelopePeriod">Envelope Period</Message>
+		<Message ID="RegView_Common_EnvelopeTimer">Envelope Timer</Message>
+		<Message ID="RegView_Common_EnvelopeVolume">Envelope Volume</Message>
+		<Message ID="RegView_Common_FrameNumber">Frame Number</Message>
+		<Message ID="RegView_Common_FrameSequencer">Frame Sequencer</Message>
+		<Message ID="RegView_Common_Frequency">Frequency</Message>
+		<Message ID="RegView_Common_HzSuffix"> Hz</Message>
+		<Message ID="RegView_Common_In">In</Message>
+		<Message ID="RegView_Common_Input">Input</Message>
+		<Message ID="RegView_Common_IRQ">IRQ</Message>
+		<Message ID="RegView_Common_IRQEnabled">IRQ Enabled</Message>
+		<Message ID="RegView_Common_LCDEnabled">LCD Enabled</Message>
+		<Message ID="RegView_Common_LeftNoiseEnabled">Left Noise Enabled</Message>
+		<Message ID="RegView_Common_LeftSquare1Enabled">Left Square 1 Enabled</Message>
+		<Message ID="RegView_Common_LeftSquare2Enabled">Left Square 2 Enabled</Message>
+		<Message ID="RegView_Common_LeftVolume">Left Volume</Message>
+		<Message ID="RegView_Common_LeftWaveEnabled">Left Wave Enabled</Message>
+		<Message ID="RegView_Common_Length">Length</Message>
+		<Message ID="RegView_Common_LengthCounterEnabled">Length Counter Enabled</Message>
+		<Message ID="RegView_Common_Misc">Misc</Message>
+		<Message ID="RegView_Common_Noise">Noise</Message>
+		<Message ID="RegView_Common_Out">Out</Message>
+		<Message ID="RegView_Common_Output">Output</Message>
+		<Message ID="RegView_Common_PeriodShift">Period Shift</Message>
+		<Message ID="RegView_Common_Ports">Ports</Message>
+		<Message ID="RegView_Common_Registers">Registers</Message>
+		<Message ID="RegView_Common_RightNoiseEnabled">Right Noise Enabled</Message>
+		<Message ID="RegView_Common_RightSquare1Enabled">Right Square 1 Enabled</Message>
+		<Message ID="RegView_Common_RightSquare2Enabled">Right Square 2 Enabled</Message>
+		<Message ID="RegView_Common_RightVolume">Right Volume</Message>
+		<Message ID="RegView_Common_RightWaveEnabled">Right Wave Enabled</Message>
+		<Message ID="RegView_Common_ScanlineV">Scanline (V)</Message>
+		<Message ID="RegView_Common_ShiftRegister">Shift Register</Message>
+		<Message ID="RegView_Common_ShortMode">Short Mode</Message>
+		<Message ID="RegView_Common_Source">Source</Message>
+		<Message ID="RegView_Common_SpritesEnabled">Sprites Enabled</Message>
+		<Message ID="RegView_Common_Square1">Square 1</Message>
+		<Message ID="RegView_Common_Square2">Square 2</Message>
+		<Message ID="RegView_Common_State">State</Message>
+		<Message ID="RegView_Common_Status">Status</Message>
+		<Message ID="RegView_Common_SweepEnabled">Sweep Enabled</Message>
+		<Message ID="RegView_Common_SweepFrequency">Sweep Frequency</Message>
+		<Message ID="RegView_Common_SweepNegate">Sweep Negate</Message>
+		<Message ID="RegView_Common_SweepPeriod">Sweep Period</Message>
+		<Message ID="RegView_Common_SweepShift">Sweep Shift</Message>
+		<Message ID="RegView_Common_SweepTimer">Sweep Timer</Message>
+		<Message ID="RegView_Common_Timer">Timer</Message>
+		<Message ID="RegView_Common_Volume">Volume</Message>
+		<Message ID="RegView_Common_VolumeLeft">Volume Left</Message>
+		<Message ID="RegView_Common_VolumeRight">Volume Right</Message>
+		<Message ID="RegView_Common_Wave">Wave</Message>
+
+		<Message ID="RegView_Gb_8_39MHz">8.39 MHz</Message>
+		<Message ID="RegView_Gb_4_19MHz">4.19 MHz</Message>
+		<Message ID="RegView_Gb_APU">APU</Message>
+		<Message ID="RegView_Gb_BGEnabled">Background Enabled</Message>
+		<Message ID="RegView_Gb_BGPaletteBGP">BG Palette (BGP)</Message>
+		<Message ID="RegView_Gb_BGTileSelect">BG Tile Select</Message>
+		<Message ID="RegView_Gb_BGTilemapSelect">BG Tilemap Select</Message>
+		<Message ID="RegView_Gb_BGPaletteAddress">BG Palette Address</Message>
+		<Message ID="RegView_Gb_BGPaletteAutoIncrement">BG Palette Auto-increment</Message>
+		<Message ID="RegView_Gb_BGPI_BG_PaletteIndex">BGPI - Background Palette Index</Message>
+		<Message ID="RegView_Gb_CGB">CGB</Message>
+		<Message ID="RegView_Gb_ChannelEnabled">Channel Enabled</Message>
+		<Message ID="RegView_Gb_CoincidenceFlag">Coincidence Flag</Message>
+		<Message ID="RegView_Gb_CPUSpeed">CPU Speed</Message>
+		<Message ID="RegView_Gb_CPUSwitchSpeedRequest">CPU Switch Speed Request</Message>
+		<Message ID="RegView_Gb_DIV_Divider">DIV - Divider</Message>
+		<Message ID="RegView_Gb_DMA">DMA</Message>
+		<Message ID="RegView_Gb_DMADestination">DMA Destination</Message>
+		<Message ID="RegView_Gb_DMALength">DMA Length</Message>
+		<Message ID="RegView_Gb_DMARegisters">DMA registers</Message>
+		<Message ID="RegView_Gb_DMASource">DMA Source</Message>
+		<Message ID="RegView_Gb_ExternalAudioLeftEnabled">External Audio Left Enabled</Message>
+		<Message ID="RegView_Gb_ExternalAudioRightEnabled">External Audio Right Enabled</Message>
+		<Message ID="RegView_Gb_HDMAInactive">HDMA Inactive</Message>
+		<Message ID="RegView_Gb_IE_IRQEnabled">IE - IRQ Enabled</Message>
+		<Message ID="RegView_Gb_IE_JoypadIRQEnabled">IE - Joypad IRQ Enabled</Message>
+		<Message ID="RegView_Gb_IE_SerialIRQEnabled">IE - Serial IRQ Enabled</Message>
+		<Message ID="RegView_Gb_IE_STATIRQEnabled">IE - STAT IRQ Enabled</Message>
+		<Message ID="RegView_Gb_IE_TimerIRQEnabled">IE - Timer IRQ Enabled</Message>
+		<Message ID="RegView_Gb_IE_VerticalBlankIRQEnabled">IE - Vertical Blank IRQ Enabled</Message>
+		<Message ID="RegView_Gb_IF_IRQFlags">IF - IRQ Flags</Message>
+		<Message ID="RegView_Gb_IF_JoypadIRQ">IF - Joypad IRQ</Message>
+		<Message ID="RegView_Gb_IF_SerialIRQ">IF - Serial IRQ</Message>
+		<Message ID="RegView_Gb_IF_STATIRQ">IF - STAT IRQ</Message>
+		<Message ID="RegView_Gb_IF_TimerIRQ">IF - Timer IRQ</Message>
+		<Message ID="RegView_Gb_IF_VerticalBlankIRQ">IF - Vertical Blank IRQ</Message>
+		<Message ID="RegView_Gb_InputSelect">Input Select</Message>
+		<Message ID="RegView_Gb_LCD">LCD</Message>
+		<Message ID="RegView_Gb_LCDControlLCDC">LCD Control (LCDC)</Message>
+		<Message ID="RegView_Gb_LCDRegisters">LCD Registers</Message>
+		<Message ID="RegView_Gb_LCDStatusSTAT">LCD Status (STAT)</Message>
+		<Message ID="RegView_Gb_LYCCompareLYC">LY Compare (LYC)</Message>
+		<Message ID="RegView_Gb_LYCCoincidenceIRQ">LYC=LY Coincidence IRQ</Message>
+		<Message ID="RegView_Gb_Mode">Mode</Message>
+		<Message ID="RegView_Gb_Mode0HBlankIRQ">Mode 0 H-Blank IRQ</Message>
+		<Message ID="RegView_Gb_Mode1VBlankIRQ">Mode 1 V-Blank IRQ</Message>
+		<Message ID="RegView_Gb_Mode2OAMIRQ">Mode 2 OAM IRQ</Message>
+		<Message ID="RegView_Gb_OAMDMA_Running">OAM DMA - Running</Message>
+		<Message ID="RegView_Gb_OAMDMA_Source">OAM DMA - Source</Message>
+		<Message ID="RegView_Gb_OBJPalette0OBP0">OBJ Palette 0 (OBP0)</Message>
+		<Message ID="RegView_Gb_OBJPalette1OBP1">OBJ Palette 1 (OBP1)</Message>
+		<Message ID="RegView_Gb_OBJPaletteAddress">OBJ Palette Address</Message>
+		<Message ID="RegView_Gb_OBJPaletteAutoIncrement">OBJ Palette Auto-increment</Message>
+		<Message ID="RegView_Gb_OBPI_OBJPaletteIndex">OBPI - OBJ Palette Index</Message>
+		<Message ID="RegView_Gb_PaletteRegisters">Palette registers</Message>
+		<Message ID="RegView_Gb_ScrollXSCX">Scroll X (SCX)</Message>
+		<Message ID="RegView_Gb_ScrollYSCY">Scroll Y (SCY)</Message>
+		<Message ID="RegView_Gb_SerialBitCount">Serial Bit Count</Message>
+		<Message ID="RegView_Gb_SerialControl">Serial Control</Message>
+		<Message ID="RegView_Gb_SerialData">Serial Data</Message>
+		<Message ID="RegView_Gb_SpriteSize">Sprite size</Message>
+		<Message ID="RegView_Gb_TAC_Control">TAC - Control</Message>
+		<Message ID="RegView_Gb_TIMA_Counter">TIMA - Counter</Message>
+		<Message ID="RegView_Gb_TMA_Modulo">TMA - Modulo</Message>
+		<Message ID="RegView_Gb_Timer">Timer</Message>
+		<Message ID="RegView_Gb_TimerDMAIRQ">Timer/DMA/IRQ</Message>
+		<Message ID="RegView_Gb_Undocumented">Undocumented</Message>
+		<Message ID="RegView_Gb_VideoRAMBank">Video RAM Bank</Message>
+		<Message ID="RegView_Gb_WindowEnabled">Window Enabled</Message>
+		<Message ID="RegView_Gb_WindowTilemapSelect">Window Tilemap Select</Message>
+		<Message ID="RegView_Gb_WindowXWX">Window X (WX)</Message>
+		<Message ID="RegView_Gb_WindowYWY">Window Y (WY)</Message>
+		<Message ID="RegView_Gb_WorkRAMBank">Work RAM Bank</Message>
+		<Message ID="RegView_Gb_YCoordinateLY">Y-Coordinate (LY)</Message>
+		<Message ID="RegView_Gb_100Percent">100%</Message>
+		<Message ID="RegView_Gb_25Percent">25%</Message>
+		<Message ID="RegView_Gb_50Percent">50%</Message>
+
+		<Message ID="RegView_Gba_32bitTransfer">32-bit transfer</Message>
+		<Message ID="RegView_Gba_4BPP">4 BPP</Message>
+		<Message ID="RegView_Gba_A">A</Message>
+		<Message ID="RegView_Gba_Active">Active</Message>
+		<Message ID="RegView_Gba_AllowGPIORead">Allow GPIO read</Message>
+		<Message ID="RegView_Gba_APU">APU</Message>
+		<Message ID="RegView_Gba_BackdropMainTarget">Backdrop Main Target</Message>
+		<Message ID="RegView_Gba_BackdropSubTarget">Backdrop Sub Target</Message>
+		<Message ID="RegView_Gba_Bank_8_9_Sequential">Bank $8/9 - Sequential</Message>
+		<Message ID="RegView_Gba_Bank_8_9">Bank $8/9</Message>
+		<Message ID="RegView_Gba_Bank_AB_Sequential">Bank $A/B - Sequential</Message>
+		<Message ID="RegView_Gba_Bank_AB">Bank $A/B</Message>
+		<Message ID="RegView_Gba_Bank_CD_Sequential">Bank $C/D - Sequential</Message>
+		<Message ID="RegView_Gba_Bank_CD">Bank $C/D</Message>
+		<Message ID="RegView_Gba_BG0Enabled">BG0 Enabled</Message>
+		<Message ID="RegView_Gba_BG0MainTarget">BG0 Main Target</Message>
+		<Message ID="RegView_Gba_BG0SubTarget">BG0 Sub Target</Message>
+		<Message ID="RegView_Gba_BG1Enabled">BG1 Enabled</Message>
+		<Message ID="RegView_Gba_BG1MainTarget">BG1 Main Target</Message>
+		<Message ID="RegView_Gba_BG1SubTarget">BG1 Sub Target</Message>
+		<Message ID="RegView_Gba_BG2Enabled">BG2 Enabled</Message>
+		<Message ID="RegView_Gba_BG2MainTarget">BG2 Main Target</Message>
+		<Message ID="RegView_Gba_BG2SubTarget">BG2 Sub Target</Message>
+		<Message ID="RegView_Gba_BG3Enabled">BG3 Enabled</Message>
+		<Message ID="RegView_Gba_BG3MainTarget">BG3 Main Target</Message>
+		<Message ID="RegView_Gba_BG3SubTarget">BG3 Sub Target</Message>
+		<Message ID="RegView_Gba_BGEnabled0">BG0 Enabled</Message>
+		<Message ID="RegView_Gba_BGEnabled1">BG1 Enabled</Message>
+		<Message ID="RegView_Gba_BGEnabled2">BG2 Enabled</Message>
+		<Message ID="RegView_Gba_BGEnabled3">BG3 Enabled</Message>
+		<Message ID="RegView_Gba_BGLayer0">BG Layer 0</Message>
+		<Message ID="RegView_Gba_BGLayer1">BG Layer 1</Message>
+		<Message ID="RegView_Gba_BGLayer2">BG Layer 2</Message>
+		<Message ID="RegView_Gba_BGLayer3">BG Layer 3</Message>
+		<Message ID="RegView_Gba_BGMode">BG Mode</Message>
+		<Message ID="RegView_Gba_BGMosaicXSize">BG Mosaic X Size</Message>
+		<Message ID="RegView_Gba_BGMosaicYSize">BG Mosaic Y Size</Message>
+		<Message ID="RegView_Gba_BlendMainCoefficient">Blend Main Coefficient</Message>
+		<Message ID="RegView_Gba_BlendSubCoefficient">Blend Sub Coefficient</Message>
+		<Message ID="RegView_Gba_BottomY">Bottom Y</Message>
+		<Message ID="RegView_Gba_BPPSelect">BPP Select</Message>
+		<Message ID="RegView_Gba_BrightnessCoefficient">Brightness Coefficient</Message>
+		<Message ID="RegView_Gba_CartGPIO">Cart - GPIO</Message>
+		<Message ID="RegView_Gba_CartridgeIRQActive">Cartridge IRQ Active</Message>
+		<Message ID="RegView_Gba_CartridgeIRQEnabled">Cartridge IRQ Enabled</Message>
+		<Message ID="RegView_Gba_ChannelA">Channel A</Message>
+		<Message ID="RegView_Gba_ChannelALeftEnabled">Channel A Left Enabled</Message>
+		<Message ID="RegView_Gba_ChannelARightEnabled">Channel A Right Enabled</Message>
+		<Message ID="RegView_Gba_ChannelATimer">Channel A Timer</Message>
+		<Message ID="RegView_Gba_ChannelAVolume">Channel A Volume</Message>
+		<Message ID="RegView_Gba_ChannelB">Channel B</Message>
+		<Message ID="RegView_Gba_ChannelBLeftEnabled">Channel B Left Enabled</Message>
+		<Message ID="RegView_Gba_ChannelBRightEnabled">Channel B Right Enabled</Message>
+		<Message ID="RegView_Gba_ChannelBTimer">Channel B Timer</Message>
+		<Message ID="RegView_Gba_ChannelBVolume">Channel B Volume</Message>
+		<Message ID="RegView_Gba_ColorEffects">Color Effects</Message>
+		<Message ID="RegView_Gba_ColorEffectsEnabled">Color Effects Enabled</Message>
+		<Message ID="RegView_Gba_CountUpMode">Count up mode</Message>
+		<Message ID="RegView_Gba_CS_RTC">CS (RTC)</Message>
+		<Message ID="RegView_Gba_CurrentDest">Current Dest</Message>
+		<Message ID="RegView_Gba_CurrentOutput">Current Output</Message>
+		<Message ID="RegView_Gba_CurrentSrc">Current Src</Message>
+		<Message ID="RegView_Gba_Cycle">Cycle</Message>
+		<Message ID="RegView_Gba_DMA">DMA</Message>
+		<Message ID="RegView_Gba_DMAChannel0">DMA Channel 0</Message>
+		<Message ID="RegView_Gba_DMAChannel0IRQActive">DMA Channel 0 IRQ Active</Message>
+		<Message ID="RegView_Gba_DMAChannel0IRQEnabled">DMA Channel 0 IRQ Enabled</Message>
+		<Message ID="RegView_Gba_DMAChannel1">DMA Channel 1</Message>
+		<Message ID="RegView_Gba_DMAChannel1IRQActive">DMA Channel 1 IRQ Active</Message>
+		<Message ID="RegView_Gba_DMAChannel1IRQEnabled">DMA Channel 1 IRQ Enabled</Message>
+		<Message ID="RegView_Gba_DMAChannel2">DMA Channel 2</Message>
+		<Message ID="RegView_Gba_DMAChannel2IRQActive">DMA Channel 2 IRQ Active</Message>
+		<Message ID="RegView_Gba_DMAChannel2IRQEnabled">DMA Channel 2 IRQ Enabled</Message>
+		<Message ID="RegView_Gba_DMAChannel3">DMA Channel 3</Message>
+		<Message ID="RegView_Gba_DMAChannel3IRQActive">DMA Channel 3 IRQ Active</Message>
+		<Message ID="RegView_Gba_DMAChannel3IRQEnabled">DMA Channel 3 IRQ Enabled</Message>
+		<Message ID="RegView_Gba_DoubleSize">Double Size</Message>
+		<Message ID="RegView_Gba_Down">Down</Message>
+		<Message ID="RegView_Gba_DRQ">DRQ</Message>
+		<Message ID="RegView_Gba_DstMode">Dst Mode</Message>
+		<Message ID="RegView_Gba_EffectType">Effect Type</Message>
+		<Message ID="RegView_Gba_Force75PercentVolume">Force 75% volume</Message>
+		<Message ID="RegView_Gba_ForcedBlank">Forced Blank</Message>
+		<Message ID="RegView_Gba_GameBoyChannelsVolume">Game Boy Channels Volume</Message>
+		<Message ID="RegView_Gba_HBlankIRQEnabled">HBlank IRQ Enabled</Message>
+		<Message ID="RegView_Gba_HBlankOAMAccess">HBlank OAM Access</Message>
+		<Message ID="RegView_Gba_HorizontalBlank">Horizontal Blank</Message>
+		<Message ID="RegView_Gba_HorizontalBlankIRQActive">Horizontal Blank IRQ Active</Message>
+		<Message ID="RegView_Gba_HorizontalBlankIRQEnabled">Horizontal Blank IRQ Enabled</Message>
+		<Message ID="RegView_Gba_IE_IRQEnabled">IE - IRQ Enabled</Message>
+		<Message ID="RegView_Gba_IE_IRQFlags">IE - IRQ Flags</Message>
+		<Message ID="RegView_Gba_IE_RegisterValue">IE - Register Value</Message>
+		<Message ID="RegView_Gba_IF_RegisterValue">IF - Register Value</Message>
+		<Message ID="RegView_Gba_IME">IME</Message>
+		<Message ID="RegView_Gba_InputIRQActive">Input IRQ Active</Message>
+		<Message ID="RegView_Gba_InputIRQControl">Input IRQ Control</Message>
+		<Message ID="RegView_Gba_InputIRQEnabled">Input IRQ Enabled</Message>
+		<Message ID="RegView_Gba_IRQCondition">IRQ Condition</Message>
+		<Message ID="RegView_Gba_Invalid">Invalid</Message>
+		<Message ID="RegView_Gba_L">L</Message>
+		<Message ID="RegView_Gba_Left">Left</Message>
+		<Message ID="RegView_Gba_LeftX">Left X</Message>
+		<Message ID="RegView_Gba_LYC">LYC</Message>
+		<Message ID="RegView_Gba_LYCIRQEnabled">LYC IRQ Enabled</Message>
+		<Message ID="RegView_Gba_LYCMatch">LYC Match</Message>
+		<Message ID="RegView_Gba_LYCMatchIRQActive">LYC Match IRQ Active</Message>
+		<Message ID="RegView_Gba_LYCMatchIRQEnabled">LYC Match IRQ Enabled</Message>
+		<Message ID="RegView_Gba_Misc">Misc</Message>
+		<Message ID="RegView_Gba_Mosaic">Mosaic</Message>
+		<Message ID="RegView_Gba_MosaicEnabled">Mosaic Enabled</Message>
+		<Message ID="RegView_Gba_OBJEnabled">OBJ Enabled</Message>
+		<Message ID="RegView_Gba_OBJMainTarget">OBJ Main Target</Message>
+		<Message ID="RegView_Gba_OBJMosaicXSize">OBJ Mosaic X Size</Message>
+		<Message ID="RegView_Gba_OBJMosaicYSize">OBJ Mosaic Y Size</Message>
+		<Message ID="RegView_Gba_OBJSubTarget">OBJ Sub Target</Message>
+		<Message ID="RegView_Gba_OBJWindowEnabled">OBJ Window Enabled</Message>
+		<Message ID="RegView_Gba_ObjectWindow">Object Window</Message>
+		<Message ID="RegView_Gba_OR">OR</Message>
+		<Message ID="RegView_Gba_OutsideWindow">Outside Window</Message>
+		<Message ID="RegView_Gba_Pin0Direction">Pin 0 direction</Message>
+		<Message ID="RegView_Gba_Pin1Direction">Pin 1 direction</Message>
+		<Message ID="RegView_Gba_Pin2Direction">Pin 2 direction</Message>
+		<Message ID="RegView_Gba_Pin3Direction">Pin 3 direction</Message>
+		<Message ID="RegView_Gba_Position">Position</Message>
+		<Message ID="RegView_Gba_PrefetchEnabled">Prefetch Enabled</Message>
+		<Message ID="RegView_Gba_Prescale">Prescale</Message>
+		<Message ID="RegView_Gba_Priority">Priority</Message>
+		<Message ID="RegView_Gba_AND">AND</Message>
+		<Message ID="RegView_Gba_R">R</Message>
+		<Message ID="RegView_Gba_RegisterValue">Register Value</Message>
+		<Message ID="RegView_Gba_ReloadValueW">Reload Value (W)</Message>
+		<Message ID="RegView_Gba_Repeat">Repeat</Message>
+		<Message ID="RegView_Gba_Right">Right</Message>
+		<Message ID="RegView_Gba_RightX">Right X</Message>
+		<Message ID="RegView_Gba_SampleBuffer">Sample Buffer</Message>
+		<Message ID="RegView_Gba_SamplingRate">Sampling Rate</Message>
+		<Message ID="RegView_Gba_Scanline">Scanline</Message>
+		<Message ID="RegView_Gba_SCK_RTC">SCK (RTC)</Message>
+		<Message ID="RegView_Gba_ScrollX">Scroll X</Message>
+		<Message ID="RegView_Gba_ScrollY">Scroll Y</Message>
+		<Message ID="RegView_Gba_Select">Select</Message>
+		<Message ID="RegView_Gba_SelectedBank">Selected Bank</Message>
+		<Message ID="RegView_Gba_SequentialOBJMapping">Sequential OBJ Mapping</Message>
+		<Message ID="RegView_Gba_SerialIRQActive">Serial IRQ Active</Message>
+		<Message ID="RegView_Gba_SerialIRQEnabled">Serial IRQ Enabled</Message>
+		<Message ID="RegView_Gba_Show2ndFrame">Show 2nd Frame</Message>
+		<Message ID="RegView_Gba_SIO_RTC">SIO (RTC)</Message>
+		<Message ID="RegView_Gba_Size">Size</Message>
+		<Message ID="RegView_Gba_SoundBias">Sound Bias</Message>
+		<Message ID="RegView_Gba_SoundEnabled">Sound Enabled</Message>
+		<Message ID="RegView_Gba_SRAM_BankE">SRAM (Bank $E)</Message>
+		<Message ID="RegView_Gba_SrcMode">Src Mode</Message>
+		<Message ID="RegView_Gba_Start">Start</Message>
+		<Message ID="RegView_Gba_StereoscopicGreenswap">Stereoscopic ("Greenswap")</Message>
+		<Message ID="RegView_Gba_StereoscopicMode">Stereoscopic Mode</Message>
+		<Message ID="RegView_Gba_TilemapAddress">Tilemap Address</Message>
+		<Message ID="RegView_Gba_TilesetAddress">Tileset Address</Message>
+		<Message ID="RegView_Gba_Timer0">Timer 0</Message>
+		<Message ID="RegView_Gba_Timer0IRQActive">Timer 0 IRQ Active</Message>
+		<Message ID="RegView_Gba_Timer0IRQEnabled">Timer 0 IRQ Enabled</Message>
+		<Message ID="RegView_Gba_Timer1">Timer 1</Message>
+		<Message ID="RegView_Gba_Timer1IRQActive">Timer 1 IRQ Active</Message>
+		<Message ID="RegView_Gba_Timer1IRQEnabled">Timer 1 IRQ Enabled</Message>
+		<Message ID="RegView_Gba_Timer2">Timer 2</Message>
+		<Message ID="RegView_Gba_Timer2IRQActive">Timer 2 IRQ Active</Message>
+		<Message ID="RegView_Gba_Timer2IRQEnabled">Timer 2 IRQ Enabled</Message>
+		<Message ID="RegView_Gba_Timer3">Timer 3</Message>
+		<Message ID="RegView_Gba_Timer3IRQActive">Timer 3 IRQ Active</Message>
+		<Message ID="RegView_Gba_Timer3IRQEnabled">Timer 3 IRQ Enabled</Message>
+		<Message ID="RegView_Gba_Timers">Timers</Message>
+		<Message ID="RegView_Gba_TimerValueR">Timer Value (R)</Message>
+		<Message ID="RegView_Gba_TopY">Top Y</Message>
+		<Message ID="RegView_Gba_Trigger">Trigger</Message>
+		<Message ID="RegView_Gba_Unused_RTC">Unused (RTC)</Message>
+		<Message ID="RegView_Gba_Up">Up</Message>
+		<Message ID="RegView_Gba_VBlankIRQEnabled">VBlank IRQ Enabled</Message>
+		<Message ID="RegView_Gba_VerticalBlank">Vertical Blank</Message>
+		<Message ID="RegView_Gba_VerticalBlankIRQActive">Vertical Blank IRQ Active</Message>
+		<Message ID="RegView_Gba_VerticalBlankIRQEnabled">Vertical Blank IRQ Enabled</Message>
+		<Message ID="RegView_Gba_VolumeLeftGB">Volume Left (GB)</Message>
+		<Message ID="RegView_Gba_VolumeRightGB">Volume Right (GB)</Message>
+		<Message ID="RegView_Gba_WaitControl">Wait Control</Message>
+		<Message ID="RegView_Gba_Window0">Window 0</Message>
+		<Message ID="RegView_Gba_Window0Enabled">Window 0 Enabled</Message>
+		<Message ID="RegView_Gba_Window1">Window 1</Message>
+		<Message ID="RegView_Gba_Window1Enabled">Window 1 Enabled</Message>
+		<Message ID="RegView_Gba_Windows">Windows</Message>
+		<Message ID="RegView_Gba_Wraparound">Wraparound</Message>
+
+		<Message ID="RegView_Nes_1Byte">1 byte</Message>
+		<Message ID="RegView_Nes_32Bytes">32 bytes</Message>
+		<Message ID="RegView_Nes_5StepMode">5-step Mode</Message>
+		<Message ID="RegView_Nes_APU">APU</Message>
+		<Message ID="RegView_Nes_BG_ShowLeftmost8Pixels">BG - Show leftmost 8 pixels</Message>
+		<Message ID="RegView_Nes_BGTableAddress">BG Table Address</Message>
+		<Message ID="RegView_Nes_BackgroundEnabled">Background enabled</Message>
+		<Message ID="RegView_Nes_BlueEmphasis">Blue emphasis</Message>
+		<Message ID="RegView_Nes_BytesRemaining">Bytes Remaining</Message>
+		<Message ID="RegView_Nes_Cart">Cart</Message>
+		<Message ID="RegView_Nes_DMC">DMC</Message>
+		<Message ID="RegView_Nes_Envelope_ConstantVolume">Envelope - Constant Volume</Message>
+		<Message ID="RegView_Nes_Envelope_Counter">Envelope - Counter</Message>
+		<Message ID="RegView_Nes_Envelope_Divider">Envelope - Divider</Message>
+		<Message ID="RegView_Nes_FrameCounter">Frame Counter</Message>
+		<Message ID="RegView_Nes_Grayscale">Grayscale</Message>
+		<Message ID="RegView_Nes_GreenEmphasis">Green emphasis</Message>
+		<Message ID="RegView_Nes_IncrementMode">Increment Mode</Message>
+		<Message ID="RegView_Nes_IRQEnabled">IRQ Enabled</Message>
+		<Message ID="RegView_Nes_LengthCounter_Counter">Length Counter - Counter</Message>
+		<Message ID="RegView_Nes_LengthCounter_Halted">Length Counter - Halted</Message>
+		<Message ID="RegView_Nes_LengthCounter_ReloadValue">Length Counter - Reload Value</Message>
+		<Message ID="RegView_Nes_LinearCounter_Counter">Linear Counter - Counter</Message>
+		<Message ID="RegView_Nes_LinearCounter_Reload">Linear Counter - Reload</Message>
+		<Message ID="RegView_Nes_LinearCounter_ReloadFlag">Linear Counter - Reload Flag</Message>
+		<Message ID="RegView_Nes_LoopFlag">Loop Flag</Message>
+		<Message ID="RegView_Nes_Main">Main</Message>
+		<Message ID="RegView_Nes_MainSecondaryPPUSelect">Main/secondary PPU select</Message>
+		<Message ID="RegView_Nes_Mask">Mask</Message>
+		<Message ID="RegView_Nes_ModeFlag">Mode Flag</Message>
+		<Message ID="RegView_Nes_NextSampleAddress">Next sample address</Message>
+		<Message ID="RegView_Nes_NMIEnabled">NMI enabled</Message>
+		<Message ID="RegView_Nes_OAM1Address">OAM1 address</Message>
+		<Message ID="RegView_Nes_OAM2Address">OAM2 address</Message>
+		<Message ID="RegView_Nes_OutputLevel">Output Level</Message>
+		<Message ID="RegView_Nes_PPU">PPU</Message>
+		<Message ID="RegView_Nes_PPUBusAddress">PPU Bus Address</Message>
+		<Message ID="RegView_Nes_PPURegisterBuffer">PPU Register Buffer</Message>
+		<Message ID="RegView_Nes_RedEmphasis">Red emphasis</Message>
+		<Message ID="RegView_Nes_SampleAddress">Sample Address</Message>
+		<Message ID="RegView_Nes_SampleLength">Sample Length</Message>
+		<Message ID="RegView_Nes_Secondary">Secondary</Message>
+		<Message ID="RegView_Nes_SequencePosition">Sequence Position</Message>
+		<Message ID="RegView_Nes_Sprites_ShowLeftmost8Pixels">Sprites - Show leftmost 8 pixels</Message>
+		<Message ID="RegView_Nes_SpritesEnabled">Sprites enabled</Message>
+		<Message ID="RegView_Nes_SpritesSize">Sprite Size</Message>
+		<Message ID="RegView_Nes_Sprite0Hit">Sprite 0 hit</Message>
+		<Message ID="RegView_Nes_SpriteOverflow">Sprite overflow</Message>
+		<Message ID="RegView_Nes_SpriteTableAddress">Sprite Table Address</Message>
+		<Message ID="RegView_Nes_Sweep_Enabled">Sweep - Enabled</Message>
+		<Message ID="RegView_Nes_Sweep_Negate">Sweep - Negate</Message>
+		<Message ID="RegView_Nes_Sweep_Period">Sweep - Period</Message>
+		<Message ID="RegView_Nes_Sweep_Shift">Sweep - Shift</Message>
+		<Message ID="RegView_Nes_T">T</Message>
+		<Message ID="RegView_Nes_VerticalBlank">Vertical blank</Message>
+		<Message ID="RegView_Nes_VRAMAddress">VRAM Address</Message>
+		<Message ID="RegView_Nes_VRAMAddressScrolling">VRAM Address / Scrolling</Message>
+		<Message ID="RegView_Nes_WriteToggle">Write Toggle</Message>
+		<Message ID="RegView_Nes_XScroll">X Scroll</Message>
+
+		<Message ID="RegView_Pce_10_74MHz">10.74 MHz</Message>
+		<Message ID="RegView_Pce_1_79MHz">1.79 MHz</Message>
+		<Message ID="RegView_Pce_2_5Secs">2.5 secs</Message>
+		<Message ID="RegView_Pce_5_37MHz">5.37 MHz</Message>
+		<Message ID="RegView_Pce_6Secs">6 secs</Message>
+		<Message ID="RegView_Pce_7_16MHz">7.16 MHz</Message>
+		<Message ID="RegView_Pce_ACK">ACK</Message>
+		<Message ID="RegView_Pce_ActiveIRQs">Active IRQs</Message>
+		<Message ID="RegView_Pce_AddIncrementToBase">Add increment to base</Message>
+		<Message ID="RegView_Pce_AddOffset">Add offset</Message>
+		<Message ID="RegView_Pce_AddOffsetTrigger">Add offset trigger</Message>
+		<Message ID="RegView_Pce_Address">Address</Message>
+		<Message ID="RegView_Pce_ADPCM">ADPCM</Message>
+		<Message ID="RegView_Pce_ADPCM_EndReachedIRQ">ADPCM - End Reached IRQ</Message>
+		<Message ID="RegView_Pce_ADPCM_EndReachedIRQEnabled">ADPCM - End Reached IRQ Enabled</Message>
+		<Message ID="RegView_Pce_ADPCM_HalfReachedIRQ">ADPCM - Half Reached IRQ</Message>
+		<Message ID="RegView_Pce_ADPCM_HalfReachedIRQEnabled">ADPCM - Half Reached IRQ Enabled</Message>
+		<Message ID="RegView_Pce_ADPCMLength">ADPCM Length</Message>
+		<Message ID="RegView_Pce_ADPCMPlayingBusy">ADPCM Playing/Busy</Message>
+		<Message ID="RegView_Pce_Amplitude">Amplitude</Message>
+		<Message ID="RegView_Pce_ArcadeCard">Arcade Card</Message>
+		<Message ID="RegView_Pce_AudioFader">Audio Fader</Message>
+		<Message ID="RegView_Pce_AutoIncrement">Auto-increment</Message>
+		<Message ID="RegView_Pce_AutoStopOnLength0">Auto-stop on length = 0</Message>
+		<Message ID="RegView_Pce_BackgroundEnabled">Background Enabled</Message>
+		<Message ID="RegView_Pce_BaseAddress">Base Address</Message>
+		<Message ID="RegView_Pce_BlockTransferSourceAddress">SOUR - Block Transfer Source Address</Message>
+		<Message ID="RegView_Pce_BlockTransferSourceAddressDESR">DESR - Block Transfer Source Address</Message>
+		<Message ID="RegView_Pce_BlockTransferSourceAddressLENR">LENR - Block Transfer Source Address</Message>
+		<Message ID="RegView_Pce_BRAMEnabled">BRAM Enabled</Message>
+		<Message ID="RegView_Pce_BSY">BSY</Message>
+		<Message ID="RegView_Pce_BXR_BGScrollX">BXR - BG Scroll X</Message>
+		<Message ID="RegView_Pce_BYR_BGScrollY">BYR - BG Scroll Y</Message>
+		<Message ID="RegView_Pce_CD">CD</Message>
+		<Message ID="RegView_Pce_CDAudioPlayer">CD Audio Player</Message>
+		<Message ID="RegView_Pce_CDAudioStatus">CD Audio Status</Message>
+		<Message ID="RegView_Pce_CDROM">CD-ROM</Message>
+		<Message ID="RegView_Pce_CGMode">CG Mode</Message>
+		<Message ID="RegView_Pce_ChannelSelect">Channel Select</Message>
+		<Message ID="RegView_Pce_ClockSpeed">CR - Clock Speed</Message>
+		<Message ID="RegView_Pce_ColorTableAddress">CTA - Color Table Address</Message>
+		<Message ID="RegView_Pce_ColumnCount">Column Count</Message>
+		<Message ID="RegView_Pce_Control">Control</Message>
+		<Message ID="RegView_Pce_Counter">Counter</Message>
+		<Message ID="RegView_Pce_CPU">CPU</Message>
+		<Message ID="RegView_Pce_CPUSpeed">CPU Speed</Message>
+		<Message ID="RegView_Pce_CR_Control">CR - Control</Message>
+		<Message ID="RegView_Pce_CR_Grayscale">CR - Grayscale</Message>
+		<Message ID="RegView_Pce_CR_NumberOfScanlines">CR - Number of Scanlines</Message>
+		<Message ID="RegView_Pce_CurrentSample">Current Sample</Message>
+		<Message ID="RegView_Pce_CurrentSector">Current Sector</Message>
+		<Message ID="RegView_Pce_DataInIRQ">Data In IRQ</Message>
+		<Message ID="RegView_Pce_DataInIRQEnabled">Data In IRQ Enabled</Message>
+		<Message ID="RegView_Pce_DataPortRead">Data Port (Read)</Message>
+		<Message ID="RegView_Pce_DataPortWrite">Data Port (Write)</Message>
+		<Message ID="RegView_Pce_DCR_BlockTransferControl">DCR - Block Transfer Control</Message>
+		<Message ID="RegView_Pce_DDAEnabled">DDA Enabled</Message>
+		<Message ID="RegView_Pce_DDAOutputValue">DDA Output Value</Message>
+		<Message ID="RegView_Pce_DecrementDestinationAddress">Decrement Destination Address</Message>
+		<Message ID="RegView_Pce_DecrementSourceAddress">Decrement Source Address</Message>
+		<Message ID="RegView_Pce_DisabledIRQs">Disabled IRQs</Message>
+		<Message ID="RegView_Pce_DMARequested">DMA Requested</Message>
+		<Message ID="RegView_Pce_DMAEnabled">DMA Enabled</Message>
+		<Message ID="RegView_Pce_DMAControl">DMA Control</Message>
+		<Message ID="RegView_Pce_DVSSR_VRAM_SATBTransferSourceAddress">DVSSR - VRAM-SATB Transfer Source Address</Message>
+		<Message ID="RegView_Pce_EffectiveVolume">Effective Volume</Message>
+		<Message ID="RegView_Pce_Enabled">Enabled</Message>
+		<Message ID="RegView_Pce_EndBehavior">End Behavior</Message>
+		<Message ID="RegView_Pce_EndReached">End Reached</Message>
+		<Message ID="RegView_Pce_EndSector">End Sector</Message>
+		<Message ID="RegView_Pce_ExternalSync">External Sync</Message>
+		<Message ID="RegView_Pce_FadeSpeed">Fade speed</Message>
+		<Message ID="RegView_Pce_FirstSpriteIndex">First Sprite Index</Message>
+		<Message ID="RegView_Pce_HalfReached">Half Reached</Message>
+		<Message ID="RegView_Pce_HClockH">HClock (H)</Message>
+		<Message ID="RegView_Pce_HDE_HorizontalDisplayEndPosition">HDE - Horizontal Display End Position</Message>
+		<Message ID="RegView_Pce_HDR_HorizontalDisplay">HDR - Horizontal Display</Message>
+		<Message ID="RegView_Pce_HDS_HorizontalDisplayStartPosition">HDS - Horizontal Display Start Position</Message>
+		<Message ID="RegView_Pce_HDW_HorizontalDisplayWidth">HDW - Horizontal Display Width</Message>
+		<Message ID="RegView_Pce_HSR_HorizontalSync">HSR - Horizontal Sync</Message>
+		<Message ID="RegView_Pce_HSW_HorizontalSyncWidth">HSW - Horizontal Sync Width</Message>
+		<Message ID="RegView_Pce_HSYNCIn">HSYNC In</Message>
+		<Message ID="RegView_Pce_HSYNCOut">HSYNC Out</Message>
+		<Message ID="RegView_Pce_IncrementValue">Increment Value</Message>
+		<Message ID="RegView_Pce_IO">IO</Message>
+		<Message ID="RegView_Pce_IRQ">IRQ</Message>
+		<Message ID="RegView_Pce_IRQ1_VDC">IRQ1 (VDC)</Message>
+		<Message ID="RegView_Pce_IRQ1_VDCDisabled">IRQ1 (VDC) Disabled</Message>
+		<Message ID="RegView_Pce_IRQ2_CDROM">IRQ2 (CDROM)</Message>
+		<Message ID="RegView_Pce_IRQ2_CDROMDisabled">IRQ2 (CDROM) Disabled</Message>
+		<Message ID="RegView_Pce_LatchLength">Latch Length</Message>
+		<Message ID="RegView_Pce_LeftAmplitude">Left Amplitude</Message>
+		<Message ID="RegView_Pce_LFOControl">LFO Control</Message>
+		<Message ID="RegView_Pce_LFOFrequency">LFO Frequency</Message>
+		<Message ID="RegView_Pce_MAWR_MemoryWriteAddress">MAWR - Memory Write Address</Message>
+		<Message ID="RegView_Pce_MARR_MemoryReadAddress">MARR - Memory Read Address</Message>
+		<Message ID="RegView_Pce_MPR">MPR</Message>
+		<Message ID="RegView_Pce_MPR0">MPR #0</Message>
+		<Message ID="RegView_Pce_MPR1">MPR #1</Message>
+		<Message ID="RegView_Pce_MPR2">MPR #2</Message>
+		<Message ID="RegView_Pce_MPR3">MPR #3</Message>
+		<Message ID="RegView_Pce_MPR4">MPR #4</Message>
+		<Message ID="RegView_Pce_MPR5">MPR #5</Message>
+		<Message ID="RegView_Pce_MPR6">MPR #6</Message>
+		<Message ID="RegView_Pce_MPR7">MPR #7</Message>
+		<Message ID="RegView_Pce_MSG">MSG</Message>
+		<Message ID="RegView_Pce_MWR_MemoryWidth">MWR - Memory Width</Message>
+		<Message ID="RegView_Pce_NegativeOffset">Negative offset</Message>
+		<Message ID="RegView_Pce_NoiseEnabled">Noise Enabled</Message>
+		<Message ID="RegView_Pce_NoiseFrequency">Noise Frequency</Message>
+		<Message ID="RegView_Pce_NoiseLSFR">Noise LSFR</Message>
+		<Message ID="RegView_Pce_NoiseOutput">Noise Output</Message>
+		<Message ID="RegView_Pce_NoiseTimer">Noise Timer</Message>
+		<Message ID="RegView_Pce_Offset">Offset</Message>
+		<Message ID="RegView_Pce_OverflowIRQEnabled">Overflow IRQ Enabled</Message>
+		<Message ID="RegView_Pce_PlaybackRate">Playback Rate</Message>
+		<Message ID="RegView_Pce_PriorityConfigBothWindows">Priority Config (Both windows)</Message>
+		<Message ID="RegView_Pce_PriorityConfigNoWindow">Priority Config (No window)</Message>
+		<Message ID="RegView_Pce_PriorityConfigWindow1Only">Priority Config (Window 1 only)</Message>
+		<Message ID="RegView_Pce_PriorityConfigWindow2Only">Priority Config (Window 2 only)</Message>
+		<Message ID="RegView_Pce_PriorityMode">Priority Mode</Message>
+		<Message ID="RegView_Pce_PSG">PSG</Message>
+		<Message ID="RegView_Pce_RCR_RasterCompareRegister">RCR - Raster Compare Register</Message>
+		<Message ID="RegView_Pce_RCRScanlineDetected">RCR Scanline Detected</Message>
+		<Message ID="RegView_Pce_ReadAddress">Read Address</Message>
+		<Message ID="RegView_Pce_ReadBuffer">Read Buffer</Message>
+		<Message ID="RegView_Pce_ReadPending">Read Pending</Message>
+		<Message ID="RegView_Pce_ReadUntilSector">Read Until Sector</Message>
+		<Message ID="RegView_Pce_ReloadValue">Reload Value</Message>
+		<Message ID="RegView_Pce_REQ">REQ</Message>
+		<Message ID="RegView_Pce_Reset">Reset</Message>
+		<Message ID="RegView_Pce_RightAmplitude">Right Amplitude</Message>
+		<Message ID="RegView_Pce_RotateValue">Rotate Value</Message>
+		<Message ID="RegView_Pce_RowCount">Row Count</Message>
+		<Message ID="RegView_Pce_RST">RST</Message>
+		<Message ID="RegView_Pce_SATBTransferCompleted">SATB Transfer Completed</Message>
+		<Message ID="RegView_Pce_Scaler">Scaler</Message>
+		<Message ID="RegView_Pce_ScanlineDetectRCRIRQEnabled">Scanline Detect (RCR) IRQ Enabled</Message>
+		<Message ID="RegView_Pce_SCSIDrive">SCSI Drive</Message>
+		<Message ID="RegView_Pce_SCSIPhase">SCSI Phase</Message>
+		<Message ID="RegView_Pce_SCSISignals">SCSI Signals</Message>
+		<Message ID="RegView_Pce_SEL">SEL</Message>
+		<Message ID="RegView_Pce_SelectedRegister">Selected Register</Message>
+		<Message ID="RegView_Pce_ShiftRegister">Shift Register</Message>
+		<Message ID="RegView_Pce_ShiftValue">Shift Value</Message>
+		<Message ID="RegView_Pce_Sprite0Hit">Sprite 0 Hit</Message>
+		<Message ID="RegView_Pce_Sprite0HitIRQEnabled">Sprite 0 Hit IRQ Enabled</Message>
+		<Message ID="RegView_Pce_SpriteAccessMode">Sprite Access Mode</Message>
+		<Message ID="RegView_Pce_SpriteOverflow">Sprite Overflow</Message>
+		<Message ID="RegView_Pce_SpritesEnabled">Sprites Enabled</Message>
+		<Message ID="RegView_Pce_StartPlayback">Start Playback</Message>
+		<Message ID="RegView_Pce_StartSector">Start Sector</Message>
+		<Message ID="RegView_Pce_Status">Status</Message>
+		<Message ID="RegView_Pce_StatusMessageInIRQ">Status/Message In IRQ</Message>
+		<Message ID="RegView_Pce_StatusMessageInIRQEnabled">Status/Message In IRQ Enabled</Message>
+		<Message ID="RegView_Pce_STnWritesToVDC2">STn writes to VDC2</Message>
+		<Message ID="RegView_Pce_SubcodeIRQ">Subcode IRQ</Message>
+		<Message ID="RegView_Pce_SubcodeIRQEnabled">Subcode IRQ Enabled</Message>
+		<Message ID="RegView_Pce_Target">Target</Message>
+		<Message ID="RegView_Pce_TimerIRQ">Timer IRQ</Message>
+		<Message ID="RegView_Pce_TimerIRQDisabled">Timer IRQ Disabled</Message>
+		<Message ID="RegView_Pce_Value">Value</Message>
+		<Message ID="RegView_Pce_VCE">VCE</Message>
+		<Message ID="RegView_Pce_VCR_VerticalDisplayEnd">VCR - Vertical Display End</Message>
+		<Message ID="RegView_Pce_VCR_VerticalDisplayEndPosition">VCR - Vertical Display End Position</Message>
+		<Message ID="RegView_Pce_VDC">VDC</Message>
+		<Message ID="RegView_Pce_VDC1Enabled">VDC1 Enabled</Message>
+		<Message ID="RegView_Pce_VDC2Enabled">VDC2 Enabled</Message>
+		<Message ID="RegView_Pce_VDCRegisters">VDC Registers</Message>
+		<Message ID="RegView_Pce_VDR_VerticalDisplay">VDR - Vertical Display</Message>
+		<Message ID="RegView_Pce_VDS_VerticalDisplayStartPosition">VDS - Vertical Display Start Position</Message>
+		<Message ID="RegView_Pce_VDW_VerticalDisplayWidth">VDW - Vertical Display Width</Message>
+		<Message ID="RegView_Pce_VerticalBlank">Vertical Blank</Message>
+		<Message ID="RegView_Pce_VerticalBlankIRQEnabled">Vertical Blank IRQ Enabled</Message>
+		<Message ID="RegView_Pce_VPC">VPC</Message>
+		<Message ID="RegView_Pce_VPR_VerticalSync">VPR - Vertical Sync</Message>
+		<Message ID="RegView_Pce_VSW_VerticalSyncWidth">VSW - Vertical Sync Width</Message>
+		<Message ID="RegView_Pce_VRAMAccessMode">VRAM Access Mode</Message>
+		<Message ID="RegView_Pce_VRAMAddressData">VRAM Address/Data</Message>
+		<Message ID="RegView_Pce_VRAMAddressIncrement">VRAM Address Increment</Message>
+		<Message ID="RegView_Pce_VRAM_SATBTransferAutoRepeat">VRAM-SATB Transfer Auto-Repeat</Message>
+		<Message ID="RegView_Pce_VRAM_SATBTransferCompleteIRQEnabled">VRAM-SATB Transfer Complete IRQ Enabled</Message>
+		<Message ID="RegView_Pce_VRAMTransferCompleted">VRAM Transfer Completed</Message>
+		<Message ID="RegView_Pce_VRAM_VRAMTransferCompleteIRQEnabled">VRAM-VRAM Transfer Complete IRQ Enabled</Message>
+		<Message ID="RegView_Pce_VSYNCIn">VSYNC In</Message>
+		<Message ID="RegView_Pce_VSYNCOut">VSYNC Out</Message>
+		<Message ID="RegView_Pce_VWR_VRAMWriteData">VWR - VRAM Write Data</Message>
+		<Message ID="RegView_Pce_Window1">Window 1</Message>
+		<Message ID="RegView_Pce_Window2">Window 2</Message>
+		<Message ID="RegView_Pce_Windows">Windows</Message>
+		<Message ID="RegView_Pce_WriteAddress">Write Address</Message>
+		<Message ID="RegView_Pce_WriteBuffer">Write Buffer</Message>
+		<Message ID="RegView_Pce_WritePending">Write Pending</Message>
+
+		<Message ID="RegView_Sms_AddressRegister">Address register</Message>
+		<Message ID="RegView_Sms_BackgroundColorIndex">Background color index</Message>
+		<Message ID="RegView_Sms_BIOSDisabled">BIOS disabled</Message>
+		<Message ID="RegView_Sms_CardSlotDisabled">Card slot disabled</Message>
+		<Message ID="RegView_Sms_CartridgeDisabled">Cartridge disabled</Message>
+		<Message ID="RegView_Sms_CodeRegister">Code register</Message>
+		<Message ID="RegView_Sms_ColorTableAddress">Color table address</Message>
+		<Message ID="RegView_Sms_ControlPortMSBToggle">Control port MSB toggle</Message>
+		<Message ID="RegView_Sms_DataPortBuffer">Data port buffer</Message>
+		<Message ID="RegView_Sms_ExpansionSlotDisabled">Expansion slot disabled</Message>
+		<Message ID="RegView_Sms_High">High</Message>
+		<Message ID="RegView_Sms_HorizontalCounterLatch">Horizontal counter latch</Message>
+		<Message ID="RegView_Sms_HorizontalScroll">Horizontal scroll</Message>
+		<Message ID="RegView_Sms_HorizontalScrollLock">Horizontal scroll lock</Message>
+		<Message ID="RegView_Sms_IO_Disabled">I/O disabled</Message>
+		<Message ID="RegView_Sms_LargeSprites8x16Or16x16">Large sprites (8x16 or 16x16)</Message>
+		<Message ID="RegView_Sms_LatchedRegister">Latched register</Message>
+		<Message ID="RegView_Sms_LeftNoiseEnabled">Left noise enabled</Message>
+		<Message ID="RegView_Sms_LeftTone1Enabled">Left tone 1 enabled</Message>
+		<Message ID="RegView_Sms_LeftTone2Enabled">Left tone 2 enabled</Message>
+		<Message ID="RegView_Sms_LeftTone3Enabled">Left tone 3 enabled</Message>
+		<Message ID="RegView_Sms_Low">Low</Message>
+		<Message ID="RegView_Sms_M1_224LineOutput">M1 - 224-line output</Message>
+		<Message ID="RegView_Sms_M2_Allow224_240LineMode">M2 - Allow 224/240-line mode</Message>
+		<Message ID="RegView_Sms_M3_240LineOutput">M3 - 240-line output</Message>
+		<Message ID="RegView_Sms_M4_UseMode4">M4 - Use mode 4</Message>
+		<Message ID="RegView_Sms_MaskFirstColumn">Mask first column</Message>
+		<Message ID="RegView_Sms_NametableAddress">Nametable address</Message>
+		<Message ID="RegView_Sms_Panning">Panning</Message>
+		<Message ID="RegView_Sms_PatternTableAddress">Pattern table address</Message>
+		<Message ID="RegView_Sms_Port_3E">Port $3E</Message>
+		<Message ID="RegView_Sms_Port_3F">Port $3F</Message>
+		<Message ID="RegView_Sms_PortATHDirection">Port A TH pin direction</Message>
+		<Message ID="RegView_Sms_PortATHOutputLevel">Port A TH output level</Message>
+		<Message ID="RegView_Sms_PortATRDirection">Port A TR pin direction</Message>
+		<Message ID="RegView_Sms_PortATROutputLevel">Port A TR output level</Message>
+		<Message ID="RegView_Sms_PortBTHDirection">Port B TH pin direction</Message>
+		<Message ID="RegView_Sms_PortBTHOutputLevel">Port B TH output level</Message>
+		<Message ID="RegView_Sms_PortBTRDirection">Port B TR pin direction</Message>
+		<Message ID="RegView_Sms_PortBTROutputLevel">Port B TR output level</Message>
+		<Message ID="RegView_Sms_ReloadValue">Reload value</Message>
+		<Message ID="RegView_Sms_RenderingEnabled">Rendering enabled</Message>
+		<Message ID="RegView_Sms_RightNoiseEnabled">Right noise enabled</Message>
+		<Message ID="RegView_Sms_RightTone1Enabled">Right tone 1 enabled</Message>
+		<Message ID="RegView_Sms_RightTone2Enabled">Right tone 2 enabled</Message>
+		<Message ID="RegView_Sms_RightTone3Enabled">Right tone 3 enabled</Message>
+		<Message ID="RegView_Sms_ScanlineIRQCounter">Scanline IRQ counter</Message>
+		<Message ID="RegView_Sms_ScanlineIRQEnabled">Scanline IRQ enabled</Message>
+		<Message ID="RegView_Sms_ScanlineIRQReloadValue">Scanline IRQ reload value</Message>
+		<Message ID="RegView_Sms_SG1000_16KVRAMMode">SG-1000 - 16K VRAM Mode</Message>
+		<Message ID="RegView_Sms_ShiftSpritesLeft">Shift sprites left</Message>
+		<Message ID="RegView_Sms_SpriteCollision">Sprite collision</Message>
+		<Message ID="RegView_Sms_SpriteOverflow">Sprite overflow</Message>
+		<Message ID="RegView_Sms_SpriteTableAddress">Sprite table address</Message>
+		<Message ID="RegView_Sms_SpriteTilesetAddress">Sprite tileset address</Message>
+		<Message ID="RegView_Sms_SyncDisabled">Sync disabled</Message>
+		<Message ID="RegView_Sms_SystemRAMDisabled">System RAM disabled</Message>
+		<Message ID="RegView_Sms_TextColorIndex">Text color index</Message>
+		<Message ID="RegView_Sms_Tone1">Tone 1</Message>
+		<Message ID="RegView_Sms_Tone2">Tone 2</Message>
+		<Message ID="RegView_Sms_Tone3">Tone 3</Message>
+		<Message ID="RegView_Sms_VDP">VDP</Message>
+		<Message ID="RegView_Sms_PSG">PSG</Message>
+		<Message ID="RegView_Sms_Ports">Ports</Message>
+		<Message ID="RegView_Sms_VerticalBlankIRQEnabled">Vertical blank IRQ enabled</Message>
+		<Message ID="RegView_Sms_VerticalBlankIRQPending">Vertical blank IRQ pending</Message>
+		<Message ID="RegView_Sms_VerticalCounter">Vertical counter</Message>
+		<Message ID="RegView_Sms_VerticalScroll">Vertical scroll</Message>
+		<Message ID="RegView_Sms_VerticalScrollLock">Vertical scroll lock</Message>
+		<Message ID="RegView_Sms_WhiteNoiseMode">White noise mode</Message>
+		<Message ID="RegView_Sms_ZoomSprites2xSize">Zoom sprites (2x size)</Message>
+
+		<Message ID="RegView_Snes_ABusAddress">A Bus Address</Message>
+		<Message ID="RegView_Snes_ABusBank">A Bus Bank</Message>
+		<Message ID="RegView_Snes_AddressMapping">Address Mapping</Message>
+		<Message ID="RegView_Snes_ADSR1">ADSR1</Message>
+		<Message ID="RegView_Snes_ADSR2">ADSR2</Message>
+		<Message ID="RegView_Snes_ARMCPURest">ARM CPU Reset</Message>
+		<Message ID="RegView_Snes_ARM_SNESData">ARM -&gt; SNES Data</Message>
+		<Message ID="RegView_Snes_ARM_SNESDataReady">ARM -&gt; SNES Data Ready</Message>
+		<Message ID="RegView_Snes_AutoJoypadPoll">Auto Joypad Poll</Message>
+		<Message ID="RegView_Snes_AutoJoypadReadActive">Auto Joypad Read Active</Message>
+		<Message ID="RegView_Snes_AutomaticDMACharacterConversion">Automatic DMA Character Conversion</Message>
+		<Message ID="RegView_Snes_BBusAddress">B Bus Address</Message>
+		<Message ID="RegView_Snes_BG1_16x16Tiles">BG1 16x16 Tiles</Message>
+		<Message ID="RegView_Snes_BG1Address">BG1 Address</Message>
+		<Message ID="RegView_Snes_BG1Enabled">BG1 Enabled</Message>
+		<Message ID="RegView_Snes_BG1HOffset">BG1 H Offset</Message>
+		<Message ID="RegView_Snes_BG1MainscreenWindowEnabled">BG1 Mainscreen Window Enabled</Message>
+		<Message ID="RegView_Snes_BG1MosaicEnabled">BG1 Mosaic Enabled</Message>
+		<Message ID="RegView_Snes_BG1Size">BG1 Size</Message>
+		<Message ID="RegView_Snes_BG1SubscreenWindowEnabled">BG1 Subscreen Window Enabled</Message>
+		<Message ID="RegView_Snes_BG1TileAddress">BG1 Tile Address</Message>
+		<Message ID="RegView_Snes_BG1VOffset">BG1 V Offset</Message>
+		<Message ID="RegView_Snes_BG1Window1Active">BG1 Window 1 Active</Message>
+		<Message ID="RegView_Snes_BG1Window1Inverted">BG1 Window 1 Inverted</Message>
+		<Message ID="RegView_Snes_BG1Window2Active">BG1 Window 2 Active</Message>
+		<Message ID="RegView_Snes_BG1Window2Inverted">BG1 Window 2 Inverted</Message>
+		<Message ID="RegView_Snes_BG1Windows">BG1 Windows</Message>
+		<Message ID="RegView_Snes_BG1WindowMask">BG1 Window Mask</Message>
+		<Message ID="RegView_Snes_BG2_16x16Tiles">BG2 16x16 Tiles</Message>
+		<Message ID="RegView_Snes_BG2Address">BG2 Address</Message>
+		<Message ID="RegView_Snes_BG2Enabled">BG2 Enabled</Message>
+		<Message ID="RegView_Snes_BG2HOffset">BG2 H Offset</Message>
+		<Message ID="RegView_Snes_BG2MainscreenWindowEnabled">BG2 Mainscreen Window Enabled</Message>
+		<Message ID="RegView_Snes_BG2MosaicEnabled">BG2 Mosaic Enabled</Message>
+		<Message ID="RegView_Snes_BG2Size">BG2 Size</Message>
+		<Message ID="RegView_Snes_BG2SubscreenWindowEnabled">BG2 Subscreen Window Enabled</Message>
+		<Message ID="RegView_Snes_BG2TileAddress">BG2 Tile Address</Message>
+		<Message ID="RegView_Snes_BG2VOffset">BG2 V Offset</Message>
+		<Message ID="RegView_Snes_BG2Window1Active">BG2 Window 1 Active</Message>
+		<Message ID="RegView_Snes_BG2Window1Inverted">BG2 Window 1 Inverted</Message>
+		<Message ID="RegView_Snes_BG2Window2Active">BG2 Window 2 Active</Message>
+		<Message ID="RegView_Snes_BG2Window2Inverted">BG2 Window 2 Inverted</Message>
+		<Message ID="RegView_Snes_BG2Windows">BG2 Windows</Message>
+		<Message ID="RegView_Snes_BG2WindowMask">BG2 Window Mask</Message>
+		<Message ID="RegView_Snes_BG3_16x16Tiles">BG3 16x16 Tiles</Message>
+		<Message ID="RegView_Snes_BG3Address">BG3 Address</Message>
+		<Message ID="RegView_Snes_BG3Enabled">BG3 Enabled</Message>
+		<Message ID="RegView_Snes_BG3HOffset">BG3 H Offset</Message>
+		<Message ID="RegView_Snes_BG3MainscreenWindowEnabled">BG3 Mainscreen Window Enabled</Message>
+		<Message ID="RegView_Snes_BG3MosaicEnabled">BG3 Mosaic Enabled</Message>
+		<Message ID="RegView_Snes_BG3Size">BG3 Size</Message>
+		<Message ID="RegView_Snes_BG3SubscreenWindowEnabled">BG3 Subscreen Window Enabled</Message>
+		<Message ID="RegView_Snes_BG3TileAddress">BG3 Tile Address</Message>
+		<Message ID="RegView_Snes_BG3VOffset">BG3 V Offset</Message>
+		<Message ID="RegView_Snes_BG3Window1Active">BG3 Window 1 Active</Message>
+		<Message ID="RegView_Snes_BG3Window1Inverted">BG3 Window 1 Inverted</Message>
+		<Message ID="RegView_Snes_BG3Window2Active">BG3 Window 2 Active</Message>
+		<Message ID="RegView_Snes_BG3Window2Inverted">BG3 Window 2 Inverted</Message>
+		<Message ID="RegView_Snes_BG3Windows">BG3 Windows</Message>
+		<Message ID="RegView_Snes_BG3WindowMask">BG3 Window Mask</Message>
+		<Message ID="RegView_Snes_BG4_16x16Tiles">BG4 16x16 Tiles</Message>
+		<Message ID="RegView_Snes_BG4Address">BG4 Address</Message>
+		<Message ID="RegView_Snes_BG4Enabled">BG4 Enabled</Message>
+		<Message ID="RegView_Snes_BG4HOffset">BG4 H Offset</Message>
+		<Message ID="RegView_Snes_BG4MainscreenWindowEnabled">BG4 Mainscreen Window Enabled</Message>
+		<Message ID="RegView_Snes_BG4MosaicEnabled">BG4 Mosaic Enabled</Message>
+		<Message ID="RegView_Snes_BG4Size">BG4 Size</Message>
+		<Message ID="RegView_Snes_BG4SubscreenWindowEnabled">BG4 Subscreen Window Enabled</Message>
+		<Message ID="RegView_Snes_BG4TileAddress">BG4 Tile Address</Message>
+		<Message ID="RegView_Snes_BG4VOffset">BG4 V Offset</Message>
+		<Message ID="RegView_Snes_BG4Window1Active">BG4 Window 1 Active</Message>
+		<Message ID="RegView_Snes_BG4Window1Inverted">BG4 Window 1 Inverted</Message>
+		<Message ID="RegView_Snes_BG4Window2Active">BG4 Window 2 Active</Message>
+		<Message ID="RegView_Snes_BG4Window2Inverted">BG4 Window 2 Inverted</Message>
+		<Message ID="RegView_Snes_BG4Windows">BG4 Windows</Message>
+		<Message ID="RegView_Snes_BG4WindowMask">BG4 Window Mask</Message>
+		<Message ID="RegView_Snes_BGMode">BG Mode</Message>
+		<Message ID="RegView_Snes_BGModeSize">BG Mode/Size</Message>
+		<Message ID="RegView_Snes_BitmapRegisterFile">Bitmap Register File</Message>
+		<Message ID="RegView_Snes_Brightness">Brightness</Message>
+		<Message ID="RegView_Snes_BW_RAM2BppMode">BW-RAM 2 bpp mode</Message>
+		<Message ID="RegView_Snes_CGRAM">CGRAM</Message>
+		<Message ID="RegView_Snes_CGRAMAddress">CGRAM Address</Message>
+		<Message ID="RegView_Snes_CGRAMNextWriteToMSB">CGRAM next write to MSB</Message>
+		<Message ID="RegView_Snes_CharacterConversionIRQEnable">Character Conversion IRQ Enable</Message>
+		<Message ID="RegView_Snes_CharacterConversionIRQFlag">Character Conversion IRQ Flag</Message>
+		<Message ID="RegView_Snes_CharacterConversionWidth">Character Conversion Width</Message>
+		<Message ID="RegView_Snes_CharacterDMActive">Character DMA Active</Message>
+		<Message ID="RegView_Snes_CharacterFormatBPP">Character Format (BPP)</Message>
+		<Message ID="RegView_Snes_CharacterIRQFlag">Character IRQ Flag</Message>
+		<Message ID="RegView_Snes_ClockSelect">Clock Select</Message>
+		<Message ID="RegView_Snes_CM_AddSubscreen">CM - Add Subscreen</Message>
+		<Message ID="RegView_Snes_CM_BackgroundEnabled">CM - Background Enabled</Message>
+		<Message ID="RegView_Snes_CM_BG1Enabled">CM - BG1 Enabled</Message>
+		<Message ID="RegView_Snes_CM_BG2Enabled">CM - BG2 Enabled</Message>
+		<Message ID="RegView_Snes_CM_BG3Enabled">CM - BG3 Enabled</Message>
+		<Message ID="RegView_Snes_CM_BG4Enabled">CM - BG4 Enabled</Message>
+		<Message ID="RegView_Snes_CM_ClipMode">CM - Clip Mode</Message>
+		<Message ID="RegView_Snes_CM_HalfMode">CM - Half Mode</Message>
+		<Message ID="RegView_Snes_CM_OAMEnabled">CM - OAM Enabled</Message>
+		<Message ID="RegView_Snes_CM_PreventMode">CM - Prevent Mode</Message>
+		<Message ID="RegView_Snes_CM_SubtractMode">CM - Subtract Mode</Message>
+		<Message ID="RegView_Snes_Coefficients">Coefficients</Message>
+		<Message ID="RegView_Snes_ColorGradient">Color Gradient</Message>
+		<Message ID="RegView_Snes_ColorHighNibble">Color High Nibble</Message>
+		<Message ID="RegView_Snes_ColorFreezeHigh">Color Freeze High</Message>
+		<Message ID="RegView_Snes_ColorMath">Color Math</Message>
+		<Message ID="RegView_Snes_ColorWindow1Active">Color Window 1 Active</Message>
+		<Message ID="RegView_Snes_ColorWindow1Inverted">Color Window 1 Inverted</Message>
+		<Message ID="RegView_Snes_ColorWindow2Active">Color Window 2 Active</Message>
+		<Message ID="RegView_Snes_ColorWindow2Inverted">Color Window 2 Inverted</Message>
+		<Message ID="RegView_Snes_ColorWindows">Color Windows</Message>
+		<Message ID="RegView_Snes_ColorWindowMask">Color Window Mask</Message>
+		<Message ID="RegView_Snes_CPUSPC_Ports">CPU&lt;-&gt;SPC Ports</Message>
+		<Message ID="RegView_Snes_DSP">DSP</Message>
+		<Message ID="RegView_Snes_DSPRegister">DSP Register</Message>
+		<Message ID="RegView_Snes_DirectColorMode">Direct Color Mode</Message>
+		<Message ID="RegView_Snes_Direction">Direction</Message>
+		<Message ID="RegView_Snes_Dither">Dither</Message>
+		<Message ID="RegView_Snes_Dividend">Dividend</Message>
+		<Message ID="RegView_Snes_Divisor">Divisor</Message>
+		<Message ID="RegView_Snes_DMACharacterConversion">DMA Character Conversion</Message>
+		<Message ID="RegView_Snes_DMAControl">DMA Control</Message>
+		<Message ID="RegView_Snes_DMADestinationAddress">DMA Destination Address</Message>
+		<Message ID="RegView_Snes_DMADestinationDevice">DMA Destination Device</Message>
+		<Message ID="RegView_Snes_DMAIRQEnabled">DMA IRQ Enabled</Message>
+		<Message ID="RegView_Snes_DMAIRQFlag">DMA IRQ Flag</Message>
+		<Message ID="RegView_Snes_DMAPriority">DMA Priority</Message>
+		<Message ID="RegView_Snes_DMASize">DMA Size</Message>
+		<Message ID="RegView_Snes_DMASourceAddress">DMA Source Address</Message>
+		<Message ID="RegView_Snes_DMASourceDevice">DMA Source Device</Message>
+		<Message ID="RegView_Snes_EchoBufferOffsetESA">Echo Buffer (Offset) (ESA)</Message>
+		<Message ID="RegView_Snes_EchoDelayEDL">Echo Delay (EDL)</Message>
+		<Message ID="RegView_Snes_EchoDisabled">Echo Disabled</Message>
+		<Message ID="RegView_Snes_EchoEnableEON">Echo Enable (EON)</Message>
+		<Message ID="RegView_Snes_EchoFeedbackEFB">Echo Feedback (EFB)</Message>
+		<Message ID="RegView_Snes_EchoVolumeEVOL_Left">Echo Volume (EVOL) - Left</Message>
+		<Message ID="RegView_Snes_EchoVolumeEVOL_Right">Echo Volume (EVOL) - Right</Message>
+		<Message ID="RegView_Snes_ENVX">ENVX</Message>
+		<Message ID="RegView_Snes_Ext_BGEnabled">Ext. BG Enabled</Message>
+		<Message ID="RegView_Snes_ExternalSpeed">External Speed</Message>
+		<Message ID="RegView_Snes_FastROMEnabled">FastROM Enabled</Message>
+		<Message ID="RegView_Snes_Fixed">Fixed</Message>
+		<Message ID="RegView_Snes_FixedColor_BGR">Fixed Color - BGR</Message>
+		<Message ID="RegView_Snes_FlagsFLG">Flags (FLG)</Message>
+		<Message ID="RegView_Snes_ForcedBlank">Forced Blank</Message>
+		<Message ID="RegView_Snes_GAIN">GAIN</Message>
+		<Message ID="RegView_Snes_GSU">GSU</Message>
+		<Message ID="RegView_Snes_GSU_RAMAccessEnabled">GSU RAM Access Enabled</Message>
+		<Message ID="RegView_Snes_GSU_ROMAccessEnabled">GSU ROM Access Enabled</Message>
+		<Message ID="RegView_Snes_H_BlankFlag">H-Blank Flag</Message>
+		<Message ID="RegView_Snes_H_IRQEnabled">H IRQ Enabled</Message>
+		<Message ID="RegView_Snes_H_Timer">H Timer</Message>
+		<Message ID="RegView_Snes_H_VIRQTimers">H/V IRQ Timers</Message>
+		<Message ID="RegView_Snes_H_VScrollOffsets">H/V Scroll Offsets</Message>
+		<Message ID="RegView_Snes_H_VTimerControl">H/V Timer Control</Message>
+		<Message ID="RegView_Snes_HClock">HClock</Message>
+		<Message ID="RegView_Snes_HDMAAddress">HDMA Address</Message>
+		<Message ID="RegView_Snes_HDMABank">HDMA Bank</Message>
+		<Message ID="RegView_Snes_HDMAEnabled">HDMA Enabled</Message>
+		<Message ID="RegView_Snes_HDMALineCounter">HDMA Line Counter</Message>
+		<Message ID="RegView_Snes_HighResolutionMode">High Resolution Mode</Message>
+		<Message ID="RegView_Snes_HighSpeedMode">High Speed Mode</Message>
+		<Message ID="RegView_Snes_HorizontalTimerEnabled">Horizontal Timer Enabled</Message>
+		<Message ID="RegView_Snes_IncrementOn2119">Increment on $2119</Message>
+		<Message ID="RegView_Snes_IncrementValue">Increment Value</Message>
+		<Message ID="RegView_Snes_IndirectHDMA">Indirect HDMA</Message>
+		<Message ID="RegView_Snes_InputData">Input Data</Message>
+		<Message ID="RegView_Snes_InternalSpeed">Internal Speed</Message>
+		<Message ID="RegView_Snes_IO_Port">IO Port</Message>
+		<Message ID="RegView_Snes_IPLROMEnabled">IPL ROM Enabled</Message>
+		<Message ID="RegView_Snes_IRQ_NMI_AutopollEnabled">IRQ/NMI/Autopoll Enabled</Message>
+		<Message ID="RegView_Snes_IRQDisabled">IRQ Disabled</Message>
+		<Message ID="RegView_Snes_IRQFlag">IRQ Flag</Message>
+		<Message ID="RegView_Snes_IRQRequested">IRQ Requested</Message>
+		<Message ID="RegView_Snes_KeyOffKOF">Key Off (KOF)</Message>
+		<Message ID="RegView_Snes_KeyOnKON">Key On (KON)</Message>
+		<Message ID="RegView_Snes_LinearTimer">Linear Timer</Message>
+		<Message ID="RegView_Snes_MainScreenLayers">Main Screen Layers</Message>
+		<Message ID="RegView_Snes_MainScreenWindows">Main Screen Windows</Message>
+		<Message ID="RegView_Snes_MainVolumeMVOL_Left">Main Volume (MVOL) - Left</Message>
+		<Message ID="RegView_Snes_MainVolumeMVOL_Right">Main Volume (MVOL) - Right</Message>
+		<Message ID="RegView_Snes_MathOperation">Math Operation</Message>
+		<Message ID="RegView_Snes_MathOverflow">Math Overflow</Message>
+		<Message ID="RegView_Snes_MathRegisters">Math Registers</Message>
+		<Message ID="RegView_Snes_MathResult">Math Result</Message>
+		<Message ID="RegView_Snes_Message">Message</Message>
+		<Message ID="RegView_Snes_MessageReceived">Message Received</Message>
+		<Message ID="RegView_Snes_Misc">Misc.</Message>
+		<Message ID="RegView_Snes_MiscFlags">Misc. Flags</Message>
+		<Message ID="RegView_Snes_MMCBankC">MMC Bank C</Message>
+		<Message ID="RegView_Snes_MMCBankD">MMC Bank D</Message>
+		<Message ID="RegView_Snes_MMCBankE">MMC Bank E</Message>
+		<Message ID="RegView_Snes_MMCBankF">MMC Bank F</Message>
+		<Message ID="RegView_Snes_Mode1BG3Priority">Mode 1 BG3 Priority</Message>
+		<Message ID="RegView_Snes_Mode7">Mode 7</Message>
+		<Message ID="RegView_Snes_Mode7_CenterX">Mode 7 - Center X</Message>
+		<Message ID="RegView_Snes_Mode7_CenterY">Mode 7 - Center Y</Message>
+		<Message ID="RegView_Snes_Mode7_FillWTile0">Mode 7 - Fill w/ Tile 0</Message>
+		<Message ID="RegView_Snes_Mode7_HorMirroring">Mode 7 - Hor. Mirroring</Message>
+		<Message ID="RegView_Snes_Mode7_LargeTilemap">Mode 7 - Large Tilemap</Message>
+		<Message ID="RegView_Snes_Mode7_MatrixA">Mode 7 - Matrix A</Message>
+		<Message ID="RegView_Snes_Mode7_MatrixB">Mode 7 - Matrix B</Message>
+		<Message ID="RegView_Snes_Mode7_MatrixC">Mode 7 - Matrix C</Message>
+		<Message ID="RegView_Snes_Mode7_MatrixD">Mode 7 - Matrix D</Message>
+		<Message ID="RegView_Snes_Mode7_VertMirroring">Mode 7 - Vert. Mirroring</Message>
+		<Message ID="RegView_Snes_Mode7HOffset">Mode7 H Offset</Message>
+		<Message ID="RegView_Snes_Mode7VOffset">Mode7 V Offset</Message>
+		<Message ID="RegView_Snes_Mosaic">Mosaic</Message>
+		<Message ID="RegView_Snes_MosaicSize">Mosaic Size</Message>
+		<Message ID="RegView_Snes_MultDivRegistersInput">Mult/Div Registers (Input)</Message>
+		<Message ID="RegView_Snes_MultDivRegistersResult">Mult/Div Registers (Result)</Message>
+		<Message ID="RegView_Snes_Multiplicand">Multiplicand</Message>
+		<Message ID="RegView_Snes_MultiplicandDividend">Multiplicand/Dividend</Message>
+		<Message ID="RegView_Snes_Multiplier">Multiplier</Message>
+		<Message ID="RegView_Snes_MultiplierDivisor">Multiplier/Divisor</Message>
+		<Message ID="RegView_Snes_Mute">Mute</Message>
+		<Message ID="RegView_Snes_NMIEnabled">NMI Enabled</Message>
+		<Message ID="RegView_Snes_NMIFlag">NMI Flag</Message>
+		<Message ID="RegView_Snes_NMIRequested">NMI Requested</Message>
+		<Message ID="RegView_Snes_NoiseClock">Noise Clock</Message>
+		<Message ID="RegView_Snes_NoiseEnableNON">Noise Enable (NON)</Message>
+		<Message ID="RegView_Snes_OAMAddress">OAM Address</Message>
+		<Message ID="RegView_Snes_OAMBaseAddress">OAM Base Address</Message>
+		<Message ID="RegView_Snes_OAMEnabled">OAM Enabled</Message>
+		<Message ID="RegView_Snes_OAMInterlace">OAM Interlace</Message>
+		<Message ID="RegView_Snes_OAMMainscreenWindowEnabled">OAM Mainscreen Window Enabled</Message>
+		<Message ID="RegView_Snes_OAMPriority">OAM Priority</Message>
+		<Message ID="RegView_Snes_OAMSecondTableAddress">OAM Second Table Address</Message>
+		<Message ID="RegView_Snes_OAMSettings">OAM Settings</Message>
+		<Message ID="RegView_Snes_OAMSizeMode">OAM Size Mode</Message>
+		<Message ID="RegView_Snes_OAMSubscreenWindowEnabled">OAM Subscreen Window Enabled</Message>
+		<Message ID="RegView_Snes_OAMWindow1Active">OAM Window 1 Active</Message>
+		<Message ID="RegView_Snes_OAMWindow1Inverted">OAM Window 1 Inverted</Message>
+		<Message ID="RegView_Snes_OAMWindow2Active">OAM Window 2 Active</Message>
+		<Message ID="RegView_Snes_OAMWindow2Inverted">OAM Window 2 Inverted</Message>
+		<Message ID="RegView_Snes_OAMWindows">OAM Windows</Message>
+		<Message ID="RegView_Snes_OAMWindowMask">OAM Window Mask</Message>
+		<Message ID="RegView_Snes_OBJMode">OBJ mode</Message>
+		<Message ID="RegView_Snes_ObjectMode">Object Mode</Message>
+		<Message ID="RegView_Snes_OUTX">OUTX</Message>
+		<Message ID="RegView_Snes_OverscanMode">Overscan Mode</Message>
+		<Message ID="RegView_Snes_P1Data">P1 Data</Message>
+		<Message ID="RegView_Snes_P2Data">P2 Data</Message>
+		<Message ID="RegView_Snes_P3Data">P3 Data</Message>
+		<Message ID="RegView_Snes_P4Data">P4 Data</Message>
+		<Message ID="RegView_Snes_PitchModulationPMON">Pitch Modulation (PMON)</Message>
+		<Message ID="RegView_Snes_PlotOptionRegisterCMODE">Plot Option Register (CMODE)</Message>
+		<Message ID="RegView_Snes_ProductRemainder">Product / Remainder</Message>
+		<Message ID="RegView_Snes_Quotient">Quotient</Message>
+		<Message ID="RegView_Snes_RAMReg0">RAM Reg 0</Message>
+		<Message ID="RegView_Snes_RAMReg1">RAM Reg 1</Message>
+		<Message ID="RegView_Snes_RAMRegisters">RAM Registers</Message>
+		<Message ID="RegView_Snes_RAMWriteEnabled">RAM Write Enabled</Message>
+		<Message ID="RegView_Snes_ROM_BWRAM_IRAMMappings">ROM/BWRAM/IRAM Mappings</Message>
+		<Message ID="RegView_Snes_SA1_CPUControl">SA-1 CPU Control</Message>
+		<Message ID="RegView_Snes_SA1_CPUInterruptEnable">SA-1 CPU Interrupt Enable</Message>
+		<Message ID="RegView_Snes_SA1_CPUBWRAMBank">SA-1 CPU BW-RAM Bank</Message>
+		<Message ID="RegView_Snes_SA1_CPUBWRAMMode">SA-1 CPU BW-RAM Mode</Message>
+		<Message ID="RegView_Snes_SA1_CPUBWRAMWriteProtection">SA-1 CPU I-RAM Write Protection</Message>
+		<Message ID="RegView_Snes_SA1_BWRAMWriteEnabled">SA-1 BW-RAM Write Enabled</Message>
+		<Message ID="RegView_Snes_SA1_HCounter">SA-1 H-Counter</Message>
+		<Message ID="RegView_Snes_SA1_IRQEnabled">SA-1 IRQ Enabled</Message>
+		<Message ID="RegView_Snes_SA1_IRQRequested">SA-1 IRQ Requested</Message>
+		<Message ID="RegView_Snes_SA1_IRQVector">SA-1 IRQ Vector</Message>
+		<Message ID="RegView_Snes_SA1_NMIEnabled">SA-1 NMI Enabled</Message>
+		<Message ID="RegView_Snes_SA1_NMIRequested">SA-1 NMI Requested</Message>
+		<Message ID="RegView_Snes_SA1_NMIVector">SA-1 NMI Vector</Message>
+		<Message ID="RegView_Snes_SA1_ResetVector">SA-1 Reset Vector</Message>
+		<Message ID="RegView_Snes_SA1_StatusFlags">SA-1 Status Flags</Message>
+		<Message ID="RegView_Snes_SA1_VCounter">SA-1 V-Counter</Message>
+		<Message ID="RegView_Snes_SCPUBWRAMBank">S-CPU BW-RAM Bank</Message>
+		<Message ID="RegView_Snes_SCPUBWRAMWriteEnabled">S-CPU BW-RAM Write Enabled</Message>
+		<Message ID="RegView_Snes_SCPUBWRAMWriteProtectedArea">S-CPU BW-RAM Write Protected Area</Message>
+		<Message ID="RegView_Snes_SCPUControl">S-CPU Control</Message>
+		<Message ID="RegView_Snes_SCPUInterruptClear">S-CPU Interrupt Clear</Message>
+		<Message ID="RegView_Snes_SCPUInterruptEnable">S-CPU Interrupt Enable</Message>
+		<Message ID="RegView_Snes_SCPUI_RAMWriteProtection">S-CPU I-RAM Write Protection</Message>
+		<Message ID="RegView_Snes_SCPUNMIVector">S-CPU NMI Vector</Message>
+		<Message ID="RegView_Snes_SCPUStatusFlags">S-CPU Status Flags</Message>
+		<Message ID="RegView_Snes_SCPUIRQVector">S-CPU IRQ Vector</Message>
+		<Message ID="RegView_Snes_ScreenBaseAddress">Screen Base Address</Message>
+		<Message ID="RegView_Snes_ScreenHeight">Screen Height</Message>
+		<Message ID="RegView_Snes_ScreenInterlace">Screen Interlace</Message>
+		<Message ID="RegView_Snes_SNES_ARMData">SNES -&gt; ARM Data Ready</Message>
+		<Message ID="RegView_Snes_SNESRegisters">SNES Registers</Message>
+		<Message ID="RegView_Snes_SourceDirectoryOffsetDIR">Source Directory (Offset) (DIR)</Message>
+		<Message ID="RegView_Snes_SourceEndBlockENDX">Source End Block (ENDX)</Message>
+		<Message ID="RegView_Snes_SPC">SPC</Message>
+		<Message ID="RegView_Snes_ST018">ST018</Message>
+		<Message ID="RegView_Snes_ST018Registers">ST018 Registers</Message>
+		<Message ID="RegView_Snes_SubScreenLayers">Sub Screen Layers</Message>
+		<Message ID="RegView_Snes_SubScreenWindows">Sub Screen Windows</Message>
+		<Message ID="RegView_Snes_Timer0">Timer 0</Message>
+		<Message ID="RegView_Snes_Timer0Enabled">Timer 0 Enabled</Message>
+		<Message ID="RegView_Snes_Timer1">Timer 1</Message>
+		<Message ID="RegView_Snes_Timer1Enabled">Timer 1 Enabled</Message>
+		<Message ID="RegView_Snes_Timer2">Timer 2</Message>
+		<Message ID="RegView_Snes_Timer2Enabled">Timer 2 Enabled</Message>
+		<Message ID="RegView_Snes_TimersDirEnabled">Timers Disabled</Message>
+		<Message ID="RegView_Snes_TimersEnabled">Timers Enabled</Message>
+		<Message ID="RegView_Snes_TimerIRQEnabled">Timer IRQ Enabled</Message>
+		<Message ID="RegView_Snes_TransferMode">Transfer Mode</Message>
+		<Message ID="RegView_Snes_Transparent">Transparent</Message>
+		<Message ID="RegView_Snes_UnusedRegister">Unused register</Message>
+		<Message ID="RegView_Snes_UseCPUC lockforSweep">Use CPU clock for sweep</Message>
+		<Message ID="RegView_Snes_UseIRQVector">Use IRQ Vector</Message>
+		<Message ID="RegView_Snes_UseNMIVector">Use NMI Vector</Message>
+		<Message ID="RegView_Snes_V_BlankFlag">V-Blank Flag</Message>
+		<Message ID="RegView_Snes_V_IRQEnabled">V IRQ Enabled</Message>
+		<Message ID="RegView_Snes_V_Timer">V Timer</Message>
+		<Message ID="RegView_Snes_VariableLengthAddress">Variable Length Address</Message>
+		<Message ID="RegView_Snes_VariableLengthAutoIncrement">Variable Length Auto-Increment</Message>
+		<Message ID="RegView_Snes_VariableLengthBitCount">Variable Length Bit Count</Message>
+		<Message ID="RegView_Snes_VariableLengthBitProcessing">Variable Length Bit Processing</Message>
+		<Message ID="RegView_Snes_VariableLengthRegisters">Variable Length Registers</Message>
+		<Message ID="RegView_Snes_VerticalTimerEnabled">Vertical Timer Enabled</Message>
+		<Message ID="RegView_Snes_VRAM">VRAM</Message>
+		<Message ID="RegView_Snes_VRAMAddress">VRAM Address</Message>
+		<Message ID="RegView_Snes_WindowPosition">Window Position</Message>
+		<Message ID="RegView_Snes_Window1Left">Window 1 Left</Message>
+		<Message ID="RegView_Snes_Window1Right">Window 1 Right</Message>
+		<Message ID="RegView_Snes_Window2Left">Window 2 Left</Message>
+		<Message ID="RegView_Snes_Window2Right">Window 2 Right</Message>
+		<Message ID="RegView_Snes_WindowMasks">Window Masks</Message>
+		<Message ID="RegView_Snes_WorkRAMPosition">Work RAM Position</Message>
+		<Message ID="RegView_Snes_128px">128 px</Message>
+		<Message ID="RegView_Snes_160px">160 px</Message>
+		<Message ID="RegView_Snes_192px">192 px</Message>
+		<Message ID="RegView_Snes_BPP"> BPP</Message>
+		<Message ID="RegView_Snes_ABackslashB">A -&gt; B</Message>
+		<Message ID="RegView_Snes_BBackslashA">B -&gt; A</Message>
+
+		<Message ID="RegView_Ws_12_5Percent">12.5%</Message>
+		<Message ID="RegView_Ws_16BitROMBus">16-bit ROM Bus</Message>
+		<Message ID="RegView_Ws_2kHz">2 kHz</Message>
+		<Message ID="RegView_Ws_24kHz">24 kHz</Message>
+		<Message ID="RegView_Ws_25Percent">25%</Message>
+		<Message ID="RegView_Ws_4BPPEnabled">4 BPP Enabled</Message>
+		<Message ID="RegView_Ws_4BPPPackFormat">4 BPP Packed Format</Message>
+		<Message ID="RegView_Ws_4kHz">4 kHz</Message>
+		<Message ID="RegView_Ws_50Percent">50%</Message>
+		<Message ID="RegView_Ws_6kHz">6 kHz</Message>
+		<Message ID="RegView_Ws_8kHz">8 kHz</Message>
+		<Message ID="RegView_Ws_ActiveIRQVectorR">Active IRQ Vector (R)</Message>
+		<Message ID="RegView_Ws_APU">APU</Message>
+		<Message ID="RegView_Ws_AutoRepeat">Auto-repeat</Message>
+		<Message ID="RegView_Ws_Aux1">Aux 1</Message>
+		<Message ID="RegView_Ws_Aux2">Aux 2</Message>
+		<Message ID="RegView_Ws_Aux3">Aux 3</Message>
+		<Message ID="RegView_Ws_BackPorchScanline">Back Porch Scanline</Message>
+		<Message ID="RegView_Ws_BackgroundColorMono">Background Color (Mono)</Message>
+		<Message ID="RegView_Ws_BackgroundColorPaletteWSC">Background Color Palette (WSC)</Message>
+		<Message ID="RegView_Ws_BackgroundColorWSC">Background Color (WSC)</Message>
+		<Message ID="RegView_Ws_BootROMDisabled">Boot ROM Disabled</Message>
+		<Message ID="RegView_Ws_Busy">Busy</Message>
+		<Message ID="RegView_Ws_Cart">Cart</Message>
+		<Message ID="RegView_Ws_CartEEPROM">Cart EEPROM</Message>
+		<Message ID="RegView_Ws_CartIOWaitState">Cart I/O Wait State</Message>
+		<Message ID="RegView_Ws_CartRTC">Cart RTC</Message>
+		<Message ID="RegView_Ws_Cartridge">Cartridge</Message>
+		<Message ID="RegView_Ws_Ch2PCM">Ch 2 PCM</Message>
+		<Message ID="RegView_Ws_Channel1">Channel 1</Message>
+		<Message ID="RegView_Ws_Channel2VoicePCM">Channel 2 (Voice/PCM)</Message>
+		<Message ID="RegView_Ws_Channel3Sweep">Channel 3 (Sweep)</Message>
+		<Message ID="RegView_Ws_Channel4Noise">Channel 4 (Noise)</Message>
+		<Message ID="RegView_Ws_ChannelMode">Channel Mode</Message>
+		<Message ID="RegView_Ws_ColorEnabled">Color Enabled</Message>
+		<Message ID="RegView_Ws_ColorSystem">Color System</Message>
+		<Message ID="RegView_Ws_Command">Command</Message>
+		<Message ID="RegView_Ws_CurrentSector">Current Sector</Message>
+		<Message ID="RegView_Ws_Data">Data</Message>
+		<Message ID="RegView_Ws_Decrement">Decrement</Message>
+		<Message ID="RegView_Ws_DMA">DMA</Message>
+		<Message ID="RegView_Ws_Enabled">Enabled</Message>
+		<Message ID="RegView_Ws_EnabledIRQs">Enabled IRQs</Message>
+		<Message ID="RegView_Ws_FirstSpriteIndex">First Sprite Index</Message>
+		<Message ID="RegView_Ws_ForceChannels1_4OutputTo2">Force channels 1-4 output to 2</Message>
+		<Message ID="RegView_Ws_ForceChannels1_4OutputTo4">Force channels 1-4 output to 4</Message>
+		<Message ID="RegView_Ws_ForceOutputToCh2VoiceX5">Force output to (ch2 voice * 5)</Message>
+		<Message ID="RegView_Ws_Frequency">Frequency</Message>
+		<Message ID="RegView_Ws_FrequencyDivisor">Frequency Divisor</Message>
+		<Message ID="RegView_Ws_GeneralDMA">General DMA</Message>
+		<Message ID="RegView_Ws_HeadphoneIconVisible">Headphone Icon Visible</Message>
+		<Message ID="RegView_Ws_HeadphonesConnected">Headphones Connected</Message>
+		<Message ID="RegView_Ws_HeadphonesEnabled">Headphones Enabled</Message>
+		<Message ID="RegView_Ws_HighSpeed">High Speed</Message>
+		<Message ID="RegView_Ws_Hold">Hold</Message>
+		<Message ID="RegView_Ws_HoldChannels1_4">Hold channels 1-4</Message>
+		<Message ID="RegView_Ws_HoldNoiseLFSR">Hold noise LFSR</Message>
+		<Message ID="RegView_Ws_HorizontalReloadValue">Horizontal Reload Value</Message>
+		<Message ID="RegView_Ws_HorizontalTimer">Horizontal Timer</Message>
+		<Message ID="RegView_Ws_HorizontalTimerAutoReload">Horizontal Timer Auto-Reload</Message>
+		<Message ID="RegView_Ws_HorizontalTimerEnabled">Horizontal Timer Enabled</Message>
+		<Message ID="RegView_Ws_HorizontalTimerIRQ">Horizontal Timer IRQ</Message>
+		<Message ID="RegView_Ws_HyperVoice">Hyper Voice</Message>
+		<Message ID="RegView_Ws_Icons">Icons</Message>
+		<Message ID="RegView_Ws_Idle">Idle</Message>
+		<Message ID="RegView_Ws_InputRow">Input Row</Message>
+		<Message ID="RegView_Ws_InternalEEPROM">Internal EEPROM</Message>
+		<Message ID="RegView_Ws_Interrupts">Interrupts</Message>
+		<Message ID="RegView_Ws_IRQ">IRQ</Message>
+		<Message ID="RegView_Ws_IRQScanline">IRQ Scanline</Message>
+		<Message ID="RegView_Ws_IRQVectorOffsetW">IRQ Vector Offset (W)</Message>
+		<Message ID="RegView_Ws_KeyPressed">Key Pressed</Message>
+		<Message ID="RegView_Ws_Keypad">Keypad</Message>
+		<Message ID="RegView_Ws_LastScanline">Last Scanline</Message>
+		<Message ID="RegView_Ws_LCDHighContrast">LCD High Contrast</Message>
+		<Message ID="RegView_Ws_LCDSleepMode">LCD Sleep Mode</Message>
+		<Message ID="RegView_Ws_LeftOutput">Left Output</Message>
+		<Message ID="RegView_Ws_LeftOutputSum">Left Output Sum</Message>
+		<Message ID="RegView_Ws_LeftSample">Left Sample</Message>
+		<Message ID="RegView_Ws_Length">Length</Message>
+		<Message ID="RegView_Ws_LengthReloadValue">Length Reload Value</Message>
+		<Message ID="RegView_Ws_LFSREnabled">LFSR Enabled</Message>
+		<Message ID="RegView_Ws_LFSRValue">LFSR Value</Message>
+		<Message ID="RegView_Ws_MasterVolume">Master Volume</Message>
+		<Message ID="RegView_Ws_NMIOnLowBattery">NMI on low battery</Message>
+		<Message ID="RegView_Ws_NoiseEnabled">Noise Enabled</Message>
+		<Message ID="RegView_Ws_NoiseTapMode">Noise Tap Mode</Message>
+		<Message ID="RegView_Ws_OutputColumn">Output Column</Message>
+		<Message ID="RegView_Ws_OutputSum">Output Sum</Message>
+		<Message ID="RegView_Ws_PCMEnabled">PCM Enabled</Message>
+		<Message ID="RegView_Ws_PCMLeftVolume">PCM Left Volume</Message>
+		<Message ID="RegView_Ws_PCMRightVolume">PCM Right Volume</Message>
+		<Message ID="RegView_Ws_PCMValue">PCM Value</Message>
+		<Message ID="RegView_Ws_PPU">PPU</Message>
+		<Message ID="RegView_Ws_RAMBank">RAM Bank</Message>
+		<Message ID="RegView_Ws_ReadData">Read Data</Message>
+		<Message ID="RegView_Ws_ReadDone">Read Done</Message>
+		<Message ID="RegView_Ws_Ready">Ready</Message>
+		<Message ID="RegView_Ws_ReceiveBufferOverflow">Receive Buffer Overflow</Message>
+		<Message ID="RegView_Ws_ReceiveBufferR">Receive Buffer (R)</Message>
+		<Message ID="RegView_Ws_ReceiveBufferFilled">Receive Buffer Filled</Message>
+		<Message ID="RegView_Ws_RightOutput">Right Output</Message>
+		<Message ID="RegView_Ws_RightOutputSum">Right Output Sum</Message>
+		<Message ID="RegView_Ws_RightSample">Right Sample</Message>
+		<Message ID="RegView_Ws_ROM0Bank">ROM0 Bank</Message>
+		<Message ID="RegView_Ws_ROM1Bank">ROM1 Bank</Message>
+		<Message ID="RegView_Ws_ROMLinearBank">ROM Linear Bank</Message>
+		<Message ID="RegView_Ws_ROMMWaitState">ROM Wait State</Message>
+		<Message ID="RegView_Ws_SamplePosition">Sample Position</Message>
+		<Message ID="RegView_Ws_SampleScalingMode">Sample Scaling Mode</Message>
+		<Message ID="RegView_Ws_Scanline">Scanline</Message>
+		<Message ID="RegView_Ws_ScanlineIRQ">Scanline IRQ</Message>
+		<Message ID="RegView_Ws_Screen1Address">Screen 1 Address</Message>
+		<Message ID="RegView_Ws_Screen1Enabled">Screen 1 Enabled</Message>
+		<Message ID="RegView_Ws_Screen1ScrollX">Screen 1 Scroll X</Message>
+		<Message ID="RegView_Ws_Screen1ScrollY">Screen 1 Scroll Y</Message>
+		<Message ID="RegView_Ws_Screen2Address">Screen 2 Address</Message>
+		<Message ID="RegView_Ws_Screen2Enabled">Screen 2 Enabled</Message>
+		<Message ID="RegView_Ws_Screen2ScrollX">Screen 2 Scroll X</Message>
+		<Message ID="RegView_Ws_Screen2ScrollY">Screen 2 Scroll Y</Message>
+		<Message ID="RegView_Ws_Screen2WindowBottom">Screen 2 Window Bottom</Message>
+		<Message ID="RegView_Ws_Screen2WindowDrawOutside">Screen 2 Window Draw Outside</Message>
+		<Message ID="RegView_Ws_Screen2WindowEnabled">Screen 2 Window Enabled</Message>
+		<Message ID="RegView_Ws_Screen2WindowLeft">Screen 2 Window Left</Message>
+		<Message ID="RegView_Ws_Screen2WindowRight">Screen 2 Window Right</Message>
+		<Message ID="RegView_Ws_Screen2WindowTop">Screen 2 Window Top</Message>
+		<Message ID="RegView_Ws_SendBufferEmpty">Send Buffer Empty</Message>
+		<Message ID="RegView_Ws_SendBufferW">Send Buffer (W)</Message>
+		<Message ID="RegView_Ws_Serial">Serial</Message>
+		<Message ID="RegView_Ws_Sleep">Sleep</Message>
+		<Message ID="RegView_Ws_SoundDMA">Sound DMA</Message>
+		<Message ID="RegView_Ws_SoundOutput">Sound Output</Message>
+		<Message ID="RegView_Ws_SoundOutputControl">Sound Output Control</Message>
+		<Message ID="RegView_Ws_SoundTest">Sound Test</Message>
+		<Message ID="RegView_Ws_SourceReloadValue">Source Reload Value</Message>
+		<Message ID="RegView_Ws_SpeakerEnabled">Speaker Enabled</Message>
+		<Message ID="RegView_Ws_SpeakerVolume">Speaker Volume</Message>
+		<Message ID="RegView_Ws_SpriteCount">Sprite Count</Message>
+		<Message ID="RegView_Ws_SpriteTableAddress">Sprite Table Address</Message>
+		<Message ID="RegView_Ws_SpriteWindowBottom">Sprite Window Bottom</Message>
+		<Message ID="RegView_Ws_SpriteWindowEnabled">Sprite Window Enabled</Message>
+		<Message ID="RegView_Ws_SpriteWindowLeft">Sprite Window Left</Message>
+		<Message ID="RegView_Ws_SpriteWindowRight">Sprite Window Right</Message>
+		<Message ID="RegView_Ws_SpriteWindowTop">Sprite Window Top</Message>
+		<Message ID="RegView_Ws_SRAMWaitState">SRAM Wait State</Message>
+		<Message ID="RegView_Ws_SwanCrystalSystem">SwanCrystal System</Message>
+		<Message ID="RegView_Ws_SweepEnabled">Sweep Enabled</Message>
+		<Message ID="RegView_Ws_SweepPeriod">Sweep Period</Message>
+		<Message ID="RegView_Ws_SweepTimer">Sweep Timer</Message>
+		<Message ID="RegView_Ws_SweepValue">Sweep Value</Message>
+		<Message ID="RegView_Ws_SystemControl">System Control</Message>
+		<Message ID="RegView_Ws_SystemControl2">System Control 2</Message>
+		<Message ID="RegView_Ws_SystemControl3">System Control 3</Message>
+		<Message ID="RegView_Ws_Target">Target</Message>
+		<Message ID="RegView_Ws_TFTLCDConfig">TFT LCD Config</Message>
+		<Message ID="RegView_Ws_Timer">Timer</Message>
+		<Message ID="RegView_Ws_UARTReceiveReady">UART Receive Ready</Message>
+		<Message ID="RegView_Ws_UARTSendReady">UART Send Ready</Message>
+		<Message ID="RegView_Ws_UpdateSampleRate">Update Sample Rate</Message>
+		<Message ID="RegView_Ws_VerticalReloadValue">Vertical Reload Value</Message>
+		<Message ID="RegView_Ws_VerticalTimer">Vertical Timer</Message>
+		<Message ID="RegView_Ws_VertitalTimerAutoReload">Vertital Timer Auto-Reload</Message>
+		<Message ID="RegView_Ws_VerticalTimerEnabled">Vertical Timer Enabled</Message>
+		<Message ID="RegView_Ws_VerticalTimerIRQ">Vertical Timer IRQ</Message>
+		<Message ID="RegView_Ws_VerticalBlankIRQ">Vertical Blank IRQ</Message>
+		<Message ID="RegView_Ws_VolumeIconVisible">Volume Icon Visible</Message>
+		<Message ID="RegView_Ws_VolumeLevel">Volume Level</Message>
+		<Message ID="RegView_Ws_WaveTableAddress">Wave Table Address</Message>
+		<Message ID="RegView_Ws_WriteData">Write Data</Message>
+		<Message ID="RegView_Ws_WriteDisabled">Write Disabled</Message>
+		<Message ID="RegView_Ws_WriteProtection">Write Protection</Message>
+		<Message ID="RegView_Ws_100Percent">100%</Message>
+		<Message ID="RegView_Ws_12kHz">12 kHz</Message>
+		<Message ID="RegView_Ws_4_8kHz">4.8 kHz</Message>
+		<!-- Missing keys for Gb, Pce, Ws, Gba, Snes -->
+		<Message ID="RegView_Gb_Position">Position</Message>
+		<Message ID="RegView_Gb_SampleBuffer">Sample Buffer</Message>
+		<Message ID="RegView_Gb_SoundEnabled">Sound Enabled</Message>
+		<Message ID="RegView_Gba_OriginX">Origin X</Message>
+		<Message ID="RegView_Gba_OriginY">Origin Y</Message>
+		<Message ID="RegView_Gba_ParamA">Param A</Message>
+		<Message ID="RegView_Gba_ParamB">Param B</Message>
+		<Message ID="RegView_Gba_ParamC">Param C</Message>
+		<Message ID="RegView_Gba_ParamD">Param D</Message>
+		<Message ID="RegView_Gba_Percent100">100%</Message>
+		<Message ID="RegView_Gba_Percent25">25%</Message>
+		<Message ID="RegView_Gba_Percent50">50%</Message>
+		<Message ID="RegView_Gba_PPU">PPU</Message>
+		<Message ID="RegView_Gba_SamplingRate0">9 bit, 32,768 Hz</Message>
+		<Message ID="RegView_Gba_SamplingRate1">8 bit, 65,536 Hz</Message>
+		<Message ID="RegView_Gba_SamplingRate2">7 bit, 131,072 Hz</Message>
+		<Message ID="RegView_Gba_SamplingRate3">6 bit, 262,144 Hz</Message>
+		<Message ID="RegView_Pce_Channel">Channel {0}</Message>
+		<Message ID="RegView_Pce_Port">Port {0}</Message>
+		<Message ID="RegView_Snes_BRF">BRF #{0}</Message>
+		<Message ID="RegView_Snes_Coefficient">Coefficient {0}</Message>
+		<Message ID="RegView_Snes_CPU">CPU</Message>
+		<Message ID="RegView_Snes_Decrement">Decrement</Message>
+		<Message ID="RegView_Snes_DMA">DMA</Message>
+		<Message ID="RegView_Snes_DMAChannel">DMA Channel {0}</Message>
+		<Message ID="RegView_Snes_DMAEnabled">DMA Enabled</Message>
+		<Message ID="RegView_Snes_LeftVolumeVOL">Left Volume (VOL)</Message>
+		<Message ID="RegView_Snes_PitchP">Pitch (P)</Message>
+		<Message ID="RegView_Snes_Port0CPURead">Port 0 (CPU read)</Message>
+		<Message ID="RegView_Snes_Port0SPCRead">Port 0 (SPC read)</Message>
+		<Message ID="RegView_Snes_Port1CPURead">Port 1 (CPU read)</Message>
+		<Message ID="RegView_Snes_Port1SPCRead">Port 1 (SPC read)</Message>
+		<Message ID="RegView_Snes_Port2CPURead">Port 2 (CPU read)</Message>
+		<Message ID="RegView_Snes_Port2SPCRead">Port 2 (SPC read)</Message>
+		<Message ID="RegView_Snes_Port3CPURead">Port 3 (CPU read)</Message>
+		<Message ID="RegView_Snes_Port3SPCRead">Port 3 (SPC read)</Message>
+		<Message ID="RegView_Snes_PPU">PPU</Message>
+		<Message ID="RegView_Snes_Reset">Reset</Message>
+		<Message ID="RegView_Snes_RightVolumeVOL">Right Volume (VOL)</Message>
+		<Message ID="RegView_Snes_SA1">SA-1</Message>
+		<Message ID="RegView_Snes_Size">Size</Message>
+		<Message ID="RegView_Snes_Size32x32">32x32</Message>
+		<Message ID="RegView_Snes_Size32x64">32x64</Message>
+		<Message ID="RegView_Snes_Size64x32">64x32</Message>
+		<Message ID="RegView_Snes_Size64x64">64x64</Message>
+		<Message ID="RegView_Snes_SourceSRCN">Source (SRCN)</Message>
+		<Message ID="RegView_Snes_Test">Test</Message>
+		<Message ID="RegView_Snes_TileAddresses">Tile Addresses</Message>
+		<Message ID="RegView_Snes_TilemapAddressesSizes">Tilemap Addresses/Sizes</Message>
+		<Message ID="RegView_Snes_Voice">Voice #{0}</Message>
+		<Message ID="RegView_Snes_Wait">Wait</Message>
+		<Message ID="RegView_Snes_Windows">Windows</Message>
+		<Message ID="RegView_Ws_0Percent">0%</Message>
+		<Message ID="RegView_Ws_3kHz">3 kHz</Message>
+		<Message ID="RegView_Ws_ActiveIRQs">Active IRQs</Message>
+		<Message ID="RegView_Ws_Horizontal">Horizontal</Message>
+		<Message ID="RegView_Ws_UseCpuClockForSweep">Use CPU clock for sweep</Message>
+		<Message ID="RegView_Ws_Vertical">Vertical</Message>
 	</Messages>
 	<Enums>
 		<Enum ID="EmulatorShortcut">

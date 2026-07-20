@@ -1,0 +1,204 @@
+{
+	"instructions": [
+		{
+			"op": "adc",
+			"name": "ADC - 加法带进位",
+			"description": ""
+		},
+		{
+			"op": "add",
+			"name": "ADD - 加法",
+			"description": ""
+		},
+		{
+			"op": "and",
+			"name": "AND - 按位与",
+			"description": ""
+		},
+		{
+			"op": "b",
+			"name": "B - 分支",
+			"description": ""
+		},
+		{
+			"op": "bal",
+			"name": "BAL - 无条件分支",
+			"description": ""
+		},
+		{
+			"op": "bic",
+			"name": "BIC - 位清除",
+			"description": ""
+		},
+		{
+			"op": "bl",
+			"name": "BL - 带链接分支",
+			"description": ""
+		},
+		{
+			"op": "bll",
+			"name": "BLL - 带链接分支(低)",
+			"description": ""
+		},
+		{
+			"op": "blh",
+			"name": "BLH - 带链接分支(高)",
+			"description": ""
+		},
+		{
+			"op": "bx",
+			"name": "BX - 分支并交换",
+			"description": ""
+		},
+		{
+			"op": "asr",
+			"name": "ASL - 算术右移",
+			"description": ""
+		},
+		{
+			"op": "cmn",
+			"name": "CMN - 负数比较",
+			"description": ""
+		},
+		{
+			"op": "cmp",
+			"name": "CMP - 比较",
+			"description": ""
+		},
+		{
+			"op": "eor",
+			"name": "EOR - 异或",
+			"description": ""
+		},
+		{
+			"op": "ldm",
+			"name": "LDM - 加载多寄存器",
+			"description": ""
+		},
+		{
+			"op": "ldr",
+			"name": "LDR - 加载寄存器",
+			"description": ""
+		},
+		{
+			"op": "lds",
+			"name": "LDS - 加载符号扩展",
+			"description": ""
+		},
+		{
+			"op": "lsl",
+			"name": "LSL - 逻辑左移",
+			"description": ""
+		},
+		{
+			"op": "lsr",
+			"name": "LSR - 逻辑右移",
+			"description": ""
+		},
+		{
+			"op": "mla",
+			"name": "MLA - 乘法累加",
+			"description": ""
+		},
+		{
+			"op": "mov",
+			"name": "MOV - 传送",
+			"description": ""
+		},
+		{
+			"op": "mrs",
+			"name": "MRS - 传送状态到寄存器",
+			"description": ""
+		},
+		{
+			"op": "msr",
+			"name": "MSR - 传送寄存器到状态",
+			"description": ""
+		},
+		{
+			"op": "mul",
+			"name": "MUL - 乘法",
+			"description": ""
+		},
+		{
+			"op": "mvn",
+			"name": "MVN - 取反传送",
+			"description": ""
+		},
+		{
+			"op": "neg",
+			"name": "NEG - 取反",
+			"description": ""
+		},
+		{
+			"op": "orr",
+			"name": "ORR - 按位或",
+			"description": ""
+		},
+		{
+			"op": "pop",
+			"name": "POP - 弹出寄存器",
+			"description": ""
+		},
+		{
+			"op": "push",
+			"name": "PUSH - 压入寄存器",
+			"description": ""
+		},
+		{
+			"op": "ror",
+			"name": "ROR - 循环右移",
+			"description": ""
+		},
+		{
+			"op": "rsb",
+			"name": "RSB - 逆向减法",
+			"description": ""
+		},
+		{
+			"op": "rsc",
+			"name": "RSC - 带借位逆向减法",
+			"description": ""
+		},
+		{
+			"op": "sbc",
+			"name": "SBC - 带借位减法",
+			"description": ""
+		},
+		{
+			"op": "stm",
+			"name": "STM - 存储多寄存器",
+			"description": ""
+		},
+		{
+			"op": "str",
+			"name": "STR - 存储寄存器",
+			"description": ""
+		},
+		{
+			"op": "sub",
+			"name": "SUB - 减法",
+			"description": ""
+		},
+		{
+			"op": "swi",
+			"name": "SWI - 软件中断",
+			"description": ""
+		},
+		{
+			"op": "swp",
+			"name": "SWP - 交换",
+			"description": ""
+		},
+		{
+			"op": "teq",
+			"name": "TEQ - 测试相等",
+			"description": ""
+		},
+		{
+			"op": "tst",
+			"name": "TST - 测试位",
+			"description": ""
+		}
+	]
+}

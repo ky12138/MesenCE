@@ -1,5 +1,6 @@
 ﻿using Mesen.Debugger.ViewModels;
 using Mesen.Interop;
+using Mesen.Localization;
 using System.Collections.Generic;
 using static Mesen.Debugger.ViewModels.RegEntry;
 
@@ -23,54 +24,54 @@ public class SmsRegisterViewer
 
 		SmsVdpState vdp = sms.Vdp;
 		entries.AddRange(new List<RegEntry>() {
-			new RegEntry("", "State"),
-			new RegEntry("", "Cycle (H)", vdp.Cycle),
-			new RegEntry("", "Scanline (V)", vdp.Scanline),
-			new RegEntry("", "Frame Number", vdp.FrameCount),
+			new RegEntry("", ResourceHelper.GetMessage("RegView_Common_State")),
+			new RegEntry("", ResourceHelper.GetMessage("RegView_Common_CycleH"), vdp.Cycle),
+			new RegEntry("", ResourceHelper.GetMessage("RegView_Common_ScanlineV"), vdp.Scanline),
+			new RegEntry("", ResourceHelper.GetMessage("RegView_Common_FrameNumber"), vdp.FrameCount),
 
-			new RegEntry("", "Ports"),
-			new RegEntry("$7E", "Vertical counter", vdp.Scanline),
-			new RegEntry("$7F", "Horizontal counter latch", vdp.HCounterLatch),
-			new RegEntry("$BF.7", "Vertical blank IRQ pending", vdp.VerticalBlankIrqPending),
-			new RegEntry("$BF.6", "Sprite overflow", vdp.SpriteOverflow),
-			new RegEntry("$BF.5", "Sprite collision", vdp.SpriteCollision),
-			new RegEntry("--", "Data port buffer", vdp.VramBuffer),
-			new RegEntry("--", "Address register", vdp.AddressReg, Format.X16),
-			new RegEntry("--", "Code register", vdp.CodeReg),
-			new RegEntry("--", "Control port MSB toggle", vdp.ControlPortMsbToggle),
+			new RegEntry("", ResourceHelper.GetMessage("RegView_Common_Ports")),
+			new RegEntry("$7E", ResourceHelper.GetMessage("RegView_Sms_VerticalCounter"), vdp.Scanline),
+			new RegEntry("$7F", ResourceHelper.GetMessage("RegView_Sms_HorizontalCounterLatch"), vdp.HCounterLatch),
+			new RegEntry("$BF.7", ResourceHelper.GetMessage("RegView_Sms_VerticalBlankIRQPending"), vdp.VerticalBlankIrqPending),
+			new RegEntry("$BF.6", ResourceHelper.GetMessage("RegView_Sms_SpriteOverflow"), vdp.SpriteOverflow),
+			new RegEntry("$BF.5", ResourceHelper.GetMessage("RegView_Sms_SpriteCollision"), vdp.SpriteCollision),
+			new RegEntry("--", ResourceHelper.GetMessage("RegView_Sms_DataPortBuffer"), vdp.VramBuffer),
+			new RegEntry("--", ResourceHelper.GetMessage("RegView_Sms_AddressRegister"), vdp.AddressReg, Format.X16),
+			new RegEntry("--", ResourceHelper.GetMessage("RegView_Sms_CodeRegister"), vdp.CodeReg),
+			new RegEntry("--", ResourceHelper.GetMessage("RegView_Sms_ControlPortMSBToggle"), vdp.ControlPortMsbToggle),
 
-			new RegEntry("", "Registers"),
-			new RegEntry("$00.0", "Sync disabled", vdp.SyncDisabled),
-			new RegEntry("$00.1", "M2 - Allow 224/240-line mode", vdp.M2_AllowHeightChange),
-			new RegEntry("$00.2", "M4 - Use mode 4", vdp.UseMode4),
-			new RegEntry("$00.3", "Shift sprites left", vdp.ShiftSpritesLeft),
-			new RegEntry("$00.4", "Scanline IRQ enabled", vdp.EnableScanlineIrq),
-			new RegEntry("$00.5", "Mask first column", vdp.MaskFirstColumn),
-			new RegEntry("$00.6", "Horizontal scroll lock", vdp.HorizontalScrollLock),
-			new RegEntry("$00.7", "Vertical scroll lock", vdp.VerticalScrollLock),
+			new RegEntry("", ResourceHelper.GetMessage("RegView_Common_Registers")),
+			new RegEntry("$00.0", ResourceHelper.GetMessage("RegView_Sms_SyncDisabled"), vdp.SyncDisabled),
+			new RegEntry("$00.1", ResourceHelper.GetMessage("RegView_Sms_M2_Allow224_240LineMode"), vdp.M2_AllowHeightChange),
+			new RegEntry("$00.2", ResourceHelper.GetMessage("RegView_Sms_M4_UseMode4"), vdp.UseMode4),
+			new RegEntry("$00.3", ResourceHelper.GetMessage("RegView_Sms_ShiftSpritesLeft"), vdp.ShiftSpritesLeft),
+			new RegEntry("$00.4", ResourceHelper.GetMessage("RegView_Sms_ScanlineIRQEnabled"), vdp.EnableScanlineIrq),
+			new RegEntry("$00.5", ResourceHelper.GetMessage("RegView_Sms_MaskFirstColumn"), vdp.MaskFirstColumn),
+			new RegEntry("$00.6", ResourceHelper.GetMessage("RegView_Sms_HorizontalScrollLock"), vdp.HorizontalScrollLock),
+			new RegEntry("$00.7", ResourceHelper.GetMessage("RegView_Sms_VerticalScrollLock"), vdp.VerticalScrollLock),
 
-			new RegEntry("$01.0", "Zoom sprites (2x size)", vdp.EnableDoubleSpriteSize),
-			new RegEntry("$01.1", "Large sprites (8x16 or 16x16)", vdp.UseLargeSprites),
-			new RegEntry("$01.3", "M3 - 240-line output", vdp.M3_Use240LineMode),
-			new RegEntry("$01.4", "M1 - 224-line output", vdp.M1_Use224LineMode),
-			new RegEntry("$01.5", "Vertical blank IRQ enabled", vdp.EnableVerticalBlankIrq),
-			new RegEntry("$01.6", "Rendering enabled", vdp.RenderingEnabled),
-			new RegEntry("$01.7", "SG-1000 - 16K VRAM Mode", vdp.Sg16KVramMode),
+			new RegEntry("$01.0", ResourceHelper.GetMessage("RegView_Sms_ZoomSprites2xSize"), vdp.EnableDoubleSpriteSize),
+			new RegEntry("$01.1", ResourceHelper.GetMessage("RegView_Sms_LargeSprites8x16Or16x16"), vdp.UseLargeSprites),
+			new RegEntry("$01.3", ResourceHelper.GetMessage("RegView_Sms_M3_240LineOutput"), vdp.M3_Use240LineMode),
+			new RegEntry("$01.4", ResourceHelper.GetMessage("RegView_Sms_M1_224LineOutput"), vdp.M1_Use224LineMode),
+			new RegEntry("$01.5", ResourceHelper.GetMessage("RegView_Sms_VerticalBlankIRQEnabled"), vdp.EnableVerticalBlankIrq),
+			new RegEntry("$01.6", ResourceHelper.GetMessage("RegView_Sms_RenderingEnabled"), vdp.RenderingEnabled),
+			new RegEntry("$01.7", ResourceHelper.GetMessage("RegView_Sms_SG1000_16KVRAMMode"), vdp.Sg16KVramMode),
 
-			new RegEntry("$02.0-3", "Nametable address", vdp.NametableAddress),
-			new RegEntry("$03", "Color table address", vdp.ColorTableAddress),
-			new RegEntry("$04.0-2", "Pattern table address", vdp.BgPatternTableAddress),
-			new RegEntry("$05.0-6", "Sprite table address", vdp.SpriteTableAddress),
-			new RegEntry("$06.0-2", "Sprite tileset address", vdp.SpritePatternSelector),
-			new RegEntry("$07.0-3", "Background color index", vdp.BackgroundColorIndex),
-			new RegEntry("$07.4-7", "Text color index", vdp.TextColorIndex),
-			new RegEntry("$08", "Horizontal scroll", vdp.HorizontalScroll),
-			new RegEntry("$09", "Vertical scroll", vdp.VerticalScroll),
-			new RegEntry("$0A", "Scanline IRQ reload value", vdp.ScanlineCounter),
-			new RegEntry("--", "Scanline IRQ counter", vdp.ScanlineCounterLatch),
+			new RegEntry("$02.0-3", ResourceHelper.GetMessage("RegView_Sms_NametableAddress"), vdp.NametableAddress),
+			new RegEntry("$03", ResourceHelper.GetMessage("RegView_Sms_ColorTableAddress"), vdp.ColorTableAddress),
+			new RegEntry("$04.0-2", ResourceHelper.GetMessage("RegView_Sms_PatternTableAddress"), vdp.BgPatternTableAddress),
+			new RegEntry("$05.0-6", ResourceHelper.GetMessage("RegView_Sms_SpriteTableAddress"), vdp.SpriteTableAddress),
+			new RegEntry("$06.0-2", ResourceHelper.GetMessage("RegView_Sms_SpriteTilesetAddress"), vdp.SpritePatternSelector),
+			new RegEntry("$07.0-3", ResourceHelper.GetMessage("RegView_Sms_BackgroundColorIndex"), vdp.BackgroundColorIndex),
+			new RegEntry("$07.4-7", ResourceHelper.GetMessage("RegView_Sms_TextColorIndex"), vdp.TextColorIndex),
+			new RegEntry("$08", ResourceHelper.GetMessage("RegView_Sms_HorizontalScroll"), vdp.HorizontalScroll),
+			new RegEntry("$09", ResourceHelper.GetMessage("RegView_Sms_VerticalScroll"), vdp.VerticalScroll),
+			new RegEntry("$0A", ResourceHelper.GetMessage("RegView_Sms_ScanlineIRQReloadValue"), vdp.ScanlineCounter),
+			new RegEntry("--", ResourceHelper.GetMessage("RegView_Sms_ScanlineIRQCounter"), vdp.ScanlineCounterLatch),
 		});
 
-		return new RegisterViewerTab("VDP", entries, CpuType.Sms);
+		return new RegisterViewerTab(ResourceHelper.GetMessage("RegView_Sms_VDP"), entries, CpuType.Sms);
 	}
 
 	private static RegisterViewerTab GetSmsPsgTab(ref SmsState sms, bool isGameGear)
@@ -79,42 +80,42 @@ public class SmsRegisterViewer
 
 		SmsPsgState psg = sms.Psg;
 
-		entries.Add(new RegEntry("", "Latched register", psg.SelectedReg));
+		entries.Add(new RegEntry("", ResourceHelper.GetMessage("RegView_Sms_LatchedRegister"), psg.SelectedReg));
 
 		for(int i = 0; i < 3; i++) {
 			entries.AddRange(new List<RegEntry>() {
-				new RegEntry("", "Tone " + (i + 1)),
-				new RegEntry("", "Volume", psg.Tone[i].Volume, Format.X8),
-				new RegEntry("", "Reload value", psg.Tone[i].ReloadValue, Format.X16),
-				new RegEntry("", "Timer", psg.Tone[i].Timer, Format.X16),
-				new RegEntry("", "Output", psg.Tone[i].Output, Format.X8),
+				new RegEntry("", ResourceHelper.GetMessage("RegView_Sms_Tone" + (i + 1))),
+				new RegEntry("", ResourceHelper.GetMessage("RegView_Common_Volume"), psg.Tone[i].Volume, Format.X8),
+				new RegEntry("", ResourceHelper.GetMessage("RegView_Sms_ReloadValue"), psg.Tone[i].ReloadValue, Format.X16),
+				new RegEntry("", ResourceHelper.GetMessage("RegView_Common_Timer"), psg.Tone[i].Timer, Format.X16),
+				new RegEntry("", ResourceHelper.GetMessage("RegView_Common_Output"), psg.Tone[i].Output, Format.X8),
 			});
 		}
 
 		entries.AddRange(new List<RegEntry>() {
-			new RegEntry("", "Noise"),
-			new RegEntry("", "Volume", psg.Noise.Volume, Format.X8),
-			new RegEntry("", "White noise mode", (psg.Noise.Control & 0x04) != 0),
-			new RegEntry("", "Divider", psg.Noise.Control & 0x03),
-			new RegEntry("", "Timer", psg.Noise.Timer, Format.X16),
-			new RegEntry("", "Output", psg.Noise.Output),
+			new RegEntry("", ResourceHelper.GetMessage("RegView_Common_Noise")),
+			new RegEntry("", ResourceHelper.GetMessage("RegView_Common_Volume"), psg.Noise.Volume, Format.X8),
+			new RegEntry("", ResourceHelper.GetMessage("RegView_Sms_WhiteNoiseMode"), (psg.Noise.Control & 0x04) != 0),
+			new RegEntry("", ResourceHelper.GetMessage("RegView_Common_Divider"), psg.Noise.Control & 0x03),
+			new RegEntry("", ResourceHelper.GetMessage("RegView_Common_Timer"), psg.Noise.Timer, Format.X16),
+			new RegEntry("", ResourceHelper.GetMessage("RegView_Common_Output"), psg.Noise.Output),
 		});
 
 		if(isGameGear) {
 			entries.AddRange(new List<RegEntry>() {
-				new RegEntry("", "Panning"),
-				new RegEntry("$06.0", "Right tone 1 enabled", (psg.GameGearPanningReg & 0x01) != 0),
-				new RegEntry("$06.1", "Right tone 2 enabled", (psg.GameGearPanningReg & 0x02) != 0),
-				new RegEntry("$06.2", "Right tone 3 enabled", (psg.GameGearPanningReg & 0x04) != 0),
-				new RegEntry("$06.3", "Right noise enabled", (psg.GameGearPanningReg & 0x08) != 0),
-				new RegEntry("$06.4", "Left tone 1 enabled", (psg.GameGearPanningReg & 0x10) != 0),
-				new RegEntry("$06.5", "Left tone 2 enabled", (psg.GameGearPanningReg & 0x20) != 0),
-				new RegEntry("$06.6", "Left tone 3 enabled", (psg.GameGearPanningReg & 0x40) != 0),
-				new RegEntry("$06.7", "Left noise enabled", (psg.GameGearPanningReg & 0x80) != 0),
+				new RegEntry("", ResourceHelper.GetMessage("RegView_Sms_Panning")),
+				new RegEntry("$06.0", ResourceHelper.GetMessage("RegView_Sms_RightTone1Enabled"), (psg.GameGearPanningReg & 0x01) != 0),
+				new RegEntry("$06.1", ResourceHelper.GetMessage("RegView_Sms_RightTone2Enabled"), (psg.GameGearPanningReg & 0x02) != 0),
+				new RegEntry("$06.2", ResourceHelper.GetMessage("RegView_Sms_RightTone3Enabled"), (psg.GameGearPanningReg & 0x04) != 0),
+				new RegEntry("$06.3", ResourceHelper.GetMessage("RegView_Sms_RightNoiseEnabled"), (psg.GameGearPanningReg & 0x08) != 0),
+				new RegEntry("$06.4", ResourceHelper.GetMessage("RegView_Sms_LeftTone1Enabled"), (psg.GameGearPanningReg & 0x10) != 0),
+				new RegEntry("$06.5", ResourceHelper.GetMessage("RegView_Sms_LeftTone2Enabled"), (psg.GameGearPanningReg & 0x20) != 0),
+				new RegEntry("$06.6", ResourceHelper.GetMessage("RegView_Sms_LeftTone3Enabled"), (psg.GameGearPanningReg & 0x40) != 0),
+				new RegEntry("$06.7", ResourceHelper.GetMessage("RegView_Sms_LeftNoiseEnabled"), (psg.GameGearPanningReg & 0x80) != 0),
 			});
 		}
 
-		return new RegisterViewerTab("PSG", entries, CpuType.Sms);
+		return new RegisterViewerTab(ResourceHelper.GetMessage("RegView_Sms_PSG"), entries, CpuType.Sms);
 	}
 
 	private static RegisterViewerTab GetSmsMiscTab(ref SmsState sms)
@@ -125,24 +126,24 @@ public class SmsRegisterViewer
 		SmsMemoryManagerState mem = sms.MemoryManager;
 
 		entries.AddRange(new List<RegEntry>() {
-			new RegEntry("", "Port $3E"),
-			new RegEntry("$3E.2", "I/O disabled", !mem.IoEnabled),
-			new RegEntry("$3E.3", "BIOS disabled", !mem.BiosEnabled),
-			new RegEntry("$3E.4", "System RAM disabled", !mem.WorkRamEnabled),
-			new RegEntry("$3E.5", "Card slot disabled", !mem.CardEnabled),
-			new RegEntry("$3E.6", "Cartridge disabled", !mem.CartridgeEnabled),
-			new RegEntry("$3E.7", "Expansion slot disabled", !mem.ExpEnabled),
-			new RegEntry("", "Port $3F"),
-			new RegEntry("$3F.0", "Port A TR pin direction", (ctrl.ControlPort & 0x01) != 0 ? "Input" : "Output", (ctrl.ControlPort & 0x01) != 0),
-			new RegEntry("$3F.1", "Port A TH pin direction", (ctrl.ControlPort & 0x02) != 0 ? "Input" : "Output", (ctrl.ControlPort & 0x02) != 0),
-			new RegEntry("$3F.2", "Port B TR pin direction", (ctrl.ControlPort & 0x04) != 0 ? "Input" : "Output", (ctrl.ControlPort & 0x04) != 0),
-			new RegEntry("$3F.3", "Port B TH pin direction", (ctrl.ControlPort & 0x08) != 0 ? "Input" : "Output", (ctrl.ControlPort & 0x08) != 0),
-			new RegEntry("$3F.4", "Port A TR output level", (ctrl.ControlPort & 0x10) != 0 ? "High" : "Low", (ctrl.ControlPort & 0x10) != 0),
-			new RegEntry("$3F.5", "Port A TH output level", (ctrl.ControlPort & 0x20) != 0 ? "High" : "Low", (ctrl.ControlPort & 0x20) != 0),
-			new RegEntry("$3F.6", "Port B TR output level", (ctrl.ControlPort & 0x40) != 0 ? "High" : "Low", (ctrl.ControlPort & 0x40) != 0),
-			new RegEntry("$3F.7", "Port B TH output level", (ctrl.ControlPort & 0x80) != 0 ? "High" : "Low", (ctrl.ControlPort & 0x80) != 0)
+			new RegEntry("", ResourceHelper.GetMessage("RegView_Sms_Port_3E")),
+			new RegEntry("$3E.2", ResourceHelper.GetMessage("RegView_Sms_IO_Disabled"), !mem.IoEnabled),
+			new RegEntry("$3E.3", ResourceHelper.GetMessage("RegView_Sms_BIOSDisabled"), !mem.BiosEnabled),
+			new RegEntry("$3E.4", ResourceHelper.GetMessage("RegView_Sms_SystemRAMDisabled"), !mem.WorkRamEnabled),
+			new RegEntry("$3E.5", ResourceHelper.GetMessage("RegView_Sms_CardSlotDisabled"), !mem.CardEnabled),
+			new RegEntry("$3E.6", ResourceHelper.GetMessage("RegView_Sms_CartridgeDisabled"), !mem.CartridgeEnabled),
+			new RegEntry("$3E.7", ResourceHelper.GetMessage("RegView_Sms_ExpansionSlotDisabled"), !mem.ExpEnabled),
+			new RegEntry("", ResourceHelper.GetMessage("RegView_Sms_Port_3F")),
+			new RegEntry("$3F.0", ResourceHelper.GetMessage("RegView_Sms_PortATRDirection"), (ctrl.ControlPort & 0x01) != 0 ? ResourceHelper.GetMessage("RegView_Common_Input") : ResourceHelper.GetMessage("RegView_Common_Output"), (ctrl.ControlPort & 0x01) != 0),
+			new RegEntry("$3F.1", ResourceHelper.GetMessage("RegView_Sms_PortATHDirection"), (ctrl.ControlPort & 0x02) != 0 ? ResourceHelper.GetMessage("RegView_Common_Input") : ResourceHelper.GetMessage("RegView_Common_Output"), (ctrl.ControlPort & 0x02) != 0),
+			new RegEntry("$3F.2", ResourceHelper.GetMessage("RegView_Sms_PortBTRDirection"), (ctrl.ControlPort & 0x04) != 0 ? ResourceHelper.GetMessage("RegView_Common_Input") : ResourceHelper.GetMessage("RegView_Common_Output"), (ctrl.ControlPort & 0x04) != 0),
+			new RegEntry("$3F.3", ResourceHelper.GetMessage("RegView_Sms_PortBTHDirection"), (ctrl.ControlPort & 0x08) != 0 ? ResourceHelper.GetMessage("RegView_Common_Input") : ResourceHelper.GetMessage("RegView_Common_Output"), (ctrl.ControlPort & 0x08) != 0),
+			new RegEntry("$3F.4", ResourceHelper.GetMessage("RegView_Sms_PortATROutputLevel"), (ctrl.ControlPort & 0x10) != 0 ? ResourceHelper.GetMessage("RegView_Sms_High") : ResourceHelper.GetMessage("RegView_Sms_Low"), (ctrl.ControlPort & 0x10) != 0),
+			new RegEntry("$3F.5", ResourceHelper.GetMessage("RegView_Sms_PortATHOutputLevel"), (ctrl.ControlPort & 0x20) != 0 ? ResourceHelper.GetMessage("RegView_Sms_High") : ResourceHelper.GetMessage("RegView_Sms_Low"), (ctrl.ControlPort & 0x20) != 0),
+			new RegEntry("$3F.6", ResourceHelper.GetMessage("RegView_Sms_PortBTROutputLevel"), (ctrl.ControlPort & 0x40) != 0 ? ResourceHelper.GetMessage("RegView_Sms_High") : ResourceHelper.GetMessage("RegView_Sms_Low"), (ctrl.ControlPort & 0x40) != 0),
+			new RegEntry("$3F.7", ResourceHelper.GetMessage("RegView_Sms_PortBTHOutputLevel"), (ctrl.ControlPort & 0x80) != 0 ? ResourceHelper.GetMessage("RegView_Sms_High") : ResourceHelper.GetMessage("RegView_Sms_Low"), (ctrl.ControlPort & 0x80) != 0)
 		});
 
-		return new RegisterViewerTab("Ports", entries, CpuType.Sms);
+		return new RegisterViewerTab(ResourceHelper.GetMessage("RegView_Sms_Ports"), entries, CpuType.Sms);
 	}
 }

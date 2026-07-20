@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Mesen.Config;
 using Mesen.Debugger.Controls;
 using Mesen.Interop;
 using Mesen.Localization;
@@ -60,16 +61,16 @@ public static class OpCodeHelper
 		TooltipEntries items = new();
 		items.AddCustomEntry("OP", panel);
 		if(!string.IsNullOrEmpty(seg.Data.ByteCodeStr)) {
-			items.AddEntry("Byte Code", seg.Data.ByteCodeStr);
+			items.AddEntry(ResourceHelper.GetMessage("TooltipByteCode"), seg.Data.ByteCodeStr);
 		}
 		if(doc.OpMode != null) {
-			items.AddEntry("Mode", doc.OpMode[opcode]);
+			items.AddEntry(ResourceHelper.GetMessage("TooltipMode"), doc.OpMode[opcode]);
 		}
 		if(doc.OpCycleCount != null) {
-			items.AddEntry("Cycle Count", doc.OpCycleCount[opcode]);
+			items.AddEntry(ResourceHelper.GetMessage("TooltipCycleCount"), doc.OpCycleCount[opcode]);
 		}
 		if(desc.Flags != null) {
-			items.AddEntry("Affected Flags", string.Join(", ", desc.Flags));
+			items.AddEntry(ResourceHelper.GetMessage("TooltipAffectedFlags"), string.Join(", ", desc.Flags));
 		}
 
 		return new DynamicTooltip() { Items = items };
@@ -314,8 +315,29 @@ public static class OpCodeHelper
 
 	private static DocFileFormat? ReadDocumentationFile(string filename)
 	{
-		using StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Mesen.Debugger.Documentation." + filename)!);
-		return (DocFileFormat?)JsonSerializer.Deserialize(reader.ReadToEnd(), typeof(DocFileFormat), MesenCamelCaseSerializerContext.Default);
+		string lang = "en";
+		try {
+			lang = ConfigManager.Config.Preferences.Language;
+		} catch {
+		}
+
+		if(lang != "en") {
+			try {
+				string localizedFilename = Path.ChangeExtension(filename, "." + lang + ".json");
+				Stream? stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Mesen.Debugger.Documentation." + localizedFilename);
+				if(stream != null) {
+					using StreamReader reader = new StreamReader(stream);
+					DocFileFormat? result = (DocFileFormat?)JsonSerializer.Deserialize(reader.ReadToEnd(), typeof(DocFileFormat), MesenCamelCaseSerializerContext.Default);
+					if(result != null) {
+						return result;
+					}
+				}
+			} catch {
+			}
+		}
+
+		using StreamReader defaultReader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Mesen.Debugger.Documentation." + filename)!);
+		return (DocFileFormat?)JsonSerializer.Deserialize(defaultReader.ReadToEnd(), typeof(DocFileFormat), MesenCamelCaseSerializerContext.Default);
 	}
 
 	private class CpuDocumentationData

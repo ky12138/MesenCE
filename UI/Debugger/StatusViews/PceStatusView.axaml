@@ -6,6 +6,7 @@
 	xmlns:du="using:Mesen.Debugger.Utilities"
 	xmlns:vm="using:Mesen.Debugger.StatusViews"
 	xmlns:c="using:Mesen.Controls"
+	xmlns:l="using:Mesen.Localization"
 	mc:Ignorable="d" d:DesignWidth="350"
 	VerticalAlignment="Stretch"
 	HorizontalAlignment="Stretch"
@@ -25,7 +26,7 @@
 			<DockPanel>
 				<StackPanel DockPanel.Dock="Right">
 					<StackPanel Orientation="Horizontal" IsEnabled="{Binding EditAllowed}">
-						<TextBlock Margin="0">SP:</TextBlock>
+						<TextBlock Text="{l:Translate lblSP}" Margin="0" />
 						<c:MesenNumericTextBox Value="{Binding RegSP}" Hex="True" Max="0xFF" />
 					</StackPanel>
 					<TextBox
@@ -42,23 +43,23 @@
 				<StackPanel DockPanel.Dock="Top" IsEnabled="{Binding EditAllowed}">
 					<WrapPanel>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock>A:</TextBlock>
+							<TextBlock Text="{l:Translate lblA}" />
 							<c:MesenNumericTextBox Value="{Binding RegA}" Hex="True" Max="0xFF" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock>X:</TextBlock>
+							<TextBlock Text="{l:Translate lblX}" />
 							<c:MesenNumericTextBox Value="{Binding RegX}" Hex="True" Max="0xFF" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock>Y:</TextBlock>
+							<TextBlock Text="{l:Translate lblY}" />
 							<c:MesenNumericTextBox Value="{Binding RegY}" Hex="True" Max="0xFF" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock>PC:</TextBlock>
+							<TextBlock Text="{l:Translate lblPC}" />
 							<c:MesenNumericTextBox Value="{Binding RegPC}" Hex="True" Max="0xFFFF" />
 						</StackPanel>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock>Cycle:</TextBlock>
+							<TextBlock Text="{l:Translate lblCycle}" />
 							<c:MesenNumericTextBox Width="70" Value="{Binding CycleCount}" IsEnabled="False" />
 						</StackPanel>
 					</WrapPanel>
@@ -67,26 +68,26 @@
 
 					<WrapPanel Margin="0 2 0 0" DockPanel.Dock="Top">
 						<StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Top">
-							<TextBlock>P:</TextBlock>
+							<TextBlock Text="{l:Translate lblP}" />
 							<c:MesenNumericTextBox Value="{Binding RegPS}" Hex="True" Max="0xFF" />
 						</StackPanel>
 
 						<WrapPanel>
 							<StackPanel>
-								<CheckBox IsChecked="{Binding FlagC}" Content="Carry" />
+								<CheckBox IsChecked="{Binding FlagC}" Content="{l:Translate chkCarry}" />
 								<CheckBox IsEnabled="False" Content="----" />
 							</StackPanel>
 							<StackPanel>
-								<CheckBox IsChecked="{Binding FlagZ}" Content="Zero" />
-								<CheckBox IsChecked="{Binding FlagT}" Content="Memory" />
+								<CheckBox IsChecked="{Binding FlagZ}" Content="{l:Translate chkZero}" />
+								<CheckBox IsChecked="{Binding FlagT}" Content="{l:Translate chkMemory}" />
 							</StackPanel>
 							<StackPanel>
-								<CheckBox IsChecked="{Binding FlagI}" Content="Interrupt" />
-								<CheckBox IsChecked="{Binding FlagV}" Content="Overflow" />
+								<CheckBox IsChecked="{Binding FlagI}" Content="{l:Translate chkInterrupt}" />
+								<CheckBox IsChecked="{Binding FlagV}" Content="{l:Translate chkOverflow}" />
 							</StackPanel>
 							<StackPanel>
-								<CheckBox IsChecked="{Binding FlagD}" Content="Decimal" />
-								<CheckBox IsChecked="{Binding FlagN}" Content="Negative" />
+								<CheckBox IsChecked="{Binding FlagD}" Content="{l:Translate chkDecimal}" />
+								<CheckBox IsChecked="{Binding FlagN}" Content="{l:Translate chkNegative}" />
 							</StackPanel>
 						</WrapPanel>
 					</WrapPanel>
@@ -98,9 +99,9 @@
 
 				<WrapPanel>
 					<Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
-						<TextBlock>Cycle:</TextBlock>
+						<TextBlock Text="{l:Translate lblCycle}" />
 						<c:MesenNumericTextBox Grid.Column="1" Value="{Binding Cycle}" IsEnabled="False" />
-						<TextBlock Grid.Row="1">Scanline:</TextBlock>
+						<TextBlock Grid.Row="1" Text="{l:Translate lblScanline}" />
 						<c:MesenNumericTextBox Grid.Row="1" Grid.Column="1" Value="{Binding Scanline}" IsEnabled="False" />
 					</Grid>
 				</WrapPanel>

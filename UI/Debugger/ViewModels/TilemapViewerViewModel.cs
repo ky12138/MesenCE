@@ -10,6 +10,7 @@ using Mesen.Debugger.Controls;
 using Mesen.Debugger.Utilities;
 using Mesen.Debugger.Windows;
 using Mesen.Interop;
+using Mesen.Localization;
 using Mesen.Utilities;
 using Mesen.ViewModels;
 using System;
@@ -144,6 +145,19 @@ namespace Mesen.Debugger.ViewModels
 						DebugTilemapTileInfo? tile = GetSelectedTileInfo();
 						if(tile != null && tile.Value.TileMapAddress >= 0) {
 							MemoryToolsWindow.ShowInMemoryTools(GetVramMemoryType(), tile.Value.TileMapAddress);
+						}
+					}
+				},
+				new ContextMenuAction() {
+					ActionType = ActionType.ViewInMemoryViewer,
+					HintText = () => {
+						DebugTilemapTileInfo? tile = GetSelectedTileInfo();
+						return tile?.AttributeAddress > 0 ? $"${tile?.AttributeAddress:X4}" : "";
+					},
+					OnClick = () => {
+						DebugTilemapTileInfo? tile = GetSelectedTileInfo();
+						if(tile != null && tile.Value.AttributeAddress >= 0) {
+							MemoryToolsWindow.ShowInMemoryTools(GetVramMemoryType(), tile.Value.AttributeAddress);
 						}
 					}
 				},
@@ -580,16 +594,16 @@ namespace Mesen.Debugger.ViewModels
 			TooltipEntries entries = TilemapInfoPanel.Items ?? new TooltipEntries();
 			DebugTilemapInfo info = _data.TilemapInfo;
 			entries.StartUpdate();
-			entries.AddEntry("Size", info.ColumnCount + "x" + info.RowCount);
-			entries.AddEntry("Size (px)", info.ColumnCount * info.TileWidth + "x" + info.RowCount * info.TileHeight);
-			entries.AddEntry("Tilemap Address", FormatAddress((int)info.TilemapAddress));
-			entries.AddEntry("Tileset Address", FormatAddress((int)info.TilesetAddress));
-			entries.AddEntry("Tile Format", info.Format);
+			entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_Size"), info.ColumnCount + "x" + info.RowCount);
+			entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_SizePx"), info.ColumnCount * info.TileWidth + "x" + info.RowCount * info.TileHeight);
+			entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_TilemapAddress"), FormatAddress((int)info.TilemapAddress));
+			entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_TilesetAddress"), FormatAddress((int)info.TilesetAddress));
+			entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_TileFormat"), info.Format);
 			if(info.Mirroring != TilemapMirroring.None) {
-				entries.AddEntry("Mirroring", info.Mirroring);
+				entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_Mirroring"), info.Mirroring);
 			}
 			if(info.Priority >= 0) {
-				entries.AddEntry("Priority", info.Priority);
+				entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_Priority"), info.Priority);
 			}
 			entries.EndUpdate();
 			TilemapInfoPanel.Items = entries;
@@ -614,43 +628,43 @@ namespace Mesen.Debugger.ViewModels
 			entries.StartUpdate();
 
 			if(tileInfo.Width == 1 && tileInfo.Height == 1) {
-				entries.AddPicture("Tile", ViewerBitmap, 32, cropRect);
+				entries.AddPicture(ResourceHelper.GetMessage("TilemapViewer_Tile"), ViewerBitmap, 32, cropRect);
 			} else {
-				entries.AddPicture("Tile", ViewerBitmap, 6, cropRect);
+				entries.AddPicture(ResourceHelper.GetMessage("TilemapViewer_Tile"), ViewerBitmap, 6, cropRect);
 			}
 
 			if(_data.TilemapInfo.Bpp >= 2 && _data.TilemapInfo.Bpp <= 4) {
 				int paletteSize = (int)Math.Pow(2, _data.TilemapInfo.Bpp);
 				int paletteIndex = tileInfo.PaletteIndex >= 0 ? tileInfo.PaletteIndex : 0;
-				entries.AddEntry("Palette", new TooltipPaletteEntry(paletteIndex, paletteSize, _data.RgbPalette, _data.RawPalette, _data.RawFormat));
+				entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_Palette"), new TooltipPaletteEntry(paletteIndex, paletteSize, _data.RgbPalette, _data.RawPalette, _data.RawFormat));
 			}
 
 			if(tileInfo.Width != 1 || tileInfo.Height != 1) {
-				entries.AddEntry("Column, Row", $"{tileInfo.Column}, {tileInfo.Row}");
+				entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_ColumnRow"), $"{tileInfo.Column}, {tileInfo.Row}");
 			}
-			entries.AddEntry("X, Y", $"{tileInfo.Column * tileInfo.Width}, {tileInfo.Row * tileInfo.Height}");
-			entries.AddEntry("Size", tileInfo.Width + "x" + tileInfo.Height);
+			entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_XY"), $"{tileInfo.Column * tileInfo.Width}, {tileInfo.Row * tileInfo.Height}");
+			entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_Size"), tileInfo.Width + "x" + tileInfo.Height);
 
 			if(tileInfo.TileMapAddress >= 0) {
-				entries.AddEntry("Tilemap address", FormatAddress(tileInfo.TileMapAddress));
+				entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_TilemapAddressValue"), FormatAddress(tileInfo.TileMapAddress));
 			}
 
 			entries.AddSeparator("TileSeparator");
 
 			if(tileInfo.TileIndex >= 0) {
-				entries.AddEntry("Tile index", "$" + tileInfo.TileIndex.ToString("X2"));
+				entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_TileIndex"), "$" + tileInfo.TileIndex.ToString("X2"));
 			}
 			if(tileInfo.TileAddress >= 0) {
 				MemoryType memType = GetVramMemoryType();
 				if(memType.IsRelativeMemory()) {
-					entries.AddEntry("Tile address (" + memType.GetShortName() + ")", "$" + tileInfo.TileAddress.ToString("X4"));
+					entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_TileAddressMemType", memType.GetShortName()), "$" + tileInfo.TileAddress.ToString("X4"));
 
 					AddressInfo absAddress = DebugApi.GetAbsoluteAddress(new AddressInfo() { Address = tileInfo.TileAddress, Type = memType });
 					if(absAddress.Address >= 0) {
-						entries.AddEntry("Tile address (" + absAddress.Type.GetShortName() + ")", "$" + absAddress.Address.ToString("X4"));
+						entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_TileAddressMemType", absAddress.Type.GetShortName()), "$" + absAddress.Address.ToString("X4"));
 					}
 				} else {
-					entries.AddEntry("Tile address", FormatAddress(tileInfo.TileAddress));
+					entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_TileAddress"), FormatAddress(tileInfo.TileAddress));
 				}
 			}
 
@@ -658,32 +672,32 @@ namespace Mesen.Debugger.ViewModels
 
 			if(tileInfo.PaletteIndex >= 0) {
 				if(tileInfo.BasePaletteIndex >= 0) {
-					entries.AddEntry("Palette index", $"{tileInfo.BasePaletteIndex} ({tileInfo.PaletteIndex})");
+					entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_PaletteIndex"), $"{tileInfo.BasePaletteIndex} ({tileInfo.PaletteIndex})");
 				} else {
-					entries.AddEntry("Palette index", tileInfo.PaletteIndex.ToString());
+					entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_PaletteIndex"), tileInfo.PaletteIndex.ToString());
 				}
 			}
 			if(tileInfo.PaletteAddress >= 0) {
-				entries.AddEntry("Palette address", "$" + tileInfo.PaletteAddress.ToString("X2"));
+				entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_PaletteAddress"), "$" + tileInfo.PaletteAddress.ToString("X2"));
 			}
 
 			entries.AddSeparator("AttributeSeparator");
 
 			if(tileInfo.AttributeAddress >= 0) {
-				entries.AddEntry("Attribute address", "$" + tileInfo.AttributeAddress.ToString("X4"));
+				entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_AttributeAddress"), "$" + tileInfo.AttributeAddress.ToString("X4"));
 			}
 			if(tileInfo.AttributeData >= 0) {
-				entries.AddEntry("Attribute data", "$" + tileInfo.AttributeData.ToString("X2"));
+				entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_AttributeData"), "$" + tileInfo.AttributeData.ToString("X2"));
 			}
 
 			entries.AddSeparator("MiscSeparator");
 
 			if(tileInfo.PixelData >= 0) {
-				entries.AddEntry("Pixel data", "$" + tileInfo.PixelData.ToString("X2"));
+				entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_PixelData"), "$" + tileInfo.PixelData.ToString("X2"));
 			}
-			entries.AddEntry("Horizontal mirror", tileInfo.HorizontalMirroring);
-			entries.AddEntry("Vertical mirror", tileInfo.VerticalMirroring);
-			entries.AddEntry("High priority", tileInfo.HighPriority);
+			entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_HorizontalMirror"), tileInfo.HorizontalMirroring);
+			entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_VerticalMirror"), tileInfo.VerticalMirroring);
+			entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_HighPriority"), tileInfo.HighPriority);
 
 			entries.EndUpdate();
 

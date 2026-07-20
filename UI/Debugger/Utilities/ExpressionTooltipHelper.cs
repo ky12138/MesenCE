@@ -18,12 +18,12 @@ namespace Mesen.Debugger.Utilities
 			void addRow(string text) { panel.Children.Add(new TextBlock() { Text = text }); }
 			void addBoldRow(string text) { panel.Children.Add(new TextBlock() { Text = text, FontWeight = Avalonia.Media.FontWeight.Bold }); }
 
-			addBoldRow("Notes");
-			addRow("  -Use C++ syntax - most expressions/operators are accepted.");
-			addRow("  -Use the $ or 0x prefixes to denote hexadecimal values.");
-			addRow("  -Labels can be used in expressions");
+			addBoldRow(ResourceHelper.GetMessage("ExprTooltip_Notes"));
+			addRow(ResourceHelper.GetMessage("ExprTooltip_SyntaxCpp"));
+			addRow(ResourceHelper.GetMessage("ExprTooltip_HexPrefix"));
+			addRow(ResourceHelper.GetMessage("ExprTooltip_Labels"));
 			addRow(" ");
-			addBoldRow("Available values (" + ResourceHelper.GetEnumText(cpuType) + ")");
+			addBoldRow(ResourceHelper.GetMessage("ExprTooltip_AvailableValues", ResourceHelper.GetEnumText(cpuType)));
 
 			string[] tokens = DebugApi.GetTokenList(cpuType);
 
@@ -51,33 +51,33 @@ namespace Mesen.Debugger.Utilities
 
 			if(!forWatch) {
 				addRow(" ");
-				addBoldRow("Other values");
-				addRow("  OpPc: Program counter of the first byte of the current instruction");
-				addRow("  Address: CPU memory address being read/written");
-				addRow("  MemAddress: RAM or ROM address (byte offset) being read/written (-1 if not mapped to RAM/ROM)");
-				addRow("  Value: Value being read/written");
-				addRow("  IsRead: True if the CPU is reading data");
-				addRow("  IsWrite: True if the CPU is writing data");
-				addRow("  IsDma: True if the operation was triggered by DMA");
-				addRow("  IsDummy: True if this is a \"dummy\" read or write");
+				addBoldRow(ResourceHelper.GetMessage("ExprTooltip_OtherValues"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_OpPc"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_Address"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_MemAddress"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_Value"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_IsRead"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_IsWrite"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_IsDma"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_IsDummy"));
 			}
 
 			addRow(" ");
-			addBoldRow("Accessing memory");
-			addRow("  [<address>] - 8-bit memory value at <address>");
-			addRow("  {<address>} - 16-bit memory value at <address>");
-			addRow("  #<address> - 32-bit memory value at <address>");
-			addRow("  :<address> - Returns the ROM/RAM address for the specified CPU address");
+			addBoldRow(ResourceHelper.GetMessage("ExprTooltip_AccessingMemory"));
+			addRow(ResourceHelper.GetMessage("ExprTooltip_Memory8Bit"));
+			addRow(ResourceHelper.GetMessage("ExprTooltip_Memory16Bit"));
+			addRow(ResourceHelper.GetMessage("ExprTooltip_Memory32Bit"));
+			addRow(ResourceHelper.GetMessage("ExprTooltip_RomRamAddress"));
 
 			addRow(" ");
-			addBoldRow("Examples");
+			addBoldRow(ResourceHelper.GetMessage("ExprTooltip_Examples"));
 			addRow("  a == 10 || x == $23");
 			addRow("  scanline == 10 && (cycle >= 55 && cycle <= 100)");
 			addRow("  x == [$150] || y == [10]");
-			addRow("  [[$15] + y] -- Read value at $15, add Y to it and return the value stored at the resulting address.");
-			addRow("  {$FFEA} -- NMI handler's address.");
-			addRow("  #r0 -- Returns the 32-bit value stored at the address stored in r0.");
-			addRow("  #(r0+20) -- Returns the 32-bit value stored at the address stored in r0, offset by 20.");
+			addRow(ResourceHelper.GetMessage("ExprTooltip_Example1"));
+			addRow(ResourceHelper.GetMessage("ExprTooltip_Example2"));
+			addRow(ResourceHelper.GetMessage("ExprTooltip_Example3"));
+			addRow(ResourceHelper.GetMessage("ExprTooltip_Example4"));
 
 			return panel;
 		}
