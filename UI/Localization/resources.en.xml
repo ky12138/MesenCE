@@ -1089,6 +1089,7 @@
 			<Control ID="chkNesShowAttributeByteGrid">Show attribute grid (32x32)</Control>
 			<Control ID="chkNesShowTilemapGrid">Show nametable delimiters</Control>
 			
+			<Control ID="lblTextHooker">Text Hooker</Control>
 			<Control ID="lblHighlightOptions">Highlight settings</Control>
 			<Control ID="lblTileHighlightMode">Tiles:</Control>
 			<Control ID="lblAttributeHighlightMode">Attributes:</Control>
@@ -1176,6 +1177,18 @@
 			<Control ID="lblDataSource">Data Source</Control>
 			<Control ID="lblSource">Source:</Control>
 			<Control ID="lblSourceOffset">Offset:</Control>
+		</Form>
+
+		<Form ID="TextHookerPanel">
+			<Control ID="chkIgnoreMirrored">Ignore mirrored nametables</Control>
+			<Control ID="chkUseScrollOffsets">Use scroll offsets</Control>
+			<Control ID="chkAutoCopyClipboard">Auto copy to clipboard</Control>
+		</Form>
+
+		<Form ID="CharacterMappingsPanel">
+			<Control ID="lblChrSelection">CHR Selection:</Control>
+			<Control ID="lblMappingHint">Enter the character matching each tile in the text box below the tile.</Control>
+			<Control ID="btnExportTbl">Export TBL</Control>
 		</Form>
 
 		<Form ID="AssemblerWindow">
@@ -2581,6 +2594,12 @@ E
 		<Message ID="TilemapViewer_HorizontalMirror">Horizontal mirror</Message>
 		<Message ID="TilemapViewer_VerticalMirror">Vertical mirror</Message>
 		<Message ID="TilemapViewer_HighPriority">High priority</Message>
+		<Message ID="TilemapViewer_Character">Character</Message>
+		<Message ID="TilemapViewer_ShowTextHooker">Show Text Hooker</Message>
+		<Message ID="TilemapViewer_Tab_Nametables">Nametables</Message>
+		<Message ID="TilemapViewer_Tab_Window">Window</Message>
+		<Message ID="TilemapViewer_Tab_CharacterMappings">Character Mappings</Message>
+		<Message ID="TilemapViewer_Tab_MemAccess">Mem Access</Message>
 
 		<Message ID="SnesReg_INIDISP">Screen Display Register</Message>
 		<Message ID="SnesReg_OBSEL">Object Size and Character Size Register</Message>

@@ -59,6 +59,7 @@ namespace Mesen.Debugger.Windows
 		protected override void OnClosing(WindowClosingEventArgs e)
 		{
 			base.OnClosing(e);
+			_model.SaveTextHookerConfig();
 			_model.Config.SaveWindowSettings(this);
 			ConfigManager.Config.Debug.TilemapViewer = _model.Config;
 		}

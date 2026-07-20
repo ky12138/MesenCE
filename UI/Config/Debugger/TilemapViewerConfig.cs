@@ -24,6 +24,8 @@ namespace Mesen.Config
 
 		[ObservableProperty] public partial RefreshTimingConfig RefreshTiming { get; set; } = new();
 
+		public TextHookerConfig TextHooker { get; set; } = new();
+
 		public TilemapViewerConfig()
 		{
 		}

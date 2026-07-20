@@ -1,0 +1,36 @@
+<UserControl
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:dvm="using:Mesen.Debugger.ViewModels"
+	xmlns:l="using:Mesen.Localization"
+	mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="220"
+	x:Class="Mesen.Debugger.Controls.TextHookerPanel"
+	x:DataType="dvm:TextHookerViewModel"
+>
+	<Design.DataContext>
+		<dvm:TextHookerViewModel />
+	</Design.DataContext>
+
+	<Grid RowDefinitions="*,Auto" Margin="4">
+		<Border Grid.Row="0" BorderBrush="{DynamicResource ThemeBorderLowBrush}" BorderThickness="1" Margin="0,4,0,4">
+			<TextBox
+				Text="{Binding ExtractedText}"
+				IsReadOnly="True"
+				AcceptsReturn="True"
+				FontFamily="Consolas"
+				FontSize="12"
+				MinHeight="160"
+				TextWrapping="NoWrap"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+			/>
+		</Border>
+		<StackPanel Grid.Row="1" Margin="0,0,0,4" Spacing="3">
+			<CheckBox Content="{l:Translate chkIgnoreMirrored}" IsChecked="{Binding Config.IgnoreMirroredNametables}" />
+			<CheckBox Content="{l:Translate chkUseScrollOffsets}" IsChecked="{Binding Config.AdjustViewportScrolling}" />
+			<CheckBox Content="{l:Translate chkAutoCopyClipboard}" IsChecked="{Binding Config.AutoCopyToClipboard}" />
+		</StackPanel>
+	</Grid>
+</UserControl>

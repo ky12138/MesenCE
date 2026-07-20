@@ -1078,6 +1078,7 @@
 
 			<Control ID="btnToggleSettings">切换设置面板</Control>
 
+			<Control ID="lblBackground">背景: </Control>
 			<Control ID="lblDisplayMode">显示模式： </Control>
 			<Control ID="lblSelectedTile">已选择的图块</Control>
 			<Control ID="lblTilemap">图块映射</Control>
@@ -1087,6 +1088,7 @@
 			<Control ID="chkNesShowAttributeByteGrid">显示属性网格（32x32）</Control>
 			<Control ID="chkNesShowTilemapGrid">显示名称表分隔符</Control>
 			
+			<Control ID="lblTextHooker">文本提取</Control>
 			<Control ID="lblHighlightOptions">高亮设置</Control>
 			<Control ID="lblTileHighlightMode">图块：</Control>
 			<Control ID="lblAttributeHighlightMode">属性：</Control>
@@ -1174,6 +1176,18 @@
 			<Control ID="lblDataSource">数据来源</Control>
 			<Control ID="lblSource">来源：</Control>
 			<Control ID="lblSourceOffset">偏移：</Control>
+		</Form>
+
+		<Form ID="TextHookerPanel">
+			<Control ID="chkIgnoreMirrored">忽略镜像名称表</Control>
+			<Control ID="chkUseScrollOffsets">使用滚动偏移</Control>
+			<Control ID="chkAutoCopyClipboard">自动复制到剪贴板</Control>
+		</Form>
+
+		<Form ID="CharacterMappingsPanel">
+			<Control ID="lblChrSelection">CHR 选择：</Control>
+			<Control ID="lblMappingHint">在 tiles 下方的文本框中输入每个 tile 对应的字符。</Control>
+			<Control ID="btnExportTbl">导出 TBL</Control>
 		</Form>
 
 		<Form ID="AssemblerWindow">
@@ -2581,6 +2595,12 @@ E
 		<Message ID="TilemapViewer_HorizontalMirror">水平镜像</Message>
 		<Message ID="TilemapViewer_VerticalMirror">垂直镜像</Message>
 		<Message ID="TilemapViewer_HighPriority">高优先级</Message>
+		<Message ID="TilemapViewer_Character">字符</Message>
+		<Message ID="TilemapViewer_ShowTextHooker">显示文本提取</Message>
+		<Message ID="TilemapViewer_Tab_Nametables">名称表</Message>
+		<Message ID="TilemapViewer_Tab_Window">窗口</Message>
+		<Message ID="TilemapViewer_Tab_CharacterMappings">字符映射</Message>
+		<Message ID="TilemapViewer_Tab_MemAccess">内存访问</Message>
 
 		<Message ID="SnesReg_INIDISP">屏幕显示寄存器</Message>
 		<Message ID="SnesReg_OBSEL">对象大小与字符大小寄存器</Message>

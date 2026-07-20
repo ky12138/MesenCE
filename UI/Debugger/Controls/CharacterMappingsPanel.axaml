@@ -1,0 +1,112 @@
+<UserControl
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:dvm="using:Mesen.Debugger.ViewModels"
+	xmlns:u="using:Mesen.Debugger.Utilities"
+	xmlns:l="using:Mesen.Localization"
+	mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
+	x:Class="Mesen.Debugger.Controls.CharacterMappingsPanel"
+	x:DataType="dvm:TextHookerViewModel"
+>
+	<UserControl.Resources>
+		<u:MappingCellBorderConverter x:Key="MappingCellBorderConverter" />
+	</UserControl.Resources>
+
+	<Design.DataContext>
+		<dvm:TextHookerViewModel />
+	</Design.DataContext>
+
+	<DockPanel>
+		<Border DockPanel.Dock="Top" Padding="6,4" Margin="4,4,4,2">
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="{l:Translate lblChrSelection}" VerticalAlignment="Center" Margin="0,0,6,0" />
+				<ComboBox
+					x:Name="ChrSelectionComboBox"
+					ItemsSource="{Binding ChrBankOptions}"
+					SelectedIndex="{Binding ChrSelectionIndex}"
+					Width="150"
+				/>
+				<Button x:Name="btnExportTbl" Content="{l:Translate btnExportTbl}" Margin="12,0,0,0" VerticalAlignment="Center" Click="ExportTbl_Click" />
+				<TextBlock Text="{l:Translate lblMappingHint}" VerticalAlignment="Center" Margin="12,0,0,0" Foreground="{DynamicResource ThemeForegroundLowBrush}" />
+			</StackPanel>
+		</Border>
+
+		<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+			<StackPanel Margin="4,2">
+				<!-- Column headers (0-F) -->
+				<Grid Margin="0,0,0,2">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="20" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<ItemsControl Grid.Column="1" ItemsSource="{Binding ColumnHeaders}">
+						<ItemsControl.ItemsPanel>
+							<ItemsPanelTemplate>
+								<UniformGrid Columns="16" />
+							</ItemsPanelTemplate>
+						</ItemsControl.ItemsPanel>
+						<ItemsControl.ItemTemplate>
+							<DataTemplate x:DataType="x:String">
+								<TextBlock Text="{Binding}" Width="24" Margin="3" HorizontalAlignment="Center" FontSize="12" />
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</Grid>
+
+				<!-- 16x16 mapping grid -->
+				<ItemsControl ItemsSource="{Binding MappingRows}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<StackPanel />
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate x:DataType="dvm:TextHookerMappingRowViewModel">
+						<Grid Margin="0,1">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="20" />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
+								<TextBlock Grid.Column="0" Text="{Binding RowLabel}" HorizontalAlignment="Right"
+										   VerticalAlignment="Center" Margin="0,0,4,0" FontSize="10" />
+								<ItemsControl Grid.Column="1" ItemsSource="{Binding Tiles}">
+									<ItemsControl.ItemsPanel>
+										<ItemsPanelTemplate>
+											<UniformGrid Columns="16" />
+										</ItemsPanelTemplate>
+									</ItemsControl.ItemsPanel>
+									<ItemsControl.ItemTemplate>
+										<DataTemplate x:DataType="dvm:MappingCellViewModel">
+											<Border Width="26" Height="40" Margin="2" >
+												<Border.BorderThickness>
+													<MultiBinding Converter="{StaticResource MappingCellBorderConverter}">
+														<Binding Path="Col" />
+														<Binding Path="Row" />
+													</MultiBinding>
+												</Border.BorderThickness>
+												<StackPanel>
+													<Image Source="{Binding TileImage}" Width="16" Height="16"
+														Stretch="None" HorizontalAlignment="Center" Margin="1" />
+													<TextBox 
+														FontSize="12"
+														TextAlignment="Center"
+														MinWidth="0"
+														Width="24"
+														HorizontalAlignment="Center"
+														Text="{Binding CharText, Mode=TwoWay}" 
+													/>
+												</StackPanel>
+											</Border>
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
+								</ItemsControl>
+							</Grid>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</StackPanel>
+		</ScrollViewer>
+	</DockPanel>
+</UserControl>

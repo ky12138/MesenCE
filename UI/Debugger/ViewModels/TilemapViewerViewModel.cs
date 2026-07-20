@@ -1,5 +1,6 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -47,6 +48,17 @@ namespace Mesen.Debugger.ViewModels
 		[ObservableProperty] public partial bool ShowTabs { get; private set; }
 		[ObservableProperty] public partial TilemapViewerTab SelectedTab { get; set; }
 
+		[ObservableProperty] public partial bool IsCharMappingsTab { get; private set; }
+		[ObservableProperty] public partial bool EmbedTextHooker { get; private set; }
+		[ObservableProperty] public partial bool ShowTilemap { get; private set; }
+
+		public TextHookerViewModel? TextHooker => _textHooker;
+		private TextHookerViewModel? _textHooker;
+
+		private TextBox? _previewCharTextBox = null;
+		private StackPanel? _previewCharPanel = null;
+		private int _previewCharTileAddress = -1;
+
 		[ObservableProperty] public partial Rect ScrollOverlayRect { get; private set; }
 		[ObservableProperty] public partial List<PictureViewerLine>? OverlayLines { get; private set; } = null;
 
@@ -80,7 +92,22 @@ namespace Mesen.Debugger.ViewModels
 
 			SelectedTab = Tabs[0];
 
+			if(IsNes) {
+				_textHooker = new TextHookerViewModel(Config.TextHooker);
+				// Migrate character mappings previously saved under the standalone Text Hooker config
+				if(_textHooker.Config.SavedCharMappings.Count == 0 && ConfigManager.Config.Debug.TextHooker.SavedCharMappings.Count > 0) {
+					foreach(CharMappingEntry entry in ConfigManager.Config.Debug.TextHooker.SavedCharMappings) {
+						_textHooker.Config.SavedCharMappings.Add(new CharMappingEntry() { Key = entry.Key, Value = entry.Value });
+					}
+				}
+			}
+
 			InitBitmap(256, 256);
+
+			IsCharMappingsTab = SelectedTab?.Kind == TilemapViewerTabKind.CharacterMappings;
+			EmbedTextHooker = SelectedTab?.EmbedTextHooker ?? false;
+			ShowTilemap = !IsCharMappingsTab;
+
 
 			FileMenuActions = AddDisposables(new List<object>() {
 				new ContextMenuAction() {
@@ -129,6 +156,19 @@ namespace Mesen.Debugger.ViewModels
 					ActionType = ActionType.ZoomOut,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.ZoomOut),
 					OnClick = () => _picViewer.ZoomOut()
+				},
+				new ContextMenuSeparator() { IsVisible = () => IsNes },
+				new ContextMenuAction() {
+					ActionType = ActionType.Custom,
+					DynamicText = () => ResourceHelper.GetMessage("TilemapViewer_ShowTextHooker"),
+					IsSelected = () => EmbedTextHooker,
+					IsVisible = () => IsNes,
+					OnClick = () => {
+						EmbedTextHooker = !EmbedTextHooker;
+						if(SelectedTab != null) {
+							SelectedTab.EmbedTextHooker = EmbedTextHooker;
+						}
+					}
 				},
 			});
 
@@ -244,6 +284,10 @@ namespace Mesen.Debugger.ViewModels
 			AddDisposable(this.ObserveProp(nameof(Tabs), () => ShowTabs = Tabs.Count > 1));
 			AddDisposable(this.ObserveProp(nameof(SelectionRect), () => UpdatePreviewPanel()));
 			AddDisposable(this.ObserveProp(nameof(SelectedTab), () => {
+				IsCharMappingsTab = SelectedTab?.Kind == TilemapViewerTabKind.CharacterMappings;
+				EmbedTextHooker = SelectedTab?.EmbedTextHooker ?? false;
+				ShowTilemap = !IsCharMappingsTab;
+
 				if(_inGameLoaded) {
 					//Skip refresh data/tab if this is triggered while processing a gameloaded event
 					//Otherwise RefreshTab will be called on the old game's data, causing a crash.
@@ -351,12 +395,14 @@ namespace Mesen.Debugger.ViewModels
 					FrameInfo size = DebugApi.GetTilemapSize(CpuType.Nes, new GetTilemapOptions() { Layer = 1 }, new NesPpuState());
 					if(size.Width != 0 && size.Height != 0) {
 						Tabs = new List<TilemapViewerTab>() {
-							new() { Title = "Nametables", Layer = 0 },
-							new() { Title = "Window", Layer = 1 }
+							new() { Title = ResourceHelper.GetMessage("TilemapViewer_Tab_Nametables"), Layer = 0, EmbedTextHooker = true },
+							new() { Title = ResourceHelper.GetMessage("TilemapViewer_Tab_Window"), Layer = 1 },
+							new() { Title = ResourceHelper.GetMessage("TilemapViewer_Tab_CharacterMappings"), Kind = TilemapViewerTabKind.CharacterMappings }
 						};
 					} else {
 						Tabs = new List<TilemapViewerTab>() {
-							new() { Title = "", Layer = 0 }
+							new() { Title = ResourceHelper.GetMessage("TilemapViewer_Tab_Nametables"), Layer = 0, EmbedTextHooker = true },
+							new() { Title = ResourceHelper.GetMessage("TilemapViewer_Tab_CharacterMappings"), Kind = TilemapViewerTabKind.CharacterMappings }
 						};
 					}
 					break;
@@ -364,7 +410,7 @@ namespace Mesen.Debugger.ViewModels
 				case CpuType.Sms:
 					Tabs = new List<TilemapViewerTab>() {
 						new() { Title = "BG", Layer = 0 },
-						new() { Title = "Mem Access", Layer = 1 }
+						new() { Title = ResourceHelper.GetMessage("TilemapViewer_Tab_MemAccess"), Layer = 1 }
 					};
 					break;
 
@@ -395,7 +441,7 @@ namespace Mesen.Debugger.ViewModels
 						new() { Title = "BG1", Layer = 1 },
 						new() { Title = "BG2", Layer = 2 },
 						new() { Title = "BG3", Layer = 3 },
-						new() { Title = "Mem Access", Layer = 4 }
+						new() { Title = ResourceHelper.GetMessage("TilemapViewer_Tab_MemAccess"), Layer = 4 }
 					};
 					break;
 				}
@@ -595,6 +641,10 @@ namespace Mesen.Debugger.ViewModels
 				OverlayLines = null;
 			}
 
+			if(_textHooker != null && SelectedTab != null && !Disposed) {
+				_textHooker.Refresh(SelectedTab.Kind);
+			}
+
 			_refreshPending = false;
 		}
 
@@ -707,6 +757,56 @@ namespace Mesen.Debugger.ViewModels
 			entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_HorizontalMirror"), tileInfo.HorizontalMirroring);
 			entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_VerticalMirror"), tileInfo.VerticalMirroring);
 			entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_HighPriority"), tileInfo.HighPriority);
+
+			// NES-only: tile -> character mapping (uses _data.Vram tile bytes)
+			if(IsNes && _textHooker != null && tileInfo.TileAddress >= 0 && tileInfo.TileAddress + 16 <= _data.Vram.Length) {
+				byte[] tileBytes = new byte[16];
+				Array.Copy(_data.Vram, tileInfo.TileAddress, tileBytes, 0, 16);
+
+				// Only the persistent PreviewPanel (GroupBox) gets the editable TextBox.
+				// The hover tooltip reuses the same StackPanel instance, which can only
+				// have one visual parent, so it must show a read-only value instead.
+				bool isPersistentPanel = ReferenceEquals(tooltipToUpdate, PreviewPanel);
+				if(isPersistentPanel) {
+					if(_previewCharTextBox == null || _previewCharTileAddress != tileInfo.TileAddress) {
+						_previewCharTileAddress = tileInfo.TileAddress;
+						byte[] capturedBytes = tileBytes;
+						_previewCharTextBox = new TextBox() {
+							Text = _textHooker.GetCharMappingForTile(tileBytes),
+							MinWidth = 60,
+							MaxWidth = 120,
+							VerticalAlignment = VerticalAlignment.Center
+						};
+						_previewCharTextBox.TextChanged += (s, e) => {
+							if(s is TextBox tb) {
+								_textHooker.SetCharMappingForTile(capturedBytes, tb.Text ?? "");
+								_textHooker.SaveMappingsToConfig();
+							}
+						};
+						_previewCharPanel = new StackPanel() { Orientation = Orientation.Horizontal };
+						_previewCharPanel.Children.Add(new TextBlock() {
+							Text = ResourceHelper.GetMessage("TilemapViewer_Character"),
+							VerticalAlignment = VerticalAlignment.Center,
+							Margin = new Thickness(0, 0, 10, 0)
+						});
+						_previewCharPanel.Children.Add(_previewCharTextBox);
+					} else if(!_previewCharTextBox.IsFocused) {
+						_previewCharTextBox.Text = _textHooker.GetCharMappingForTile(tileBytes);
+					}
+
+					if(_previewCharPanel != null) {
+						entries.AddCustomEntry(ResourceHelper.GetMessage("TilemapViewer_Character"), _previewCharPanel);
+					}
+				} else {
+					// On hover, only show the character mapping when one actually exists.
+					// An empty mapping is meaningless in the transient tooltip, and the
+					// editable TextBox (persistent panel) is where new mappings are added.
+					string charMapping = _textHooker.GetCharMappingForTile(tileBytes);
+					if(!string.IsNullOrEmpty(charMapping)) {
+						entries.AddEntry(ResourceHelper.GetMessage("TilemapViewer_Character"), charMapping);
+					}
+				}
+			}
 
 			entries.EndUpdate();
 
@@ -872,10 +972,19 @@ namespace Mesen.Debugger.ViewModels
 		{
 			Dispatcher.UIThread.Post(() => {
 				_inGameLoaded = true;
+				_textHooker?.OnGameLoaded();
 				InitForCpuType();
 				RefreshData();
 				_inGameLoaded = false;
 			});
+		}
+
+		public void SaveTextHookerConfig()
+		{
+			if(_textHooker != null) {
+				_textHooker.SaveMappingsToConfig();
+				Config.TextHooker = _textHooker.Config;
+			}
 		}
 	}
 
@@ -885,6 +994,8 @@ namespace Mesen.Debugger.ViewModels
 		[ObservableProperty] public partial int Layer { get; set; } = 0;
 		[ObservableProperty] public partial MemoryType? VramMemoryType { get; set; }
 		[ObservableProperty] public partial bool Enabled { get; set; } = true;
+		[ObservableProperty] public partial TilemapViewerTabKind Kind { get; set; } = TilemapViewerTabKind.Tilemap;
+		[ObservableProperty] public partial bool EmbedTextHooker { get; set; } = false;
 	}
 
 	public class TilemapViewerData

@@ -71,6 +71,10 @@
 				<CheckBox Content="{l:Translate chkNesShowTilemapGrid}" IsChecked="{Binding Config.NesShowTilemapGrid}" IsVisible="{Binding IsNes}" />
 				<CheckBox Content="{l:Translate chkShowScrollOverlay}" IsChecked="{Binding Config.ShowScrollOverlay}" />
 
+				<c:GroupBox Header="{l:Translate lblTextHooker}" Margin="0 5 0 0" IsVisible="{Binding EmbedTextHooker}">
+					<dc:TextHookerPanel DataContext="{Binding TextHooker}" />
+				</c:GroupBox>
+
 				<c:GroupBox Header="{l:Translate lblHighlightOptions}" Margin="0" IsVisible="{Binding IsNes}">
 					<Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto">
 						<TextBlock Text="{l:Translate lblTileHighlightMode}" />
@@ -115,17 +119,23 @@
 			</TabControl.ContentTemplate>
 		</TabControl>
 
-		<dc:ScrollPictureViewer
-			x:Name="picViewer"
-			Source="{Binding ViewerBitmap}"
-			Zoom="{Binding Config.ImageScale}"
-			ShowGrid="{Binding Config.ShowGrid}"
-			SelectionRect="{Binding SelectionRect}"
-			CustomGrids="{Binding CustomGrids}"
-			OverlayRect="{Binding ScrollOverlayRect}"
-			GridSizeX="{Binding GridSizeX}"
-			GridSizeY="{Binding GridSizeY}"
-			OverlayLines="{Binding OverlayLines}"
-		/>
+		<Grid>
+			<dc:ScrollPictureViewer
+				x:Name="picViewer"
+				Source="{Binding ViewerBitmap}"
+				Zoom="{Binding Config.ImageScale}"
+				ShowGrid="{Binding Config.ShowGrid}"
+				SelectionRect="{Binding SelectionRect}"
+				CustomGrids="{Binding CustomGrids}"
+				OverlayRect="{Binding ScrollOverlayRect}"
+				GridSizeX="{Binding GridSizeX}"
+				GridSizeY="{Binding GridSizeY}"
+				OverlayLines="{Binding OverlayLines}"
+				IsVisible="{Binding ShowTilemap}"
+			/>
+			<Grid IsVisible="{Binding IsCharMappingsTab}">
+				<dc:CharacterMappingsPanel DataContext="{Binding TextHooker}" />
+			</Grid>
+		</Grid>
 	</DockPanel>
 </Window>

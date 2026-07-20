@@ -22,6 +22,7 @@ namespace Mesen.Config
 		public TilemapViewerConfig TilemapViewer { get; set; } = new();
 		public TileViewerConfig TileViewer { get; set; } = new();
 		public PaletteViewerConfig PaletteViewer { get; set; } = new();
+		public TextHookerConfig TextHooker { get; set; } = new();
 		public TileEditorConfig TileEditor { get; set; } = new();
 		public RegisterViewerConfig RegisterViewer { get; set; } = new();
 		public SpriteViewerConfig SpriteViewer { get; set; } = new();
