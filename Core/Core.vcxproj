@@ -40,6 +40,7 @@
     <ClInclude Include="SMS\Input\ColecoVisionController.h" />
     <ClInclude Include="Debugger\AddressInfo.h" />
     <ClInclude Include="Debugger\AddressPage.h" />
+    <ClInclude Include="Debugger\FunctionMemoryAccessTracker.h" />
     <ClInclude Include="Debugger\Base6502Assembler.h" />
     <ClInclude Include="Debugger\CdlManager.h" />
     <ClInclude Include="Debugger\DisassemblySearch.h" />
@@ -839,6 +840,7 @@
     <ClCompile Include="Debugger\ExpressionEvaluator.Spc.cpp" />
     <ClCompile Include="Debugger\StepBackManager.cpp" />
     <ClCompile Include="Debugger\CallerCalleeTracker.cpp" />
+    <ClCompile Include="Debugger\FunctionMemoryAccessTracker.cpp" />
     <ClCompile Include="Debugger\AddressPage.cpp" />
     <ClCompile Include="Gameboy\Debugger\DummyGbCpu.cpp" />
     <ClCompile Include="Gameboy\Debugger\GbTraceLogger.cpp" />

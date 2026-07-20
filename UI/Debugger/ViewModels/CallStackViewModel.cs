@@ -86,7 +86,7 @@ namespace Mesen.Debugger.ViewModels
 
 			StackFrameInfo entry = stackFrame.Value;
 			CodeLabel? label = entry.AbsTarget.Address >= 0 ? LabelManager.GetLabel(entry.AbsTarget) : null;
-			string entryRelStr = MemoryHelper.GetAddressStr((int)entry.Target, CpuType.ToMemoryType());
+			string entryRelStr = MemoryHelper.GetAddrStr((int)entry.Target, CpuType.ToMemoryType());
 			if(label != null) {
 				return label.Label + " (" + entryRelStr + ")";
 			} else if(entry.Flags == StackFrameFlags.Nmi) {
@@ -101,9 +101,9 @@ namespace Mesen.Debugger.ViewModels
 		{
 			if(Selection.SelectedItem is StackInfo entry && entry.EntryPointAbsAddr != null) {
 				if(entry.EntryPointAbsAddr.Value.Address >= 0 && isAbs) {
-					return MemoryHelper.GetAddressStr(entry.PcAbsAddr);
+					return MemoryHelper.GetAddrStr(entry.PcAbsAddr);
 				} else {
-					return MemoryHelper.GetAddressStr(entry.PcRelAddr, true, true);
+					return MemoryHelper.GetAddrStr(entry.PcRelAddr, true, true);
 				}
 			}
 			return "";
@@ -179,8 +179,8 @@ namespace Mesen.Debugger.ViewModels
 	{
 		public string EntryPointStr { get; set; } = "";
 
-		public string PcRelAddressStr => MemoryHelper.GetAddressStr(PcRelAddr);
-		public string PcAbsAddressStr => MemoryHelper.GetAddressStr(PcAbsAddr);
+		public string PcRelAddressStr => MemoryHelper.GetAddrStr(PcRelAddr);
+		public string PcAbsAddressStr => MemoryHelper.GetAddrStr(PcAbsAddr);
 
 		public AddressInfo? EntryPointAbsAddr { get; set; }
 

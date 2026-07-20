@@ -18,69 +18,83 @@
 		<vm:FunctionListViewModel />
 	</Design.DataContext>
 
-	<UserControl.Styles>
-		<Style Selector="DataBoxRow">
-			<Setter Property="Foreground" Value="{Binding RowBrush, DataType={x:Type vm:FunctionViewModel}}" />
-			<Setter Property="FontStyle" Value="{Binding RowStyle, DataType={x:Type vm:FunctionViewModel}}" />
-		</Style>
-	</UserControl.Styles>
-
 	<Border BorderThickness="0 1 0 0" BorderBrush="{StaticResource MesenGrayBorderColor}">
-		<DataBox
-			Items="{Binding Functions}"
-			Selection="{Binding Selection}"
-			GridLinesVisibility="All"
-			SelectionMode="Multiple"
-			SortMode="Multiple"
-			SortCommand="{Binding Sort}"
-			SortState="{Binding SortState}"
-			CellDoubleClick="OnCellDoubleClick"
-			ColumnWidths="{Binding ColumnWidths}"
-		>
-			<DataBox.Columns>
-				<DataBoxTextColumn
-					ColumnName="Function"
-					Header="{l:Translate colFunction}"
-					Binding="{Binding LabelName, DataType={x:Type vm:FunctionViewModel}}"
-					CanUserResize="True"
-					InitialWidth="80"
-				/>
-				<DataBoxTextColumn
-					ColumnName="RelAddr"
-					Header="{l:Translate colCpuAddr}"
-					Binding="{Binding RelAddressDisplay, DataType={x:Type vm:FunctionViewModel}}"
-					CanUserResize="True"
-					InitialWidth="80"
-				/>
-				<DataBoxTextColumn
-					ColumnName="AbsAddr"
-					Header="{l:Translate colRomAddr}"
-					Binding="{Binding AbsAddressDisplay, DataType={x:Type vm:FunctionViewModel}}"
-					CanUserResize="True"
-					InitialWidth="80"
-				/>
-				<DataBoxTextColumn
-					ColumnName="FuncLength"
-					Header="{l:Translate colFuncLength}"
-					Binding="{Binding FunctionLengthDisplay, DataType={x:Type vm:FunctionViewModel}}"
-					CanUserResize="True"
-					InitialWidth="60"
-				/>
-				<DataBoxTextColumn
-					ColumnName="ExecCount"
-					Header="{l:Translate colExecCount}"
-					Binding="{Binding ExecCount, DataType={x:Type vm:FunctionViewModel}}"
-					CanUserResize="True"
-					InitialWidth="50"
-				/>
-				<DataBoxTextColumn
-					ColumnName="LastExec"
-					Header="{l:Translate colLastExec}"
-					Binding="{Binding LastExec, DataType={x:Type vm:FunctionViewModel}}"
-					CanUserResize="True"
-					InitialWidth="50"
-				/>
-			</DataBox.Columns>
-		</DataBox>
+		<Grid RowDefinitions="Auto,*">
+			<CheckBox Grid.Row="0" Margin="4,2" Content="{l:Translate lblShowBlocked}" IsChecked="{Binding ShowBlocked}" />
+			<DataBox
+				Grid.Row="1"
+				Items="{Binding Functions}"
+				Selection="{Binding Selection}"
+				GridLinesVisibility="All"
+				SelectionMode="Multiple"
+				SortMode="Multiple"
+				SortCommand="{Binding Sort}"
+				SortState="{Binding SortState}"
+				CellClick="OnCellClick"
+				CellDoubleClick="OnCellDoubleClick"
+				ColumnWidths="{Binding ColumnWidths}"
+			>
+			<DataBox.Styles>
+				<Style Selector="DataBoxRow /template/ Rectangle#BackgroundRectangle">
+					<Setter Property="Fill" Value="{Binding RowBackground, DataType={x:Type vm:FunctionNode}}" />
+				</Style>
+				<Style Selector="DataBoxRow">
+					<Setter Property="Foreground" Value="{Binding RowForeground, DataType={x:Type vm:FunctionNode}}" />
+					<Setter Property="FontStyle" Value="{Binding RowStyle, DataType={x:Type vm:FunctionNode}}" />
+					<Setter Property="FontWeight" Value="{Binding RowWeight, DataType={x:Type vm:FunctionNode}}" />
+				</Style>
+			</DataBox.Styles>
+				<DataBox.Columns>
+					<DataBoxCheckBoxColumn
+						ColumnName="Marked"
+						Header="{l:Translate colMarked}"
+						Binding="{Binding IsMarked, DataType={x:Type vm:FunctionNode}}"
+						InitialWidth="22"
+					/>
+					<DataBoxTextColumn
+						ColumnName="Function"
+						Header="{l:Translate colFunction}"
+						Binding="{Binding FunctionName, DataType={x:Type vm:FunctionNode}}"
+						CanUserResize="True"
+						InitialWidth="80"
+					/>
+					<DataBoxTextColumn
+						ColumnName="RelAddr"
+						Header="{l:Translate colCpuAddr}"
+						Binding="{Binding RelAddressDisplay, DataType={x:Type vm:FunctionNode}}"
+						CanUserResize="True"
+						InitialWidth="80"
+					/>
+					<DataBoxTextColumn
+						ColumnName="AbsAddr"
+						Header="{l:Translate colRomAddr}"
+						Binding="{Binding AbsAddressDisplay, DataType={x:Type vm:FunctionNode}}"
+						CanUserResize="True"
+						InitialWidth="80"
+					/>
+					<DataBoxTextColumn
+						ColumnName="FuncLength"
+						Header="{l:Translate colFuncLength}"
+						Binding="{Binding FunctionLengthDisplay, DataType={x:Type vm:FunctionNode}}"
+						CanUserResize="True"
+						InitialWidth="60"
+					/>
+					<DataBoxTextColumn
+						ColumnName="ExecCount"
+						Header="{l:Translate colExecCount}"
+						Binding="{Binding ExecCount, DataType={x:Type vm:FunctionNode}}"
+						CanUserResize="True"
+						InitialWidth="50"
+					/>
+					<DataBoxTextColumn
+						ColumnName="LastExec"
+						Header="{l:Translate colLastExec}"
+						Binding="{Binding LastExec, DataType={x:Type vm:FunctionNode}}"
+						CanUserResize="True"
+						InitialWidth="50"
+					/>
+				</DataBox.Columns>
+			</DataBox>
+		</Grid>
 	</Border>
 </UserControl>

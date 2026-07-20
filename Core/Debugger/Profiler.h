@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "Debugger/DebugTypes.h"
 #include "Debugger/CallerCalleeTracker.h"
+#include "Debugger/FunctionMemoryAccessTracker.h"
 
 class Debugger;
 class IDebugger;
@@ -32,8 +33,10 @@ private:
 	uint64_t _currentCycleCount = 0;
 	uint64_t _prevMasterClock = 0;
 	int32_t _currentFunction = -1;
+	AddressInfo _currentFuncAddr = {};
 
 	CallerCalleeTracker _callerCalleeTracker;
+	FunctionMemoryAccessTracker _funcMemAccessTracker;
 
 	void InternalReset();
 	void UpdateCycles();
@@ -49,4 +52,8 @@ public:
 	void ResetState();
 	void GetProfilerData(ProfiledFunction* profilerData, uint32_t& functionCount);
 	CallerCalleeTracker* GetCallerCalleeTracker();
+	FunctionMemoryAccessTracker* GetFunctionMemoryAccessTracker();
+
+	// Absolute address of the function currently executing (or {-1, None} when none).
+	AddressInfo GetCurrentFunctionAddress();
 };

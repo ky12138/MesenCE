@@ -53,7 +53,7 @@ namespace Mesen.Config
 
 		[ObservableProperty] public partial bool RefreshWhileRunning { get; set; } = false;
 
-		[ObservableProperty] public bool ShowLastExecTimeInSeconds { get; set; } = false;
+		[ObservableProperty] public partial bool ShowLastExecTimeInSeconds { get; set; } = false;
 
 		[ObservableProperty] public partial bool BringToFrontOnBreak { get; set; } = true;
 		[ObservableProperty] public partial bool BringToFrontOnPause { get; set; } = false;
@@ -90,6 +90,12 @@ namespace Mesen.Config
 
 		[ObservableProperty] public partial List<int> LabelListColumnWidths { get; set; } = new();
 		[ObservableProperty] public partial List<int> FunctionListColumnWidths { get; set; } = new();
+		[ObservableProperty] public partial bool ShowBlockedFunctions { get; set; } = false;
+
+		// Bitmask of MemoryOperationType values recorded by the per-function memory
+		// access tracker. Defaults to data R/W + DMA R/W (0x33). Instruction fetch,
+		// dummy and PPU render reads are opt-in via the UI checkboxes.
+		[ObservableProperty] public partial UInt32 FunctionMemoryAccessOptions { get; set; } = 0x33;
 		[ObservableProperty] public partial List<int> BreakpointListColumnWidths { get; set; } = new();
 		[ObservableProperty] public partial List<int> WatchListColumnWidths { get; set; } = new();
 		[ObservableProperty] public partial List<int> CallStackColumnWidths { get; set; } = new();

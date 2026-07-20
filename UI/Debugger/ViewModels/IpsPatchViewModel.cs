@@ -332,7 +332,7 @@ namespace Mesen.Debugger.ViewModels
 		private string GetHintText()
 		{
 			return Selection.SelectedItem is IpsRecordViewModel record
-				? MemoryHelper.GetAddressStr(record.TargetAddress)
+				? MemoryHelper.GetAddrStr(record.TargetAddress)
 				: "";
 		}
 		private void ViewSelectedInMemoryTools()

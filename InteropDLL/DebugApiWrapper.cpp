@@ -19,6 +19,7 @@
 #include "Core/Debugger/ScriptManager.h"
 #include "Core/Debugger/Profiler.h"
 #include "Core/Debugger/CallerCalleeTracker.h"
+#include "Core/Debugger/FunctionMemoryAccessTracker.h"
 #include "Core/Debugger/DebugBreakHelper.h"
 #include "Core/Debugger/AddressPage.h"
 #include "Core/Debugger/IAssembler.h"
@@ -219,6 +220,60 @@ extern "C"
 			if(dbg->GetCallstackManager(cpuType)) {
 				DebugBreakHelper helper(dbg);
 				dbg->GetCallstackManager(cpuType)->GetProfiler()->GetCallerCalleeTracker()->GetCallerCalleeData(funcAddr, *output);
+			}
+		});
+	}
+
+	DllExport void __stdcall SetFunctionMemoryAccessTracked(CpuType cpuType, AddressInfo funcAddr, bool tracked)
+	{
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
+			if(dbg->GetCallstackManager(cpuType)) {
+				DebugBreakHelper helper(dbg);
+				dbg->GetCallstackManager(cpuType)->GetProfiler()->GetFunctionMemoryAccessTracker()->SetTracked(funcAddr, tracked);
+			}
+		});
+	}
+
+	DllExport void __stdcall GetFunctionMemoryAccess(CpuType cpuType, AddressInfo funcAddr, FunctionMemoryAccessRecord* output)
+	{
+		output->Count = 0;
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
+			if(dbg->GetCallstackManager(cpuType)) {
+				DebugBreakHelper helper(dbg);
+				dbg->GetCallstackManager(cpuType)->GetProfiler()->GetFunctionMemoryAccessTracker()->GetFunctionMemoryAccess(funcAddr, *output);
+			}
+		});
+	}
+
+	DllExport void __stdcall GetFunctionMemoryAccessDetails(CpuType cpuType, AddressInfo funcAddr, int32_t memType, uint32_t start, uint32_t end, uint32_t interval, FunctionMemoryAccessRecord* output)
+	{
+		output->Count = 0;
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
+			if(dbg->GetCallstackManager(cpuType)) {
+				DebugBreakHelper helper(dbg);
+				dbg->GetCallstackManager(cpuType)->GetProfiler()->GetFunctionMemoryAccessTracker()->GetFunctionMemoryAccessDetails(funcAddr, (MemoryType)memType, start, end, interval, *output);
+			}
+		});
+	}
+
+	DllExport void __stdcall SetFunctionMemoryAccessOptions(CpuType cpuType, uint32_t mask)
+	{
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
+			if(dbg->GetCallstackManager(cpuType)) {
+				DebugBreakHelper helper(dbg);
+				dbg->GetCallstackManager(cpuType)->GetProfiler()->GetFunctionMemoryAccessTracker()->SetRecordMask(mask);
+			}
+		});
+	}
+
+	// Clear all recorded access data while keeping the set of marked (tracked) functions,
+	// so tracking restarts from scratch under the current options.
+	DllExport void __stdcall ResetFunctionMemoryAccess(CpuType cpuType)
+	{
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
+			if(dbg->GetCallstackManager(cpuType)) {
+				DebugBreakHelper helper(dbg);
+				dbg->GetCallstackManager(cpuType)->GetProfiler()->GetFunctionMemoryAccessTracker()->Reset();
 			}
 		});
 	}

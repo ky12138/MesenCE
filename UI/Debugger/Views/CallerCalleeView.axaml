@@ -18,98 +18,209 @@
 	</Design.DataContext>
 
 	<Border BorderThickness="0 1 0 0" BorderBrush="{StaticResource MesenGrayBorderColor}">
-		<Grid RowDefinitions="Auto,Auto,*,Auto,*,Auto">
+		<Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,2*">
 			<!-- Callers Header -->
-			<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="4,0,4,2">
+			<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="4,0,4,2" >
+				<CheckBox IsChecked="{Binding SelectedFunctionMarked}" VerticalAlignment="Center" />
 				<TextBlock Text="{Binding SelectedFunctionName}" Opacity="0.7" Cursor="Hand" PointerPressed="OnSelectedFunctionPointerPressed" />
-				<TextBlock Text=" " />
-				<TextBlock FontWeight="Bold" Text="{l:Translate lblCallers}" />
+				<TextBlock Text=" " IsVisible="{Binding HasCallers}" />
+				<TextBlock FontWeight="Bold" Text="{l:Translate lblCallers}" IsVisible="{Binding HasCallers}" />
 			</StackPanel>
 
 			<!-- Callers DataBox -->
 			<DataBox
+				x:Name="callersGrid"
 				Grid.Row="2"
 				Items="{Binding Callers}"
 				Selection="{Binding CallerSelection}"
+				IsVisible="{Binding HasCallers}"
 				GridLinesVisibility="All"
+				CellClick="OnCellClick"
 				CellDoubleClick="OnCallerCellDoubleClick"
-				ColumnWidths="{Binding ColumnWidths}"
-			>
-			<DataBox.Columns>
-				<DataBoxTextColumn
-					ColumnName="Function"
-					Header="{l:Translate colFunction}"
-					Binding="{Binding FunctionName, DataType={x:Type vm:CallerCalleeEntryModel}}"
-					InitialWidth="50"
-				/>
-				<DataBoxTextColumn
-					ColumnName="RelAddr"
-					Header="{l:Translate colCpuAddr}"
-					Binding="{Binding RelAddressDisplay, DataType={x:Type vm:CallerCalleeEntryModel}}"
-					InitialWidth="70"
-				/>
-				<DataBoxTextColumn
-					ColumnName="AbsAddr"
-					Header="{l:Translate colRomAddr}"
-					Binding="{Binding AbsAddressDisplay, DataType={x:Type vm:CallerCalleeEntryModel}}"
-					InitialWidth="70"
-				/>
-				<DataBoxTextColumn
-					ColumnName="CallCount"
-					Header="{l:Translate colCallCount}"
-					Binding="{Binding CallCount, DataType={x:Type vm:CallerCalleeEntryModel}}"
-					InitialWidth="30"
-				/>
-			</DataBox.Columns>
-		</DataBox>
+				ColumnWidths="{Binding ColumnWidths}" 
+				>
+				<DataBox.Styles>
+					<Style Selector="DataBoxRow /template/ Rectangle#BackgroundRectangle">
+						<Setter Property="Fill" Value="{Binding RowBackground, DataType={x:Type vm:CallerCalleeEntry}}" />
+					</Style>
+					<Style Selector="DataBoxRow">
+						<Setter Property="Foreground" Value="{Binding RowForeground, DataType={x:Type vm:CallerCalleeEntry}}" />
+						<Setter Property="FontStyle" Value="{Binding RowStyle, DataType={x:Type vm:CallerCalleeEntry}}" />
+						<Setter Property="FontWeight" Value="{Binding RowWeight, DataType={x:Type vm:CallerCalleeEntry}}" />
+					</Style>
+				</DataBox.Styles>
+				<DataBox.Columns>
+					<DataBoxCheckBoxColumn
+						ColumnName="Marked"
+						Header="{l:Translate colMarked}"
+						Binding="{Binding IsMarked, DataType={x:Type vm:CallerCalleeEntry}}"
+						InitialWidth="20"
+					/>
+					<DataBoxTextColumn
+						ColumnName="Function"
+						Header="{l:Translate colFunction}"
+						Binding="{Binding FunctionName, DataType={x:Type vm:CallerCalleeEntry}}"
+						InitialWidth="45"
+					/>
+					<DataBoxTextColumn
+						ColumnName="RelAddr"
+						Header="{l:Translate colCpuAddr}"
+						Binding="{Binding RelAddressDisplay, DataType={x:Type vm:CallerCalleeEntry}}"
+						InitialWidth="70"
+					/>
+					<DataBoxTextColumn
+						ColumnName="AbsAddr"
+						Header="{l:Translate colRomAddr}"
+						Binding="{Binding AbsAddressDisplay, DataType={x:Type vm:CallerCalleeEntry}}"
+						InitialWidth="70"
+					/>
+					<DataBoxTextColumn
+						ColumnName="CallCount"
+						Header="{l:Translate colCallCount}"
+						Binding="{Binding CallCount, DataType={x:Type vm:CallerCalleeEntry}}"
+						InitialWidth="40"
+					/>
+				</DataBox.Columns>
+			</DataBox>
 
-		<!-- Callees Header -->
-		<StackPanel Grid.Row="3" Orientation="Horizontal" Margin="4,8,4,2">
-			<TextBlock Text="{Binding SelectedFunctionName}" Opacity="0.7" Cursor="Hand" PointerPressed="OnSelectedFunctionPointerPressed" />
-			<TextBlock Text=" " />
-			<TextBlock FontWeight="Bold" Text="{l:Translate lblCallees}" />
-		</StackPanel>
-		<!-- <TextBlock Grid.Row="3" Margin="4,8,4,2" FontWeight="Bold" Text="{l:Translate lblCallees}" /> -->
+			<!-- Callees Header -->
+			<StackPanel Grid.Row="3" Orientation="Horizontal" Margin="4,8,4,2" IsVisible="{Binding HasCallees}">
+				<TextBlock Text="{Binding SelectedFunctionName}" Opacity="0.7" Cursor="Hand" PointerPressed="OnSelectedFunctionPointerPressed" />
+				<TextBlock Text=" " />
+				<TextBlock FontWeight="Bold" Text="{l:Translate lblCallees}" />
+			</StackPanel>
 
-		<!-- Callees DataBox -->
-		<DataBox
-			Grid.Row="4"
-			Items="{Binding Callees}"
-			Selection="{Binding CalleeSelection}"
-			GridLinesVisibility="All"
-			CellDoubleClick="OnCalleeCellDoubleClick"
-			ColumnWidths="{Binding ColumnWidths}"
-		>
-			<DataBox.Columns>
-				<DataBoxTextColumn
-					ColumnName="Function"
-					Header="{l:Translate colFunction}"
-					Binding="{Binding FunctionName, DataType={x:Type vm:CallerCalleeEntryModel}}"
-					InitialWidth="50"
-				/>
-				<DataBoxTextColumn
-					ColumnName="RelAddr"
-					Header="{l:Translate colCpuAddr}"
-					Binding="{Binding RelAddressDisplay, DataType={x:Type vm:CallerCalleeEntryModel}}"
-					InitialWidth="70"
-				/>
-				<DataBoxTextColumn
-					ColumnName="AbsAddr"
-					Header="{l:Translate colRomAddr}"
-					Binding="{Binding AbsAddressDisplay, DataType={x:Type vm:CallerCalleeEntryModel}}"
-					InitialWidth="70"
-				/>
-				<DataBoxTextColumn
-					ColumnName="CallCount"
-					Header="{l:Translate colCallCount}"
-					Binding="{Binding CallCount, DataType={x:Type vm:CallerCalleeEntryModel}}"
-					InitialWidth="30"
-				/>
-			</DataBox.Columns>
-		</DataBox>
+			<!-- Callees DataBox -->
+			<DataBox
+				x:Name="calleesGrid"
+				Grid.Row="4"
+				Items="{Binding Callees}"
+				Selection="{Binding CalleeSelection}"
+				IsVisible="{Binding HasCallees}"
+				GridLinesVisibility="All"
+				CellClick="OnCellClick"
+				CellDoubleClick="OnCalleeCellDoubleClick"
+				ColumnWidths="{Binding ColumnWidths}" 
+				>
+				<DataBox.Styles>
+					<Style Selector="DataBoxRow /template/ Rectangle#BackgroundRectangle">
+						<Setter Property="Fill" Value="{Binding RowBackground, DataType={x:Type vm:CallerCalleeEntry}}" />
+					</Style>
+					<Style Selector="DataBoxRow">
+						<Setter Property="Foreground" Value="{Binding RowForeground, DataType={x:Type vm:CallerCalleeEntry}}" />
+						<Setter Property="FontStyle" Value="{Binding RowStyle, DataType={x:Type vm:CallerCalleeEntry}}" />
+						<Setter Property="FontWeight" Value="{Binding RowWeight, DataType={x:Type vm:CallerCalleeEntry}}" />
+					</Style>
+				</DataBox.Styles>
+				<DataBox.Columns>
+					<DataBoxCheckBoxColumn
+						ColumnName="Marked"
+						Header="{l:Translate colMarked}"
+						Binding="{Binding IsMarked, DataType={x:Type vm:CallerCalleeEntry}}"
+						InitialWidth="20"
+					/>
+					<DataBoxTextColumn
+						ColumnName="Function"
+						Header="{l:Translate colFunction}"
+						Binding="{Binding FunctionName, DataType={x:Type vm:CallerCalleeEntry}}"
+						InitialWidth="45"
+					/>
+					<DataBoxTextColumn
+						ColumnName="RelAddr"
+						Header="{l:Translate colCpuAddr}"
+						Binding="{Binding RelAddressDisplay, DataType={x:Type vm:CallerCalleeEntry}}"
+						InitialWidth="70"
+					/>
+					<DataBoxTextColumn
+						ColumnName="AbsAddr"
+						Header="{l:Translate colRomAddr}"
+						Binding="{Binding AbsAddressDisplay, DataType={x:Type vm:CallerCalleeEntry}}"
+						InitialWidth="70"
+					/>
+					<DataBoxTextColumn
+						ColumnName="CallCount"
+						Header="{l:Translate colCallCount}"
+						Binding="{Binding CallCount, DataType={x:Type vm:CallerCalleeEntry}}"
+						InitialWidth="40"
+					/>
+				</DataBox.Columns>
+			</DataBox>
 
-			<!-- Spacer -->
-			<Panel Grid.Row="5" />
+			<!-- 访问记录面板 -->
+			<Grid Grid.Row="5" Margin="4,4,4,4" RowDefinitions="Auto,Auto,*">
+				<Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,Auto">
+					<TextBlock Grid.Column="0" FontWeight="Bold" Text="{l:Translate lblMemoryAccess}" VerticalAlignment="Center" Margin="4,0,0,0" />
+					<CheckBox Grid.Column="2" Content="{l:Translate chkShowAllFunctions}" IsChecked="{Binding ShowAllFunctions}" />
+					<Button Grid.Column="3" Content="{l:Translate btnRetrack}" Command="{Binding RetrackCommand}" />
+				</Grid>
+				<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,4">
+					<CheckBox Content="{l:Translate chkTrackExec}" IsChecked="{Binding TrackInstructionFetch}" />
+					<CheckBox Content="{l:Translate chkTrackDummy}" IsChecked="{Binding TrackDummy}" />
+					<CheckBox Content="{l:Translate chkTrackPpu}" IsChecked="{Binding TrackPpuRender}" />
+				</StackPanel>
+				<Grid Grid.Row="2" RowDefinitions="Auto,*">
+					<TextBlock Grid.Row="0" Text="{l:Translate lblNoAccessData}" IsVisible="{Binding !HasAccessData}" />
+					<DataBox
+						x:Name="accessGrid"
+						Grid.Row="1"
+						Items="{Binding MarkedAccessRanges}"
+						Selection="{Binding AccessRangeSelection}"
+						IsVisible="{Binding HasAccessData}"
+						GridLinesVisibility="All"
+						ColumnWidths="{Binding AccessRangesColumnWidths}"
+						PointerPressed="OnAccessPointerPressed"
+						CellClick="OnAccessCellClick"
+						CellDoubleClick="OnAccessRangeCellDoubleClick"
+						SortMode="Multiple"
+						SortState="{Binding AccessRangeSortState}"
+						SortCommand="{Binding AccessRangeSortCommand}"
+						>
+						<DataBox.Styles>
+							<Style Selector="DataBoxRow">
+								<Setter Property="FontStyle" Value="{Binding RowStyle, DataType={x:Type vm:AccessRangeViewModel}}" />
+							</Style>
+						</DataBox.Styles>
+						<DataBox.Columns>
+							<DataBoxTextColumn
+								ColumnName="Range"
+								Header="{l:Translate colRange}"
+								Binding="{Binding RangeDisplay, DataType={x:Type vm:AccessRangeViewModel}}"
+								InitialWidth="160"
+							/>
+							<DataBoxTextColumn
+								ColumnName="Rw"
+								Header="{l:Translate colRw}"
+								Binding="{Binding RwDisplay, DataType={x:Type vm:AccessRangeViewModel}}"
+								InitialWidth="25"
+							/>
+							<DataBoxTextColumn
+								ColumnName="MemType"
+								Header="{l:Translate colMemType}"
+								Binding="{Binding MemTypeDisplay, DataType={x:Type vm:AccessRangeViewModel}}"
+								InitialWidth="50"
+							/>
+							<DataBoxTextColumn
+								ColumnName="ReadCount"
+								Header="{l:Translate colReadCount}"
+								Binding="{Binding ReadCountDisplay, DataType={x:Type vm:AccessRangeViewModel}}"
+								InitialWidth="30"
+							/>
+							<DataBoxTextColumn
+								ColumnName="WriteCount"
+								Header="{l:Translate colWriteCount}"
+								Binding="{Binding WriteCountDisplay, DataType={x:Type vm:AccessRangeViewModel}}"
+								InitialWidth="30"
+							/>
+							<DataBoxTextColumn
+								ColumnName="AccessCount"
+								Header="{l:Translate colAccessCount}"
+								Binding="{Binding AccessCountDisplay, DataType={x:Type vm:AccessRangeViewModel}}"
+								InitialWidth="30"
+							/>
+						</DataBox.Columns>
+					</DataBox>
+				</Grid>
+			</Grid>
 		</Grid>
 	</Border>
 </UserControl>

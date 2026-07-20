@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Mesen.Config;
 using Mesen.Debugger;
+using Mesen.Debugger.ViewModels;
 using Mesen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -505,6 +506,86 @@ namespace Mesen.Interop
 			} finally {
 				Marshal.FreeHGlobal(buffer);
 			}
+		}
+
+		// Function Memory Access tracking (mirrors CallerCallee, but records memory R/W per function)
+		[DllImport(DllPath, EntryPoint = "SetFunctionMemoryAccessTracked")] public static extern void SetFunctionMemoryAccessTracked(CpuType type, AddressInfo funcAddr, bool tracked);
+
+		// Bitmask of MemoryOperationType values to record (opt-in special accesses).
+		[DllImport(DllPath, EntryPoint = "SetFunctionMemoryAccessOptions")] public static extern void SetFunctionMemoryAccessOptions(CpuType type, UInt32 mask);
+
+		// Clear recorded data (keeps marked functions tracked) so tracking restarts.
+		[DllImport(DllPath, EntryPoint = "ResetFunctionMemoryAccess")] public static extern void ResetFunctionMemoryAccess(CpuType type);
+
+
+
+		[DllImport(DllPath, EntryPoint = "GetFunctionMemoryAccess")] private static extern void GetFunctionMemoryAccessWrapper(CpuType type, AddressInfo funcAddr, IntPtr output);
+		public static FuncMemoryAccess? GetFunctionMemoryAccess(CpuType type, AddressInfo funcAddr)
+		{
+			// C++ FunctionAccessRange is packed(1): uint32 Start, uint32 Length,
+			// MemoryType Type(4), uint8 Flags, uint32 ReadCount, uint32 WriteCount,
+			// uint32 AccessCount, uint32 Interval
+			const int entrySize = 29;
+			const int maxRanges = 1024;
+			int bufferSize = maxRanges * entrySize + 4;
+			IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
+			try {
+				DebugApi.GetFunctionMemoryAccessWrapper(type, funcAddr, buffer);
+				FuncMemoryAccess result = new FuncMemoryAccess() { Sampled = true };
+				result.Ranges.AddRange(ParseAccessRanges(buffer, entrySize, maxRanges));
+				return result;
+			} finally {
+				Marshal.FreeHGlobal(buffer);
+			}
+		}
+
+		[DllImport(DllPath, EntryPoint = "GetFunctionMemoryAccessDetails")] private static extern void GetFunctionMemoryAccessDetailsWrapper(CpuType type, AddressInfo funcAddr, Int32 memType, UInt32 start, UInt32 end, UInt32 interval, IntPtr output);
+		// Drill-down: per-address access details within [start, end] of a merged range.
+		// interval matches the merged range's stride so the drill-down stays aligned.
+		public static List<AccessRange> GetFunctionMemoryAccessDetails(CpuType type, AddressInfo funcAddr, MemoryType memType, uint start, uint end, uint interval)
+		{
+			const int entrySize = 29;
+			const int maxRanges = 1024;
+			int bufferSize = maxRanges * entrySize + 4;
+			IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
+			try {
+				DebugApi.GetFunctionMemoryAccessDetailsWrapper(type, funcAddr, (Int32)memType, start, end, interval, buffer);
+				return ParseAccessRanges(buffer, entrySize, maxRanges);
+			} finally {
+				Marshal.FreeHGlobal(buffer);
+			}
+		}
+
+		// Shared parser for the packed FunctionAccessRange[] buffer produced by the
+		// C++ tracker (uint32 Start, uint32 Length, MemoryType(4), uint8 Flags,
+		// uint32 ReadCount, uint32 WriteCount, uint32 AccessCount, uint32 Interval
+		// == 29 bytes each, followed by a uint32 Count).
+		private static List<AccessRange> ParseAccessRanges(IntPtr buffer, int entrySize, int maxRanges)
+		{
+			List<AccessRange> ranges = new();
+			UInt32 count = (UInt32)Marshal.ReadInt32(buffer, maxRanges * entrySize);
+			for(int i = 0; i < count && i < maxRanges; i++) {
+				IntPtr ptr = new IntPtr(buffer.ToInt64() + (long)(i * entrySize));
+				uint start = (uint)Marshal.ReadInt32(ptr);
+				uint length = (uint)Marshal.ReadInt32(ptr, 4);
+				MemoryType memType = (MemoryType)Marshal.ReadInt32(ptr, 8);
+				byte flags = Marshal.ReadByte(ptr, 12);
+				uint readCount = (uint)Marshal.ReadInt32(ptr, 13);
+				uint writeCount = (uint)Marshal.ReadInt32(ptr, 17);
+				uint accessCount = (uint)Marshal.ReadInt32(ptr, 21);
+				uint interval = (uint)Marshal.ReadInt32(ptr, 25);
+				ranges.Add(new AccessRange() {
+					Start = start,
+					Length = length,
+					MemType = memType,
+					Flags = (RwFlags)flags,
+					ReadCount = readCount,
+					WriteCount = writeCount,
+					AccessCount = accessCount,
+					Interval = interval
+				});
+			}
+			return ranges;
 		}
 
 		[DllImport(DllPath, EntryPoint = "GetTokenList")] private static extern void GetTokenListWrapper(CpuType cpuType, IntPtr tokenListBuffer);

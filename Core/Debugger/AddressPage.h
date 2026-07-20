@@ -1,6 +1,6 @@
 #pragma once
-#include "Core/Shared/DebugTypes.h"
-#include "Core/Debugger/AddressInfo.h"
+#include "Debugger/DebugTypes.h"
+#include "Debugger/AddressInfo.h"
 
 class Debugger;
 

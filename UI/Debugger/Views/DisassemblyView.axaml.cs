@@ -285,8 +285,8 @@ namespace Mesen.Debugger.Views
 					HintText = () => GetHintText(),
 					IsVisible = () => !IsMarginClick,
 					IsEnabled = () => ActionLoc.RelAddress != null && Model.Debugger.FunctionList != null && FindFunctionForAddress() != null,
-					OnClick = () => {
-						FunctionViewModel? func = FindFunctionForAddress();
+				OnClick = () => {
+					FunctionNode? func = FindFunctionForAddress();
 						if(func != null && Model.Debugger.FunctionList != null) {
 							Model.Debugger.FunctionList.Selection.SelectedItem = func;
 						}
@@ -428,7 +428,7 @@ namespace Mesen.Debugger.Views
 			};
 		}
 
-		private FunctionViewModel? FindFunctionForAddress()
+		private FunctionNode? FindFunctionForAddress()
 		{
 			if(Model.Debugger.FunctionList == null || ActionLoc.RelAddress == null) {
 				return null;
@@ -437,7 +437,7 @@ namespace Mesen.Debugger.Views
 			int address = ActionLoc.RelAddress.Value.Address;
 			var functions = Model.Debugger.FunctionList.Functions;
 
-			FunctionViewModel? bestMatch = null;
+			FunctionNode? bestMatch = null;
 			foreach(var func in functions) {
 				if(func.FuncRelAddr.Address >= 0 && func.FuncRelAddr.Address <= address) {
 					if(bestMatch == null || func.FuncRelAddr.Address > bestMatch.FuncRelAddr.Address) {
@@ -460,9 +460,9 @@ namespace Mesen.Debugger.Views
 				return MemoryHelper.GetFunctionName(ActionLoc.AbsAddress.Value, true);
 			}
 			if(isAbs && ActionLoc?.AbsAddress != null) {
-				return MemoryHelper.GetAddressStr(ActionLoc.AbsAddress.Value);
+				return MemoryHelper.GetAddrStr(ActionLoc.AbsAddress.Value);
 			} else if(ActionLoc?.RelAddress != null && ActionLoc.RelAddress.Value.Address >= 0) {
-				return MemoryHelper.GetAddressStr(ActionLoc.RelAddress.Value);
+				return MemoryHelper.GetAddrStr(ActionLoc.RelAddress.Value);
 			}
 			return "";
 		}
@@ -479,12 +479,12 @@ namespace Mesen.Debugger.Views
 
 			if(isAbs && ActionLoc.AbsAddress != null) {
 				return IsRelAddrHigh()
-					? MemoryHelper.GetAddressStr(ActionLoc.AbsAddress.Value, range, true)
-					: MemoryHelper.GetAddressStr(ActionLoc.AbsAddress.Value, range);
+					? MemoryHelper.GetAddrRangeStr(ActionLoc.AbsAddress.Value, range, true)
+					: MemoryHelper.GetAddrRangeStr(ActionLoc.AbsAddress.Value, range);
 			} else if(ActionLoc.RelAddress.Value.Address >= 0) {
 				return IsRelAddrHigh()
-					? MemoryHelper.GetAddressStr(ActionLoc.RelAddress.Value, range, true)
-					: MemoryHelper.GetAddressStr(ActionLoc.RelAddress.Value, range);
+					? MemoryHelper.GetAddrRangeStr(ActionLoc.RelAddress.Value, range, true)
+					: MemoryHelper.GetAddrRangeStr(ActionLoc.RelAddress.Value, range);
 			}
 			return "";
 		}
@@ -534,7 +534,7 @@ namespace Mesen.Debugger.Views
 				if(_selectionHandler?.IsMarginClick == false && ActionLoc.RelAddress != null && props.IsLeftButtonPressed && e.ClickCount == 2) {
 					Model.SetSelectedRow(ActionLoc.RelAddress.Value.Address, true, true);
 
-					FunctionViewModel? func = FindFunctionForAddress();
+					FunctionNode? func = FindFunctionForAddress();
 					if(func != null && Model.Debugger.FunctionList != null) {
 						Model.Debugger.FunctionList.Selection.SelectedItem = func;
 					}

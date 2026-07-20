@@ -1375,6 +1375,8 @@
 			<Control ID="colFuncLength">长度</Control>
 			<Control ID="colExecCount">执行次数</Control>
 			<Control ID="colLastExec">上次执行</Control>
+			<Control ID="colMarked">记录</Control>
+			<Control ID="lblShowBlocked">显示被屏蔽</Control>
 		</Form>
 
 		<Form ID="CallerCalleeView">
@@ -1384,6 +1386,20 @@
 			<Control ID="colCallCount">次数</Control>
 			<Control ID="lblCallers">被下列函数调用</Control>
 			<Control ID="lblCallees">调用了下列函数</Control>
+			<Control ID="colMarked">记录</Control>
+			<Control ID="lblMemoryAccess">访问记录</Control>
+			<Control ID="colRange">范围</Control>
+			<Control ID="colRw">读写</Control>
+			<Control ID="colMemType">内存类型</Control>
+			<Control ID="colReadCount">读</Control>
+			<Control ID="colWriteCount">写</Control>
+			<Control ID="colAccessCount">访问</Control>
+			<Control ID="lblNoAccessData">尚未记录内存访问（标记函数后运行游戏即可）</Control>
+			<Control ID="btnRetrack">重新跟踪</Control>
+			<Control ID="chkTrackExec">记录指令取指</Control>
+			<Control ID="chkTrackDummy">记录Dummy访问</Control>
+			<Control ID="chkTrackPpu">记录PPU渲染读取</Control>
+			<Control ID="chkShowAllFunctions">显示页面内函数的记录</Control>
 		</Form>
 
 		<Form ID="LabelListView">
@@ -2502,6 +2518,23 @@ E
 		<Message ID="DockCallerCallee">调用记录</Message>
 		<Message ID="lblNoLabel">无标签</Message>
 		<Message ID="lblUnavailable">不可用</Message>
+		<Message ID="mnuFunctionColor">设置颜色</Message>
+		<Message ID="mnuBlockFunction">屏蔽</Message>
+		<Message ID="mnuUnblockFunction">取消屏蔽</Message>
+		<Message ID="mnuBlockByColor">按颜色屏蔽</Message>
+		<Message ID="mnuUnblockByColor">按颜色取消屏蔽</Message>
+		<Message ID="mnuBlockMenu">屏蔽</Message>
+		<Message ID="mnuMarkFunctionAccess">跟踪内存访问</Message>
+		<Message ID="mnuClearColor">清除颜色</Message>
+		<Message ID="mnuCustomColor">自定义...</Message>
+		<Message ID="colColorRed">红</Message>
+		<Message ID="colColorGreen">绿</Message>
+		<Message ID="colColorBlue">蓝</Message>
+		<Message ID="colColorYellow">黄</Message>
+		<Message ID="colColorOrange">橙</Message>
+		<Message ID="colColorPurple">紫</Message>
+		<Message ID="colColorCyan">青</Message>
+		<Message ID="colColorGray">灰</Message>
 		<Message ID="DockCallStack">调用堆栈</Message>
 		<Message ID="DockLabels">标签</Message>
 		<Message ID="DockFunctions">函数列表</Message>

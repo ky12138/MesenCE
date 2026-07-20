@@ -6,6 +6,7 @@ using Mesen.Debugger.Labels;
 using Mesen.Debugger.ViewModels;
 using Mesen.Debugger.Windows;
 using System;
+using System.Linq;
 using static Mesen.Debugger.ViewModels.FunctionListViewModel;
 
 namespace Mesen.Debugger.Views
@@ -30,9 +31,29 @@ namespace Mesen.Debugger.Views
 			base.OnDataContextChanged(e);
 		}
 
+		private void OnCellClick(DataBoxCell cell)
+		{
+			if(DataContext is not FunctionListViewModel model || cell.DataContext is not FunctionNode fv) {
+				return;
+			}
+
+			if(cell.Column?.ColumnName == "Marked") {
+				bool newValue = !fv.IsMarked;
+				if(model.Selection.SelectedItems.Contains(fv)) {
+					foreach(var s in model.Selection.SelectedItems) {
+						if(s != null) {
+							s.IsMarked = newValue;
+						}
+					}
+				} else {
+					fv.IsMarked = newValue;
+				}
+			}
+		}
+
 		private void OnCellDoubleClick(DataBoxCell cell)
 		{
-			if(DataContext is not FunctionListViewModel listModel || cell.DataContext is not FunctionViewModel entry) {
+			if(DataContext is not FunctionListViewModel listModel || cell.DataContext is not FunctionNode entry) {
 				return;
 			}
 

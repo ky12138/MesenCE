@@ -15,6 +15,8 @@
 #include "Debugger/ScriptManager.h"
 #include "Debugger/ScriptHost.h"
 #include "Debugger/CallstackManager.h"
+#include "Debugger/Profiler.h"
+#include "Debugger/FunctionMemoryAccessTracker.h"
 #include "Debugger/ExpressionEvaluator.h"
 #include "Debugger/MemorySearchExpression.h"
 #include "Debugger/BaseEventManager.h"
@@ -548,6 +550,12 @@ bool Debugger::IsBreakpointForbidden(BreakSource source, CpuType sourceCpu, Memo
 template<uint8_t accessWidth>
 void Debugger::ProcessBreakConditions(CpuType sourceCpu, StepRequest& step, BreakpointManager* bpManager, MemoryOperationInfo& operation, AddressInfo& addressInfo)
 {
+	// Record memory accesses for marked functions (Function Memory Access feature).
+	// All the lookup / resolution / mask logic lives in RecordFunctionMemoryAccess
+	// (FunctionMemoryAccessTracker.cpp) so this hot path stays a single stable call
+	// and Debugger.cpp never needs to change with the feature.
+	RecordFunctionMemoryAccess(this, sourceCpu, addressInfo, operation.Type);
+
 	int breakpointId = bpManager->CheckBreakpoint<accessWidth>(operation, addressInfo, true);
 	if(_breakRequestCount || _waitForBreakResume || ((int)step.BreakNeeded && (!_debuggers[(int)sourceCpu].Debugger->IgnoreBreakpoints || step.Type == StepType::CpuCycleStep))) {
 		SleepUntilResume(sourceCpu, step.GetBreakSource());

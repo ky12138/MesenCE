@@ -285,7 +285,7 @@ namespace Mesen.Debugger.ViewModels
 			if(location?.Label != null) {
 				return location.Label.Label;
 			} else if(location?.RelAddress != null) {
-				return MemoryHelper.GetAddressStr(location.RelAddress.Value);
+				return MemoryHelper.GetAddrStr(location.RelAddress.Value);
 				// "$" + location.RelAddress.Value.Address.ToString("X" + CpuType.GetAddressSize());
 			}
 			return "";

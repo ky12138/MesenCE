@@ -68,8 +68,79 @@ namespace Mesen.Debugger.ViewModels
 
 		public CpuType CpuType { get; private set; }
 		private UInt64 _masterClock = 0;
-		
-		public Dictionary<AddressInfo, string> RelAddressDisplayCache { get; } = new();
+
+		// 函数相对地址缓存：以绝对地址为键，缓存 (RelPage, RelAddress) 两个整数
+		//（均 null 表示无相对地址）。原 RelAddressDisplayCache 缓存的是 "page:$relAddr"
+		// 字符串，现拆为 RelPage + RelAddress，显示串在需要时由二者重建，JSON 更紧凑。
+		// RelPage 直接取自缓存，避免每次重建显示串都重算 GetPage（PCE 还会 P/Invoke）。
+		public Dictionary<AddressInfo, (int? RelPage, int? RelAddress)> RelAddressCache { get; } = new();
+
+		// 当前 CPU 地址空间正在使用的 PRG 页集合，由 MemoryMappings.CpuMappings 各块的
+		// Page 汇总而来。Function List 以此为「页」单位判断函数是否处于当前可寻址空间：
+		// 页不在此集合中的函数一律斜体。每次 UpdateFunctionList 重建前刷新，避免逐函数
+		// 为斜体判定再去 P/Invoke 取 relAddr（先前靠 RelAddr.Address>=0 的判定由此替换）。
+		public HashSet<int> UsedPages { get; } = new();
+
+		public void RefreshUsedPages()
+		{
+			UsedPages.Clear();
+			var mappings = MemoryMappings?.CpuMappings;
+			if(mappings != null) {
+				foreach(var block in mappings) {
+					if(block.Page >= 0) {
+						UsedPages.Add(block.Page);
+					}
+				}
+			}
+		}
+
+		// 取函数所属 PRG 页：优先用缓存的 RelPage（Put 时无 P/Invoke），缺失时回落到
+		// MemoryHelper.GetPage 直算。-1 表示无法确定页（如部分 RAM 段）。
+		public int GetCachedPage(AddressInfo absAddr)
+		{
+			if(RelAddressCache.TryGetValue(absAddr, out var cached) && cached.RelPage.HasValue) {
+				return cached.RelPage.Value;
+			}
+			return MemoryHelper.GetPage(absAddr, CpuType);
+		}
+
+		/// <summary>取缓存的相对地址显示串（"page:$relAddr"）；无相对地址或缺失时返回 ""。</summary>
+		public string GetRelAddressDisplay(AddressInfo absAddr)
+		{
+			if(RelAddressCache.TryGetValue(absAddr, out var cached) && cached.RelAddress.HasValue) {
+				return FormatRelDisplay(cached.RelPage, cached.RelAddress.Value);
+			}
+			return "";
+		}
+
+		/// <summary>确保相对地址已缓存（缺失，或曾为无相对地址但现已映射时重算），返回显示串；
+		/// 同时通过 out 参数把相对地址（缓存命中时由 RelAddress 重建，无需 P/Invoke）交给调用方复用，
+		/// 避免调用方再为 FuncRelAddr 单独调用一次 GetRelativeAddress。</summary>
+		public string GetOrUpdateRelAddressDisplay(AddressInfo absAddr, out AddressInfo relAddr)
+		{
+			if(RelAddressCache.TryGetValue(absAddr, out var cached) && cached.RelAddress.HasValue) {
+				// 缓存已有效：不调用 GetRelativeAddress（P/Invoke），直接用缓存重建相对地址。
+				// 相对地址位于 CPU 地址空间，类型取 CPU 内存类型（与 GetRelativeAddress 返回值一致）。
+				relAddr = new AddressInfo { Address = cached.RelAddress.Value, Type = CpuType.ToMemoryType() };
+				return FormatRelDisplay(cached.RelPage, cached.RelAddress.Value);
+			}
+			relAddr = DebugApi.GetRelativeAddress(absAddr, CpuType);
+			int? relPage = cached.RelPage ?? MemoryHelper.GetPage(absAddr, CpuType);
+			int? relAddress = relAddr.Address >= 0 ? relAddr.Address : (int?)null;
+			if(!RelAddressCache.TryGetValue(absAddr, out var existing) || existing.RelAddress != relAddress || existing.RelPage != relPage) {
+				RelAddressCache[absAddr] = (relPage, relAddress);
+				MarkCacheDirty();
+			}
+			return relAddress.HasValue ? FormatRelDisplay(relPage, relAddress.Value) : "";
+		}
+
+		// 由缓存的 RelPage + RelAddress 重建显示串，不再调用 GetPageText（避免重复计算 page）。
+		// 相对地址是 CPU 地址空间内的地址（bank:offset 形式），其格式位数应由 CPU
+		// 内存类型决定，而非 PRG ROM 类型——用后者会让十六进制位数与地址类型对不上。
+		private string FormatRelDisplay(int? relPage, int relAddress)
+		{
+			return MemoryHelper.FormatRelDisplay(relPage, relAddress, CpuType);
+		}
 
 		private bool _cacheLoaded;
 		private int _unsavedChanges;
@@ -182,14 +253,41 @@ namespace Mesen.Debugger.ViewModels
 				var functionList = FunctionList;
 				var callerCallee = CallerCallee;
 				functionList.Selection.SelectionChanged += (s, e) => {
-					if(functionList.Selection?.SelectedItem is FunctionViewModel vm) {
+					if(functionList.Selection?.SelectedItem is FunctionNode vm) {
 						callerCallee.UpdateForFunction(vm.FuncAbsAddr,
 							vm.FuncRelAddr.Address >= 0
-								? RelAddressDisplayCache[vm.FuncAbsAddr]
+								? GetRelAddressDisplay(vm.FuncAbsAddr)
 								: vm.AbsAddressDisplay
 						);
 					} else {
-						callerCallee.UpdateForFunction(new AddressInfo() { Address = -1, Type = MemoryType.None },"");
+						callerCallee.UpdateForFunction(new AddressInfo() { Address = -1, Type = MemoryType.None }, "");
+					}
+				};
+				// Cross-view sync: when func meta (color/block/marked) changes in either view,
+				// refresh the other view's display without recreating the list.
+				FuncMetaChanged += () => {
+					foreach(var f in functionList.Functions) {
+						f.RefreshMeta();
+					}
+					foreach(var c in callerCallee.Callers) {
+						c.RefreshMeta();
+					}
+					foreach(var c in callerCallee.Callees) {
+						c.RefreshMeta();
+					}
+					callerCallee.UpdateMarkedAccessRanges();
+				};
+				// Appearance-only changes (color/block) refresh the list display but
+				// must NOT rebuild the access panel (that would drop drill-down state).
+				FuncAppearanceChanged += () => {
+					foreach(var f in functionList.Functions) {
+						f.RefreshMeta();
+					}
+					foreach(var c in callerCallee.Callers) {
+						c.RefreshMeta();
+					}
+					foreach(var c in callerCallee.Callees) {
+						c.RefreshMeta();
 					}
 				};
 			}
@@ -272,10 +370,52 @@ namespace Mesen.Debugger.ViewModels
 			DebounceSaveCache();
 		}
 
+		/// <summary>函数维度的标记元数据（按 AddressInfo 索引，运行时字典）</summary>
+		public Dictionary<AddressInfo, FuncMeta> FuncMetaCache { get; } = new();
+
+		/// <summary>函数标记元数据变更通知（颜色/block/marked 变化时触发，用于跨视图同步）</summary>
+		public event Action? FuncMetaChanged;
+		public void NotifyFuncMetaChanged() => FuncMetaChanged?.Invoke();
+
+		/// <summary>仅外观变化（颜色/block）的通知：只刷新行显示，不重建访问面板</summary>
+		public event Action? FuncAppearanceChanged;
+		public void NotifyFuncAppearanceChanged() => FuncAppearanceChanged?.Invoke();
+
+		public FuncMeta? GetFuncMeta(AddressInfo key)
+		{
+			EnsureCacheLoaded();
+			return FuncMetaCache.TryGetValue(key, out var m) ? m : null;
+		}
+
+		public FuncMeta GetOrAddFuncMeta(AddressInfo key)
+		{
+			EnsureCacheLoaded();
+			if(!FuncMetaCache.TryGetValue(key, out var m)) {
+				m = new FuncMeta();
+				FuncMetaCache[key] = m;
+			}
+			return m;
+		}
+
 		private async void DebounceSaveCache()
 		{
 			await Task.Delay(3000);
 			SaveCache();
+		}
+
+		private void SampleMarkedFunctionMemoryAccess()
+		{
+			foreach(var kvp in FuncMetaCache) {
+				if(kvp.Value.Marked) {
+					FuncMemoryAccess? live = DebugApi.GetFunctionMemoryAccess(CpuType, kvp.Key);
+					if(live != null && live.Ranges.Count > 0) {
+						// Accumulate into the persistent cache instead of replacing it,
+						// so the JSON records every address the function has ever
+						// accessed (full cache), not just the latest session snapshot.
+						kvp.Value.MemoryAccess = FuncMemoryAccess.Union(kvp.Value.MemoryAccess, live);
+					}
+				}
+			}
 		}
 
 		public void SaveCache()
@@ -290,21 +430,61 @@ namespace Mesen.Debugger.ViewModels
 				return;
 			}
 
+			// Sample live memory access data for all marked functions before serializing,
+			// so that functions marked only in FunctionList (which don't go through
+			// CallerCallee's GetLive path) also get their access data persisted.
+			SampleMarkedFunctionMemoryAccess();
+			FillRangeDisplays();
+
 			string path = Path.Combine(ConfigManager.DebuggerFolder, romName + "_RelAddr.json");
 
 			var data = new RelAddressCacheData();
 			var entries = new List<RelAddressCacheEntry>();
-			foreach(var kvp in RelAddressDisplayCache) {
-				entries.Add(new RelAddressCacheEntry {
+			foreach(var kvp in RelAddressCache) {
+				var entry = new RelAddressCacheEntry {
 					Address = kvp.Key.Address,
 					Type = kvp.Key.Type,
-					Display = kvp.Value
-				});
+					RelPage = kvp.Value.RelPage ?? -1,
+					RelAddress = kvp.Value.RelAddress
+				};
+				if(FuncMetaCache.TryGetValue(kvp.Key, out var meta) && meta.HasData) {
+					entry.FunctionColor = meta.FunctionColor;
+					entry.Blocked = meta.Blocked;
+					entry.Marked = meta.Marked;
+					entry.MemoryAccess = meta.MemoryAccess;
+				}
+				entries.Add(entry);
 			}
 			data.CacheByCpu[CpuType] = entries;
 
 			string json = JsonSerializer.Serialize(data, typeof(RelAddressCacheData), MesenSerializerContext.Default);
 			FileHelper.WriteAllText(path, json);
+		}
+
+		// Fill each range's RelPage/RelAddress once (for marked functions whose
+		// AccessRangeViewModel was never constructed, i.e. not shown in the panel)
+		// so the split serializes inline into the Range entry of <rom>_RelAddr.json.
+		// ROM only — RAM needs no page/rel split. Ranges already displayed have these
+		// set by the VM's BuildRelAddrDisplay and are skipped via the HasValue guard,
+		// so this only back-fills the unshown ones.
+		private void FillRangeDisplays()
+		{
+			foreach(var meta in FuncMetaCache.Values) {
+				if(meta.MemoryAccess?.Ranges == null) {
+					continue;
+				}
+				foreach(var r in meta.MemoryAccess.Ranges) {
+					if(!r.MemType.IsRomMemory() || r.RelAddress.HasValue) {
+						continue;
+					}
+					AddressInfo absAddr = new AddressInfo { Address = (int)r.Start, Type = r.MemType };
+					GetOrUpdateRelAddressDisplay(absAddr, out AddressInfo rel);
+					if(rel.Address >= 0) {
+						r.RelPage = GetCachedPage(absAddr);
+						r.RelAddress = rel.Address;
+					}
+				}
+			}
 		}
 
 		public void EnsureCacheLoaded()
@@ -331,14 +511,45 @@ namespace Mesen.Debugger.ViewModels
 						if(data?.CacheByCpu.TryGetValue(CpuType, out var entries) == true) {
 							foreach(var e in entries) {
 								var key = new AddressInfo { Address = e.Address, Type = e.Type };
-								RelAddressDisplayCache.TryAdd(key, e.Display);
+								RelAddressCache.TryAdd(key, (
+									e.RelPage >= 0 ? e.RelPage : (int?)null,
+									e.RelAddress
+								));
+								if(e.FunctionColor != null || e.Blocked || e.Marked || e.MemoryAccess != null) {
+									FuncMetaCache[key] = new FuncMeta {
+										FunctionColor = e.FunctionColor,
+										Blocked = e.Blocked,
+										Marked = e.Marked,
+										MemoryAccess = e.MemoryAccess
+									};
+								}
 							}
+							FillRangeDisplays();
 						}
 					} catch {
 					}
 				}
 
 				_cacheLoaded = true;
+				ApplyFunctionMemoryAccessState();
+			}
+		}
+
+		// Push the saved tracking options + marked-function set into the C++ tracker so that
+		// tracking resumes automatically when a workspace (with cached marked functions) is opened.
+		private bool _funcMemAccessStateApplied = false;
+		private void ApplyFunctionMemoryAccessState()
+		{
+			if(_funcMemAccessStateApplied) {
+				return;
+			}
+			_funcMemAccessStateApplied = true;
+
+			DebugApi.SetFunctionMemoryAccessOptions(CpuType, ConfigManager.Config.Debug.Debugger.FunctionMemoryAccessOptions);
+			foreach(var kvp in FuncMetaCache) {
+				if(kvp.Value.Marked) {
+					DebugApi.SetFunctionMemoryAccessTracked(CpuType, kvp.Key, true);
+				}
 			}
 		}
 

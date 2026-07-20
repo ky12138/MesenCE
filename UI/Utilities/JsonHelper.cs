@@ -40,6 +40,9 @@ namespace Mesen.Utilities
 [JsonSerializable(typeof(DebugWorkspace))]
 [JsonSerializable(typeof(UpdateInfo))]
 [JsonSerializable(typeof(RelAddressCacheData))]
+[JsonSerializable(typeof(FuncMemoryAccess))]
+[JsonSerializable(typeof(AccessRange))]
+[JsonSerializable(typeof(RwFlags))]
 [JsonSourceGenerationOptions(
 	WriteIndented = true,
 	IgnoreReadOnlyProperties = true,

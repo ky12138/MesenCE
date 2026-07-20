@@ -1375,6 +1375,8 @@
 			<Control ID="colFuncLength">Length</Control>
 			<Control ID="colExecCount">Exec Count</Control>
 			<Control ID="colLastExec">Last Exec</Control>
+			<Control ID="colMarked">M</Control>
+			<Control ID="lblShowBlocked">Show blocked</Control>
 		</Form>
 
 		<Form ID="CallerCalleeView">
@@ -1384,6 +1386,20 @@
 			<Control ID="colCallCount">Count</Control>
 			<Control ID="lblCallers">Called by</Control>
 			<Control ID="lblCallees">Called</Control>
+			<Control ID="colMarked">M</Control>
+			<Control ID="lblMemoryAccess">Memory / ROM Access</Control>
+			<Control ID="colRange">Range</Control>
+			<Control ID="colRw">R/W</Control>
+			<Control ID="colMemType">Type</Control>
+			<Control ID="colReadCount">Reads</Control>
+			<Control ID="colWriteCount">Writes</Control>
+			<Control ID="colAccessCount">Accesses</Control>
+			<Control ID="lblNoAccessData">No memory access recorded yet (mark a function, then run the game)</Control>
+			<Control ID="btnRetrack">Re-track</Control>
+			<Control ID="chkTrackExec">Instruction fetch</Control>
+			<Control ID="chkTrackDummy">Dummy accesses</Control>
+			<Control ID="chkTrackPpu">PPU render reads</Control>
+			<Control ID="chkShowAllFunctions">Show all functions</Control>
 		</Form>
 
 		<Form ID="LabelListView">
@@ -2504,6 +2520,23 @@ E
 		<Message ID="DockCallerCallee">Caller/Callee</Message>
 		<Message ID="lblNoLabel">No label</Message>
 		<Message ID="lblUnavailable">Unavailable</Message>
+		<Message ID="mnuFunctionColor">Set Color</Message>
+		<Message ID="mnuBlockFunction">Block</Message>
+		<Message ID="mnuUnblockFunction">Unblock</Message>
+		<Message ID="mnuBlockByColor">Block by Color</Message>
+		<Message ID="mnuUnblockByColor">Unblock by Color</Message>
+		<Message ID="mnuBlockMenu">Block</Message>
+		<Message ID="mnuMarkFunctionAccess">Track Memory Access</Message>
+		<Message ID="mnuClearColor">Clear Color</Message>
+		<Message ID="mnuCustomColor">Custom...</Message>
+		<Message ID="colColorRed">Red</Message>
+		<Message ID="colColorGreen">Green</Message>
+		<Message ID="colColorBlue">Blue</Message>
+		<Message ID="colColorYellow">Yellow</Message>
+		<Message ID="colColorOrange">Orange</Message>
+		<Message ID="colColorPurple">Purple</Message>
+		<Message ID="colColorCyan">Cyan</Message>
+		<Message ID="colColorGray">Gray</Message>
 		<Message ID="DockFindResults">Find Results</Message>
 		<Message ID="DockControllers">Controllers</Message>
 

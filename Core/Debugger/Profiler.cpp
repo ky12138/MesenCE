@@ -51,6 +51,7 @@ void Profiler::StackFunction(AddressInfo& addr, StackFrameFlags stackFlag)
 		func.Flags = stackFlag;
 
 		_currentFunction = key;
+		_currentFuncAddr = addr;
 		_currentCycleCount = 0;
 	}
 }
@@ -90,6 +91,7 @@ void Profiler::UnstackFunction()
 		func.MaxCycles = std::max(func.MaxCycles, _currentCycleCount);
 
 		_currentFunction = _functionStack.back();
+		_currentFuncAddr = _functions[_currentFunction].Address;
 		_functionStack.pop_back();
 		_stackFlags.pop_back();
 
@@ -119,6 +121,7 @@ void Profiler::ResetState()
 	_stackFlags.clear();
 	_cycleCountStack.clear();
 	_currentFunction = ResetFunctionIndex;
+	_currentFuncAddr = { ResetFunctionIndex, MemoryType::None };
 }
 
 void Profiler::InternalReset()
@@ -129,6 +132,7 @@ void Profiler::InternalReset()
 	_functions[ResetFunctionIndex] = ProfiledFunction();
 	_functions[ResetFunctionIndex].Address = { ResetFunctionIndex, MemoryType::None };
 	_callerCalleeTracker.Reset();
+	_funcMemAccessTracker.Reset();
 }
 
 void Profiler::GetProfilerData(ProfiledFunction* profilerData, uint32_t& functionCount)
@@ -151,4 +155,14 @@ void Profiler::GetProfilerData(ProfiledFunction* profilerData, uint32_t& functio
 CallerCalleeTracker* Profiler::GetCallerCalleeTracker()
 {
 	return &_callerCalleeTracker;
+}
+
+FunctionMemoryAccessTracker* Profiler::GetFunctionMemoryAccessTracker()
+{
+	return &_funcMemAccessTracker;
+}
+
+AddressInfo Profiler::GetCurrentFunctionAddress()
+{
+	return _currentFuncAddr;
 }
