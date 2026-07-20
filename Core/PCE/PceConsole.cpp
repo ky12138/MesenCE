@@ -387,6 +387,19 @@ AddressInfo PceConsole::GetRelativeAddress(AddressInfo& absAddress, CpuType cpuT
 	return _memoryManager->GetRelativeAddress(absAddress, _cpu->GetState().PC);
 }
 
+int32_t PceConsole::GetAbsoluteAddressPage(AddressInfo absAddr, CpuType cpuType)
+{
+	AddressInfo rel = GetRelativeAddress(absAddr, cpuType);
+	if(rel.Address < 0 || rel.Type != MemoryType::PceMemory) {
+		return -1;
+	}
+	int bankIndex = rel.Address >> 13;
+	if(bankIndex < 0 || bankIndex >= 8) {
+		return -1;
+	}
+	return _memoryManager->GetState().Mpr[bankIndex];
+}
+
 PceVideoState PceConsole::GetVideoState()
 {
 	PceVideoState state;

@@ -54,6 +54,16 @@ GbMemoryManagerState& GbMemoryManager::GetState()
 	return _state;
 }
 
+int32_t GbMemoryManager::GetPageSize(MemoryType memType)
+{
+	switch(memType) {
+		case MemoryType::GbPrgRom: return 0x4000;
+		case MemoryType::GbCartRam: return 0x2000;
+		case MemoryType::GbWorkRam: return _ppu->IsCgbEnabled() ? 0x1000 : 0x2000;
+		default: return -1;
+	}
+}
+
 void GbMemoryManager::RefreshMappings()
 {
 	int wramBank = _ppu->IsCgbEnabled() ? std::max<int>(1, _state.CgbWorkRamBank) : 1;

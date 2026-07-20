@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "Debugger/DebugTypes.h"
+#include "Debugger/AddressInfo.h"
 #include "Utilities/ISerializable.h"
 
 class Gameboy;
@@ -48,6 +49,8 @@ public:
 	virtual ~GbMemoryManager();
 
 	GbMemoryManagerState& GetState();
+
+	int32_t GetPageSize(MemoryType memType);
 
 	void Init(Emulator* emu, Gameboy* gameboy, GbCart* cart, GbPpu* ppu, GbApu* apu, GbTimer* timer, GbDmaController* dmaController);
 	void MapRegisters(uint16_t start, uint16_t end, RegisterAccess access);

@@ -20,6 +20,7 @@
 #include "Core/Debugger/Profiler.h"
 #include "Core/Debugger/CallerCalleeTracker.h"
 #include "Core/Debugger/DebugBreakHelper.h"
+#include "Core/Debugger/AddressPage.h"
 #include "Core/Debugger/IAssembler.h"
 #include "Core/Debugger/BaseEventManager.h"
 #include "Core/Debugger/ITraceLogger.h"
@@ -333,10 +334,24 @@ extern "C"
 		return WithDebugger(AddressInfo, GetAbsoluteAddress(relAddress));
 	}
 
-	DllExport AddressInfo __stdcall GetRelativeAddress(AddressInfo absAddress, CpuType cpuType)
-	{
-		return WithDebugger(AddressInfo, GetRelativeAddress(absAddress, cpuType));
-	}
+DllExport AddressInfo __stdcall GetRelativeAddress(AddressInfo absAddress, CpuType cpuType)
+{
+	return WithDebugger(AddressInfo, GetRelativeAddress(absAddress, cpuType));
+}
+
+DllExport int32_t __stdcall GetPageSize(MemoryType memType)
+{
+	return WrapDebuggerCall<int32_t>([&](Debugger* dbg) -> int32_t {
+		return GetPageSize(dbg, memType);
+	});
+}
+
+DllExport int32_t __stdcall GetAbsoluteAddressPage(AddressInfo absAddress, CpuType cpuType)
+{
+	return WrapDebuggerCall<int32_t>([&](Debugger* dbg) -> int32_t {
+		return GetAbsoluteAddressPage(dbg, absAddress, cpuType);
+	});
+}
 
 	DllExport void __stdcall SetLabel(uint32_t address, MemoryType memType, char* label, char* comment)
 	{

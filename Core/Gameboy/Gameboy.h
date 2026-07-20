@@ -138,6 +138,7 @@ public:
 
 	AddressInfo GetAbsoluteAddress(AddressInfo& relAddress) override;
 	AddressInfo GetRelativeAddress(AddressInfo& absAddress, CpuType cpuType) override;
+	int32_t GetPageSize(MemoryType memType) override;
 
 	uint64_t GetMasterClock() override;
 	uint32_t GetMasterClockRate() override;

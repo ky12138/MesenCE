@@ -293,6 +293,7 @@ public:
 	void GetPpuAbsoluteAddress(uint16_t relativeAddr, AddressInfo& info);
 	AddressInfo GetPpuAbsoluteAddress(uint32_t relativeAddr);
 	AddressInfo GetRelativeAddress(AddressInfo& addr);
+	int32_t GetPageSize(MemoryType memType);
 	int32_t GetPpuRelativeAddress(AddressInfo& addr);
 
 	bool IsWriteRegister(uint16_t addr);

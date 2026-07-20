@@ -96,6 +96,7 @@ public:
 
 	AddressInfo GetAbsoluteAddress(AddressInfo& relAddress) override;
 	AddressInfo GetRelativeAddress(AddressInfo& absAddress, CpuType cpuType) override;
+	int32_t GetAbsoluteAddressPage(AddressInfo absAddr, CpuType cpuType) override;
 
 	PceVideoState GetVideoState();
 	void SetVideoState(PceVideoState& state);

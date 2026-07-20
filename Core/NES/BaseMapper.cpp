@@ -1137,6 +1137,18 @@ AddressInfo BaseMapper::GetRelativeAddress(AddressInfo& addr)
 	return { -1, MemoryType::None };
 }
 
+int32_t BaseMapper::GetPageSize(MemoryType memType)
+{
+	switch(memType) {
+		case MemoryType::NesPrgRom: return _prgRomPageSize;
+		case MemoryType::NesWorkRam: return _workRamPageSize;
+		case MemoryType::NesSaveRam: return _saveRamPageSize;
+		case MemoryType::NesChrRom: return _chrRomPageSize;
+		case MemoryType::NesChrRam: return _chrRamPageSize;
+		default: return -1;
+	}
+}
+
 int32_t BaseMapper::GetPpuRelativeAddress(AddressInfo& addr)
 {
 	uint8_t* ptrAddress;

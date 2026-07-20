@@ -407,6 +407,11 @@ AddressInfo NesConsole::GetRelativeAddress(AddressInfo& absAddress, CpuType cpuT
 	return _mapper->GetRelativeAddress(absAddress);
 }
 
+int32_t NesConsole::GetPageSize(MemoryType memType)
+{
+	return _mapper->GetPageSize(memType);
+}
+
 void NesConsole::GetConsoleState(BaseState& baseState, ConsoleType consoleType)
 {
 	NesState& state = (NesState&)baseState;

@@ -706,6 +706,11 @@ AddressInfo Gameboy::GetRelativeAddress(AddressInfo& absAddress, CpuType cpuType
 	return { GetRelativeAddress(absAddress), MemoryType::GameboyMemory };
 }
 
+int32_t Gameboy::GetPageSize(MemoryType memType)
+{
+	return _memoryManager->GetPageSize(memType);
+}
+
 uint64_t Gameboy::GetMasterClock()
 {
 	return _cpu->GetCycleCount();

@@ -101,6 +101,16 @@ public:
 
 	virtual AddressInfo GetAbsoluteAddress(AddressInfo& relAddress) = 0;
 	virtual AddressInfo GetRelativeAddress(AddressInfo& absAddress, CpuType cpuType) = 0;
+	// Returns the page/bank size (in bytes) for a memory type, or -1 when the
+	// memory type has no meaningful page size. Lets the UI compute a relative
+	// address' page index without serializing the whole console/PPu state.
+	// Consoles with banking override it (e.g. NES mapper, Game Boy).
+	virtual int32_t GetPageSize(MemoryType memType) { return -1; }
+	// Returns the bank/page index of an absolute address for display, or -1
+	// when the address space has no meaningful page concept (e.g. SNES/GBA).
+	// Only consoles whose page can't be derived from GetPageSize (e.g. PCE's
+	// MPR window) override it; the default returns -1.
+	virtual int32_t GetAbsoluteAddressPage(AddressInfo absAddr, CpuType cpuType) { return -1; }
 	virtual void GetConsoleState(BaseState& state, ConsoleType consoleType) = 0;
 
 	virtual optional<SaveStateCompatInfo> ValidateSaveStateCompatibility(Serializer& s, ConsoleType stateConsoleType) { return {}; }

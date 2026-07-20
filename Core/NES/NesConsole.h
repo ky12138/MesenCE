@@ -107,6 +107,7 @@ public:
 
 	AddressInfo GetAbsoluteAddress(AddressInfo& relAddress) override;
 	AddressInfo GetRelativeAddress(AddressInfo& absAddress, CpuType cpuType) override;
+	int32_t GetPageSize(MemoryType memType) override;
 	void GetConsoleState(BaseState& state, ConsoleType consoleType) override;
 
 	uint64_t GetMasterClock() override;

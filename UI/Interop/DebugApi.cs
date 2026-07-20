@@ -224,6 +224,8 @@ namespace Mesen.Interop
 
 		[DllImport(DllPath)] public static extern AddressInfo GetAbsoluteAddress(AddressInfo relAddress);
 		[DllImport(DllPath)] public static extern AddressInfo GetRelativeAddress(AddressInfo absAddress, CpuType cpuType);
+		[DllImport(DllPath)] public static extern Int32 GetPageSize(MemoryType memType);
+		[DllImport(DllPath)] public static extern Int32 GetAbsoluteAddressPage(AddressInfo absAddress, CpuType cpuType);
 
 		[DllImport(DllPath)] public static extern void SetLabel(uint address, MemoryType memType, [MarshalAs(UnmanagedType.LPUTF8Str)] string label, [MarshalAs(UnmanagedType.LPUTF8Str)] string comment);
 		[DllImport(DllPath)] public static extern void ClearLabels();
