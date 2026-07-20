@@ -7,146 +7,165 @@
 	xmlns:vm="using:Mesen.Debugger.StatusViews"
 	xmlns:c="using:Mesen.Controls"
 	xmlns:l="using:Mesen.Localization"
-	mc:Ignorable="d" d:DesignWidth="350"
+	mc:Ignorable="d" d:DesignWidth="550" d:DesignHeight="300"
 	VerticalAlignment="Stretch"
 	HorizontalAlignment="Stretch"
 	x:DataType="vm:NesStatusViewModel"
 	x:Class="Mesen.Debugger.StatusViews.NesStatusView"
 >
 	<Design.DataContext>
-		<vm:NesStatusViewModel />
+		<vm:NesStatusViewModel/>
 	</Design.DataContext>
 
 	<UserControl.Styles>
-		<StyleInclude Source="/Styles/DebugStatusStyles.xaml" />
+		<StyleInclude Source="/Styles/DebugStatusStyles.xaml"/>
 	</UserControl.Styles>
 
 	<ScrollViewer>
 		<StackPanel>
-			<DockPanel>
-				<StackPanel DockPanel.Dock="Right">
-					<StackPanel Orientation="Horizontal" IsEnabled="{Binding EditAllowed}">
-						<TextBlock Text="{l:Translate lblSP}" Margin="0" />
-						<c:MesenNumericTextBox Value="{Binding RegSP}" Hex="True" Max="0xFF" />
-					</StackPanel>
-					<TextBox
-						TextWrapping="Wrap"
-						Width="78"
-						Height="65"
-						AcceptsReturn="True"
-						IsReadOnly="True"
-						ScrollViewer.VerticalScrollBarVisibility="Visible"
-						Text="{Binding StackPreview}"
-					/>
-				</StackPanel>
-
-				<StackPanel DockPanel.Dock="Top" IsEnabled="{Binding EditAllowed}">
-					<WrapPanel>
-						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{l:Translate lblA}" />
-							<c:MesenNumericTextBox Value="{Binding RegA}" Hex="True" Max="0xFF" />
-						</StackPanel>
-						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{l:Translate lblX}" />
-							<c:MesenNumericTextBox Value="{Binding RegX}" Hex="True" Max="0xFF" />
-						</StackPanel>
-						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{l:Translate lblY}" />
-							<c:MesenNumericTextBox Value="{Binding RegY}" Hex="True" Max="0xFF" />
-						</StackPanel>
-						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{l:Translate lblPC}" />
-							<c:MesenNumericTextBox Value="{Binding RegPC}" Hex="True" Max="0xFFFF" />
-						</StackPanel>
-						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{l:Translate lblCycle}" />
-							<c:MesenNumericTextBox Width="70" Value="{Binding CycleCount}" IsEnabled="False" />
-						</StackPanel>
-					</WrapPanel>
-
-					<Rectangle Stroke="{StaticResource MesenGrayBorderColor}" StrokeThickness="1" Margin="5 5 5 2" />
-
-					<WrapPanel Margin="0 2 0 0" DockPanel.Dock="Top">
-						<StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Top">
-							<TextBlock Text="{l:Translate lblP}" />
-							<c:MesenNumericTextBox Value="{Binding RegPS}" Hex="True" Max="0xFF" />
-						</StackPanel>
-
-						<WrapPanel>
-							<StackPanel>
-								<CheckBox IsChecked="{Binding FlagC}" Content="{l:Translate chkCarry}" />
-								<CheckBox IsEnabled="False" Content="----" />
-							</StackPanel>
-							<StackPanel>
-								<CheckBox IsChecked="{Binding FlagZ}" Content="{l:Translate chkZero}" />
-								<CheckBox IsEnabled="False" Content="----" />
-							</StackPanel>
-							<StackPanel>
-								<CheckBox IsChecked="{Binding FlagI}" Content="{l:Translate chkInterrupt}" />
-								<CheckBox IsChecked="{Binding FlagV}" Content="{l:Translate chkOverflow}" />
-							</StackPanel>
-							<StackPanel>
-								<CheckBox IsChecked="{Binding FlagD}" Content="{l:Translate chkDecimal}" />
-								<CheckBox IsChecked="{Binding FlagN}" Content="{l:Translate chkNegative}" />
-							</StackPanel>
-						</WrapPanel>
-					</WrapPanel>
-
-					<Rectangle Stroke="{StaticResource MesenGrayBorderColor}" StrokeThickness="1" Margin="5 5 5 4" />
-
-					<WrapPanel>
-						<TextBlock Text="{l:Translate lblIRQs}" />
-						<CheckBox IsChecked="{Binding FlagNmi}" Content="{l:Translate chkNMI}" />
-						<CheckBox IsChecked="{Binding FlagIrqExternal}" Content="{l:Translate chkCart}" />
-						<CheckBox IsChecked="{Binding FlagIrqFrameCount}" Content="{l:Translate chkFrameCounter}" />
-						<CheckBox IsChecked="{Binding FlagIrqDmc}" Content="{l:Translate chkDMC}" />
-					</WrapPanel>
-				</StackPanel>
-			</DockPanel>
-
-			<StackPanel IsEnabled="{Binding EditAllowed}">
-				<Rectangle Stroke="{StaticResource MesenGrayBorderColor}" StrokeThickness="1" Margin="5 5 5 4" />
-
-				<WrapPanel>
-					<Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
-						<TextBlock Text="{l:Translate lblCycle}" />
-						<c:MesenNumericTextBox Grid.Column="1" Value="{Binding Cycle}" IsEnabled="False" />
-						<TextBlock Grid.Row="1" Text="{l:Translate lblScanline}" />
-						<c:MesenNumericTextBox Grid.Row="1" Grid.Column="1" Value="{Binding Scanline}" IsEnabled="False" Min="-1" />
-
-						<TextBlock Grid.Row="2" Text="{l:Translate lblBus}" />
-						<c:MesenNumericTextBox Grid.Row="2" Grid.Column="1" Value="{Binding BusAddr}" Hex="True" Max="0x3FFF" IsEnabled="False" />
-						<TextBlock Grid.Row="3" Text="{l:Translate lblV}" />
-						<c:MesenNumericTextBox Grid.Row="3" Grid.Column="1" Value="{Binding VramAddr}" Hex="True" Max="0x7FFF" />
-						<TextBlock Grid.Row="4" Text="{l:Translate lblT}" />
-						<c:MesenNumericTextBox Grid.Row="4" Grid.Column="1" Value="{Binding TmpVramAddr}" Hex="True" Max="0x7FFF" />
-						<TextBlock Grid.Row="5" Text="{l:Translate lblScrollX}" />
-						<c:MesenNumericTextBox Grid.Row="5" Grid.Column="1" Value="{Binding ScrollX}" Hex="True" Max="7" />
+			<Grid ColumnDefinitions="Auto,Auto,Auto" Margin="2">
+				<StackPanel Grid.Column="0" IsEnabled="{Binding EditAllowed}">
+					<TextBlock Text="{l:Translate lblCpuHeader}" FontWeight="Bold" Margin="0 0 0 2"/>
+					<Grid ColumnDefinitions="Auto,Auto" RowDefinitions="18,18,18,18">
+						<TextBlock Grid.Row="0" Text="{l:Translate lblA}" VerticalAlignment="Center"/>
+						<c:MesenNumericTextBox Grid.Row="0" Grid.Column="1" Value="{Binding RegA}" Hex="True" Max="0xFF" Margin="0 0 4 1" MinHeight="12" Height="16"/>
+						<TextBlock Grid.Row="1" Text="{l:Translate lblX}" VerticalAlignment="Center"/>
+						<c:MesenNumericTextBox Grid.Row="1" Grid.Column="1" Value="{Binding RegX}" Hex="True" Max="0xFF" Margin="0 0 4 1" MinHeight="12" Height="16"/>
+						<TextBlock Grid.Row="2" Text="{l:Translate lblY}" VerticalAlignment="Center"/>
+						<c:MesenNumericTextBox Grid.Row="2" Grid.Column="1" Value="{Binding RegY}" Hex="True" Max="0xFF" Margin="0 0 4 1" MinHeight="12" Height="16"/>
+						<TextBlock Grid.Row="3" Text="{l:Translate lblPC}" VerticalAlignment="Center"/>
+						<c:MesenNumericTextBox Grid.Row="3" Grid.Column="1" Value="{Binding RegPC}" Hex="True" Max="0xFFFF" Margin="0 0 4 1" MinHeight="12" Height="16"/>
 					</Grid>
-					<StackPanel Margin="5 0 2 0">
-						<CheckBox IsChecked="{Binding Sprite0Hit}" Content="{l:Translate chkSprite0Hit}" />
-						<CheckBox IsChecked="{Binding SpriteOverflow}" Content="{l:Translate chkSpriteOverflow}" />
-						<CheckBox IsChecked="{Binding VerticalBlank}" Content="{l:Translate chkVerticalBlank}" />
-						<CheckBox IsChecked="{Binding WriteToggle}" Content="{l:Translate chkWriteToggle}" />
 
-						<CheckBox IsChecked="{Binding LargeSprites}" Content="{l:Translate chkLargeSprites}" Margin="0 5 0 0" />
-						<CheckBox IsChecked="{Binding VerticalWrite}" Content="{l:Translate chkVerticalWrite}" />
-						<CheckBox IsChecked="{Binding NmiOnVBlank}" Content="{l:Translate chkNmiOnVBlank}" />
-						<CheckBox IsChecked="{Binding BgAt1000}" Content="{l:Translate chkBgAt1000}" />
-						<CheckBox IsChecked="{Binding SpritesAt1000}" Content="{l:Translate chkSpritesAt1000}" />
+					<Rectangle Stroke="{StaticResource MesenGrayBorderColor}" StrokeThickness="1" Margin="2 4 2 4"/>
+
+					<TextBlock Text="{l:Translate lblPpuHeader}" FontWeight="Bold" Margin="0 0 0 2"/>
+					<Grid ColumnDefinitions="Auto,Auto" RowDefinitions="18,18,18,18,18,18">
+						<TextBlock Grid.Row="0" Text="{l:Translate lblPpuCycle}" VerticalAlignment="Center"/>
+						<c:MesenNumericTextBox Grid.Row="0" Grid.Column="1" Value="{Binding Cycle}" IsEnabled="False" Margin="0 0 4 1" MinHeight="12" Height="16"/>
+						<TextBlock Grid.Row="1" Text="{l:Translate lblScanline}" VerticalAlignment="Center"/>
+						<c:MesenNumericTextBox Grid.Row="1" Grid.Column="1" Value="{Binding Scanline}" IsEnabled="False" Min="-1" Margin="0 0 4 1" MinHeight="12" Height="16"/>
+						<TextBlock Grid.Row="2" Text="{l:Translate lblBus}" VerticalAlignment="Center"/>
+						<c:MesenNumericTextBox Grid.Row="2" Grid.Column="1" Value="{Binding BusAddr}" IsEnabled="False" Hex="True" Max="0x3FFF" Margin="0 0 4 1" MinHeight="12" Height="16"/>
+						<TextBlock Grid.Row="3" Text="{l:Translate lblV}" VerticalAlignment="Center"/>
+						<c:MesenNumericTextBox Grid.Row="3" Grid.Column="1" Value="{Binding VramAddr}" Hex="True" Max="0x7FFF" Margin="0 0 4 1" MinHeight="12" Height="16"/>
+						<TextBlock Grid.Row="4" Text="{l:Translate lblT}" VerticalAlignment="Center"/>
+						<c:MesenNumericTextBox Grid.Row="4" Grid.Column="1" Value="{Binding TmpVramAddr}" Hex="True" Max="0x7FFF" Margin="0 0 4 1" MinHeight="12" Height="16"/>
+						<TextBlock Grid.Row="5" Text="{l:Translate lblScrollX}" VerticalAlignment="Center"/>
+						<c:MesenNumericTextBox Grid.Row="5" Grid.Column="1" Value="{Binding ScrollX}" Hex="True" Max="7" Margin="0 0 4 1" MinHeight="12" Height="16"/>
+					</Grid>
+				</StackPanel>
+
+				<StackPanel Grid.Column="1" Margin="4 0 0 0" IsEnabled="{Binding EditAllowed}">
+					<Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto">
+						<TextBlock Grid.Row="0" Text="{l:Translate lblCycle}"/>
+						<c:MesenNumericTextBox Grid.Row="0" Grid.Column="1" Value="{Binding CycleCount}" IsEnabled="False" Margin="0 0 4 1" MinHeight="12" Height="16"/>
+					</Grid>
+
+					<Rectangle Stroke="{StaticResource MesenGrayBorderColor}" StrokeThickness="1" Margin="2 4 2 4"/>
+
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="{l:Translate lblP}" FontWeight="Bold" VerticalAlignment="Center"/>
+						<c:MesenNumericTextBox Value="{Binding RegPS}" Hex="True" Max="0xFF" Margin="2 0 0 0" MinHeight="12" Height="16"/>
 					</StackPanel>
-					<StackPanel>
-						<CheckBox IsChecked="{Binding BgEnabled}" Content="{l:Translate chkBgEnabled}" />
-						<CheckBox IsChecked="{Binding SpritesEnabled}" Content="{l:Translate chkSpritesEnabled}" />
-						<CheckBox IsChecked="{Binding BgMaskLeft}" Content="{l:Translate chkBgMask}" />
-						<CheckBox IsChecked="{Binding SpriteMaskLeft}" Content="{l:Translate chkSpriteMask}" />
-						<CheckBox IsChecked="{Binding Grayscale}" Content="{l:Translate chkGrayscale}" />
-						<CheckBox IsChecked="{Binding IntensifyRed}" Content="{l:Translate chkIntensifyRed}" />
-						<CheckBox IsChecked="{Binding IntensifyGreen}" Content="{l:Translate chkIntensifyGreen}" />
-						<CheckBox IsChecked="{Binding IntensifyBlue}" Content="{l:Translate chkIntensifyBlue}" />
+
+					<Grid ColumnDefinitions="Auto,Auto" RowDefinitions="16,16,16,16" >
+						<CheckBox Grid.Row="0" IsChecked="{Binding FlagC}" Content="{l:Translate chkCarry}" ToolTip.Tip="{l:Translate chkCarryHint}" FontSize="10"/>
+						<CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding FlagZ}" Content="{l:Translate chkZero}" ToolTip.Tip="{l:Translate chkZeroHint}" FontSize="10"/>
+						<CheckBox Grid.Row="1" IsChecked="{Binding FlagI}" Content="{l:Translate chkInterrupt}" ToolTip.Tip="{l:Translate chkInterruptHint}" FontSize="10"/>
+						<CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding FlagD}" Content="{l:Translate chkDecimal}" ToolTip.Tip="{l:Translate chkDecimalHint}" FontSize="10"/>
+						<CheckBox Grid.Row="2" IsEnabled="False" Content="----" FontSize="10"/>
+						<CheckBox Grid.Row="2" Grid.Column="1" IsEnabled="False" Content="----" FontSize="10"/>
+						<CheckBox Grid.Row="3" IsChecked="{Binding FlagV}" Content="{l:Translate chkOverflow}" ToolTip.Tip="{l:Translate chkOverflowHint}" FontSize="10"/>
+						<CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding FlagN}" Content="{l:Translate chkNegative}" ToolTip.Tip="{l:Translate chkNegativeHint}" FontSize="10"/>
+					</Grid>
+
+					<Rectangle Stroke="{StaticResource MesenGrayBorderColor}" StrokeThickness="1" Margin="2 4 2 4"/>
+
+					<Grid ColumnDefinitions="Auto,Auto" RowDefinitions="21,21,21">
+						<Button Grid.Row="0" Content="{l:Translate lblGoTo}" Command="{Binding GoToAddressCmd}" IsEnabled="{Binding EditAllowed}" VerticalAlignment="Center" Margin="0 0 2 0" FontSize="10"/>
+						<c:MesenNumericTextBox Grid.Column="1" Value="{Binding GoToAddress}" Hex="True" Max="0xFFFF" Margin="0 0 4 1" MinHeight="12" Height="16"/>
+						<Button Grid.Row="1" Content="{l:Translate lblMovPc}" Command="{Binding MoveProgramCounterCmd}" IsEnabled="{Binding EditAllowed}" VerticalAlignment="Center" Margin="0 0 2 0" FontSize="10"/>
+						<c:MesenNumericTextBox Grid.Row="1" Grid.Column="1" Value="{Binding MoveProgramCounter}" Hex="True" Max="0xFFFF" Margin="0 0 4 1" MinHeight="12" Height="16"/>
+						<Button Grid.Row="2" Content="{l:Translate lblRunTo}" Command="{Binding RunToAddressCmd}" IsEnabled="{Binding EditAllowed}" VerticalAlignment="Center" Margin="0 0 2 0" FontSize="10"/>
+						<c:MesenNumericTextBox Grid.Row="2" Grid.Column="1" Value="{Binding RunToAddress}" Hex="True" Max="0xFFFF" Margin="0 0 4 1" MinHeight="12" Height="16"/>
+					</Grid>
+
+					<Rectangle Stroke="{StaticResource MesenGrayBorderColor}" StrokeThickness="1" Margin="2 4 2 4"/>
+
+					<TextBlock Text="{l:Translate lblBankSwitch}" FontWeight="Bold" Margin="0 0 0 2"/>
+					<StackPanel Orientation="Vertical" Spacing="2">
+						<StackPanel Spacing="6">
+							<CheckBox IsChecked="{Binding Config.Nes.BreakOnPrgBankSwitchBefore}" Content="{l:Translate chkNesBreakOnPrgBankSwitchBefore}" FontSize="10" VerticalAlignment="Center"/>
+							<TextBox Text="{Binding Config.Nes.PrgBankSwitchPages}"
+								PlaceholderText="{l:Translate lblBankSwitchPagesHint}"
+								IsVisible="{Binding Config.Nes.BreakOnPrgBankSwitchBefore}"
+								Width="120"
+							/>
+							<CheckBox IsChecked="{Binding Config.Nes.BreakOnChrBankSwitchBefore}" Content="{l:Translate chkNesBreakOnChrBankSwitchBefore}" FontSize="10" VerticalAlignment="Center"/>
+							<TextBox Text="{Binding Config.Nes.ChrBankSwitchPages}" 
+								PlaceholderText="{l:Translate lblBankSwitchPagesHint}"
+								IsVisible="{Binding Config.Nes.BreakOnChrBankSwitchBefore}"
+								Width="120"
+							/>
+						</StackPanel>
 					</StackPanel>
-				</WrapPanel>
-			</StackPanel>
+				</StackPanel>
+
+				<StackPanel Grid.Column="2" Margin="4 0 0 0">
+					<Grid ColumnDefinitions="Auto,Auto" RowDefinitions="18,Auto">						
+						<StackPanel Grid.Row="0" Orientation="Horizontal">
+							<TextBlock Text="{l:Translate lblSP}" VerticalAlignment="Center" FontWeight="Bold"/>
+							<c:MesenNumericTextBox Value="{Binding RegSP}" Hex="True" Max="0xFF" IsEnabled="{Binding EditAllowed}"/>
+						</StackPanel>
+						<TextBox
+							Grid.Row="1" 
+							TextWrapping="Wrap"
+							Width="85"
+							Height="200"
+							AcceptsReturn="True"
+							IsReadOnly="True"
+							Text="{Binding StackPreview}"
+						/>
+					</Grid>					
+				</StackPanel>
+			</Grid>
+
+			<Rectangle Stroke="{StaticResource MesenGrayBorderColor}" StrokeThickness="1" Margin="5 4 5 4"/>
+
+			<Grid ColumnDefinitions="Auto,Auto,Auto,Auto" Margin="2" IsEnabled="{Binding EditAllowed}">
+				<StackPanel Grid.Column="0" Margin="4 0 0 0">
+					<TextBlock Text="{l:Translate lblIrqHeader}" FontWeight="Bold" Margin="0 0 0 2"/>
+					<CheckBox IsChecked="{Binding FlagNmi}" Content="{l:Translate chkNMI}" ToolTip.Tip="{l:Translate chkNmiHint}" FontSize="10"/>
+					<CheckBox IsChecked="{Binding FlagIrqExternal}" Content="{l:Translate chkCart}" ToolTip.Tip="{l:Translate chkCartHint}" FontSize="10"/>
+					<CheckBox IsChecked="{Binding FlagIrqFrameCount}" Content="{l:Translate chkFrameCounter}" ToolTip.Tip="{l:Translate chkFrameCounterHint}" FontSize="10"/>
+					<CheckBox IsChecked="{Binding FlagIrqDmc}" Content="{l:Translate chkDMC}" ToolTip.Tip="{l:Translate chkDmcHint}" FontSize="10"/>
+				</StackPanel>
+				<StackPanel Grid.Column="1" Margin="4 0 0 0">				
+					<CheckBox IsChecked="{Binding VerticalWrite}" Content="{l:Translate chkVerticalWrite}" ToolTip.Tip="{l:Translate chkVerticalWriteHint}" FontSize="10"/>
+					<CheckBox IsChecked="{Binding BgAt1000}" Content="{l:Translate chkBgAt1000}" ToolTip.Tip="{l:Translate chkBgAt1000Hint}" FontSize="10"/>
+					<CheckBox IsChecked="{Binding SpritesAt1000}" Content="{l:Translate chkSpritesAt1000}" ToolTip.Tip="{l:Translate chkSpritesAt1000Hint}" FontSize="10"/>
+					<CheckBox IsChecked="{Binding LargeSprites}" Content="{l:Translate chkLargeSprites}" ToolTip.Tip="{l:Translate chkLargeSpritesHint}" FontSize="10"/>
+					<CheckBox IsChecked="{Binding NmiOnVBlank}" Content="{l:Translate chkNmiOnVBlank}" ToolTip.Tip="{l:Translate chkNmiOnVBlankHint}" FontSize="10"/>
+				</StackPanel>
+				<StackPanel Grid.Column="2" Margin="4 0 0 0">
+					<CheckBox IsChecked="{Binding Grayscale}" Content="{l:Translate chkGrayscale}" ToolTip.Tip="{l:Translate chkGrayscaleHint}" FontSize="10"/>
+					<CheckBox IsChecked="{Binding BgEnabled}" Content="{l:Translate chkBgEnabled}" ToolTip.Tip="{l:Translate chkBgEnabledHint}" FontSize="10"/>
+					<CheckBox IsChecked="{Binding SpritesEnabled}" Content="{l:Translate chkSpritesEnabled}" ToolTip.Tip="{l:Translate chkSpritesEnabledHint}" FontSize="10"/>
+					<CheckBox IsChecked="{Binding BgMaskLeft}" Content="{l:Translate chkBgMask}" ToolTip.Tip="{l:Translate chkBgMaskHint}" FontSize="10"/>
+					<CheckBox IsChecked="{Binding SpriteMaskLeft}" Content="{l:Translate chkSpriteMask}" ToolTip.Tip="{l:Translate chkSpriteMaskHint}" FontSize="10"/>
+					<CheckBox IsChecked="{Binding IntensifyRed}" Content="{l:Translate chkIntensifyRed}" ToolTip.Tip="{l:Translate chkIntensifyRedHint}" FontSize="10"/>
+					<CheckBox IsChecked="{Binding IntensifyGreen}" Content="{l:Translate chkIntensifyGreen}" ToolTip.Tip="{l:Translate chkIntensifyGreenHint}" FontSize="10"/>
+					<CheckBox IsChecked="{Binding IntensifyBlue}" Content="{l:Translate chkIntensifyBlue}" ToolTip.Tip="{l:Translate chkIntensifyBlueHint}" FontSize="10"/>
+				</StackPanel>
+				<StackPanel Grid.Column="3" Margin="4 0 0 0">
+					<CheckBox IsChecked="{Binding Sprite0Hit}" Content="{l:Translate chkSprite0Hit}" ToolTip.Tip="{l:Translate chkSprite0HitHint}" FontSize="10"/>
+					<CheckBox IsChecked="{Binding SpriteOverflow}" Content="{l:Translate chkSpriteOverflow}" ToolTip.Tip="{l:Translate chkSpriteOverflowHint}" FontSize="10"/>
+					<CheckBox IsChecked="{Binding VerticalBlank}" Content="{l:Translate chkVerticalBlank}" ToolTip.Tip="{l:Translate chkVerticalBlankHint}" FontSize="10"/>
+					<Rectangle Stroke="{StaticResource MesenGrayBorderColor}" StrokeThickness="1" Margin="2 4 2 4"/>
+					<CheckBox IsChecked="{Binding WriteToggle}" Content="{l:Translate chkWriteToggle}" ToolTip.Tip="{l:Translate chkWriteToggleHint}" FontSize="10"/>
+				</StackPanel>
+			</Grid>
 		</StackPanel>
 	</ScrollViewer>
 </UserControl>

@@ -225,6 +225,16 @@ namespace Mesen.Interop
 
 		[DllImport(DllPath)] public static extern void SetBreakpoints([MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] InteropBreakpoint[] breakpoints, UInt32 length);
 
+		[DllImport(DllPath)] public static extern void SetBankSwitchBreakConfig(
+			[MarshalAs(UnmanagedType.I1)] bool prgEnabled,
+			[MarshalAs(UnmanagedType.LPArray, SizeConst = 64)] int[] prgPages,
+			[MarshalAs(UnmanagedType.LPArray, SizeConst = 64)] byte[] prgNegated,
+			byte prgCount,
+			[MarshalAs(UnmanagedType.I1)] bool chrEnabled,
+			[MarshalAs(UnmanagedType.LPArray, SizeConst = 64)] int[] chrPages,
+			[MarshalAs(UnmanagedType.LPArray, SizeConst = 64)] byte[] chrNegated,
+			byte chrCount);
+
 		[DllImport(DllPath)] public static extern void SetInputOverrides(UInt32 index, DebugControllerState state);
 		[DllImport(DllPath)] private static extern void GetAvailableInputOverrides([In, Out] byte[] availableIndexes);
 

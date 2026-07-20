@@ -22,6 +22,7 @@
 #include "Core/Debugger/ITraceLogger.h"
 #include "Core/Debugger/TraceLogFileSaver.h"
 #include "Core/Debugger/FrozenAddressManager.h"
+#include "Core/Debugger/BankSwitchBreakpoint.h"
 #include "Core/Gameboy/GbTypes.h"
 #include "Utilities/StringUtilities.h"
 
@@ -134,6 +135,19 @@ extern "C"
 	DllExport void __stdcall SetBreakpoints(Breakpoint breakpoints[], uint32_t length)
 	{
 		WithDebugger(void, SetBreakpoints(breakpoints, length));
+	}
+
+	DllExport void __stdcall SetBankSwitchBreakConfig(
+		bool prgEnabled,
+		int32_t prgPages[],
+		uint8_t prgNegated[],
+		uint8_t prgCount,
+		bool chrEnabled,
+		int32_t chrPages[],
+		uint8_t chrNegated[],
+		uint8_t chrCount)
+	{
+		BankSwitchBreakpoint::SetConfig(prgEnabled, prgPages, prgNegated, prgCount, chrEnabled, chrPages, chrNegated, chrCount);
 	}
 
 	DllExport void __stdcall SetInputOverrides(uint32_t index, DebugControllerState state)

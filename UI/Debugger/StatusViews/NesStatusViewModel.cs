@@ -1,4 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Mesen.Config;
+using Mesen.Debugger.Disassembly;
+using Mesen.Debugger.ViewModels;
 using Mesen.Interop;
 using Mesen.Utilities;
 using System;
@@ -8,6 +12,10 @@ namespace Mesen.Debugger.StatusViews
 {
 	public partial class NesStatusViewModel : BaseConsoleStatusViewModel
 	{
+		public DebuggerConfig Config => ConfigManager.Config.Debug.Debugger;
+
+		public DebuggerWindowViewModel? Debugger { get; set; }
+
 		[ObservableProperty] public partial byte RegA { get; set; }
 		[ObservableProperty] public partial byte RegX { get; set; }
 		[ObservableProperty] public partial byte RegY { get; set; }
@@ -60,8 +68,20 @@ namespace Mesen.Debugger.StatusViews
 
 		[ObservableProperty] public partial string StackPreview { get; private set; } = "";
 
+		[ObservableProperty] public partial UInt16 GoToAddress { get; set; }
+		[ObservableProperty] public partial UInt16 MoveProgramCounter { get; set; }
+		[ObservableProperty] public partial UInt16 RunToAddress { get; set; }
+
+		public RelayCommand GoToAddressCmd { get; }
+		public RelayCommand MoveProgramCounterCmd { get; }
+		public RelayCommand RunToAddressCmd { get; }
+
 		public NesStatusViewModel()
 		{
+			GoToAddressCmd = new RelayCommand(ExecuteGoToAddress);
+			MoveProgramCounterCmd = new RelayCommand(ExecuteMoveProgramCounter);
+			RunToAddressCmd = new RelayCommand(ExecuteRunToAddress);
+
 			bool preventUpdate = false;
 
 			this.ObserveProp([nameof(FlagC), nameof(FlagD), nameof(FlagI), nameof(FlagN), nameof(FlagV), nameof(FlagZ)], () => {
@@ -87,6 +107,14 @@ namespace Mesen.Debugger.StatusViews
 				FlagC = (RegPS & (byte)NesCpuFlags.Carry) != 0;
 				preventUpdate = false;
 			});
+
+			Config.Nes.ObserveProp([
+					nameof(Config.Nes.BreakOnPrgBankSwitchBefore),
+					nameof(Config.Nes.PrgBankSwitchPages),
+					nameof(Config.Nes.BreakOnChrBankSwitchBefore),
+					nameof(Config.Nes.ChrBankSwitchPages)
+				], () => ConfigManager.Config.Debug.ApplyConfig()
+			);
 		}
 
 		protected override void InternalUpdateUiState()
@@ -194,6 +222,26 @@ namespace Mesen.Debugger.StatusViews
 
 			DebugApi.SetCpuState(cpu, CpuType.Nes);
 			DebugApi.SetPpuState(ppu, CpuType.Nes);
+		}
+
+		private void ExecuteGoToAddress()
+		{
+			Debugger?.ScrollToAddress((int)GoToAddress);
+		}
+
+		private void ExecuteMoveProgramCounter()
+		{
+			UpdateConsoleState();
+			DebugApi.SetProgramCounter(CpuType.Nes, MoveProgramCounter);
+			UpdateUiState();
+			Debugger?.UpdateDisassembly(true);
+		}
+
+		private void ExecuteRunToAddress()
+		{
+			Debugger?.RunToLocation(new LocationInfo {
+				RelAddress = new AddressInfo { Address = (int)RunToAddress, Type = MemoryType.NesMemory }
+			});
 		}
 	}
 }

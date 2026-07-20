@@ -17,5 +17,9 @@ namespace Mesen.Config
 		[ObservableProperty] public partial bool BreakOnInvalidVramAccess { get; set; } = false;
 		[ObservableProperty] public partial bool BreakOnInvalidOamWrite { get; set; } = false;
 		[ObservableProperty] public partial bool BreakOnDmaInputRead { get; set; } = false;
+		[ObservableProperty] public partial bool BreakOnPrgBankSwitchBefore { get; set; } = false;
+		[ObservableProperty] public partial bool BreakOnChrBankSwitchBefore { get; set; } = false;
+		[ObservableProperty] public partial string PrgBankSwitchPages { get; set; } = "";
+		[ObservableProperty] public partial string ChrBankSwitchPages { get; set; } = "";
 	}
 }

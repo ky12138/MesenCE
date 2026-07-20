@@ -1346,11 +1346,20 @@
 		</Form>
 
 		<Form ID="FunctionListView">
-			<Control ID="colFunction">函数</Control>
+			<Control ID="colFunction">标签</Control>
 			<Control ID="colCpuAddr">CPU地址</Control>
 			<Control ID="colRomAddr">ROM地址</Control>
 			<Control ID="colExecCount">执行次数</Control>
 			<Control ID="colLastExec">上次执行</Control>
+		</Form>
+
+		<Form ID="CallerCalleeView">
+			<Control ID="colFunction">标签</Control>
+			<Control ID="colCpuAddr">CPU地址</Control>
+			<Control ID="colRomAddr">ROM地址</Control>
+			<Control ID="colCallCount">次数</Control>
+			<Control ID="lblCallers">被下列函数调用</Control>
+			<Control ID="lblCallees">调用了下列函数</Control>
 		</Form>
 
 		<Form ID="LabelListView">
@@ -1773,46 +1782,85 @@
 		</Form>
 
 		<Form ID="NesStatusView">
-			<Control ID="lblSP">堆栈指针:</Control>
-			<Control ID="lblA">累加器:</Control>
-			<Control ID="lblX">变址X:</Control>
-			<Control ID="lblY">变址Y:</Control>
-			<Control ID="lblPC">程序计数器:</Control>
+			<Control ID="lblCpuHeader">CPU:</Control>
+			<Control ID="lblPpuHeader">PPU:</Control>
+			<Control ID="lblIrqHeader">IRQ中断:</Control>
+			<Control ID="lblStackLabel">堆栈:</Control>
+			<Control ID="lblGoTo">跳转到位置</Control>
+			<Control ID="lblMovPc">设置程序计数</Control>
+			<Control ID="lblRunTo">运行到位置</Control>
+			<Control ID="lblSP">SP 堆栈:</Control>
+			<Control ID="lblA">A 累加器:</Control>
+			<Control ID="lblX">X寻址寄存:</Control>
+			<Control ID="lblY">Y寻址寄存:</Control>
+			<Control ID="lblPC">PC程序计数:</Control>
 			<Control ID="lblCycle">周期:</Control>
-			<Control ID="lblP">状态寄存器:</Control>
-			<Control ID="chkCarry">进位</Control>
-			<Control ID="chkZero">零</Control>
-			<Control ID="chkInterrupt">中断</Control>
-			<Control ID="chkOverflow">溢出</Control>
-			<Control ID="chkDecimal">十进制</Control>
-			<Control ID="chkNegative">负数</Control>
+			<Control ID="lblP">P状态寄存器:</Control>
+			<Control ID="chkCarry">C 进位</Control>
+			<Control ID="chkZero">Z 零位</Control>
+			<Control ID="chkInterrupt">IRQ中断</Control>
+			<Control ID="chkOverflow">V溢出位</Control>
+			<Control ID="chkDecimal">D十进制</Control>
+			<Control ID="chkNegative">N负数位</Control>
 			<Control ID="lblIRQs">中断请求:</Control>
 			<Control ID="chkNMI">NMI</Control>
 			<Control ID="chkCart">卡带</Control>
-			<Control ID="chkFrameCounter">帧计数器</Control>
-			<Control ID="chkDMC">DMC</Control>
+			<Control ID="chkFrameCounter">APU帧计数</Control>
+			<Control ID="chkDMC">APU DMC</Control>
 			<Control ID="lblScanline">扫描线:</Control>
-			<Control ID="lblBus">总线:</Control>
-			<Control ID="lblV">V:</Control>
-			<Control ID="lblT">T:</Control>
-			<Control ID="lblScrollX">X:</Control>
-			<Control ID="chkSprite0Hit">Sprite 0命中</Control>
-			<Control ID="chkSpriteOverflow">Sprite溢出</Control>
+			<Control ID="lblBus">PPU总线:</Control>
+			<Control ID="lblPpuCycle">PPU周期:</Control>
+			<Control ID="lblV">VRAM地址:</Control>
+			<Control ID="lblT">T临时地址:</Control>
+			<Control ID="lblScrollX">X滚动漂移:</Control>
+			<Control ID="chkSprite0Hit">命中精灵0</Control>
+			<Control ID="chkSpriteOverflow">精灵溢出</Control>
 			<Control ID="chkVerticalBlank">垂直消隐</Control>
 			<Control ID="chkWriteToggle">写入切换</Control>
-			<Control ID="chkLargeSprites">大Sprites</Control>
+			<Control ID="chkLargeSprites">8x16精灵</Control>
 			<Control ID="chkVerticalWrite">垂直写入</Control>
 			<Control ID="chkNmiOnVBlank">VBlank时NMI</Control>
-			<Control ID="chkBgAt1000">BG在$1000</Control>
-			<Control ID="chkSpritesAt1000">Sprites在$1000</Control>
-			<Control ID="chkBgEnabled">BG启用</Control>
-			<Control ID="chkSpritesEnabled">Sprites启用</Control>
-			<Control ID="chkBgMask">BG遮罩</Control>
-			<Control ID="chkSpriteMask">Sprite遮罩</Control>
+			<Control ID="chkBgAt1000">背景在$1000</Control>
+			<Control ID="chkSpritesAt1000">精灵在$1000</Control>
+			<Control ID="chkBgEnabled">背景启用</Control>
+			<Control ID="chkSpritesEnabled">精灵启用</Control>
+			<Control ID="chkBgMask">背景遮罩</Control>
+			<Control ID="chkSpriteMask">精灵遮罩</Control>
 			<Control ID="chkGrayscale">灰度</Control>
 			<Control ID="chkIntensifyRed">增强红色</Control>
 			<Control ID="chkIntensifyGreen">增强绿色</Control>
 			<Control ID="chkIntensifyBlue">增强蓝色</Control>
+			<Control ID="chkCarryHint">进位标志，bit 7 产生进位时置位</Control>
+			<Control ID="chkZeroHint">零标志，结果为 0 时置位</Control>
+			<Control ID="chkInterruptHint">IRQ 禁用标志，为 1 时屏蔽可屏蔽中断</Control>
+			<Control ID="chkOverflowHint">有符号算术溢出标志</Control>
+			<Control ID="chkDecimalHint">十进制模式标志</Control>
+			<Control ID="chkNegativeHint">负数标志，结果 bit 7 为 1 时置位</Control>
+			<Control ID="chkNmiHint">非可屏蔽中断（NMI）待处理</Control>
+			<Control ID="chkCartHint">来自卡带的外部 IRQ</Control>
+			<Control ID="chkFrameCounterHint">来自 APU 帧计数器的 IRQ</Control>
+			<Control ID="chkDmcHint">来自 DMC 的 IRQ</Control>
+			<Control ID="chkSprite0HitHint">精灵 0 命中标志，精灵与背景碰撞时置位</Control>
+			<Control ID="chkSpriteOverflowHint">本条扫描线上超过 8 个精灵时置位</Control>
+			<Control ID="chkVerticalBlankHint">垂直消隐期间置位</Control>
+			<Control ID="chkWriteToggleHint">$2005/$2006 寄存器写入交替标志</Control>
+			<Control ID="chkLargeSpritesHint">开启后精灵为 8x16 像素模式</Control>
+			<Control ID="chkVerticalWriteHint">VRAM 地址增量为 32 而非 1</Control>
+			<Control ID="chkNmiOnVBlankHint">垂直消隐时产生 NMI 中断</Control>
+			<Control ID="chkBgAt1000Hint">背景图案表位于 $1000</Control>
+			<Control ID="chkSpritesAt1000Hint">精灵图案表位于 $1000</Control>
+			<Control ID="chkBgEnabledHint">启用背景渲染</Control>
+			<Control ID="chkSpritesEnabledHint">启用精灵渲染</Control>
+			<Control ID="chkBgMaskHint">隐藏左侧 8 像素的背景</Control>
+			<Control ID="chkSpriteMaskHint">隐藏左侧 8 像素的精灵</Control>
+			<Control ID="chkGrayscaleHint">输出替换为灰度</Control>
+			<Control ID="chkIntensifyRedHint">增强红色通道</Control>
+			<Control ID="chkIntensifyGreenHint">增强绿色通道</Control>
+			<Control ID="chkIntensifyBlueHint">增强蓝色通道</Control>
+			<Control ID="lblBankSwitch">Bank切页断点:</Control>
+			<Control ID="chkNesBreakOnPrgBankSwitchBefore">PRG切页前</Control>
+			<Control ID="chkNesBreakOnChrBankSwitchBefore">CHR切页前</Control>
+			<Control ID="lblBankSwitchPagesHint">如: 3,5 或 !8-12</Control>
 		</Form>
 
 		<Form ID="SnesStatusView">
@@ -2355,7 +2403,7 @@ E
 
 		<Message ID="GoToWindowHint">十六进制地址、标签以及监视窗口支持的任何表达式&#13;都可以使用。</Message>
 
-		<Message ID="ViewInAction">在 {0} 中查看</Message>
+		<Message ID="ViewInAction">{0} 中查看</Message>
 
 		<Message ID="btnOK">确定</Message>
 		<Message ID="btnCancel">取消</Message>
@@ -5768,13 +5816,13 @@ DMC 中断 (I)、帧中断 (F)、DMC 活动 (D)、长度计数器 &gt; 0 (N/T/2/
 			<Value ID="GoToCpuVector3">转到 [CPU 向量 3]</Value>
 			<Value ID="GoToCpuVector4">转到 [CPU 向量 4]</Value>
 			<Value ID="GoToCpuVector5">转到 [CPU 向量 5]</Value>
-			<Value ID="CodeWindow_ViewInMemoryViewer">代码窗口：在内存查看器中查看</Value>
-			<Value ID="CodeWindow_ViewInMemoryViewerAbsAddr">代码窗口：在内存查看器中查看[ROM]</Value>
+			<Value ID="CodeWindow_ViewInMemoryViewer">代码窗口：内存中查看</Value>
+			<Value ID="CodeWindow_ViewInMemoryViewerAbsAddr">代码窗口：内存中查看[ROM]</Value>
 			<Value ID="CodeWindow_AddToWatch">代码窗口：添加到监视</Value>
 			<Value ID="CodeWindow_GoToLocation">代码窗口：转到位置</Value>
 			<Value ID="CodeWindow_NavigateBack">代码窗口：向后导航</Value>
 			<Value ID="CodeWindow_NavigateForward">代码窗口：向前导航</Value>
-			<Value ID="CodeWindow_MoveProgramCounter">代码窗口：移动程序计数器</Value>
+			<Value ID="CodeWindow_MoveProgramCounter">代码窗口：设置程序计数器</Value>
 			<Value ID="CodeWindow_RunToLocation">代码窗口：运行到位置</Value>
 			<Value ID="CodeWindow_EditSelectedCode">代码窗口：编辑选中代码</Value>
 			<Value ID="CodeWindow_EditSourceFile">代码窗口：编辑源文件（源代码视图）</Value>
@@ -5793,17 +5841,17 @@ DMC 中断 (I)、帧中断 (F)、DMC 活动 (D)、长度计数器 &gt; 0 (N/T/2/
 			<Value ID="LabelList_AddToWatch">标签列表：添加到监视</Value>
 			<Value ID="LabelList_GoToLocation">标签列表：转到位置</Value>
 			<Value ID="LabelList_FindOccurrences">标签列表：查找匹配项</Value>
-			<Value ID="LabelList_ViewInMemoryViewer">标签列表：在内存查看器中查看</Value>
+			<Value ID="LabelList_ViewInMemoryViewer">标签列表：内存中查看</Value>
 			<Value ID="FunctionList_EditLabel">函数列表：编辑标签</Value>
 			<Value ID="FunctionList_ToggleBreakpoint">函数列表：切换断点</Value>
 			<Value ID="FunctionList_GoToLocation">函数列表：转到位置</Value>
 			<Value ID="FunctionList_FindOccurrences">标签列表：查找匹配项</Value>
-			<Value ID="FunctionList_ViewInMemoryViewer">函数列表：在内存查看器中查看</Value>
+			<Value ID="FunctionList_ViewInMemoryViewer">函数列表：内存中查看</Value>
 			<Value ID="BreakpointList_Add">断点列表：添加断点</Value>
 			<Value ID="BreakpointList_AddForbid">断点列表：添加禁止断点</Value>
 			<Value ID="BreakpointList_Edit">断点列表：编辑断点</Value>
 			<Value ID="BreakpointList_GoToLocation">断点列表：转到位置</Value>
-			<Value ID="BreakpointList_ViewInMemoryViewer">断点列表：在内存查看器中查看</Value>
+			<Value ID="BreakpointList_ViewInMemoryViewer">断点列表：内存中查看</Value>
 			<Value ID="BreakpointList_Delete">断点列表：删除断点</Value>
 			<Value ID="BreakpointList_EnableBreakpoint">断点列表：启用断点</Value>
 			<Value ID="BreakpointList_DisableBreakpoint">断点列表：禁用断点</Value>
@@ -5825,16 +5873,16 @@ DMC 中断 (I)、帧中断 (F)、DMC 活动 (D)、长度计数器 &gt; 0 (N/T/2/
 			<Value ID="SaveCdl">将 CDL 数据保存到...</Value>
 			<Value ID="TilemapViewer_EditTilemapBreakpoint">图块映射查看器 - 编辑断点（图块映射）</Value>
 			<Value ID="TilemapViewer_EditAttributeBreakpoint">图块映射查看器 - 编辑断点（属性）</Value>
-			<Value ID="TilemapViewer_ViewInMemoryViewer">图块映射查看器 - 在内存查看器中查看</Value>
-			<Value ID="TilemapViewer_ViewInTileViewer">图块映射查看器 - 在图块查看器中查看</Value>
+			<Value ID="TilemapViewer_ViewInMemoryViewer">图块映射查看器 - 内存中查看</Value>
+			<Value ID="TilemapViewer_ViewInTileViewer">图块映射查看器 - 图块查看器中查看</Value>
 			<Value ID="TilemapViewer_EditTile">图块映射查看器 - 编辑图块</Value>
-			<Value ID="TileViewer_ViewInMemoryViewer">图块查看器 - 在内存查看器中查看</Value>
+			<Value ID="TileViewer_ViewInMemoryViewer">图块查看器 - 内存中查看</Value>
 			<Value ID="TileViewer_EditTile">图块查看器 - 编辑图块</Value>
-			<Value ID="SpriteViewer_ViewInMemoryViewer">精灵查看器 - 在内存查看器中查看</Value>
-			<Value ID="SpriteViewer_ViewInTileViewer">精灵查看器 - 在图块查看器中查看</Value>
+			<Value ID="SpriteViewer_ViewInMemoryViewer">精灵查看器 - 内存中查看</Value>
+			<Value ID="SpriteViewer_ViewInTileViewer">精灵查看器 - 图块查看器中查看</Value>
 			<Value ID="SpriteViewer_EditSprite">精灵查看器 - 编辑精灵</Value>
 			<Value ID="PaletteViewer_EditColor">调色板查看器 - 编辑颜色</Value>
-			<Value ID="PaletteViewer_ViewInMemoryViewer">调色板查看器 - 在内存查看器中查看</Value>
+			<Value ID="PaletteViewer_ViewInMemoryViewer">调色板查看器 - 内存中查看</Value>
 			<Value ID="MemoryViewer_Freeze">冻结</Value>
 			<Value ID="MemoryViewer_Unfreeze">解冻</Value>
 			<Value ID="MemoryViewer_AddToWatch">添加到监视</Value>
@@ -5843,8 +5891,8 @@ DMC 中断 (I)、帧中断 (F)、DMC 活动 (D)、长度计数器 &gt; 0 (N/T/2/
 			<Value ID="MemoryViewer_Import">导入</Value>
 			<Value ID="MemoryViewer_Export">导出</Value>
 			<Value ID="MemoryViewer_ResetAccessCounters">重置访问统计</Value>
-			<Value ID="MemoryViewer_ViewInMemoryType">在 [内存类型] 中查看</Value>
-			<Value ID="MemoryViewer_ViewInDebugger">在调试器中查看</Value>
+			<Value ID="MemoryViewer_ViewInMemoryType"> [内存类型] 中查看</Value>
+			<Value ID="MemoryViewer_ViewInDebugger">调试器中查看</Value>
 
 			<Value ID="MemoryViewer_GoToPrevCode">导航到：上一个代码块</Value>
 			<Value ID="MemoryViewer_GoToNextCode">导航到：下一个代码块</Value>
@@ -5867,8 +5915,8 @@ DMC 中断 (I)、帧中断 (F)、DMC 活动 (D)、长度计数器 &gt; 0 (N/T/2/
 
 			<Value ID="TraceLogger_EditBreakpoint">跟踪记录器 - 编辑断点</Value>
 			<Value ID="TraceLogger_EditLabel">跟踪记录器 - 编辑标签</Value>
-			<Value ID="TraceLogger_ViewInDebugger">跟踪记录器 - 在调试器中查看</Value>
-			<Value ID="TraceLogger_ViewInMemoryViewer">跟踪记录器 - 在内存查看器中查看</Value>
+			<Value ID="TraceLogger_ViewInDebugger">跟踪记录器 - 调试器中查看</Value>
+			<Value ID="TraceLogger_ViewInMemoryViewer">跟踪记录器 - 内存中查看</Value>
 
 			<Value ID="RegisterViewer_EditBreakpoint">寄存器查看器 - 编辑断点</Value>
 
@@ -5983,11 +6031,12 @@ DMC 中断 (I)、帧中断 (F)、DMC 活动 (D)、长度计数器 &gt; 0 (N/T/2/
 			<Value ID="HelpApiReference">API 参考</Value>
 			<Value ID="RecentScripts">最近使用的脚本</Value>
 
-			<Value ID="GoToLocation">转到位置</Value>
+			<Value ID="GoToLocation">跳转到位置</Value>
+			<Value ID="LocateInFunctionList">在函数列表中定位</Value>
 			
 			<Value ID="ExportToPng">导出为 PNG</Value>
-			<Value ID="ViewInTileViewer">在图块查看器中查看</Value>
-			<Value ID="ViewInMemoryViewer">在内存查看器中查看</Value>
+			<Value ID="ViewInTileViewer">图块查看器中查看</Value>
+			<Value ID="ViewInMemoryViewer">内存中查看</Value>
 			
 			<Value ID="LoadTblFile">加载 TBL 文件...</Value>
 			<Value ID="ResetTblMappings">重置 TBL 映射</Value>
@@ -6110,7 +6159,7 @@ DMC 中断 (I)、帧中断 (F)、DMC 活动 (D)、长度计数器 &gt; 0 (N/T/2/
 
 			<Value ID="ToggleBreakpoint">切换断点</Value>
 			<Value ID="EditSelectedCode">编辑选中代码</Value>
-			<Value ID="ViewInDebugger">在调试器中查看</Value>
+			<Value ID="ViewInDebugger">调试器中查看</Value>
 			
 			<Value ID="EnableBreakpoint">启用断点</Value>
 			<Value ID="DisableBreakpoint">禁用断点</Value>
@@ -6123,7 +6172,7 @@ DMC 中断 (I)、帧中断 (F)、DMC 活动 (D)、长度计数器 &gt; 0 (N/T/2/
 			<Value ID="LoadCdl">从...加载 CDL 数据</Value>
 			<Value ID="SaveCdl">将 CDL 数据保存为...</Value>
 
-			<Value ID="MoveProgramCounter">移动程序计数器</Value>
+			<Value ID="MoveProgramCounter">设置程序计数器</Value>
 			<Value ID="RunToLocation">运行到位置</Value>
 
 			<Value ID="ShowToolbar">显示工具栏</Value>

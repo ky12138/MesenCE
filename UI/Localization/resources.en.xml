@@ -1774,6 +1774,13 @@
 		</Form>
 
 		<Form ID="NesStatusView">
+			<Control ID="lblCpuHeader">CPU:</Control>
+			<Control ID="lblPpuHeader">PPU:</Control>
+			<Control ID="lblIrqHeader">IRQ:</Control>
+			<Control ID="lblStackLabel">SP:</Control>
+			<Control ID="lblGoTo">Go to</Control>
+			<Control ID="lblMovPc">Mov PC</Control>
+			<Control ID="lblRunTo">Run to</Control>
 			<Control ID="lblSP">SP:</Control>
 			<Control ID="lblA">A:</Control>
 			<Control ID="lblX">X:</Control>
@@ -1794,6 +1801,7 @@
 			<Control ID="chkDMC">DMC</Control>
 			<Control ID="lblScanline">Scanline:</Control>
 			<Control ID="lblBus">Bus:</Control>
+			<Control ID="lblPpuCycle">PPU Cycle:</Control>
 			<Control ID="lblV">V:</Control>
 			<Control ID="lblT">T:</Control>
 			<Control ID="lblScrollX">X:</Control>
@@ -1814,6 +1822,37 @@
 			<Control ID="chkIntensifyRed">Intensify Red</Control>
 			<Control ID="chkIntensifyGreen">Intensify Green</Control>
 			<Control ID="chkIntensifyBlue">Intensify Blue</Control>
+			<Control ID="chkCarryHint">Carry flag, set on carry out of bit 7</Control>
+			<Control ID="chkZeroHint">Zero flag, set when result is zero</Control>
+			<Control ID="chkInterruptHint">IRQ disable flag, prevents maskable interrupts</Control>
+			<Control ID="chkOverflowHint">Overflow flag for signed arithmetic</Control>
+			<Control ID="chkDecimalHint">Decimal mode flag</Control>
+			<Control ID="chkNegativeHint">Negative flag, set when bit 7 of result is 1</Control>
+			<Control ID="chkNmiHint">Non-Maskable Interrupt pending</Control>
+			<Control ID="chkCartHint">External IRQ from cartridge</Control>
+			<Control ID="chkFrameCounterHint">IRQ from APU frame counter</Control>
+			<Control ID="chkDmcHint">IRQ from Delta Modulation Channel</Control>
+			<Control ID="chkSprite0HitHint">Sprite 0 hit flag, set on sprite-background collision</Control>
+			<Control ID="chkSpriteOverflowHint">Set when more than 8 sprites on a scanline</Control>
+			<Control ID="chkVerticalBlankHint">Set during vertical blanking period</Control>
+			<Control ID="chkWriteToggleHint">First/second write toggle for $2005/$2006</Control>
+			<Control ID="chkLargeSpritesHint">8x16 sprite mode when enabled</Control>
+			<Control ID="chkVerticalWriteHint">VRAM increment by 32 instead of 1</Control>
+			<Control ID="chkNmiOnVBlankHint">Enable NMI generation on vertical blank</Control>
+			<Control ID="chkBgAt1000Hint">Background pattern table at $1000</Control>
+			<Control ID="chkSpritesAt1000Hint">Sprite pattern table at $1000</Control>
+			<Control ID="chkBgEnabledHint">Enable background rendering</Control>
+			<Control ID="chkSpritesEnabledHint">Enable sprite rendering</Control>
+			<Control ID="chkBgMaskHint">Hide background in leftmost 8 pixels</Control>
+			<Control ID="chkSpriteMaskHint">Hide sprites in leftmost 8 pixels</Control>
+			<Control ID="chkGrayscaleHint">Replace color output with grayscale</Control>
+			<Control ID="chkIntensifyRedHint">Emphasize red color channel</Control>
+			<Control ID="chkIntensifyGreenHint">Emphasize green color channel</Control>
+			<Control ID="chkIntensifyBlueHint">Emphasize blue color channel</Control>
+			<Control ID="lblBankSwitch">Bank Switch Break:</Control>
+			<Control ID="chkNesBreakOnPrgBankSwitchBefore">PRG bank switch (before)</Control>
+			<Control ID="chkNesBreakOnChrBankSwitchBefore">CHR bank switch (before)</Control>
+			<Control ID="lblBankSwitchPagesHint">e.g. 3,5 or !8-12</Control>
 		</Form>
 
 		<Form ID="SnesStatusView">

@@ -346,6 +346,8 @@ enum class BreakSource
 	NesInvalidVramAccess,
 	NesInvalidOamWrite,
 	NesDmaInputRead,
+	NesBreakOnPrgBankSwitchBefore,
+	NesBreakOnChrBankSwitchBefore,
 
 	PceBreakOnInvalidVramAddress,
 

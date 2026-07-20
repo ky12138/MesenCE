@@ -658,6 +658,7 @@
     <ClInclude Include="Shared\Video\BaseVideoFilter.h" />
     <ClInclude Include="Shared\FirmwareHelper.h" />
     <ClInclude Include="Debugger\Breakpoint.h" />
+    <ClInclude Include="Debugger\BankSwitchBreakpoint.h" />
     <ClInclude Include="Debugger\BreakpointManager.h" />
     <ClInclude Include="Debugger\CallstackManager.h" />
     <ClInclude Include="SNES\CartTypes.h" />
@@ -981,6 +982,7 @@
     <ClCompile Include="Shared\Video\BaseVideoFilter.cpp" />
     <ClCompile Include="Shared\BatteryManager.cpp" />
     <ClCompile Include="Debugger\Breakpoint.cpp" />
+    <ClCompile Include="Debugger\BankSwitchBreakpoint.cpp" />
     <ClCompile Include="Debugger\BreakpointManager.cpp" />
     <ClCompile Include="SNES\Coprocessors\BSX\BsxCart.cpp" />
     <ClCompile Include="SNES\Coprocessors\BSX\BsxMemoryPack.cpp" />

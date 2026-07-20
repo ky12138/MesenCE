@@ -40,6 +40,15 @@ namespace Mesen.Config
 
 		public void ApplyConfig()
 		{
+			(int[] prgPages, byte[] prgNegated, byte prgCount) = ParseBankSwitchPages(Debugger.Nes.PrgBankSwitchPages);
+			(int[] chrPages, byte[] chrNegated, byte chrCount) = ParseBankSwitchPages(Debugger.Nes.ChrBankSwitchPages);
+
+			DebugApi.SetBankSwitchBreakConfig(
+				Debugger.Nes.BreakOnPrgBankSwitchBefore,
+				prgPages, prgNegated, prgCount,
+				Debugger.Nes.BreakOnChrBankSwitchBefore,
+				chrPages, chrNegated, chrCount);
+
 			ConfigApi.SetDebugConfig(new InteropDebugConfig() {
 				BreakOnUninitRead = Debugger.BreakOnUninitRead,
 				BreakOnUnidentifiedCode = Debugger.BreakOnUnidentifiedCode,
@@ -106,6 +115,45 @@ namespace Mesen.Config
 				ScriptAllowNetworkAccess = ScriptWindow.AllowNetworkAccess,
 				ScriptTimeout = ScriptWindow.ScriptTimeout
 			});
+		}
+
+		private static (int[] Pages, byte[] Negated, byte Count) ParseBankSwitchPages(string text)
+		{
+			int[] pages = new int[64];
+			byte[] negated = new byte[64];
+			byte count = 0;
+			if(string.IsNullOrWhiteSpace(text)) {
+				return (pages, negated, count);
+			}
+			foreach(var part in text.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) {
+				if(count >= 64) {
+					break;
+				}
+				string p = part;
+				bool neg = false;
+				if(p.StartsWith("!")) {
+					neg = true;
+					p = p.Substring(1);
+				}
+				if(p.Contains('-')) {
+					string[] r = p.Split('-');
+					if(r.Length == 2 && int.TryParse(r[0], out int lo) && int.TryParse(r[1], out int hi)) {
+						if(hi < lo) {
+							(hi, lo) = (lo, hi);
+						}
+						for(int v = lo; v <= hi && count < 64; v++) {
+							pages[count] = v;
+							negated[count] = neg ? (byte)1 : (byte)0;
+							count++;
+						}
+					}
+				} else if(int.TryParse(p, out int val)) {
+					pages[count] = val;
+					negated[count] = neg ? (byte)1 : (byte)0;
+					count++;
+				}
+			}
+			return (pages, negated, count);
 		}
 	}
 

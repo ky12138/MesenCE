@@ -8,6 +8,7 @@
 #include "NES/RomData.h"
 #include "NES/Epsm.h"
 #include "Debugger/DebugTypes.h"
+#include "Debugger/BankSwitchBreakpoint.h"
 #include "Shared/MessageManager.h"
 #include "Shared/BatteryManager.h"
 #include "Shared/EmuSettings.h"
@@ -406,6 +407,14 @@ void BaseMapper::SelectPrgPage(uint16_t slot, uint16_t page, PrgMemoryType memor
 	} else {
 		uint16_t startAddr = 0x8000 + slot * _prgRomPageSize;
 		uint16_t endAddr = startAddr + _prgRomPageSize - 1;
+
+		int32_t oldOffset = _prgMemoryOffset[startAddr >> 8];
+		if(oldOffset != (int32_t)(page * _prgRomPageSize)) {
+			if(BankSwitchBreakpoint::ShouldBreakPrg((int32_t)page)) {
+				_emu->BreakIfDebugging(CpuType::Nes, BreakSource::NesBreakOnPrgBankSwitchBefore);
+			}
+		}
+
 		SetCpuMemoryMapping(startAddr, endAddr, page, memoryType);
 	}
 }
@@ -442,6 +451,14 @@ void BaseMapper::SelectChrPage(uint16_t slot, uint16_t page, ChrMemoryType memor
 
 	uint16_t startAddr = slot * pageSize;
 	uint16_t endAddr = startAddr + pageSize - 1;
+
+	int32_t oldOffset = _chrMemoryOffset[startAddr >> 8];
+	if(oldOffset != (int32_t)(page * pageSize)) {
+		if(BankSwitchBreakpoint::ShouldBreakChr((int32_t)page)) {
+			_emu->BreakIfDebugging(CpuType::Nes, BreakSource::NesBreakOnChrBankSwitchBefore);
+		}
+	}
+
 	SetPpuMemoryMapping(startAddr, endAddr, page, memoryType);
 }
 

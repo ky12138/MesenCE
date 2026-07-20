@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Debugger/Debugger.h"
 #include "Debugger/DebugTypes.h"
+#include "Debugger/BankSwitchBreakpoint.h"
 #include "Debugger/DisassemblyInfo.h"
 #include "Debugger/MemoryDumper.h"
 #include "Debugger/MemoryAccessCounter.h"
@@ -815,6 +816,8 @@ bool Debugger::IsBreakOptionEnabled(BreakSource src)
 		case BreakSource::NesInvalidVramAccess: return cfg.NesBreakOnInvalidVramAccess;
 		case BreakSource::NesInvalidOamWrite: return cfg.NesBreakOnInvalidOamWrite;
 		case BreakSource::NesDmaInputRead: return cfg.NesBreakOnDmaInputRead;
+		case BreakSource::NesBreakOnPrgBankSwitchBefore: return BankSwitchBreakpoint::IsPrgEnabled();
+		case BreakSource::NesBreakOnChrBankSwitchBefore: return BankSwitchBreakpoint::IsChrEnabled();
 		case BreakSource::PceBreakOnInvalidVramAddress: return cfg.PceBreakOnInvalidVramAddress;
 		case BreakSource::GbaInvalidOpCode: return cfg.GbaBreakOnInvalidOpCode;
 		case BreakSource::GbaUnalignedMemoryAccess: return cfg.GbaBreakOnUnalignedMemAccess;

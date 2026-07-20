@@ -130,6 +130,10 @@ namespace Mesen.Debugger.ViewModels
 				_ => null
 			};
 
+			if(ConsoleStatus is NesStatusViewModel nesStatus) {
+				nesStatus.Debugger = this;
+			}
+
 			DockFactory = new DebuggerDockFactory(Config.SavedDockLayout);
 
 			DockFactory.BreakpointListTool.Model = BreakpointList;
