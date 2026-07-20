@@ -60,6 +60,15 @@ namespace Mesen.Debugger.Utilities
 				addRow(ResourceHelper.GetMessage("ExprTooltip_IsWrite"));
 				addRow(ResourceHelper.GetMessage("ExprTooltip_IsDma"));
 				addRow(ResourceHelper.GetMessage("ExprTooltip_IsDummy"));
+
+				addRow(" ");
+				addBoldRow(ResourceHelper.GetMessage("ExprTooltip_AccessCounters"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_ReadCount"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_WriteCount"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_ExecCount"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_LastRead"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_LastWrite"));
+				addRow(ResourceHelper.GetMessage("ExprTooltip_LastExec"));
 			}
 
 			addRow(" ");
@@ -78,6 +87,12 @@ namespace Mesen.Debugger.Utilities
 			addRow(ResourceHelper.GetMessage("ExprTooltip_Example2"));
 			addRow(ResourceHelper.GetMessage("ExprTooltip_Example3"));
 			addRow(ResourceHelper.GetMessage("ExprTooltip_Example4"));
+
+			if(!forWatch) {
+				addRow("  rc > 100");
+				addRow("  wc > 0 && rc == 0");
+				addRow("  [$300] == $FF && rc > 10");
+			}
 
 			return panel;
 		}

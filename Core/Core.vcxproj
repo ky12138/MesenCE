@@ -729,6 +729,7 @@
     <ClInclude Include="Shared\Interfaces\IRenderingDevice.h" />
     <ClInclude Include="Shared\KeyManager.h" />
     <ClInclude Include="Debugger\MemoryDumper.h" />
+    <ClInclude Include="Debugger\MemorySearchExpression.h" />
     <ClInclude Include="SNES\SnesMemoryManager.h" />
     <ClInclude Include="Shared\MessageManager.h" />
     <ClInclude Include="Shared\NotificationManager.h" />
@@ -1056,6 +1057,7 @@
     <ClCompile Include="Debugger\LuaCallHelper.cpp" />
     <ClCompile Include="Debugger\MemoryAccessCounter.cpp" />
     <ClCompile Include="Debugger\MemoryDumper.cpp" />
+    <ClCompile Include="Debugger\MemorySearchExpression.cpp" />
     <ClCompile Include="SNES\SnesMemoryManager.cpp" />
     <ClCompile Include="SNES\MemoryMappings.cpp" />
     <ClCompile Include="Shared\Movies\MesenMovie.cpp" />

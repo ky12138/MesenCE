@@ -16,6 +16,7 @@
 #include "Debugger/ScriptHost.h"
 #include "Debugger/CallstackManager.h"
 #include "Debugger/ExpressionEvaluator.h"
+#include "Debugger/MemorySearchExpression.h"
 #include "Debugger/BaseEventManager.h"
 #include "Debugger/TraceLogFileSaver.h"
 #include "Debugger/CdlManager.h"
@@ -134,6 +135,7 @@ Debugger::Debugger(Emulator* emu, IConsole* console)
 
 Debugger::~Debugger()
 {
+	CleanupMemorySearchEvaluators(this);
 	Release();
 }
 

@@ -2,6 +2,7 @@
 #include "Core/Shared/Emulator.h"
 #include "Core/Shared/DebuggerRequest.h"
 #include "Core/Debugger/Debugger.h"
+#include "Core/Debugger/MemorySearchExpression.h"
 #include "Core/Debugger/IDebugger.h"
 #include "Core/Debugger/MemoryDumper.h"
 #include "Core/Debugger/MemoryAccessCounter.h"
@@ -174,6 +175,20 @@ extern "C"
 	DllExport int64_t __stdcall EvaluateExpression(const char* expression, CpuType cpuType, EvalResultType* resultType, bool useCache)
 	{
 		return WithDebugger(int64_t, EvaluateExpression(expression, cpuType, *resultType, useCache));
+	}
+
+	DllExport int64_t __stdcall EvaluateExpressionForAddress(const char* expression, CpuType cpuType, uint32_t address, AddressCounters* counters, uint32_t counterCount, EvalResultType* resultType)
+	{
+		return WrapDebuggerCall<int64_t>([&](Debugger* dbg) -> int64_t {
+			return EvaluateMemorySearchExpressionForAddress(dbg, expression, cpuType, address, counters, counterCount, *resultType);
+		});
+	}
+
+	DllExport void __stdcall EvaluateExpressionForRange(const char* expression, CpuType cpuType, uint32_t startAddr, uint32_t endAddr, AddressCounters* counters, uint32_t counterCount, uint8_t* results)
+	{
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
+			EvaluateMemorySearchExpressionForRange(dbg, expression, cpuType, startAddr, endAddr, counters, counterCount, results);
+		});
 	}
 
 	DllExport void __stdcall GetCallstack(CpuType cpuType, StackFrameInfo* callstackArray, uint32_t& callstackSize)
