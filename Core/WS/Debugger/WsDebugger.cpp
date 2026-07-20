@@ -93,6 +93,9 @@ void WsDebugger::ProcessInstruction()
 
 	if(addressInfo.Address >= 0) {
 		if(addressInfo.Type == MemoryType::WsPrgRom) {
+			if(_settings->GetDebugConfig().BreakOnUnidentifiedCode && !_codeDataLogger->IsCode(addressInfo.Address)) {
+				_step->Break(BreakSource::BreakOnUnidentifiedCode);
+			}
 			if(WsDisUtils::IsConditionalJump(_prevOpCode)) {
 				uint8_t opSize = WsDisUtils::GetOpSize(_prevProgramCounter, MemoryType::WsMemory, _memoryDumper);
 				_codeDataLogger->SetCode(addressInfo.Address, WsDisUtils::GetOpFlags(_prevOpCode, pc, _prevProgramCounter, opSize));

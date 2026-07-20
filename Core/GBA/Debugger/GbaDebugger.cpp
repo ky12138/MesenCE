@@ -106,6 +106,9 @@ void GbaDebugger::ProcessInstruction()
 
 	if(addressInfo.Type != MemoryType::None) {
 		if(addressInfo.Type == MemoryType::GbaPrgRom) {
+			if(_settings->GetDebugConfig().BreakOnUnidentifiedCode && !_codeDataLogger->IsCode(addressInfo.Address)) {
+				_step->Break(BreakSource::BreakOnUnidentifiedCode);
+			}
 			_codeDataLogger->SetCode<accessWidth>(addressInfo.Address, GbaDisUtils::GetOpFlags(_prevOpCode, _prevFlags, pc, _prevProgramCounter) | flags);
 		}
 		_disassembler->BuildCache(addressInfo, flags, CpuType::Gba);

@@ -32,6 +32,7 @@ namespace Mesen.Config
 		[ObservableProperty] public partial WsDebuggerConfig Ws { get; set; } = new();
 
 		[ObservableProperty] public partial bool BreakOnUninitRead { get; set; } = false;
+		[ObservableProperty] public partial bool BreakOnUnidentifiedCode { get; set; } = false;
 		[ObservableProperty] public partial bool BreakOnOpen { get; set; } = true;
 		[ObservableProperty] public partial bool BreakOnPowerCycleReset { get; set; } = true;
 

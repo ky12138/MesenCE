@@ -42,6 +42,7 @@ namespace Mesen.Config
 		{
 			ConfigApi.SetDebugConfig(new InteropDebugConfig() {
 				BreakOnUninitRead = Debugger.BreakOnUninitRead,
+				BreakOnUnidentifiedCode = Debugger.BreakOnUnidentifiedCode,
 				ShowJumpLabels = Debugger.ShowJumpLabels,
 				DrawPartialFrame = Debugger.DrawPartialFrame,
 				ShowVerifiedData = Debugger.VerifiedDataDisplay == CodeDisplayMode.Show,
@@ -111,6 +112,7 @@ namespace Mesen.Config
 	public struct InteropDebugConfig
 	{
 		[MarshalAs(UnmanagedType.I1)] public bool BreakOnUninitRead;
+		[MarshalAs(UnmanagedType.I1)] public bool BreakOnUnidentifiedCode;
 
 		[MarshalAs(UnmanagedType.I1)] public bool ShowJumpLabels;
 		[MarshalAs(UnmanagedType.I1)] public bool DrawPartialFrame;

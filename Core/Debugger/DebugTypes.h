@@ -327,6 +327,7 @@ enum class BreakSource
 	BreakOnWdm,
 	BreakOnStp,
 	BreakOnUninitMemoryRead,
+	BreakOnUnidentifiedCode,
 
 	GbInvalidOamAccess,
 	GbInvalidVramAccess,

@@ -260,6 +260,10 @@
 				Content="{l:Translate chkBreakOnUninitRead}"
 			/>
 			<CheckBox
+				IsChecked="{Binding Config.BreakOnUnidentifiedCode}"
+				Content="{l:Translate chkBreakOnUnidentifiedCode}"
+			/>
+			<CheckBox
 				IsChecked="{Binding Config.BreakOnPowerCycleReset}"
 				Content="{l:Translate chkBreakOnPowerCycleReset}"
 			/>

@@ -107,6 +107,9 @@ void PceDebugger::ProcessInstruction()
 	bool needDisassemble = _traceLogger->IsEnabled() || _settings->CheckDebuggerFlag(DebuggerFlags::PceDebuggerEnabled);
 	if(addressInfo.Address >= 0) {
 		if(addressInfo.Type == MemoryType::PcePrgRom) {
+			if(_settings->GetDebugConfig().BreakOnUnidentifiedCode && !_codeDataLogger->IsCode(addressInfo.Address)) {
+				_step->Break(BreakSource::BreakOnUnidentifiedCode);
+			}
 			_codeDataLogger->SetCode(addressInfo.Address, PceDisUtils::GetOpFlags(_prevOpCode, pc, _prevProgramCounter));
 		}
 		if(needDisassemble) {
