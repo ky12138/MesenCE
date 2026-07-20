@@ -53,6 +53,8 @@ namespace Mesen.Config
 
 		[ObservableProperty] public partial bool RefreshWhileRunning { get; set; } = false;
 
+		[ObservableProperty] public bool ShowLastExecTimeInSeconds { get; set; } = false;
+
 		[ObservableProperty] public partial bool BringToFrontOnBreak { get; set; } = true;
 		[ObservableProperty] public partial bool BringToFrontOnPause { get; set; } = false;
 		[ObservableProperty] public partial bool FocusGameOnResume { get; set; } = false;

@@ -41,6 +41,11 @@ void Profiler::StackFunction(AddressInfo& addr, StackFrameFlags stackFlag)
 			_stackFlags.pop_front();
 		}
 
+		// Record caller->callee relationship
+		if(_currentFunction >= 0 && _functions.find(_currentFunction) != _functions.end()) {
+			_callerCalleeTracker.RecordCall(_functions[_currentFunction].Address, addr);
+		}
+
 		ProfiledFunction& func = _functions[key];
 		func.CallCount++;
 		func.Flags = stackFlag;
@@ -123,6 +128,7 @@ void Profiler::InternalReset()
 	_functions.clear();
 	_functions[ResetFunctionIndex] = ProfiledFunction();
 	_functions[ResetFunctionIndex].Address = { ResetFunctionIndex, MemoryType::None };
+	_callerCalleeTracker.Reset();
 }
 
 void Profiler::GetProfilerData(ProfiledFunction* profilerData, uint32_t& functionCount)
@@ -140,4 +146,9 @@ void Profiler::GetProfilerData(ProfiledFunction* profilerData, uint32_t& functio
 			break;
 		}
 	}
+}
+
+CallerCalleeTracker* Profiler::GetCallerCalleeTracker()
+{
+	return &_callerCalleeTracker;
 }

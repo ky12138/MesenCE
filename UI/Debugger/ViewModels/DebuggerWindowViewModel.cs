@@ -41,6 +41,7 @@ namespace Mesen.Debugger.ViewModels
 		[ObservableProperty] public partial BaseConsoleStatusViewModel? ConsoleStatus { get; private set; }
 		[ObservableProperty] public partial LabelListViewModel LabelList { get; private set; }
 		[ObservableProperty] public partial FunctionListViewModel? FunctionList { get; private set; }
+		[ObservableProperty] public partial CallerCalleeViewModel? CallerCallee { get; private set; }
 		[ObservableProperty] public partial CallStackViewModel CallStack { get; private set; }
 		[ObservableProperty] public partial SourceViewViewModel? SourceView { get; private set; }
 		[ObservableProperty] public partial MemoryMappingViewModel? MemoryMappings { get; private set; }
@@ -110,6 +111,7 @@ namespace Mesen.Debugger.ViewModels
 			ControllerList = new ControllerListViewModel(consoleType);
 			if(CpuType.SupportsFunctionList()) {
 				FunctionList = AddDisposable(new FunctionListViewModel(CpuType, this));
+				CallerCallee = AddDisposable(new CallerCalleeViewModel(CpuType, this));
 			}
 			CallStack = AddDisposable(new CallStackViewModel(CpuType, this));
 			WatchList = AddDisposable(new WatchListViewModel(CpuType));
@@ -139,6 +141,7 @@ namespace Mesen.Debugger.ViewModels
 			DockFactory.BreakpointListTool.Model = BreakpointList;
 			DockFactory.LabelListTool.Model = LabelList;
 			DockFactory.FunctionListTool.Model = FunctionList;
+			DockFactory.CallerCalleeTool.Model = CallerCallee;
 			DockFactory.CallStackTool.Model = CallStack;
 			DockFactory.WatchListTool.Model = WatchList;
 			DockFactory.FindResultListTool.Model = FindResultList;
@@ -164,6 +167,23 @@ namespace Mesen.Debugger.ViewModels
 			LabelManager.OnLabelUpdated += LabelManager_OnLabelUpdated;
 			BreakpointManager.BreakpointsChanged += BreakpointManager_BreakpointsChanged;
 			BreakpointManager.AddCpuType(CpuType);
+
+			if(FunctionList != null && CallerCallee != null) {
+				var functionList = FunctionList;
+				var callerCallee = CallerCallee;
+				functionList.Selection.SelectionChanged += (s, e) => {
+					if(functionList.Selection?.SelectedItem is FunctionViewModel vm) {
+						callerCallee.UpdateForFunction(vm.FuncAbsAddr,
+							vm.FuncRelAddr.Address >= 0
+								? RelAddressDisplayCache[vm.FuncAbsAddr]
+								: vm.AbsAddressDisplay
+						);
+					} else {
+						callerCallee.UpdateForFunction(new AddressInfo() { Address = -1, Type = MemoryType.None },"");
+					}
+				};
+			}
+
 			ConfigApi.SetDebuggerFlag(CpuType.GetDebuggerFlag(), true);
 		}
 
@@ -174,12 +194,29 @@ namespace Mesen.Debugger.ViewModels
 			if(FunctionList == null) {
 				DockFactory.CloseDockable(DockFactory.FunctionListTool);
 			}
+			if(CallerCallee == null) {
+				DockFactory.CloseDockable(DockFactory.CallerCalleeTool);
+			}
+
+			// Inject CallerCalleeTool into the layout if saved layout doesn't include it
+			if(CallerCallee != null && !IsToolVisible(DockFactory.CallerCalleeTool)) {
+				InjectToolIntoSameDockAs(DockFactory.CallerCalleeTool, DockFactory.FunctionListTool);
+			}
 
 			if(Design.IsDesignMode) {
 				return;
 			}
 
 			UpdateSourceViewState();
+		}
+
+		private void InjectToolIntoSameDockAs(Tool toolToInject, Tool referenceTool)
+		{
+			if(referenceTool.Owner is IDock parentDock && parentDock.VisibleDockables != null) {
+				if(!parentDock.VisibleDockables.Contains(toolToInject)) {
+					DockFactory.AddDockable(parentDock, toolToInject);
+				}
+			}
 		}
 
 		public void ScrollToAddress(int address)
@@ -600,6 +637,12 @@ namespace Mesen.Debugger.ViewModels
 					IsVisible = () => FunctionList != null,
 					IsSelected = () => IsToolVisible(DockFactory.FunctionListTool),
 					OnClick = () => ToggleTool(DockFactory.FunctionListTool)
+				},
+				new ContextMenuAction() {
+					ActionType = ActionType.ShowCallerCallee,
+					IsVisible = () => CallerCallee != null,
+					IsSelected = () => IsToolVisible(DockFactory.CallerCalleeTool),
+					OnClick = () => ToggleTool(DockFactory.CallerCalleeTool)
 				},
 				new ContextMenuAction() {
 					ActionType = ActionType.ShowLabelList,

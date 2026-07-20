@@ -1451,6 +1451,7 @@
 			<Control ID="chkFocusGameOnResume">恢复时聚焦游戏窗口</Control>
 			<Control ID="chkRefreshWhileRunning">运行时刷新</Control>
 			<Control ID="chkDrawPartialFrame">绘制部分帧</Control>
+			<Control ID="chkShowLastExecTimeInSeconds">上次执行时间显示为秒</Control>
 			<Control ID="chkUsePredictiveBreakpoints">使用预测断点</Control>
 			<Control ID="chkUsePredictiveBreakpointsHint">启用后，调试器尝试在相应的读/写操作发生前预测断点，&#xA;允许在指令开始执行前停止执行。</Control>
 			<Control ID="chkSingleBreakpointPerInstruction">每条指令中断一次</Control>
@@ -2443,9 +2444,12 @@ E
 		<Message ID="DockStatus">状态</Message>
 		<Message ID="DockBreakpoints">断点</Message>
 		<Message ID="DockWatch">监视</Message>
+		<Message ID="DockCallerCallee">调用记录</Message>
+		<Message ID="lblNoLabel">无标签</Message>
+		<Message ID="lblUnavailable">不可用</Message>
 		<Message ID="DockCallStack">调用堆栈</Message>
 		<Message ID="DockLabels">标签</Message>
-		<Message ID="DockFunctions">函数</Message>
+		<Message ID="DockFunctions">函数列表</Message>
 		<Message ID="DockFindResults">查找结果</Message>
 		<Message ID="DockControllers">控制器</Message>
 
@@ -5996,6 +6000,7 @@ DMC 中断 (I)、帧中断 (F)、DMC 活动 (D)、长度计数器 &gt; 0 (N/T/2/
 			<Value ID="ShowFunctionList">显示函数列表</Value>
 			<Value ID="ShowWatchList">显示监视列表</Value>
 			<Value ID="ShowCallStack">显示调用堆栈</Value>
+			<Value ID="ShowCallerCallee">显示调用记录</Value>
 			<Value ID="ShowConsoleStatus">显示控制台状态</Value>
 			<Value ID="ShowControllers">显示控制器</Value>
 			

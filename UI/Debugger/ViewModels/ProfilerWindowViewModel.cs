@@ -8,6 +8,7 @@ using DataBoxControl;
 using Mesen.Config;
 using Mesen.Debugger.Labels;
 using Mesen.Debugger.Utilities;
+using Mesen.Debugger.Windows;
 using Mesen.Interop;
 using Mesen.Localization;
 using Mesen.Utilities;
@@ -89,6 +90,8 @@ namespace Mesen.Debugger.ViewModels
 			DebugShortcutManager.RegisterActions(wnd, FileMenuActions);
 			DebugShortcutManager.RegisterActions(wnd, ViewMenuActions);
 
+			InitContextMenu(wnd);
+
 			LabelManager.OnLabelUpdated += LabelManager_OnLabelUpdated;
 		}
 
@@ -103,6 +106,84 @@ namespace Mesen.Debugger.ViewModels
 			Dispatcher.UIThread.Post(() => {
 				tab?.RefreshGrid();
 			});
+		}
+
+		private void InitContextMenu(Window wnd)
+		{
+			AddDisposables(DebugShortcutManager.CreateContextMenu(wnd, new object[] {
+				new ContextMenuAction() {
+					ActionType = ActionType.EditLabel,
+					IsEnabled = () => GetSelectedFuncAddr() != null,
+					OnClick = () => {
+						AddressInfo? addr = GetSelectedFuncAddr();
+						if(addr != null) {
+							CpuType cpuType = SelectedTab?.CpuType ?? CpuType.Snes;
+							CodeLabel? label = LabelManager.GetLabel(addr.Value);
+							LabelEditWindow.EditLabel(cpuType, wnd, label ?? new CodeLabel(addr.Value));
+						}
+					}
+				},
+
+				new ContextMenuSeparator(),
+
+				new ContextMenuAction() {
+					ActionType = ActionType.ToggleBreakpoint,
+					IsEnabled = () => GetSelectedFuncAddr() != null,
+					OnClick = () => {
+						AddressInfo? addr = GetSelectedFuncAddr();
+						if(addr != null) {
+							BreakpointManager.EditBreakpointAtAddress(addr.Value, SelectedTab?.CpuType ?? CpuType.Snes, wnd);
+						}
+					}
+				},
+
+				new ContextMenuSeparator(),
+
+				new ContextMenuAction() {
+					ActionType = ActionType.GoToLocation,
+					IsEnabled = () => GetSelectedRelAddr() >= 0,
+					OnClick = () => {
+						int relAddr = GetSelectedRelAddr();
+						if(relAddr >= 0) {
+							DebuggerWindow.OpenWindowAtAddress(SelectedTab?.CpuType ?? CpuType.Snes, relAddr);
+						}
+					}
+				},
+
+				new ContextMenuAction() {
+					ActionType = ActionType.ViewInMemoryViewer,
+					IsEnabled = () => GetSelectedFuncAddr() != null,
+					OnClick = () => {
+						AddressInfo? addr = GetSelectedFuncAddr();
+						if(addr != null) {
+							CpuType cpuType = SelectedTab?.CpuType ?? CpuType.Snes;
+							int relAddr = DebugApi.GetRelativeAddress(addr.Value, cpuType).Address;
+							AddressInfo memAddr = new AddressInfo() { Address = relAddr, Type = cpuType.ToMemoryType() };
+							if(memAddr.Address < 0) {
+								memAddr = addr.Value;
+							}
+							MemoryToolsWindow.ShowInMemoryTools(memAddr.Type, memAddr.Address);
+						}
+					}
+				},
+			}));
+		}
+
+		private AddressInfo? GetSelectedFuncAddr()
+		{
+			if(SelectedTab?.Selection.SelectedItem is ProfiledFunctionViewModel vm) {
+				return vm.FuncAddr;
+			}
+			return null;
+		}
+
+		private int GetSelectedRelAddr()
+		{
+			AddressInfo? addr = GetSelectedFuncAddr();
+			if(addr != null) {
+				return DebugApi.GetRelativeAddress(addr.Value, SelectedTab?.CpuType ?? CpuType.Snes).Address;
+			}
+			return -1;
 		}
 
 		public void UpdateAvailableTabs()
@@ -282,6 +363,9 @@ namespace Mesen.Debugger.ViewModels
 		private ProfiledFunction _funcData;
 		private CpuType _cpuType;
 		private UInt64 _totalCycles;
+
+		public AddressInfo FuncAddr => _funcData.Address;
+		public CpuType CurrentCpuType => _cpuType;
 
 		public void Update(ProfiledFunction func, CpuType cpuType, UInt64 totalCycles)
 		{

@@ -320,6 +320,10 @@
 			/>
 			
 			<CheckBox
+				IsChecked="{Binding Config.ShowLastExecTimeInSeconds}"
+				Content="{l:Translate chkShowLastExecTimeInSeconds}"
+			/>
+			<CheckBox
 				IsChecked="{Binding Config.UsePredictiveBreakpoints}"
 				Content="{l:Translate chkUsePredictiveBreakpoints}"
 				ToolTip.Tip="{l:Translate chkUsePredictiveBreakpointsHint}"

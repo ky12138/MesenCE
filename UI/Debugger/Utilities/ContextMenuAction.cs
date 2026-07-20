@@ -389,6 +389,7 @@ namespace Mesen.Debugger.Utilities
 		ShowFunctionList,
 		ShowLabelList,
 		ShowCallStack,
+		ShowCallerCallee,
 		ShowControllers,
 
 		ShowSettingsPanel,
@@ -491,6 +492,8 @@ namespace Mesen.Debugger.Utilities
 
 		[IconFile("Expand")]
 		GoToLocation,
+
+		LocateInFunctionList,
 
 		[IconFile("Export")]
 		ExportToPng,

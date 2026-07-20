@@ -123,6 +123,9 @@
 		<DataTemplate DataType="{x:Type vm:FunctionListViewModel}">
 			<v:FunctionListView />
 		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:CallerCalleeViewModel}">
+			<v:CallerCalleeView />
+		</DataTemplate>
 		<DataTemplate DataType="{x:Type vm:LabelListViewModel}">
 			<v:LabelListView />
 		</DataTemplate>

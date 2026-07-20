@@ -1358,6 +1358,15 @@
 			<Control ID="colLastExec">Last Exec</Control>
 		</Form>
 
+		<Form ID="CallerCalleeView">
+			<Control ID="colFunction">Function</Control>
+			<Control ID="colCpuAddr">CPU Addr</Control>
+			<Control ID="colRomAddr">ROM Addr</Control>
+			<Control ID="colCallCount">Count</Control>
+			<Control ID="lblCallers">Callers</Control>
+			<Control ID="lblCallees">Callees</Control>
+		</Form>
+
 		<Form ID="LabelListView">
 			<Control ID="colLabel">Label</Control>
 			<Control ID="colCpuAddr">CPU Addr</Control>
@@ -1443,6 +1452,7 @@
 			<Control ID="chkFocusGameOnResume">Focus game window on resume</Control>
 			<Control ID="chkRefreshWhileRunning">Refresh while running</Control>
 			<Control ID="chkDrawPartialFrame">Draw partial frame</Control>
+			<Control ID="chkShowLastExecTimeInSeconds">Show last execution time in seconds</Control>
 			<Control ID="chkUsePredictiveBreakpoints">Use predictive breakpoints</Control>
 			<Control ID="chkUsePredictiveBreakpointsHint">When enabled, the debugger attempts to predict breakpoints before the corresponding read/write occurs,&#xA;allowing execution to be stopped before the instruction starts executing.</Control>
 			<Control ID="chkSingleBreakpointPerInstruction">Break once per instruction</Control>
@@ -2437,6 +2447,9 @@ E
 		<Message ID="DockCallStack">Call Stack</Message>
 		<Message ID="DockLabels">Labels</Message>
 		<Message ID="DockFunctions">Functions</Message>
+		<Message ID="DockCallerCallee">Caller/Callee</Message>
+		<Message ID="lblNoLabel">No label</Message>
+		<Message ID="lblUnavailable">Unavailable</Message>
 		<Message ID="DockFindResults">Find Results</Message>
 		<Message ID="DockControllers">Controllers</Message>
 
@@ -6023,6 +6036,7 @@ Upload an object to RAM $0200-$02ff. (see object structure on NESdev Wiki)</Mess
 			<Value ID="ShowFunctionList">Show function list</Value>
 			<Value ID="ShowWatchList">Show watch list</Value>
 			<Value ID="ShowCallStack">Show call stack</Value>
+			<Value ID="ShowCallerCallee">Show caller/callee</Value>
 			<Value ID="ShowConsoleStatus">Show console status</Value>
 			<Value ID="ShowControllers">Show controllers</Value>
 			
@@ -6071,6 +6085,7 @@ Upload an object to RAM $0200-$02ff. (see object structure on NESdev Wiki)</Mess
 			<Value ID="RecentScripts">Recent Scripts</Value>
 
 			<Value ID="GoToLocation">Go to Location</Value>
+			<Value ID="LocateInFunctionList">Locate in Function List</Value>
 			
 			<Value ID="ExportToPng">Export to PNG</Value>
 			<Value ID="ViewInTileViewer">View in Tile Viewer</Value>
