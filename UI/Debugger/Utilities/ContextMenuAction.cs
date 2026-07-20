@@ -507,6 +507,7 @@ namespace Mesen.Debugger.Utilities
 		[IconFile("Expand")]
 		GoToLocation,
 
+		[IconFile("Expand")]
 		LocateInFunctionList,
 
 		[IconFile("Export")]

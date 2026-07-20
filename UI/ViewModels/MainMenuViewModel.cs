@@ -1103,6 +1103,14 @@ namespace Mesen.ViewModels
 					IsVisible = isNesFormat,
 					OnClick = () => new NesHeaderEditWindow().ShowCenteredDialog((Control)wnd)
 				},
+				new ContextMenuAction() {
+					ActionType = ActionType.Custom,
+					CustomText = ResourceHelper.GetViewLabel(nameof(IpsPatchWindow), "wndTitle"),
+					DynamicIcon = () => "CheatCode",
+					IsVisible = isNesFormat,
+					IsEnabled = () => IsGameRunning && MainWindow.RomInfo.ConsoleType == ConsoleType.Nes,
+					OnClick = () => IpsPatchWindow.Open()
+				},
 
 				new ContextMenuSeparator(),
 				new ContextMenuAction() {

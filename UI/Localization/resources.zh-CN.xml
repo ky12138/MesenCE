@@ -1475,6 +1475,34 @@
 			<Control ID="lblMemoryType">内存类型:</Control>
 			<Control ID="btnToggleSettings">切换设置面板</Control>
 		</Form>
+
+		<Form ID="IpsPatchWindow">
+			<Control ID="wndTitle">IPS补丁查看器</Control>
+			<Control ID="mnuFile">文件(_F)</Control>
+			<Control ID="mnuView">视图(_V)</Control>
+			<Control ID="lblPatch">补丁:</Control>
+			<Control ID="lblRom">ROM:</Control>
+			<Control ID="lblRecords">记录数:</Control>
+			<Control ID="lblChanged">修改:</Control>
+			<Control ID="lblBytes">字节</Control>
+			<Control ID="lblSmall">小 (1-16字节)</Control>
+			<Control ID="lblMedium">中 (17-64字节)</Control>
+			<Control ID="lblLarge">大 (65-256字节)</Control>
+			<Control ID="lblHuge">巨大 (257-1024字节)</Control>
+			<Control ID="lblMassive">超大 (&gt;1024字节)</Control>
+			<Control ID="lblRle">RLE记录</Control>
+			<Control ID="colIndex">#</Control>
+			<Control ID="colMem">内存类型</Control>
+			<Control ID="colAddress">ROM地址</Control>
+			<Control ID="colTarget">目标地址</Control>
+			<Control ID="colLabel">标签</Control>
+			<Control ID="colLength">长度</Control>
+			<Control ID="colType">补丁类型</Control>
+			<Control ID="colPreview">数据预览</Control>
+			<Control ID="mnuOpenPatch">打开补丁文件...</Control>
+			<Control ID="mnuSaveIps">保存IPS文件...</Control>
+			<Control ID="mnuOpenRom">打开ROM文件...</Control>
+		</Form>
 		
 		<Form ID="MemoryToolsDisplayOptionsView">
 			<Control ID="lblAccessHighlight">访问高亮</Control>

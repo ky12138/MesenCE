@@ -1476,6 +1476,34 @@
 			<Control ID="lblMemoryType">Memory Type:</Control>
 			<Control ID="btnToggleSettings">Toggle settings panel</Control>
 		</Form>
+
+		<Form ID="IpsPatchWindow">
+			<Control ID="wndTitle">IPS Patch Viewer</Control>
+			<Control ID="mnuFile">_File</Control>
+			<Control ID="mnuView">_View</Control>
+			<Control ID="lblPatch">Patch:</Control>
+			<Control ID="lblRom">ROM:</Control>
+			<Control ID="lblRecords">Records:</Control>
+			<Control ID="lblChanged">Changed:</Control>
+			<Control ID="lblBytes">bytes</Control>
+			<Control ID="lblSmall">Small (1-16 bytes)</Control>
+			<Control ID="lblMedium">Medium (17-64 bytes)</Control>
+			<Control ID="lblLarge">Large (65-256 bytes)</Control>
+			<Control ID="lblHuge">Huge (257-1024 bytes)</Control>
+			<Control ID="lblMassive">Massive (&gt;1024 bytes)</Control>
+			<Control ID="lblRle">RLE Record</Control>
+			<Control ID="colIndex">#</Control>
+			<Control ID="colMem">Mem</Control>
+			<Control ID="colAddress">Address</Control>
+			<Control ID="colTarget">Target</Control>
+			<Control ID="colLabel">Label</Control>
+			<Control ID="colLength">Length</Control>
+			<Control ID="colType">Type</Control>
+			<Control ID="colPreview">Data Preview</Control>
+			<Control ID="mnuOpenPatch">Open Patch File...</Control>
+			<Control ID="mnuSaveIps">Save IPS File...</Control>
+			<Control ID="mnuOpenRom">Open ROM File...</Control>
+		</Form>
 		
 		<Form ID="MemoryToolsDisplayOptionsView">
 			<Control ID="lblAccessHighlight">Access highlighting</Control>

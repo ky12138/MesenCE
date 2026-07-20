@@ -62,6 +62,21 @@ namespace Mesen.Debugger.Windows
 			}
 		}
 
+		public void SetCursorPositionWithIpsHighlight(MemoryType memType, int address, List<ParsedIpsRecord> records)
+		{
+			if(_model.AvailableMemoryTypes.Contains(memType)) {
+				_model.Config.MemoryType = memType;
+
+				// Create highlighted data provider
+				var baseProvider = new HexEditorDataProvider(memType, _model.Config, _model.TblConverter);
+				var highlightProvider = new IpsHexEditorDataProvider(baseProvider, records);
+				_model.DataProvider = highlightProvider;
+
+				_editor.SetCursorPosition(address, scrollToTop: true);
+				_editor.Focus();
+			}
+		}
+
 		protected override void OnClosing(WindowClosingEventArgs e)
 		{
 			base.OnClosing(e);

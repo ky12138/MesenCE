@@ -47,28 +47,21 @@ namespace Mesen.Debugger.ViewModels
 		{
 			DebuggerWindow? wnd = DebugWindowManager.GetDebugWindow<DebuggerWindow>(x => x.CpuType == memType.ToCpuType());
 			if(wnd?.DataContext is DebuggerWindowViewModel model && model.FunctionList != null) {
-				FunctionViewModel? target = model.FunctionList.Functions
-					.FirstOrDefault(f => f.FuncAddr.Address == address && f.FuncAddr.Type == memType);
-				if(target != null) {
-					model.FunctionList.Selection.SelectedItem = target;
-				}
-			}
-		}
-
-		public static void ShowInFunctionList(AddressInfo addr)
-		{
-			ShowInFunctionList(addr.Type, addr.Address);
-		}
-
-		public static void ShowInFunctionListContaining(CpuType cpuType, int relAddress)
-		{
-			DebuggerWindow? wnd = DebugWindowManager.GetDebugWindow<DebuggerWindow>(x => x.CpuType == cpuType);
-			if(wnd?.DataContext is DebuggerWindowViewModel model && model.FunctionList != null) {
 				FunctionViewModel? bestMatch = null;
 				foreach(var func in model.FunctionList.Functions) {
-					if(func.RelAddress >= 0 && func.RelAddress <= relAddress) {
-						if(bestMatch == null || func.RelAddress > bestMatch.RelAddress) {
-							bestMatch = func;
+					if(func.FuncAddr.Type == memType && func.FuncAddr.Address >= 0) {
+						int funcLen = (int)func.FunctionLength;
+						if(funcLen > 0) {
+							if(address >= func.FuncAddr.Address && address < func.FuncAddr.Address + funcLen) {
+								if(bestMatch == null || func.FuncAddr.Address > bestMatch.FuncAddr.Address) {
+									bestMatch = func;
+								}
+							}
+						} else {
+							if(func.FuncAddr.Address == address) {
+								bestMatch = func;
+								break;
+							}
 						}
 					}
 				}
@@ -76,6 +69,11 @@ namespace Mesen.Debugger.ViewModels
 					model.FunctionList.Selection.SelectedItem = bestMatch;
 				}
 			}
+		}
+
+		public static void ShowInFunctionList(AddressInfo addr)
+		{
+			ShowInFunctionList(addr.Type, addr.Address);
 		}
 
 		public void Sort(object? param)

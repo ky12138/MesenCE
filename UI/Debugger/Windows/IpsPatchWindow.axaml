@@ -1,0 +1,115 @@
+<Window
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:vm="using:Mesen.Debugger.ViewModels"
+	xmlns:c="using:Mesen.Controls"
+	xmlns:dc="using:Mesen.Debugger.Controls"
+	xmlns:l="using:Mesen.Localization"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="500"
+	x:Class="Mesen.Debugger.Windows.IpsPatchWindow"
+	x:DataType="vm:IpsPatchViewModel"
+	Width="760" Height="550"
+	Title="{l:Translate wndTitle}"
+>
+	<Design.DataContext>
+		<vm:IpsPatchViewModel />
+	</Design.DataContext>
+
+	<DockPanel>
+		<c:MesenMenu DockPanel.Dock="Top" Name="ActionMenu">
+			<MenuItem Header="{l:Translate mnuFile}" ItemsSource="{Binding FileMenuItems}" />
+			<MenuItem Header="{l:Translate mnuView}" ItemsSource="{Binding ViewMenuItems}" />
+		</c:MesenMenu>
+
+		<!-- Info Panel -->
+		<Border DockPanel.Dock="Top" BorderThickness="0 0 0 1" BorderBrush="{StaticResource MesenGrayBorderColor}" Margin="3 2">
+			<Grid ColumnDefinitions="Auto,*,Auto,Auto" RowDefinitions="Auto,Auto">
+				<TextBlock Grid.Row="0" Grid.Column="0" Text="{l:Translate lblPatch}" FontWeight="Bold" VerticalAlignment="Center" Margin="4 2" />
+				<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding PatchFilePath}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0 2" />
+
+				<TextBlock Grid.Row="1" Grid.Column="0" Text="{l:Translate lblRom}" FontWeight="Bold" VerticalAlignment="Center" Margin="4 2" />
+				<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding RomFilePath}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0 2" />
+
+				<TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding RecordCount, StringFormat='{}{l:Translate lblRecords} {0}'}" VerticalAlignment="Center" Margin="12 2 4 2" />
+				<TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding TotalChangedBytes, StringFormat='{}{l:Translate lblChanged} {0} {l:Translate lblBytes}'}" VerticalAlignment="Center" Margin="12 2 4 2" />
+
+				<StackPanel Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="4 2">
+					<Border Background="#6400C8C8" Width="15" Height="15" Margin="2" ToolTip.Tip="{l:Translate lblRle}" />
+					<Border Background="#6400B4FF" Width="15" Height="15" Margin="2" ToolTip.Tip="{l:Translate lblSmall}" />
+					<Border Background="#640078FF" Width="15" Height="15" Margin="2" ToolTip.Tip="{l:Translate lblMedium}" />
+					<Border Background="#64C88200" Width="15" Height="15" Margin="2" ToolTip.Tip="{l:Translate lblLarge}" />
+					<Border Background="#64DC3232" Width="15" Height="15" Margin="2" ToolTip.Tip="{l:Translate lblHuge}" />
+					<Border Background="#64B400DC" Width="15" Height="15" Margin="2" ToolTip.Tip="{l:Translate lblMassive}" />
+				</StackPanel>
+			</Grid>
+		</Border>
+
+		<!-- Status Bar -->
+		<Border DockPanel.Dock="Bottom" BorderThickness="0 1 0 0" BorderBrush="{StaticResource MesenGrayBorderColor}" Margin="3 0">
+			<TextBlock Text="{Binding StatusText}" Margin="4 2" VerticalAlignment="Center" />
+		</Border>
+
+		<!-- DataBox -->
+		<Border BorderThickness="1" BorderBrush="{StaticResource MesenGrayBorderColor}" Margin="2">
+			<DataBox
+				Items="{Binding Records}"
+				Selection="{Binding Selection}"
+				CellDoubleClick="OnCellDoubleClick"
+				SortMode="Multiple"
+				SortCommand="{Binding Sort}"
+				SortState="{Binding SortState}"
+				GridLinesVisibility="All"
+			>
+				<DataBox.Styles>
+					<Style Selector="DataBoxRow /template/ Rectangle#BackgroundRectangle">
+						<Setter Property="Fill" Value="{Binding RowBackgroundBrush, DataType={x:Type vm:IpsRecordViewModel}}" />
+					</Style>
+				</DataBox.Styles>
+				<DataBox.Columns>
+					<DataBoxTextColumn ColumnName="Index" Header="{l:Translate colIndex}" 
+						Binding="{Binding Index,
+						DataType={x:Type vm:IpsRecordViewModel}}" 
+						InitialWidth="40" 
+						/>
+					<DataBoxTextColumn ColumnName="Memory" Header="{l:Translate colMem}" 
+						Binding="{Binding MemoryDisplay, 
+						DataType={x:Type vm:IpsRecordViewModel}}" 
+						CanUserResize="True" InitialWidth="60" 
+					/>
+					<DataBoxTextColumn ColumnName="Address" Header="{l:Translate colAddress}" 
+						Binding="{Binding AddressDisplay, 
+						DataType={x:Type vm:IpsRecordViewModel}}" 
+						CanUserResize="True" InitialWidth="70" 
+					/>
+				<DataBoxTextColumn ColumnName="TargetOffset" Header="{l:Translate colTarget}" 
+					Binding="{Binding TargetAddressDisplay, 
+					DataType={x:Type vm:IpsRecordViewModel}}" 
+					CanUserResize="True" InitialWidth="70" 
+				/>
+				<DataBoxTextColumn ColumnName="Label" Header="{l:Translate colLabel}" 
+					Binding="{Binding LabelDisplay, 
+					DataType={x:Type vm:IpsRecordViewModel}}" 
+					CanUserResize="True" InitialWidth="60" 
+				/>
+				<DataBoxTextColumn ColumnName="Length" Header="{l:Translate colLength}" 
+					Binding="{Binding LengthDisplay, 
+					DataType={x:Type vm:IpsRecordViewModel}}" 
+					CanUserResize="True" InitialWidth="50" 
+				/>
+					<DataBoxTextColumn ColumnName="Type" Header="{l:Translate colType}" 
+						Binding="{Binding TypeDisplay, 
+						DataType={x:Type vm:IpsRecordViewModel}}" 
+						CanUserResize="True" InitialWidth="30" 
+					/>
+					<DataBoxTextColumn ColumnName="Preview" Header="{l:Translate colPreview}" 
+						Binding="{Binding DataPreview, 
+						DataType={x:Type vm:IpsRecordViewModel}}" 
+						CanUserResize="True" InitialWidth="300" 
+					/>
+				</DataBox.Columns>
+			</DataBox>
+		</Border>
+	</DockPanel>
+</Window>

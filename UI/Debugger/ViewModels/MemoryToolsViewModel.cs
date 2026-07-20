@@ -21,7 +21,7 @@ namespace Mesen.Debugger.ViewModels
 	{
 		[ObservableProperty] public partial HexEditorConfig Config { get; set; }
 		[ObservableProperty] public partial int ScrollPosition { get; set; }
-		[ObservableProperty] public partial HexEditorDataProvider? DataProvider { get; set; }
+		[ObservableProperty] public partial IHexEditorDataProvider? DataProvider { get; set; }
 		[ObservableProperty] public partial TblByteCharConverter? TblConverter { get; set; }
 
 		[ObservableProperty] public partial Enum[] AvailableMemoryTypes { get; set; } = Array.Empty<Enum>();
