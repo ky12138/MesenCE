@@ -105,15 +105,40 @@ namespace Mesen.Debugger.Views
 				new ContextMenuAction() {
 					ActionType = ActionType.ToggleBreakpoint,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CodeWindow_ToggleBreakpoint),
-					HintText = () => GetHint(ActionLocation),
-					IsVisible = () => !IsMarginClick,
-					IsEnabled = () => ActionLocation.RelAddress != null || ActionLocation.AbsAddress != null,
+					HintText = () => GetRangeHint(ActionLocation),
+					IsVisible = () => !IsMarginClick && (Model.SelectionStart != Model.SelectionEnd || ActionLocation.RelAddress != null),
+					IsEnabled = () => Model.SelectionStart != Model.SelectionEnd || ActionLocation.RelAddress != null,
 					OnClick = () => {
 						LocationInfo loc = ActionLocation;
-						if(loc.AbsAddress != null) {
-							BreakpointManager.EditBreakpointAtAddress(loc.AbsAddress.Value, CpuType, this);
+						if(loc.RelAddress != null && Model.SelectionStart != Model.SelectionEnd) {
+							int range = Math.Abs(Model.SelectionStart - Model.SelectionEnd);
+							if(isRangeMax(loc)) {
+								BreakpointManager.EditBreakpointAtRange(loc.RelAddress.Value, -range, CpuType, this);
+							} else {
+								BreakpointManager.EditBreakpointAtRange(loc.RelAddress.Value, range, CpuType, this);
+							}
 						} else if(loc.RelAddress != null) {
 							BreakpointManager.EditBreakpointAtAddress(loc.RelAddress.Value, CpuType, this);
+						}
+					}
+				},
+				new ContextMenuAction() {
+					ActionType = ActionType.ToggleBreakpoint,
+					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CodeWindow_ToggleBreakpointAbsAddr),
+					HintText = () => GetRangeHint(ActionLocation, true),
+					IsVisible = () => !IsMarginClick && (Model.SelectionStart != Model.SelectionEnd || ActionLocation.AbsAddress != null),
+					IsEnabled = () => Model.SelectionStart != Model.SelectionEnd || ActionLocation.AbsAddress != null,
+					OnClick = () => {
+						LocationInfo loc = ActionLocation;
+						if(loc.AbsAddress != null && Model.SelectionStart != Model.SelectionEnd) {
+							int range = Math.Abs(Model.SelectionStart - Model.SelectionEnd);
+							if(isRangeMax(loc)) {
+								BreakpointManager.EditBreakpointAtRange(loc.AbsAddress.Value, -range, CpuType, this);
+							} else {
+								BreakpointManager.EditBreakpointAtRange(loc.AbsAddress.Value, range, CpuType, this);
+							}
+						} else if(loc.AbsAddress != null) {
+							BreakpointManager.EditBreakpointAtAddress(loc.AbsAddress.Value, CpuType, this);
 						}
 					}
 				},
@@ -158,7 +183,7 @@ namespace Mesen.Debugger.Views
 					ActionType = ActionType.EditComment,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CodeWindow_EditComment),
 					HintText = () => GetHint(ActionLocation),
-					IsVisible = () => false,
+					IsVisible = () => !IsMarginClick,
 					AllowedWhenHidden = true,
 					IsEnabled = () => ActionLocation.Label != null || ActionLocation.AbsAddress != null || (ActionLocation.RelAddress != null && ActionLocation.RelAddress.Value.Type.SupportsLabels()),
 					OnClick = () => {
@@ -176,14 +201,25 @@ namespace Mesen.Debugger.Views
 				new ContextMenuAction() {
 					ActionType = ActionType.ViewInMemoryViewer,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CodeWindow_ViewInMemoryViewer),
-					HintText = () => GetHint(ActionLocation),
-					IsVisible = () => !IsMarginClick,
-					IsEnabled = () => ActionLocation.RelAddress != null || ActionLocation.AbsAddress != null,
+					HintText = () => GetHint(ActionLocation,true),
+					IsVisible = () => !IsMarginClick && ActionLocation.RelAddress != null,
+					IsEnabled = () => ActionLocation.RelAddress != null,
 					OnClick = () => {
 						LocationInfo loc = ActionLocation;
 						if(loc.RelAddress != null) {
 							MemoryToolsWindow.ShowInMemoryTools(loc.RelAddress.Value.Type, loc.RelAddress.Value.Address);
-						} else if(loc.AbsAddress != null) {
+						}
+					}
+				},
+				new ContextMenuAction() {
+					ActionType = ActionType.ViewInMemoryViewer,
+					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CodeWindow_ViewInMemoryViewerAbsAddr),
+					HintText = () => GetHint(ActionLocation,true,true),
+					IsVisible = () => !IsMarginClick && ActionLocation.AbsAddress != null,
+					IsEnabled = () => ActionLocation.AbsAddress != null,
+					OnClick = () => {
+						LocationInfo loc = ActionLocation;
+						if(loc.AbsAddress != null) {
 							MemoryToolsWindow.ShowInMemoryTools(loc.AbsAddress.Value.Type, loc.AbsAddress.Value.Address);
 						}
 					}
@@ -239,9 +275,22 @@ namespace Mesen.Debugger.Views
 					IsVisible = () => !IsMarginClick,
 					IsEnabled = () => ActionLocation.RelAddress != null,
 					OnClick = () => {
-						LocationInfo loc = ActionLocation;
-						if(loc.RelAddress != null) {
-							Model.SetSelectedRow(loc.RelAddress.Value.Address, true, true);
+						if(ActionLoc.RelAddress != null) {
+							Model.SetSelectedRow(ActionLoc.RelAddress.Value.Address, true, true);
+						}
+					}
+				},
+				new ContextMenuAction() {
+					ActionType = ActionType.LocateInFunctionList,
+					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CodeWindow_GoToLocation),
+					HintText = () => GetHint(),
+					IsVisible = () => !IsMarginClick,
+					IsEnabled = () => ActionLoc.RelAddress != null 
+						&& Model.Debugger.FunctionList != null 
+						&& Model.Debugger.FunctionList.Functions.Any(f => f.RelAddress >= 0 && f.RelAddress <= ActionLoc.RelAddress!.Value.Address),
+					OnClick = () => {
+						if(ActionLoc.RelAddress != null) {
+							FunctionListViewModel.ShowInFunctionListContaining(Model.CpuType, ActionLoc.RelAddress.Value.Address);
 						}
 					}
 				},
@@ -387,21 +436,74 @@ namespace Mesen.Debugger.Views
 			return CpuType.ToMemoryType().GetFormatString();
 		}
 
-		private string GetHint(LocationInfo? loc)
+		private string GetHint(LocationInfo? loc, bool winthType = false, bool isAbs = false)
 		{
 			if(loc == null) {
 				return string.Empty;
 			}
-
-			if(loc?.Label != null) {
-				return loc.Label.Label + (loc.LabelAddressOffset > 0 ? ("+" + loc.LabelAddressOffset) : "");
-			} else if(loc?.RelAddress != null) {
-				return "$" + loc.RelAddress.Value.Address.ToString(GetFormatString());
+			string hint = string.Empty;
+			string addrType = string.Empty;
+			
+			if(loc?.Label != null && isAbs == false) {
+				hint = loc.Label.Label + (loc.LabelAddressOffset > 0 ? ("+" + loc.LabelAddressOffset) : "");
+				if(winthType == true) {
+					addrType = loc.RelAddress != null ? " [" + loc.RelAddress.Value.Type.GetShortName() + "]" : string.Empty;
+				}
+			} else if(loc?.RelAddress != null && isAbs == false) {
+				hint =  "$" + loc.RelAddress.Value.Address.ToString(GetFormatString());
+				if(winthType == true) {
+					addrType = loc.RelAddress != null ? " [" + loc.RelAddress.Value.Type.GetShortName() + "]" : string.Empty;
+				}
 			} else if(loc?.AbsAddress != null) {
-				return "[$" + loc.AbsAddress.Value.Address.ToString(GetFormatString()) + "]";
+				hint =  "[$" + loc.AbsAddress.Value.Address.ToString(GetFormatString()) + "]";
+				if(winthType == true) {
+					addrType = loc.AbsAddress != null ? " [" + loc.AbsAddress.Value.Type.GetShortName() + "]" : string.Empty;
+				}
 			}
 
-			return string.Empty;
+			return hint + addrType;
+		}
+		private string GetRangeHint(LocationInfo loc, bool isAbs = false)
+		{
+			if(Model.SelectionStart == Model.SelectionEnd) {
+				return GetHint(ActionLocation, true, isAbs);
+			}
+			if(loc == null || loc.RelAddress == null) {
+				return string.Empty;
+			}
+
+			int start,end;
+			int range = Math.Abs(Model.SelectionStart - Model.SelectionEnd);
+			string hint = string.Empty;
+			string addrType = string.Empty;
+
+			if(isAbs) {
+				if(isRangeMax(loc) && loc.AbsAddress != null) {
+					end = loc.AbsAddress.Value.Address;
+					start = end - range;
+				} else {
+					start = loc.RelAddress.Value.Address;
+					end = start + range;
+				}
+			} else {
+				start = Math.Min(Model.SelectionStart, Model.SelectionEnd);
+				end = start + range;
+			}
+			hint = "$" + start.ToString(GetFormatString()) + " - $" + end.ToString(GetFormatString());
+			addrType = loc.RelAddress != null ?  " [" + loc.RelAddress.Value.Type.GetShortName() + "]" : "";
+
+			return hint + addrType;
+		}
+
+		private bool isRangeMax(LocationInfo? loc) {
+			if(loc == null) {
+				return false;
+			}
+			int max = Math.Max(Model.SelectionStart, Model.SelectionEnd);
+			if(loc.RelAddress != null && loc.RelAddress.Value.Address == max) {
+				return true;
+			}
+			return false;
 		}
 
 		private void InitializeComponent()
@@ -437,8 +539,12 @@ namespace Mesen.Debugger.Views
 			//Navigate on double-click left click
 			if(e.Source is DisassemblyViewer) {
 				PointerPointProperties props = e.GetCurrentPoint(this).Properties;
-				if(_selectionHandler?.IsMarginClick == false && ActionLocation.RelAddress != null && props.IsLeftButtonPressed && e.ClickCount == 2) {
-					Model.SetSelectedRow(ActionLocation.RelAddress.Value.Address, true, true);
+				if(_selectionHandler?.IsMarginClick == false && ActionLoc.RelAddress != null && props.IsLeftButtonPressed && e.ClickCount == 2) {
+					Model.SetSelectedRow(ActionLoc.RelAddress.Value.Address, true, true);
+
+					if(ActionLoc.RelAddress != null) {
+						FunctionListViewModel.ShowInFunctionListContaining(Model.CpuType, ActionLoc.RelAddress.Value.Address);
+					}
 				} else if(props.IsXButton1Pressed) {
 					Model.GoBack();
 				} else if(props.IsXButton2Pressed) {

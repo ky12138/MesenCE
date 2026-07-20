@@ -5768,6 +5768,7 @@ DMC 中断 (I)、帧中断 (F)、DMC 活动 (D)、长度计数器 &gt; 0 (N/T/2/
 			<Value ID="GoToCpuVector4">转到 [CPU 向量 4]</Value>
 			<Value ID="GoToCpuVector5">转到 [CPU 向量 5]</Value>
 			<Value ID="CodeWindow_ViewInMemoryViewer">代码窗口：在内存查看器中查看</Value>
+			<Value ID="CodeWindow_ViewInMemoryViewerAbsAddr">代码窗口：在内存查看器中查看[ROM]</Value>
 			<Value ID="CodeWindow_AddToWatch">代码窗口：添加到监视</Value>
 			<Value ID="CodeWindow_GoToLocation">代码窗口：转到位置</Value>
 			<Value ID="CodeWindow_NavigateBack">代码窗口：向后导航</Value>
@@ -5781,6 +5782,7 @@ DMC 中断 (I)、帧中断 (F)、DMC 活动 (D)、长度计数器 &gt; 0 (N/T/2/
 			<Value ID="CodeWindow_NavigateBack">代码窗口：向后导航</Value>
 			<Value ID="CodeWindow_NavigateForward">代码窗口：向前导航</Value>
 			<Value ID="CodeWindow_ToggleBreakpoint">代码窗口：切换断点</Value>
+			<Value ID="CodeWindow_ToggleBreakpointAbsAddr">代码窗口：切换断点[ROM]</Value>
 			<Value ID="CodeWindow_DisableEnableBreakpoint">代码窗口：禁用/启用断点</Value>
 			<Value ID="CodeWindow_SwitchView">代码窗口：切换视图（反汇编/源代码视图）</Value>
 			<Value ID="LabelList_Add">标签列表：添加标签</Value>

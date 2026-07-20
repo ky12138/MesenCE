@@ -21,6 +21,11 @@ namespace Mesen.Debugger.Utilities
 		private Func<int, int, int> _getRowAddress;
 		private double _scrollAccumulator = 0.0;
 
+		private bool _isMarginDragging = false;
+		private bool _marginDragAddBreakpoint = true;
+		private bool _marginDragIsMiddleButton = false;
+		private int _marginDragLastRow = -1;
+
 		public CodeSegmentInfo? MouseOverSegment { get; private set; }
 		public bool IsMarginClick => _marginClicked;
 
@@ -50,6 +55,7 @@ namespace Mesen.Debugger.Utilities
 		private void Viewer_PointerExited(object? sender, PointerEventArgs e)
 		{
 			_mouseOverCodeLocation = null;
+			_isMarginDragging = false;
 		}
 
 		public int GetAddress(RowClickedEventArgs e)
@@ -62,29 +68,46 @@ namespace Mesen.Debugger.Utilities
 			return _getRowAddress(e.RowNumber, (e.Data?.Address ?? -1));
 		}
 
+		private AddressInfo? GetCodeLineAddress(CodeLineData lineData)
+		{
+			CpuType cpuType = lineData.CpuType;
+			if(lineData.AbsoluteAddress.Address >= 0) {
+				return lineData.AbsoluteAddress;
+			} else if(lineData.Address >= 0) {
+				AddressInfo relAddress = new AddressInfo() {
+					Address = lineData.Address,
+					Type = cpuType.ToMemoryType()
+				};
+				AddressInfo absAddress = DebugApi.GetAbsoluteAddress(relAddress);
+				return absAddress.Address >= 0 ? absAddress : relAddress;
+			}
+			return null;
+		}
+
 		public void Viewer_RowClicked(DisassemblyViewer sender, RowClickedEventArgs e)
 		{
 			_marginClicked = e.MarginClicked;
 
 			if(e.Properties.IsLeftButtonPressed || e.Properties.IsMiddleButtonPressed) {
 				if(_marginClicked && _allowMarginClick) {
-					CpuType cpuType = e.CodeLineData.CpuType;
-					if(e.CodeLineData.AbsoluteAddress.Address >= 0) {
-						if(e.Properties.IsMiddleButtonPressed) {
-							BreakpointManager.ToggleForbidBreakpoint(e.CodeLineData.AbsoluteAddress, cpuType);
+					AddressInfo? address = GetCodeLineAddress(e.CodeLineData);
+					if(address.HasValue && address.Value.Address >= 0) {
+						CpuType cpuType = e.CodeLineData.CpuType;
+						bool isMiddleButton = e.Properties.IsMiddleButtonPressed;
+
+						Breakpoint? existingBp = isMiddleButton
+							? BreakpointManager.GetMatchingForbidBreakpoint(address.Value, cpuType)
+							: (BreakpointManager.GetMatchingForbidBreakpoint(address.Value, cpuType) ?? BreakpointManager.GetMatchingBreakpoint(address.Value, cpuType, true));
+
+						_isMarginDragging = true;
+						_marginDragAddBreakpoint = existingBp == null;
+						_marginDragIsMiddleButton = isMiddleButton;
+						_marginDragLastRow = e.RowNumber;
+
+						if(isMiddleButton) {
+							BreakpointManager.ToggleForbidBreakpoint(address.Value, cpuType);
 						} else {
-							BreakpointManager.ToggleBreakpoint(e.CodeLineData.AbsoluteAddress, cpuType);
-						}
-					} else if(e.CodeLineData.Address >= 0) {
-						AddressInfo relAddress = new AddressInfo() {
-							Address = e.CodeLineData.Address,
-							Type = cpuType.ToMemoryType()
-						};
-						AddressInfo absAddress = DebugApi.GetAbsoluteAddress(relAddress);
-						if(e.Properties.IsMiddleButtonPressed) {
-							BreakpointManager.ToggleForbidBreakpoint(absAddress.Address < 0 ? relAddress : absAddress, cpuType);
-						} else {
-							BreakpointManager.ToggleBreakpoint(absAddress.Address < 0 ? relAddress : absAddress, cpuType);
+							BreakpointManager.ToggleBreakpoint(address.Value, cpuType);
 						}
 					}
 				} else if(e.Properties.IsLeftButtonPressed) {
@@ -137,6 +160,38 @@ namespace Mesen.Debugger.Utilities
 
 			if(!_marginClicked && GetAddress(e) >= 0 && e.PointerEvent.GetCurrentPoint(null).Properties.IsLeftButtonPressed) {
 				_model.ResizeSelectionTo(GetAddress(e));
+			}
+
+			if(_isMarginDragging) {
+				bool buttonPressed = _marginDragIsMiddleButton
+					? e.PointerEvent.GetCurrentPoint(null).Properties.IsMiddleButtonPressed
+					: e.PointerEvent.GetCurrentPoint(null).Properties.IsLeftButtonPressed;
+
+				if(!buttonPressed) {
+					_isMarginDragging = false;
+				} else if(e.RowNumber >= 0 && e.Data != null && e.RowNumber != _marginDragLastRow) {
+					AddressInfo? address = GetCodeLineAddress(e.Data);
+					if(address.HasValue && address.Value.Address >= 0) {
+						CpuType cpuType = e.Data.CpuType;
+						if(_marginDragIsMiddleButton) {
+							Breakpoint? existing = BreakpointManager.GetMatchingForbidBreakpoint(address.Value, cpuType);
+							if(_marginDragAddBreakpoint && existing == null) {
+								BreakpointManager.ToggleForbidBreakpoint(address.Value, cpuType);
+							} else if(!_marginDragAddBreakpoint && existing != null) {
+								BreakpointManager.ToggleForbidBreakpoint(address.Value, cpuType);
+							}
+						} else {
+							Breakpoint? existingForbid = BreakpointManager.GetMatchingForbidBreakpoint(address.Value, cpuType);
+							Breakpoint? existingBp = existingForbid ?? BreakpointManager.GetMatchingBreakpoint(address.Value, cpuType, true);
+							if(_marginDragAddBreakpoint && existingBp == null) {
+								BreakpointManager.ToggleBreakpoint(address.Value, cpuType);
+							} else if(!_marginDragAddBreakpoint && existingBp != null) {
+								BreakpointManager.ToggleBreakpoint(address.Value, cpuType);
+							}
+						}
+					}
+					_marginDragLastRow = e.RowNumber;
+				}
 			}
 		}
 

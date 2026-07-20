@@ -245,6 +245,41 @@ namespace Mesen.Debugger
 			}
 		}
 
+		public static void EditBreakpointAtRange(AddressInfo startAddressinfo, int range, CpuType cpuType, Control parent)
+		{
+			if(startAddressinfo.Address < 0) {
+				return;
+			}
+			uint start, end;
+			uint addr = (uint)startAddressinfo.Address;
+			uint length = range - 1;
+			if(isHighAddr) {
+				start = addr - length;
+				end = addr;
+			} else {
+				start = addr;
+				end = addr + length;
+			}
+
+			Breakpoint? existing = GetMatchingBreakpoint(start, end, memType);
+			Breakpoint bp;
+			if(existing != null) {
+				bp = existing;
+			} else {
+				bp = new Breakpoint() {
+					CpuType = cpuType,
+					Enabled = true,
+					BreakOnExec = true,
+					BreakOnRead = true,
+					BreakOnWrite = true,
+					StartAddress = start,
+					EndAddress = end,
+					MemoryType = memType
+				};
+			}
+			BreakpointEditWindow.EditBreakpoint(bp, parent);
+		}
+
 		public static void ToggleForbidBreakpoint(AddressInfo addr, CpuType cpuType)
 		{
 			if(addr.Address < 0) {
