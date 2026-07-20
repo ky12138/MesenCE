@@ -6,6 +6,7 @@ namespace Mesen.Config
 	public partial class TilemapViewerConfig : BaseWindowConfig<TilemapViewerConfig>
 	{
 		[ObservableProperty] public partial bool ShowSettingsPanel { get; set; } = true;
+		[ObservableProperty] public partial bool ShowToolbar { get; set; } = true;
 
 		[ObservableProperty] public partial double ImageScale { get; set; } = 1;
 

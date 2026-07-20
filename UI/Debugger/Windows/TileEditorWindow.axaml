@@ -28,12 +28,14 @@
 		<Panel DockPanel.Dock="Top">
 			<c:MesenMenu DockPanel.Dock="Top" Name="ActionMenu">
 				<MenuItem Header="{l:Translate mnuFile}" ItemsSource="{Binding FileMenuActions}" />
+				<MenuItem Header="{l:Translate mnuDebug}" ItemsSource="{Binding DebugMenuItems}" />
 				<MenuItem Header="{l:Translate mnuView}" ItemsSource="{Binding ViewMenuActions}" />
 				<MenuItem Header="{l:Translate mnuTools}" ItemsSource="{Binding ToolsMenuActions}" />
 			</c:MesenMenu>
 		</Panel>
 
-		<dc:ActionToolbar Items="{Binding ToolbarActions}" DockPanel.Dock="Top" />
+		<dc:ActionToolbar Items="{Binding ToolbarActions}" DockPanel.Dock="Top" IsVisible="{Binding Config.ShowToolbar}" />
+		<dc:ActionToolbar Items="{Binding DebugToolbarItems}" DockPanel.Dock="Top" IsVisible="{Binding Config.ShowToolbar}" />
 
 		<ScrollViewer Margin="3 0" DockPanel.Dock="Right">
 			<StackPanel>

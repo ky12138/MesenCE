@@ -1073,6 +1073,7 @@
 			<Control ID="wndTitle">图块映射查看器</Control>
 
 			<Control ID="mnuFile">文件(_F)</Control>
+			<Control ID="mnuDebug">调试(_D)</Control>
 			<Control ID="mnuView">视图(_V)</Control>
 
 			<Control ID="btnToggleSettings">切换设置面板</Control>
@@ -1095,6 +1096,7 @@
 		<Form ID="TileEditorWindow">
 			<Control ID="wndTitle">图块编辑器</Control>
 			<Control ID="mnuFile">文件(_F)</Control>
+			<Control ID="mnuDebug">调试(_D)</Control>
 			<Control ID="mnuView">视图(_V)</Control>
 			<Control ID="mnuTools">工具(_T)</Control>
 
@@ -1112,6 +1114,7 @@
 		<Form ID="TileViewerWindow">
 			<Control ID="wndTitle">图块查看器</Control>
 			<Control ID="mnuFile">文件(_F)</Control>
+			<Control ID="mnuDebug">调试(_D)</Control>
 			<Control ID="mnuView">视图(_V)</Control>
 			<Control ID="btnToggleSettings">切换设置面板</Control>
 			<Control ID="lblSelectedTile">已选择的图块</Control>
@@ -1130,6 +1133,7 @@
 		<Form ID="PaletteViewerWindow">
 			<Control ID="wndTitle">调色板查看器</Control>
 			<Control ID="mnuFile">文件(_F)</Control>
+			<Control ID="mnuDebug">调试(_D)</Control>
 			<Control ID="mnuView">视图(_V)</Control>
 			<Control ID="btnToggleSettings">切换设置面板</Control>
 			<Control ID="chkShowPaletteIndexes">显示调色板索引</Control>
@@ -1149,6 +1153,7 @@
 			<Control ID="btnToggleSettings">切换设置面板</Control>
 
 			<Control ID="mnuFile">文件(_F)</Control>
+			<Control ID="mnuDebug">调试(_D)</Control>
 			<Control ID="mnuView">视图(_V)</Control>
 
 			<Control ID="colSpriteIndex">#</Control>
@@ -1463,6 +1468,7 @@
 		<Form ID="MemoryToolsWindow">
 			<Control ID="wndTitle">内存查看器</Control>
 			<Control ID="mnuFile">文件(_F)</Control>
+			<Control ID="mnuDebug">调试(_D)</Control>
 			<Control ID="mnuView">视图(_V)</Control>
 			<Control ID="mnuSearch">搜索(_A)</Control>
 			
@@ -1641,6 +1647,7 @@
 			<Control ID="wndTitle">性能分析器</Control>
 
 			<Control ID="mnuFile">文件(_F)</Control>
+			<Control ID="mnuDebug">调试(_D)</Control>
 			<Control ID="mnuView">视图(_V)</Control>
 			
 			<Control ID="btnReset">重置</Control>
@@ -1660,6 +1667,8 @@
 		
 		<Form ID="MemorySearchWindow">
 			<Control ID="wndTitle">内存搜索</Control>
+			<Control ID="mnuFile">文件(_F)</Control>
+			<Control ID="mnuDebug">调试(_D)</Control>
 			<Control ID="btnApplyFilter">应用过滤器</Control>
 			<Control ID="btnUpdateValues">更新值</Control>
 			<Control ID="btnReset">重置</Control>
@@ -1745,6 +1754,7 @@
 			<Control ID="wndTitle">寄存器查看器</Control>
 
 			<Control ID="mnuFile">文件(_F)</Control>
+			<Control ID="mnuDebug">调试(_D)</Control>
 			<Control ID="mnuView">视图(_V)</Control>
 		</Form>
 		
@@ -5814,8 +5824,8 @@ DMC 中断 (I)、帧中断 (F)、DMC 活动 (D)、长度计数器 &gt; 0 (N/T/2/
 			<Value ID="StepBackFrame">步退（1 帧）</Value>
 			<Value ID="RunCpuCycle">运行一个 CPU 周期</Value>
 			<Value ID="RunPpuCycle">运行一个 PPU 周期</Value>
-			<Value ID="RunPpuScanline">运行一个 PPU 扫描线</Value>
-			<Value ID="RunPpuFrame">运行一个 PPU 帧</Value>
+			<Value ID="RunPpuScanline">运行一个扫描线</Value>
+			<Value ID="RunPpuFrame">运行一帧</Value>
 			<Value ID="BreakIn">中断于...</Value>
 			<Value ID="BreakOn">运行到扫描线...</Value>
 			<Value ID="RunToNmi">运行到 NMI</Value>

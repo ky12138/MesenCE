@@ -54,6 +54,10 @@ public partial class MemorySearchViewModel : DisposableViewModel
 	[ObservableProperty] public partial string FilterExpression { get; set; } = "";
 	[ObservableProperty] public partial bool IsExpressionValid { get; set; } = true;
 
+	[ObservableProperty] public partial List<ContextMenuAction> ToolbarItems { get; private set; } = new();
+	[ObservableProperty] public partial List<ContextMenuAction> FileMenuItems { get; private set; } = new();
+	[ObservableProperty] public partial List<ContextMenuAction> DebugMenuItems { get; private set; } = new();
+
 	public Control HelpTooltip => ExpressionTooltipHelper.GetHelpTooltip(MemoryType.ToCpuType(), false);
 
 	public int[] AddressLookup => _addressLookup;
@@ -147,6 +151,26 @@ public partial class MemorySearchViewModel : DisposableViewModel
 	{
 		AvailableMemoryTypes = Enum.GetValues<MemoryType>().Where(t => t.SupportsMemoryViewer() && !t.IsRelativeMemory() && DebugApi.GetMemorySize(t) > 0).Cast<Enum>().ToArray();
 		MemoryType = EmuApi.GetRomInfo().ConsoleType.GetMainCpuType().GetSystemRamType();
+	}
+
+	public void InitializeMenu(Window wnd)
+	{
+		if(Design.IsDesignMode) {
+			return;
+		}
+
+		FileMenuItems = AddDisposables(new List<ContextMenuAction>() {
+			new ContextMenuAction() {
+				ActionType = ActionType.Exit,
+				OnClick = () => wnd.Close()
+			}
+		});
+
+		DebugMenuItems = AddDisposables(DebugSharedActions.GetStepActions(wnd, () => MemoryType.ToCpuType()));
+		ToolbarItems = AddDisposables(DebugSharedActions.GetStepActions(wnd, () => MemoryType.ToCpuType()));
+
+		DebugShortcutManager.RegisterActions(wnd, FileMenuItems);
+		DebugShortcutManager.RegisterActions(wnd, DebugMenuItems);
 	}
 
 	public void RefreshData(bool forceSort)

@@ -24,6 +24,8 @@ namespace Mesen.Debugger.ViewModels
 
 		[ObservableProperty] public partial List<object> FileMenuActions { get; private set; } = new();
 		[ObservableProperty] public partial List<object> ViewMenuActions { get; private set; } = new();
+		[ObservableProperty] public partial List<ContextMenuAction> DebugMenuItems { get; private set; } = new();
+		[ObservableProperty] public partial List<ContextMenuAction> ToolbarItems { get; private set; } = new();
 
 		private BaseState? _state = null;
 
@@ -81,6 +83,10 @@ namespace Mesen.Debugger.ViewModels
 
 			DebugShortcutManager.RegisterActions(wnd, FileMenuActions);
 			DebugShortcutManager.RegisterActions(wnd, ViewMenuActions);
+
+			DebugMenuItems = AddDisposables(DebugSharedActions.GetStepActions(wnd, () => CpuType));
+			ToolbarItems = AddDisposables(DebugSharedActions.GetStepActions(wnd, () => CpuType));
+			DebugShortcutManager.RegisterActions(wnd, DebugMenuItems);
 		}
 
 		public void UpdateRomInfo()

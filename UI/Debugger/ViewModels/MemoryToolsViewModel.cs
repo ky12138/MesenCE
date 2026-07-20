@@ -35,6 +35,7 @@ namespace Mesen.Debugger.ViewModels
 		[ObservableProperty] public partial List<ContextMenuAction> FileMenuItems { get; set; } = new();
 		[ObservableProperty] public partial List<ContextMenuAction> ViewMenuItems { get; set; } = new();
 		[ObservableProperty] public partial List<ContextMenuAction> SearchMenuItems { get; set; } = new();
+		[ObservableProperty] public partial List<ContextMenuAction> DebugMenuItems { get; set; } = new();
 		[ObservableProperty] public partial List<ContextMenuAction> ToolbarItems { get; set; } = new();
 
 		[ObservableProperty] public partial int MaxScrollValue { get; private set; }

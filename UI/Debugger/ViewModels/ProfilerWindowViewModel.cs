@@ -26,6 +26,9 @@ namespace Mesen.Debugger.ViewModels
 		[ObservableProperty] public partial List<ProfilerTab> ProfilerTabs { get; set; } = new List<ProfilerTab>();
 		[ObservableProperty] public partial ProfilerTab? SelectedTab { get; set; } = null;
 
+		[ObservableProperty] public partial List<ContextMenuAction> ToolbarItems { get; private set; } = new();
+		[ObservableProperty] public partial List<ContextMenuAction> DebugMenuActions { get; private set; } = new();
+
 		public List<object> FileMenuActions { get; } = new();
 		public List<object> ViewMenuActions { get; } = new();
 
@@ -89,6 +92,11 @@ namespace Mesen.Debugger.ViewModels
 
 			DebugShortcutManager.RegisterActions(wnd, FileMenuActions);
 			DebugShortcutManager.RegisterActions(wnd, ViewMenuActions);
+
+			DebugMenuActions = AddDisposables(DebugSharedActions.GetStepActions(wnd, () => SelectedTab?.CpuType ?? CpuType.Snes));
+			ToolbarItems = AddDisposables(DebugSharedActions.GetStepActions(wnd, () => SelectedTab?.CpuType ?? CpuType.Snes));
+
+			DebugShortcutManager.RegisterActions(wnd, DebugMenuActions);
 
 			InitContextMenu(wnd);
 

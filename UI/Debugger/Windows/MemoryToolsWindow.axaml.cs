@@ -238,6 +238,10 @@ namespace Mesen.Debugger.Windows
 				}
 			});
 
+			_model.DebugMenuItems = _model.AddDisposables(
+				DebugSharedActions.GetStepActions(this, () => _model.Config.MemoryType.ToCpuType())
+			);
+
 			_model.ViewMenuItems = _model.AddDisposables(new List<ContextMenuAction>() {
 				new ContextMenuAction() {
 					ActionType = ActionType.ShowSettingsPanel,
@@ -363,14 +367,19 @@ namespace Mesen.Debugger.Windows
 				}
 			});
 
-			_model.ToolbarItems = _model.AddDisposables(new List<ContextMenuAction>() {
+
+			var toolbarItems = new List<ContextMenuAction>() {
 				GetImportAction(),
 				GetExportAction(),
 				new ContextMenuSeparator(),
-				GetResetAccessCountersAction()
-			});
+				GetResetAccessCountersAction(),
+				new ContextMenuSeparator()
+			};
+			toolbarItems.AddRange(DebugSharedActions.GetStepActions(this, () => _model.Config.MemoryType.ToCpuType()));
+			_model.ToolbarItems = _model.AddDisposables(toolbarItems);
 
 			DebugShortcutManager.RegisterActions(this, _model.FileMenuItems);
+			DebugShortcutManager.RegisterActions(this, _model.DebugMenuItems);
 			DebugShortcutManager.RegisterActions(this, _model.ViewMenuItems);
 			DebugShortcutManager.RegisterActions(this, _model.SearchMenuItems);
 		}

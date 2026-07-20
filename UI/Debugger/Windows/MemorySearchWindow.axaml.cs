@@ -29,6 +29,7 @@ namespace Mesen.Debugger.Windows
 				return;
 			}
 
+			_model.InitializeMenu(this);
 			_model.Config.LoadWindowSettings(this);
 		}
 

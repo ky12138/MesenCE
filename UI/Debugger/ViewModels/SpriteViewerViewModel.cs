@@ -56,6 +56,9 @@ namespace Mesen.Debugger.ViewModels
 		public List<object> FileMenuActions { get; } = new();
 		public List<object> ViewMenuActions { get; } = new();
 
+		[ObservableProperty] public partial List<ContextMenuAction> DebugMenuItems { get; set; } = new();
+		[ObservableProperty] public partial List<ContextMenuAction> ToolbarItems { get; set; } = new();
+
 		private Grid _spriteGrid;
 
 		private object _updateLock = new();
@@ -177,6 +180,10 @@ namespace Mesen.Debugger.ViewModels
 
 			DebugShortcutManager.RegisterActions(wnd, FileMenuActions);
 			DebugShortcutManager.RegisterActions(wnd, ViewMenuActions);
+
+			DebugMenuItems = AddDisposables(DebugSharedActions.GetStepActions(wnd, () => CpuType));
+			ToolbarItems = AddDisposables(DebugSharedActions.GetStepActions(wnd, () => CpuType));
+			DebugShortcutManager.RegisterActions(wnd, DebugMenuItems);
 		}
 
 		partial void OnSelectedSpriteChanged(SpritePreviewModel? value)

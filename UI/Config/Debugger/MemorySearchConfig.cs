@@ -6,6 +6,7 @@ namespace Mesen.Config
 {
 	public partial class MemorySearchConfig : BaseWindowConfig<MemorySearchConfig>
 	{
+		[ObservableProperty] public bool ShowToolbar { get; set; } = true;
 		[ObservableProperty] public partial List<int> ColumnWidths { get; set; } = new();
 	}
 }

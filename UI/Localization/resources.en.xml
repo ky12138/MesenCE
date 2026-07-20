@@ -1074,6 +1074,7 @@
 			<Control ID="wndTitle">Tilemap Viewer</Control>
 
 			<Control ID="mnuFile">_File</Control>
+			<Control ID="mnuDebug">_Debug</Control>
 			<Control ID="mnuView">_View</Control>
 
 			<Control ID="btnToggleSettings">Toggle settings panel</Control>
@@ -1097,6 +1098,7 @@
 		<Form ID="TileEditorWindow">
 			<Control ID="wndTitle">Tile Editor</Control>
 			<Control ID="mnuFile">_File</Control>
+			<Control ID="mnuDebug">_Debug</Control>
 			<Control ID="mnuView">_View</Control>
 			<Control ID="mnuTools">_Tools</Control>
 
@@ -1114,6 +1116,7 @@
 		<Form ID="TileViewerWindow">
 			<Control ID="wndTitle">Tile Viewer</Control>
 			<Control ID="mnuFile">_File</Control>
+			<Control ID="mnuDebug">_Debug</Control>
 			<Control ID="mnuView">_View</Control>
 			<Control ID="btnToggleSettings">Toggle settings panel</Control>
 			<Control ID="lblSelectedTile">Selected Tile</Control>
@@ -1132,6 +1135,7 @@
 		<Form ID="PaletteViewerWindow">
 			<Control ID="wndTitle">Palette Viewer</Control>
 			<Control ID="mnuFile">_File</Control>
+			<Control ID="mnuDebug">_Debug</Control>
 			<Control ID="mnuView">_View</Control>
 			<Control ID="btnToggleSettings">Toggle settings panel</Control>
 			<Control ID="chkShowPaletteIndexes">Show palette indexes</Control>
@@ -1151,6 +1155,7 @@
 			<Control ID="btnToggleSettings">Toggle settings panel</Control>
 
 			<Control ID="mnuFile">_File</Control>
+			<Control ID="mnuDebug">_Debug</Control>
 			<Control ID="mnuView">_View</Control>
 
 			<Control ID="colSpriteIndex">#</Control>
@@ -1364,8 +1369,8 @@
 			<Control ID="colCpuAddr">CPU Addr</Control>
 			<Control ID="colRomAddr">ROM Addr</Control>
 			<Control ID="colCallCount">Count</Control>
-			<Control ID="lblCallers">Callers</Control>
-			<Control ID="lblCallees">Callees</Control>
+			<Control ID="lblCallers">Called by</Control>
+			<Control ID="lblCallees">Called</Control>
 		</Form>
 
 		<Form ID="LabelListView">
@@ -1464,6 +1469,7 @@
 		<Form ID="MemoryToolsWindow">
 			<Control ID="wndTitle">Memory Viewer</Control>
 			<Control ID="mnuFile">_File</Control>
+			<Control ID="mnuDebug">_Debug</Control>
 			<Control ID="mnuView">_View</Control>
 			<Control ID="mnuSearch">_Search</Control>
 			
@@ -1642,6 +1648,7 @@
 			<Control ID="wndTitle">Profiler</Control>
 
 			<Control ID="mnuFile">_File</Control>
+			<Control ID="mnuDebug">_Debug</Control>
 			<Control ID="mnuView">_View</Control>
 			
 			<Control ID="btnReset">Reset</Control>
@@ -1661,6 +1668,8 @@
 		
 		<Form ID="MemorySearchWindow">
 			<Control ID="wndTitle">Memory Search</Control>
+			<Control ID="mnuFile">_File</Control>
+			<Control ID="mnuDebug">_Debug</Control>
 			<Control ID="btnApplyFilter">Apply filter</Control>
 			<Control ID="btnUpdateValues">Update values</Control>
 			<Control ID="btnReset">Reset</Control>
@@ -1746,6 +1755,7 @@
 			<Control ID="wndTitle">Register Viewer</Control>
 
 			<Control ID="mnuFile">_File</Control>
+			<Control ID="mnuDebug">_Debug</Control>
 			<Control ID="mnuView">_View</Control>
 		</Form>
 		

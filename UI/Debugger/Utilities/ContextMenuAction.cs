@@ -1,4 +1,4 @@
-﻿using Avalonia.Controls;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
@@ -112,6 +112,12 @@ namespace Mesen.Debugger.Utilities
 		public Func<bool>? IsSelected { get; set; }
 		public Func<bool>? IsVisible { get; set; }
 
+		/// <summary>
+		/// Cached paused state of the emulator, refreshed once per toolbar/menu update to avoid
+		/// repeated EmuApi.IsPaused() P/Invoke calls from every action's IsEnabled delegate.
+		/// </summary>
+		public static bool Paused { get; private set; } = EmuApi.IsPaused();
+
 		public bool AllowedWhenHidden { get; set; }
 		public bool AlwaysShowLabel { get; set; }
 		public RoutingStrategies RoutingStrategy { get; set; } = RoutingStrategies.Bubble;
@@ -163,8 +169,16 @@ namespace Mesen.Debugger.Utilities
 			}
 		}
 
-		public void Update()
+		public void Update(bool? isPaused = null)
 		{
+			// Toolbar refreshes pass the emulator's paused state once per tick to avoid one
+			// P/Invoke per action; menu-driven updates (isPaused == null) refresh it themselves.
+			if(isPaused != null) {
+				Paused = isPaused.Value;
+			} else {
+				Paused = EmuApi.IsPaused();
+			}
+
 			ActionName = Name;
 
 			ShortcutText = InternalShortcutText;

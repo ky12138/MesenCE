@@ -57,8 +57,12 @@ namespace Mesen.Debugger.ViewModels
 		[ObservableProperty] public partial bool ShowFormatDropdown { get; set; }
 		[ObservableProperty] public partial bool ShowFilterDropdown { get; set; }
 
+		[ObservableProperty] public partial List<ContextMenuAction> DebugMenuItems { get; set; } = new();
+		[ObservableProperty] public partial List<ContextMenuAction> ToolbarItems { get; set; } = new();
+
 		[ObservableProperty] public partial List<List<ConfigPreset>> ConfigPresetRows { get; set; } = new() { new(), new(), new() };
 		[ObservableProperty] public partial List<ConfigPreset> ConfigPresets { get; set; } = new List<ConfigPreset>();
+
 
 		public List<object> FileMenuActions { get; } = new();
 		public List<object> ViewMenuActions { get; } = new();
@@ -138,6 +142,10 @@ namespace Mesen.Debugger.ViewModels
 					OnClick = () => picViewer.ZoomOut()
 				},
 			});
+
+			DebugMenuItems = AddDisposables(DebugSharedActions.GetStepActions(wnd, () => CpuType));
+			ToolbarItems = AddDisposables(DebugSharedActions.GetStepActions(wnd, () => CpuType));
+			DebugShortcutManager.RegisterActions(wnd, DebugMenuItems);
 
 			AddDisposables(DebugShortcutManager.CreateContextMenu(picViewer, scrollViewer, new List<object> {
 				new ContextMenuAction() {

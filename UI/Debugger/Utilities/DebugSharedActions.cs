@@ -1,4 +1,4 @@
-﻿using Avalonia.Controls;
+using Avalonia.Controls;
 using Mesen.Config;
 using Mesen.Debugger.Windows;
 using Mesen.Interop;
@@ -14,19 +14,30 @@ namespace Mesen.Debugger.Utilities
 {
 	internal class DebugSharedActions
 	{
+		private static Dictionary<CpuType, DebuggerFeatures> _featuresCache = new Dictionary<CpuType, DebuggerFeatures>();
+
+		private static DebuggerFeatures GetFeatures(CpuType cpuType)
+		{
+			if(!_featuresCache.TryGetValue(cpuType, out DebuggerFeatures features)) {
+				features = DebugApi.GetDebuggerFeatures(cpuType);
+				_featuresCache[cpuType] = features;
+			}
+			return features;
+		}
+
 		public static List<ContextMenuAction> GetStepActions(Control wnd, Func<CpuType> getCpuType)
 		{
 			return new List<ContextMenuAction>() {
 				new ContextMenuAction() {
 					ActionType = ActionType.Continue,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.Continue),
-					IsEnabled = () => EmuApi.IsPaused(),
+					IsEnabled = () => ContextMenuAction.Paused,
 					OnClick = () => DebugSharedActions.ResumeExecution()
 				},
 				new ContextMenuAction() {
 					ActionType = ActionType.Break,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.Break),
-					IsEnabled = () => !EmuApi.IsPaused(),
+					IsEnabled = () => !ContextMenuAction.Paused,
 					OnClick = () => Step(getCpuType(), StepType.Step)
 				},
 				new ContextMenuAction() {
@@ -51,40 +62,40 @@ namespace Mesen.Debugger.Utilities
 				new ContextMenuAction() {
 					ActionType = ActionType.StepOver,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.StepOver),
-					IsVisible = () => DebugApi.GetDebuggerFeatures(getCpuType()).StepOver,
+					IsVisible = () => GetFeatures(getCpuType()).StepOver,
 					AllowedWhenHidden = true,
 					OnClick = () => Step(getCpuType(), StepType.StepOver, 1)
 				},
 				new ContextMenuAction() {
 					ActionType = ActionType.StepOut,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.StepOut),
-					IsVisible = () => DebugApi.GetDebuggerFeatures(getCpuType()).StepOut,
+					IsVisible = () => GetFeatures(getCpuType()).StepOut,
 					AllowedWhenHidden = true,
 					OnClick = () => Step(getCpuType(), StepType.StepOut, 1)
 				},
-				new ContextMenuSeparator() { IsVisible = () => DebugApi.GetDebuggerFeatures(getCpuType()).StepBack },
+				new ContextMenuSeparator() { IsVisible = () => GetFeatures(getCpuType()).StepBack },
 				new ContextMenuAction() {
 					ActionType = ActionType.StepBack,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.StepBack),
-					IsVisible = () => DebugApi.GetDebuggerFeatures(getCpuType()).StepBack,
+					IsVisible = () => GetFeatures(getCpuType()).StepBack,
 					OnClick = () => Step(getCpuType(), StepType.StepBack, (int)StepBackType.Instruction)
 				},
 				new ContextMenuAction() {
 					ActionType = ActionType.StepBackScanline,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.StepBackScanline),
-					IsVisible = () => DebugApi.GetDebuggerFeatures(getCpuType()).StepBack,
+					IsVisible = () => GetFeatures(getCpuType()).StepBack,
 					OnClick = () => Step(getCpuType(), StepType.StepBack, (int)StepBackType.Scanline)
 				},
 				new ContextMenuAction() {
 					ActionType = ActionType.StepBackFrame,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.StepBackFrame),
-					IsVisible = () => DebugApi.GetDebuggerFeatures(getCpuType()).StepBack,
+					IsVisible = () => GetFeatures(getCpuType()).StepBack,
 					OnClick = () => Step(getCpuType(), StepType.StepBack, (int)StepBackType.Frame)
 				},
-				new ContextMenuSeparator() { IsVisible = () => DebugApi.GetDebuggerFeatures(getCpuType()).CpuCycleStep },
+				new ContextMenuSeparator() { IsVisible = () => GetFeatures(getCpuType()).CpuCycleStep },
 				new ContextMenuAction() {
 					ActionType = ActionType.RunCpuCycle,
-					IsVisible = () => DebugApi.GetDebuggerFeatures(getCpuType()).CpuCycleStep,
+					IsVisible = () => GetFeatures(getCpuType()).CpuCycleStep,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.RunCpuCycle),
 					OnClick = () => Step(getCpuType(), StepType.CpuCycleStep, 1)
 				},
@@ -111,13 +122,13 @@ namespace Mesen.Debugger.Utilities
 				new ContextMenuAction() {
 					ActionType = ActionType.RunToNmi,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.RunToNmi),
-					IsVisible = () => DebugApi.GetDebuggerFeatures(getCpuType()).RunToNmi,
+					IsVisible = () => GetFeatures(getCpuType()).RunToNmi,
 					OnClick = () => Step(getCpuType(), StepType.RunToNmi)
 				},
 				new ContextMenuAction() {
 					ActionType = ActionType.RunToIrq,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.RunToIrq),
-					IsVisible = () => DebugApi.GetDebuggerFeatures(getCpuType()).RunToIrq,
+					IsVisible = () => GetFeatures(getCpuType()).RunToIrq,
 					OnClick = () => Step(getCpuType(), StepType.RunToIrq)
 				},
 				new ContextMenuAction() {

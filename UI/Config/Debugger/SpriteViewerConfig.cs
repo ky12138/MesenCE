@@ -7,6 +7,7 @@ namespace Mesen.Config
 	public partial class SpriteViewerConfig : BaseWindowConfig<SpriteViewerConfig>
 	{
 		[ObservableProperty] public partial bool ShowSettingsPanel { get; set; } = true;
+		[ObservableProperty] public partial bool ShowToolbar { get; set; } = true;
 
 		[ObservableProperty] public partial bool ShowOutline { get; set; } = false;
 		[ObservableProperty] public partial bool ShowOffscreenRegions { get; set; } = false;

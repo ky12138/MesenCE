@@ -8,6 +8,7 @@ using Avalonia.Threading;
 using Mesen.Config;
 using Mesen.Debugger.Utilities;
 using Mesen.Debugger.ViewModels;
+using Mesen.Interop;
 using Mesen.Localization;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace Mesen.Debugger.Controls
 		public ActionToolbar()
 		{
 			InitializeComponent();
-			_timer = new DispatcherTimer(TimeSpan.FromMilliseconds(100), DispatcherPriority.Normal, (s, e) => UpdateToolbar());
+			_timer = new DispatcherTimer(TimeSpan.FromMilliseconds(250), DispatcherPriority.Background, (s, e) => UpdateToolbar());
 		}
 
 		private void InitializeComponent()
@@ -67,9 +68,11 @@ namespace Mesen.Debugger.Controls
 		private void UpdateToolbar()
 		{
 			if(Items != null) {
+				// EmuApi.IsPaused() is read once per toolbar refresh instead of once per action
+				bool isPaused = EmuApi.IsPaused();
 				foreach(object item in Items) {
 					if(item is ContextMenuAction act) {
-						act.Update();
+						act.Update(isPaused);
 					}
 				}
 			}

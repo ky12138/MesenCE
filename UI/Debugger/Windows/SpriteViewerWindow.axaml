@@ -37,6 +37,7 @@
 		<Panel DockPanel.Dock="Top">
 			<c:MesenMenu DockPanel.Dock="Top" Name="ActionMenu">
 				<MenuItem Header="{l:Translate mnuFile}" ItemsSource="{Binding FileMenuActions}" />
+				<MenuItem Header="{l:Translate mnuDebug}" ItemsSource="{Binding DebugMenuItems}" />
 				<MenuItem Header="{l:Translate mnuView}" ItemsSource="{Binding ViewMenuActions}" />
 			</c:MesenMenu>
 			<c:IconButton
@@ -47,6 +48,10 @@
 				Icon="Assets/Settings.png"
 			/>
 		</Panel>
+
+		<StackPanel Orientation="Horizontal" DockPanel.Dock="Top" IsVisible="{Binding Config.ShowToolbar}">
+			<dc:ActionToolbar Items="{Binding ToolbarItems}" />
+		</StackPanel>
 
 		<dv:RefreshTimingView DataContext="{Binding RefreshTiming}" DockPanel.Dock="Bottom" />
 

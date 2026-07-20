@@ -5,6 +5,7 @@ namespace Mesen.Config
 {
 	public partial class ProfilerConfig : BaseWindowConfig<ProfilerConfig>
 	{
+		[ObservableProperty] public partial bool ShowToolbar { get; set; } = true;
 		[ObservableProperty] public partial List<int> ColumnWidths { get; set; } = new();
 		[ObservableProperty] public partial bool AutoRefresh { get; set; } = true;
 		[ObservableProperty] public partial bool RefreshOnBreakPause { get; set; } = true;

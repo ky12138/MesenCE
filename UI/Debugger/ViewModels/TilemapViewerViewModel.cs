@@ -55,6 +55,9 @@ namespace Mesen.Debugger.ViewModels
 		public List<object> FileMenuActions { get; } = new();
 		public List<object> ViewMenuActions { get; } = new();
 
+		[ObservableProperty] public partial List<ContextMenuAction> DebugMenuItems { get; set; } = new();
+		[ObservableProperty] public partial List<ContextMenuAction> ToolbarItems { get; set; } = new();
+
 		private object _updateLock = new();
 		private TilemapViewerData _data = new();
 		private TilemapViewerData _coreData = new();
@@ -128,6 +131,12 @@ namespace Mesen.Debugger.ViewModels
 					OnClick = () => _picViewer.ZoomOut()
 				},
 			});
+
+			if(wnd != null) {
+				DebugMenuItems = AddDisposables(DebugSharedActions.GetStepActions(wnd, () => CpuType));
+				ToolbarItems = AddDisposables(DebugSharedActions.GetStepActions(wnd, () => CpuType));
+				DebugShortcutManager.RegisterActions(wnd, DebugMenuItems);
+			}
 
 			if(Design.IsDesignMode || wnd == null) {
 				return;

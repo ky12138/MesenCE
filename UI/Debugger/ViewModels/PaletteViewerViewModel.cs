@@ -36,6 +36,8 @@ namespace Mesen.Debugger.ViewModels
 
 		[ObservableProperty] public partial List<object> FileMenuActions { get; private set; } = new();
 		[ObservableProperty] public partial List<object> ViewMenuActions { get; private set; } = new();
+		[ObservableProperty] public partial List<ContextMenuAction> DebugMenuItems { get; private set; } = new();
+		[ObservableProperty] public partial List<ContextMenuAction> ToolbarItems { get; private set; } = new();
 
 		private RefStruct<DebugPaletteInfo>? _palette = null;
 
@@ -109,6 +111,10 @@ namespace Mesen.Debugger.ViewModels
 
 			DebugShortcutManager.RegisterActions(wnd, FileMenuActions);
 			DebugShortcutManager.RegisterActions(wnd, ViewMenuActions);
+
+			DebugMenuItems = AddDisposables(DebugSharedActions.GetStepActions(wnd, () => CpuType));
+			ToolbarItems = AddDisposables(DebugSharedActions.GetStepActions(wnd, () => CpuType));
+			DebugShortcutManager.RegisterActions(wnd, DebugMenuItems);
 
 			AddDisposables(DebugShortcutManager.CreateContextMenu(palSelector, selectorBorder, new List<object> {
 				new ContextMenuAction() {

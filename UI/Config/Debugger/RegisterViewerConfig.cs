@@ -5,6 +5,7 @@ namespace Mesen.Config
 {
 	public partial class RegisterViewerConfig : BaseWindowConfig<RegisterViewerConfig>
 	{
+		[ObservableProperty] public partial bool ShowToolbar { get; set; } = true;
 		[ObservableProperty] public partial RefreshTimingConfig RefreshTiming { get; set; } = new();
 		[ObservableProperty] public partial List<int> ColumnWidths { get; set; } = new();
 	}

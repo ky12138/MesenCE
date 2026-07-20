@@ -33,6 +33,8 @@ public partial class TileEditorViewModel : DisposableViewModel
 	public List<ContextMenuAction> FileMenuActions { get; private set; } = new();
 	public List<ContextMenuAction> ViewMenuActions { get; private set; } = new();
 	public List<ContextMenuAction> ToolsMenuActions { get; private set; } = new();
+	public List<ContextMenuAction> DebugMenuItems { get; private set; } = new();
+	public List<ContextMenuAction> DebugToolbarItems { get; private set; } = new();
 	public List<ContextMenuAction> ToolbarActions { get; private set; } = new();
 
 	private CpuType _cpuType;
@@ -117,9 +119,13 @@ public partial class TileEditorViewModel : DisposableViewModel
 		ToolsMenuActions = AddDisposables(GetTools());
 		ToolbarActions = AddDisposables(GetTools());
 
+		DebugMenuItems = AddDisposables(DebugSharedActions.GetStepActions(wnd, () => _cpuType));
+		DebugToolbarItems = AddDisposables(DebugSharedActions.GetStepActions(wnd, () => _cpuType));
+
 		DebugShortcutManager.RegisterActions(wnd, FileMenuActions);
 		DebugShortcutManager.RegisterActions(wnd, ViewMenuActions);
 		DebugShortcutManager.RegisterActions(wnd, ToolsMenuActions);
+		DebugShortcutManager.RegisterActions(wnd, DebugMenuItems);
 	}
 
 	private List<ContextMenuAction> GetTools()
