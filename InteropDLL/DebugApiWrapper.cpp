@@ -21,6 +21,7 @@
 #include "Core/Debugger/BaseEventManager.h"
 #include "Core/Debugger/ITraceLogger.h"
 #include "Core/Debugger/TraceLogFileSaver.h"
+#include "Core/Debugger/TraceLoggerAddressCache.h"
 #include "Core/Debugger/FrozenAddressManager.h"
 #include "Core/Debugger/BankSwitchBreakpoint.h"
 #include "Core/Gameboy/GbTypes.h"
@@ -120,6 +121,11 @@ extern "C"
 	DllExport void __stdcall ClearExecutionTrace()
 	{
 		WithDebugger(void, ClearExecutionTrace());
+	}
+
+	DllExport void __stdcall ClearTraceAddressCache()
+	{
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void { ::ClearTraceAddressCache(dbg); });
 	}
 
 	DllExport void __stdcall StartLogTraceToFile(const char* filename)

@@ -31,6 +31,7 @@ namespace Mesen.Interop
 
 		public const int TraceLogBufferSize = 30000;
 		[DllImport(DllPath)] public static extern void ClearExecutionTrace();
+		[DllImport(DllPath)] public static extern void ClearTraceAddressCache();
 		[DllImport(DllPath, EntryPoint = "GetExecutionTrace")] private static extern UInt32 GetExecutionTraceWrapper(IntPtr output, UInt32 startOffset, UInt32 maxRowCount);
 		public static unsafe TraceRow[] GetExecutionTrace(UInt32 startOffset, UInt32 maxRowCount)
 		{
@@ -1464,6 +1465,7 @@ namespace Mesen.Interop
 		[MarshalAs(UnmanagedType.I1)] public bool Enabled;
 		[MarshalAs(UnmanagedType.I1)] public bool IndentCode;
 		[MarshalAs(UnmanagedType.I1)] public bool UseLabels;
+		[MarshalAs(UnmanagedType.I1)] public bool UniqueAddressesOnly;
 
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 1000)]
 		public byte[] Condition;
@@ -1694,6 +1696,9 @@ namespace Mesen.Interop
 
 		public UInt32 LogSize;
 		public fixed byte LogOutput[500];
+
+		public Int32 AbsoluteAddress;
+
 
 		public unsafe string GetOutput()
 		{

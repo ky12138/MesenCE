@@ -10,6 +10,7 @@ struct TraceRow
 	uint8_t ByteCodeSize;
 	uint32_t LogSize;
 	char LogOutput[500];
+	int32_t AbsoluteAddress;
 };
 
 struct TraceLoggerOptions
@@ -17,6 +18,7 @@ struct TraceLoggerOptions
 	bool Enabled;
 	bool IndentCode;
 	bool UseLabels;
+	bool UniqueAddressesOnly;
 	char Condition[1000];
 	char Format[1000];
 };
@@ -32,6 +34,7 @@ public:
 	virtual int64_t GetRowId(uint32_t offset) = 0;
 	virtual void GetExecutionTrace(TraceRow& row, uint32_t offset) = 0;
 	virtual void Clear() = 0;
+	virtual void ClearAddressCache() = 0;
 	virtual void SetOptions(TraceLoggerOptions options) = 0;
 
 	__forceinline bool IsEnabled() { return _enabled; }

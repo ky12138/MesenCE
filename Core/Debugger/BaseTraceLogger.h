@@ -161,11 +161,15 @@ protected:
 	bool _pendingLog = false;
 	CpuStateType _lastState = {};
 	DisassemblyInfo _lastDisassemblyInfo = {};
+	int32_t _lastAbsoluteAddress = -1;
 
 	CpuStateType* _cpuState = nullptr;
 	DisassemblyInfo* _disassemblyCache = nullptr;
+	int32_t* _absoluteAddress = nullptr;
 	uint64_t* _rowIds = nullptr;
 	TraceLogPpuState* _ppuState = nullptr;
+
+	unordered_set<uint32_t> _seenAddresses;
 
 	unique_ptr<ExpressionEvaluator> _expEvaluator;
 	ExpressionData _conditionData;
@@ -288,10 +292,11 @@ protected:
 		}
 	}
 
-	void AddRow(CpuStateType& cpuState, DisassemblyInfo& disassemblyInfo)
+	void AddRow(CpuStateType& cpuState, DisassemblyInfo& disassemblyInfo, int32_t absoluteAddress)
 	{
 		_disassemblyCache[_currentPos] = disassemblyInfo;
 		_cpuState[_currentPos] = cpuState;
+		_absoluteAddress[_currentPos] = absoluteAddress;
 		((TraceLoggerType*)this)->LogPpuState();
 
 		_rowIds[_currentPos] = ITraceLogger::NextRowId;
@@ -429,6 +434,9 @@ public:
 		_cpuState = new CpuStateType[BaseTraceLogger::ExecutionLogSize];
 		memset(_cpuState, 0, sizeof(CpuStateType) * BaseTraceLogger::ExecutionLogSize);
 
+		_absoluteAddress = new int32_t[BaseTraceLogger::ExecutionLogSize];
+		memset(_absoluteAddress, -1, sizeof(int32_t) * BaseTraceLogger::ExecutionLogSize);
+
 		_cpuType = cpuType;
 		_cpuMemoryType = DebugUtilities::GetCpuMemoryType(cpuType);
 
@@ -441,12 +449,19 @@ public:
 		delete[] _rowIds;
 		delete[] _ppuState;
 		delete[] _cpuState;
+		delete[] _absoluteAddress;
 	}
 
 	void Clear() override
 	{
 		_currentPos = 0;
 		memset(_rowIds, 0, sizeof(uint64_t) * BaseTraceLogger::ExecutionLogSize);
+		_seenAddresses.clear();
+	}
+
+	void ClearAddressCache() override
+	{
+		_seenAddresses.clear();
 	}
 
 	void LogNonExec(MemoryOperationInfo& operation, AddressInfo& addressInfo)
@@ -458,7 +473,14 @@ public:
 			}
 
 			if(ConditionMatches(_lastDisassemblyInfo, operation, addressInfo)) {
-				AddRow(_lastState, _lastDisassemblyInfo);
+				if(_options.UniqueAddressesOnly) {
+					uint32_t pc = ((TraceLoggerType*)this)->GetProgramCounter(_lastState);
+					if(!_seenAddresses.insert(pc).second) {
+						_pendingLog = false;
+						return;
+					}
+				}
+				AddRow(_lastState, _lastDisassemblyInfo, _lastAbsoluteAddress);
 				_pendingLog = false;
 			}
 		}
@@ -469,11 +491,18 @@ public:
 		if(_enabled) {
 			//For the sake of performance, only log data for the CPUs we're actively displaying/logging
 			if(ConditionMatches(disassemblyInfo, operation, addressInfo)) {
-				AddRow(cpuState, disassemblyInfo);
+				if(_options.UniqueAddressesOnly) {
+					uint32_t pc = ((TraceLoggerType*)this)->GetProgramCounter(cpuState);
+					if(!_seenAddresses.insert(pc).second) {
+						return;
+					}
+				}
+				AddRow(cpuState, disassemblyInfo, addressInfo.Address);
 			} else {
 				_pendingLog = true;
 				_lastState = cpuState;
 				_lastDisassemblyInfo = disassemblyInfo;
+				_lastAbsoluteAddress = addressInfo.Address;
 			}
 		}
 	}
@@ -537,6 +566,7 @@ public:
 		_disassemblyCache[index].GetByteCode(row.ByteCode);
 		row.ByteCodeSize = _disassemblyCache[index].GetOpSize();
 		row.ProgramCounter = ((TraceLoggerType*)this)->GetProgramCounter(state);
+		row.AbsoluteAddress = _absoluteAddress[index];
 		row.LogSize = std::min<uint32_t>(499, (uint32_t)logOutput.size());
 		memcpy(row.LogOutput, logOutput.c_str(), row.LogSize);
 		row.LogOutput[row.LogSize] = 0;

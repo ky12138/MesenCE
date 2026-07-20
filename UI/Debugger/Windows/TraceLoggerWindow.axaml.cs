@@ -223,6 +223,11 @@ namespace Mesen.Debugger.Windows
 			_model.UpdateLog();
 		}
 
+		private void OnResetAddressCacheClick(object sender, RoutedEventArgs e)
+		{
+			_model.ResetAddressCache();
+		}
+
 		private void InitializeComponent()
 		{
 			AvaloniaXamlLoader.Load(this);

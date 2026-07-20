@@ -42,6 +42,9 @@ namespace Mesen.Debugger.ViewModels
 
 		[ObservableProperty] public partial bool ShowByteCode { get; private set; }
 
+		[ObservableProperty] public partial MemoryMappingViewModel? MappingViewModel { get; set; }
+		[ObservableProperty] public partial AddressDisplayType AddressDisplayType { get; set; } = AddressDisplayType.CpuAddress;
+
 		[ObservableProperty] public partial int SelectionStart { get; private set; }
 		[ObservableProperty] public partial int SelectionEnd { get; private set; }
 		[ObservableProperty] public partial int SelectionAnchor { get; private set; }
@@ -66,6 +69,7 @@ namespace Mesen.Debugger.ViewModels
 			if(Design.IsDesignMode) {
 				Tabs = new() { new TraceLoggerOptionTab(this, CpuType.Nes, Config.GetCpuConfig(CpuType.Nes), true) };
 				SelectedTab = Tabs[0];
+				UpdateMappingViewModel();
 				return;
 			}
 
@@ -79,10 +83,20 @@ namespace Mesen.Debugger.ViewModels
 
 			UpdateAvailableTabs();
 
+			UpdateAddressDisplayType();
+
+			AddDisposable(this.ObserveProp(nameof(SelectedTab), () => UpdateMappingViewModel()));
+
+			AddDisposable(Config.ObserveProp([nameof(Config.ShowMapping), nameof(Config.ShowAbsAddress)], () => {
+				UpdateAddressDisplayType();
+				UpdateLog();
+			}));
+
 			AddDisposable(this.ObserveProp(nameof(ScrollPosition), () => {
 				UpdateScrollPosition();
 				UpdateLog();
 			}));
+			
 			AddDisposable(this.ObserveProp(nameof(MinScrollPosition), UpdateScrollPosition));
 			AddDisposable(this.ObserveProp(nameof(MaxScrollPosition), UpdateScrollPosition));
 
@@ -175,6 +189,19 @@ namespace Mesen.Debugger.ViewModels
 					ActionType = ActionType.ShowToolbar,
 					IsSelected = () => Config.ShowToolbar,
 					OnClick = () => Config.ShowToolbar = !Config.ShowToolbar
+				},
+				new ContextMenuSeparator(),
+				new ContextMenuAction() {
+					ActionType = ActionType.Custom,
+					DynamicText = () => ResourceHelper.GetViewLabel(nameof(TraceLoggerWindow), "chkShowMapping"),
+					IsSelected = () => Config.ShowMapping,
+					OnClick = () => Config.ShowMapping = !Config.ShowMapping
+				},
+				new ContextMenuAction() {
+					ActionType = ActionType.Custom,
+					DynamicText = () => ResourceHelper.GetViewLabel(nameof(TraceLoggerWindow), "chkShowAbsAddress"),
+					IsSelected = () => Config.ShowAbsAddress,
+					OnClick = () => Config.ShowAbsAddress = !Config.ShowAbsAddress
 				}
 			});
 
@@ -224,7 +251,25 @@ namespace Mesen.Debugger.ViewModels
 			Tabs = tabs;
 			SelectedTab = tabs[0];
 
+			UpdateMappingViewModel();
 			UpdateOptions();
+		}
+
+		public void UpdateMappingViewModel()
+		{
+			MappingViewModel = SelectedTab != null ? new MemoryMappingViewModel(SelectedTab.CpuType) : null;
+		}
+
+		public void UpdateAddressDisplayType()
+		{
+			AddressDisplayType displayType = AddressDisplayType.CpuAddress;
+			if(Config.ShowMapping) {
+				displayType |= AddressDisplayType.Mapping;
+			}
+			if(Config.ShowAbsAddress) {
+				displayType |= AddressDisplayType.AbsAddress;
+			}
+			AddressDisplayType = displayType;
 		}
 
 		public void UpdateOptions()
@@ -255,6 +300,7 @@ namespace Mesen.Debugger.ViewModels
 					Enabled = romInfo.CpuTypes.Count == 1 || cfg.Enabled,
 					UseLabels = cfg.UseLabels,
 					IndentCode = cfg.IndentCode,
+					UniqueAddressesOnly = cfg.UniqueAddressesOnly,
 					Format = Encoding.UTF8.GetBytes(cfg.UseCustomFormat ? cfg.Format : TraceLoggerOptionTab.GetAutoFormat(cfg, cpuType)),
 					Condition = Encoding.UTF8.GetBytes(cfg.Condition)
 				};
@@ -279,6 +325,12 @@ namespace Mesen.Debugger.ViewModels
 					ScrollToBottom(false);
 				}
 			});
+		}
+
+		public void ResetAddressCache()
+		{
+			DebugApi.ClearTraceAddressCache();
+			UpdateLog();
 		}
 
 		public void SetSelectedRow(int rowNumber)
@@ -379,9 +431,29 @@ namespace Mesen.Debugger.ViewModels
 			int len = SelectionEnd - SelectionStart + 1;
 			CodeLineData[] lines = GetCodeLines(SelectionStart, len);
 
+			AddressDisplayType addressDisplayType = AddressDisplayType;
+			bool showMapping = addressDisplayType.HasFlag(AddressDisplayType.Mapping);
+			List<MemoryMappingBlock> mappingBlocks = MappingViewModel?.CpuMappings ?? new();
+			Dictionary<int, string>? mappingLookup = null;
+			if(showMapping && mappingBlocks.Count > 0) {
+				mappingLookup = new();
+				int pos = 0;
+				foreach(var block in mappingBlocks) {
+					string blockName = MemoryMappingViewer.GetBlockText(block, false);
+					for(int a = 0; a < block.Length; a++) {
+						mappingLookup[pos + a] = blockName;
+					}
+					pos += block.Length;
+				}
+			}
+
 			for(int i = 0; i < len; i++) {
 				string addrFormat = "X" + lines[i].CpuType.GetAddressSize();
-				sb.AppendLine(lines[i].GetAddressText(AddressDisplayType.CpuAddress, addrFormat).PadRight(6) + " " + lines[i].Text);
+				string? mappingName = null;
+				if(showMapping && mappingLookup != null && lines[i].Address >= 0 && mappingLookup.TryGetValue(lines[i].Address, out string? name)) {
+					mappingName = name;
+				}
+				sb.AppendLine(lines[i].GetAddressText(addressDisplayType, addrFormat, mappingName ?? "").PadRight(6) + " " + lines[i].Text);
 			}
 			ApplicationHelper.GetMainWindow()?.Clipboard?.SetTextAsync(sb.ToString());
 		}
@@ -418,9 +490,13 @@ namespace Mesen.Debugger.ViewModels
 			}
 
 			for(int i = rows.Length - 1; i >= 0; i--) {
+				int cpuAddress = (int)rows[i].ProgramCounter;
+				AddressInfo absAddr = Config.ShowAbsAddress
+					? new() { Address = (int)rows[i].AbsoluteAddress }
+					: new() { Address = -1 };
 				lines.Add(new CodeLineData(rows[i].Type) {
-					Address = (int)rows[i].ProgramCounter,
-					AbsoluteAddress = new() { Address = -1 },
+					Address = cpuAddress,
+					AbsoluteAddress = absAddr,
 					Text = rows[i].GetOutput(),
 					OpSize = rows[i].ByteCodeSize,
 					ByteCode = rows[i].GetByteCode()
@@ -751,5 +827,4 @@ namespace Mesen.Debugger.ViewModels
 			ByteCodeSize = consoleType.GetMainCpuType().GetByteCodeSize();
 		}
 	}
-
 }

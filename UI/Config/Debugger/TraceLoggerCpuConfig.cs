@@ -20,6 +20,7 @@ namespace Mesen.Config
 
 		[ObservableProperty] public partial bool UseLabels { get; set; } = true;
 		[ObservableProperty] public partial bool IndentCode { get; set; } = false;
+		[ObservableProperty] public partial bool UniqueAddressesOnly { get; set; } = false;
 
 		[ObservableProperty] public partial bool UseCustomFormat { get; set; } = false;
 		[ObservableProperty] public partial string Format { get; set; } = "";

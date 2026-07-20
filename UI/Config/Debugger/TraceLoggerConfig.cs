@@ -20,6 +20,8 @@ namespace Mesen.Config
 		[ObservableProperty] public partial bool AutoRefresh { get; set; } = true;
 		[ObservableProperty] public partial bool RefreshOnBreakPause { get; set; } = true;
 		[ObservableProperty] public partial bool ShowToolbar { get; set; } = true;
+		[ObservableProperty] public partial bool ShowMapping { get; set; } = false;
+		[ObservableProperty] public partial bool ShowAbsAddress { get; set; } = false;
 
 		[ObservableProperty] public partial TraceLoggerCpuConfig SnesConfig { get; set; } = new();
 		[ObservableProperty] public partial TraceLoggerCpuConfig SpcConfig { get; set; } = new();

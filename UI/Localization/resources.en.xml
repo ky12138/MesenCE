@@ -1280,6 +1280,9 @@
 
 			<Control ID="chkUseLabels">Use labels</Control>
 			<Control ID="chkIndentCode">Indent based on stack pointer</Control>
+			<Control ID="chkUniqueAddresses">Record unique addresses only</Control>
+			<Control ID="chkShowMapping">Show mapping</Control>
+			<Control ID="chkShowAbsAddress">Show absolute address</Control>
 			
 			<Control ID="lblConditionError">Condition contains invalid syntax or symbols.</Control>
 
@@ -1292,6 +1295,7 @@
 			<Control ID="btnStart">Log to file...</Control>
 			<Control ID="btnStop">Stop logging</Control>
 			<Control ID="btnClear">Clear log</Control>
+			<Control ID="btnResetAddresses">Reset recorded addresses</Control>
 		</Form>
 
 		<Form ID="EventViewerWindow">

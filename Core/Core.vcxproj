@@ -451,6 +451,7 @@
     <ClInclude Include="Debugger\DebuggerFeatures.h" />
     <ClInclude Include="Debugger\ITraceLogger.h" />
     <ClInclude Include="Debugger\TraceLogFileSaver.h" />
+    <ClInclude Include="Debugger\TraceLoggerAddressCache.h" />
     <ClInclude Include="Gameboy\Carts\GbsCart.h" />
     <ClInclude Include="Gameboy\Debugger\DummyGbCpu.h" />
     <ClInclude Include="Gameboy\Debugger\GbTraceLogger.h" />
@@ -1072,6 +1073,7 @@
     <ClCompile Include="SNES\SnesPpu.cpp" />
     <ClCompile Include="Debugger\PpuTools.cpp" />
     <ClCompile Include="Debugger\Profiler.cpp" />
+    <ClCompile Include="Debugger\TraceLoggerAddressCache.cpp" />
     <ClCompile Include="Shared\RecordedRomTest.cpp" />
     <ClCompile Include="SNES\RegisterHandlerB.cpp" />
     <ClCompile Include="Shared\RewindData.cpp" />
