@@ -116,16 +116,17 @@
 			/>
 			
 			<Border BorderBrush="Gray" BorderThickness="1" Grid.Row="2">
-				<DataBox
-					Name="lstEvents"
-					Items="{Binding ListView.DebugEvents}"
-					Selection="{Binding ListView.Selection}"
-					SortMode="Multiple"
-					SortCommand="{Binding ListView.SortCommand}"
-					SortState="{Binding ListView.SortState}"
-					GridLinesVisibility="All"
-					ColumnWidths="{Binding ListView.ColumnWidths}"
-				>
+			<DataBox
+				Name="lstEvents"
+				Items="{Binding ListView.DebugEvents}"
+				Selection="{Binding ListView.Selection}"
+				SortMode="Multiple"
+				SortCommand="{Binding ListView.SortCommand}"
+				SortState="{Binding ListView.SortState}"
+				GridLinesVisibility="All"
+				ColumnWidths="{Binding ListView.ColumnWidths}"
+				CellDoubleClick="OnCellDoubleClick"
+			>
 					<DataBox.Styles>
 						<Style Selector="TextBlock">
 							<Setter Property="Margin" Value="3 0 0 0" />

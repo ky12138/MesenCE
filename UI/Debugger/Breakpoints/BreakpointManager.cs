@@ -1,4 +1,6 @@
-﻿using Mesen.Debugger.Utilities;
+﻿using Avalonia.Controls;
+using Mesen.Debugger.Utilities;
+using Mesen.Debugger.Windows;
 using Mesen.Interop;
 using System;
 using System.Collections.Generic;
@@ -203,6 +205,43 @@ namespace Mesen.Debugger
 
 				breakpoint.MemoryType = info.Type;
 				BreakpointManager.AddBreakpoint(breakpoint);
+			}
+		}
+
+		public static void EditBreakpointAtAddress(AddressInfo info, CpuType cpuType, Control parent)
+		{
+			if(info.Address < 0) {
+				return;
+			}
+
+			Breakpoint? existing = GetMatchingForbidBreakpoint(info, cpuType) ?? GetMatchingBreakpoint(info, cpuType, true);
+			if(existing != null) {
+				BreakpointEditWindow.EditBreakpoint(existing, parent);
+			} else {
+				bool execBreakpoint = true;
+				bool readWriteBreakpoint = !info.Type.IsRomMemory() || info.Type.IsRelativeMemory();
+				if(info.Type.SupportsCdl()) {
+					CdlFlags cdlData = DebugApi.GetCdlData((uint)info.Address, 1, info.Type)[0];
+					bool isCode = cdlData.HasFlag(CdlFlags.Code);
+					bool isData = cdlData.HasFlag(CdlFlags.Data);
+					if(isCode || isData) {
+						readWriteBreakpoint = !isCode;
+						execBreakpoint = isCode;
+					}
+				}
+
+				Breakpoint bp = new Breakpoint() {
+					CpuType = cpuType,
+					Enabled = true,
+					BreakOnExec = execBreakpoint,
+					BreakOnRead = readWriteBreakpoint,
+					BreakOnWrite = readWriteBreakpoint,
+					StartAddress = (UInt32)info.Address,
+					EndAddress = (UInt32)info.Address
+				};
+
+				bp.MemoryType = info.Type;
+				BreakpointEditWindow.EditBreakpoint(bp, parent);
 			}
 		}
 

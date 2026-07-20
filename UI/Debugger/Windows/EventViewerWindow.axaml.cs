@@ -116,6 +116,22 @@ namespace Mesen.Debugger.Windows
 			}
 		}
 
+		private void OnCellDoubleClick(DataBoxCell cell)
+		{
+			if(cell.DataContext is not DebugEventViewModel vm) {
+				return;
+			}
+
+			string? colName = cell.Column?.ColumnName;
+			if(colName == "ProgramCounter") {
+				DebuggerWindow.OpenWindowAtAddress(_model.CpuType, (int)vm.RawEvent.ProgramCounter);
+			} else if(colName == "Address") {
+				if(vm.RawEvent.Flags.HasFlag(EventFlags.ReadWriteOp)) {
+					MemoryToolsWindow.ShowInMemoryTools(vm.RawEvent.Operation.MemType, (int)vm.RawEvent.Operation.Address);
+				}
+			}
+		}
+
 		private TooltipEntries GetTooltipData(DebugEventInfo evt)
 		{
 			TooltipEntries entries = new();

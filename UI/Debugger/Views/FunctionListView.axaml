@@ -43,7 +43,7 @@
 					Header="{l:Translate colFunction}"
 					Binding="{Binding LabelName, DataType={x:Type vm:FunctionViewModel}}"
 					CanUserResize="True"
-					InitialWidth="100"
+					InitialWidth="80"
 				/>
 				<DataBoxTextColumn
 					ColumnName="RelAddr"
@@ -58,6 +58,20 @@
 					Binding="{Binding AbsAddressDisplay, DataType={x:Type vm:FunctionViewModel}}"
 					CanUserResize="True"
 					InitialWidth="80"
+				/>
+				<DataBoxTextColumn
+					ColumnName="ExecCount"
+					Header="{l:Translate colExecCount}"
+					Binding="{Binding ExecCount, DataType={x:Type vm:FunctionViewModel}}"
+					CanUserResize="True"
+					InitialWidth="50"
+				/>
+				<DataBoxTextColumn
+					ColumnName="LastExec"
+					Header="{l:Translate colLastExec}"
+					Binding="{Binding LastExec, DataType={x:Type vm:FunctionViewModel}}"
+					CanUserResize="True"
+					InitialWidth="50"
 				/>
 			</DataBox.Columns>
 		</DataBox>

@@ -1,16 +1,12 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using DataBoxControl;
-using Mesen.Config;
 using Mesen.Debugger;
 using Mesen.Debugger.Utilities;
 using Mesen.Debugger.ViewModels;
 using Mesen.Debugger.Windows;
-using Mesen.Utilities;
-using Mesen.ViewModels;
+using Mesen.Interop;
 using System;
 using System.Linq;
 using static Mesen.Debugger.ViewModels.BreakpointListViewModel;
@@ -41,18 +37,27 @@ namespace Mesen.Debugger.Views
 		{
 			if(DataContext is BreakpointListViewModel bpList && cell.DataContext is BreakpointViewModel) {
 				string? header = cell.Column?.Header?.ToString() ?? "";
-				if(header == "E" || header == "M") {
-					bool isEnabledColumn = header == "E";
-					bool newValue = !bpList.Selection.SelectedItems.Any(bp => (isEnabledColumn ? bp?.Breakpoint.Enabled : bp?.Breakpoint.MarkEvent) == true);
+				if(header == "E" || header == "M" || header == "R" || header == "W" || header == "X") {
+					bool newValue = !bpList.Selection.SelectedItems.Any(bp => {
+						if(bp == null) return false;
+						return header switch {
+							"E" => bp.Breakpoint.Enabled,
+							"M" => bp.Breakpoint.MarkEvent,
+							"R" => bp.Breakpoint.BreakOnRead,
+							"W" => bp.Breakpoint.BreakOnWrite,
+							"X" => bp.Breakpoint.BreakOnExec,
+							_ => false,
+						};
+					});
 
 					foreach(BreakpointViewModel? bp in bpList.Selection.SelectedItems) {
-						if(bp != null) {
-							if(isEnabledColumn) {
-								bp.Breakpoint.Enabled = newValue;
-							} else {
-								if(!bp.Breakpoint.Forbid) {
-									bp.Breakpoint.MarkEvent = newValue;
-								}
+						if(bp != null && !bp.Breakpoint.Forbid) {
+							switch(header) {
+								case "E": bp.Breakpoint.Enabled = newValue; break;
+								case "M": bp.Breakpoint.MarkEvent = newValue; break;
+								case "R": bp.Breakpoint.BreakOnRead = newValue; break;
+								case "W": bp.Breakpoint.BreakOnWrite = newValue; break;
+								case "X": bp.Breakpoint.BreakOnExec = newValue; break;
 							}
 						}
 					}
@@ -65,7 +70,21 @@ namespace Mesen.Debugger.Views
 
 		private void OnCellDoubleClick(DataBoxCell cell)
 		{
-			if(cell.DataContext is BreakpointViewModel vm) {
+			if(cell.DataContext is not BreakpointViewModel vm) {
+				return;
+			}
+
+			string? colName = cell.Column?.ColumnName;
+			if(colName == "Address") {
+				if(vm.Breakpoint.SupportsExec) {
+					int addr = vm.Breakpoint.GetRelativeAddress();
+					if(addr >= 0 && DataContext is BreakpointListViewModel listModel) {
+						listModel.Debugger.ScrollToAddress(addr);
+						return;
+					}
+				}
+				MemoryToolsWindow.ShowInMemoryTools(vm.Breakpoint.MemoryType, (int)vm.Breakpoint.StartAddress);
+			} else {
 				BreakpointEditWindow.EditBreakpoint(vm.Breakpoint, this);
 			}
 		}

@@ -38,6 +38,9 @@
 					Binding="{Binding Breakpoint.MarkEvent, DataType={x:Type vm:BreakpointViewModel}}" IsVisible="{Binding !Breakpoint.Forbid, DataType={x:Type vm:BreakpointViewModel}}"
 					InitialWidth="22"
 				/>
+				<DataBoxCheckBoxColumn ColumnName="Read" Header="{l:Translate colRead}" Binding="{Binding Breakpoint.BreakOnRead, DataType={x:Type vm:BreakpointViewModel}}" IsVisible="{Binding !Breakpoint.Forbid, DataType={x:Type vm:BreakpointViewModel}}" InitialWidth="22" />
+				<DataBoxCheckBoxColumn ColumnName="Write" Header="{l:Translate colWrite}" Binding="{Binding Breakpoint.BreakOnWrite, DataType={x:Type vm:BreakpointViewModel}}" IsVisible="{Binding !Breakpoint.Forbid, DataType={x:Type vm:BreakpointViewModel}}" InitialWidth="22" />
+				<DataBoxCheckBoxColumn ColumnName="Exec" Header="{l:Translate colExec}" Binding="{Binding Breakpoint.BreakOnExec, DataType={x:Type vm:BreakpointViewModel}}" IsVisible="{Binding !Breakpoint.Forbid, DataType={x:Type vm:BreakpointViewModel}}" InitialWidth="22" />
 				<DataBoxTextColumn ColumnName="Type" Header="{l:Translate colType}" Binding="{Binding TypeDisplay, DataType={x:Type vm:BreakpointViewModel}}" CanUserResize="True" InitialWidth="65" />
 				<DataBoxTextColumn ColumnName="Address" Header="{l:Translate colAddress}" Binding="{Binding AddressDisplay, DataType={x:Type vm:BreakpointViewModel}}" CanUserResize="True" InitialWidth="65" />
 				<DataBoxTextColumn ColumnName="Condition" Header="{l:Translate colCondition}" Binding="{Binding Breakpoint.Condition, DataType={x:Type vm:BreakpointViewModel}}" CanUserResize="True" InitialWidth="150" />

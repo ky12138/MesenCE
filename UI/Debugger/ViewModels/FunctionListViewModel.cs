@@ -9,6 +9,7 @@ using Mesen.Debugger.Labels;
 using Mesen.Debugger.Utilities;
 using Mesen.Debugger.Windows;
 using Mesen.Interop;
+using Mesen.Localization;
 using Mesen.Utilities;
 using Mesen.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -42,6 +43,41 @@ namespace Mesen.Debugger.ViewModels
 			SortState.SetColumnSort("AbsAddr", ListSortDirection.Ascending, true);
 		}
 
+		public static void ShowInFunctionList(MemoryType memType, int address)
+		{
+			DebuggerWindow? wnd = DebugWindowManager.GetDebugWindow<DebuggerWindow>(x => x.CpuType == memType.ToCpuType());
+			if(wnd?.DataContext is DebuggerWindowViewModel model && model.FunctionList != null) {
+				FunctionViewModel? target = model.FunctionList.Functions
+					.FirstOrDefault(f => f.FuncAddr.Address == address && f.FuncAddr.Type == memType);
+				if(target != null) {
+					model.FunctionList.Selection.SelectedItem = target;
+				}
+			}
+		}
+
+		public static void ShowInFunctionList(AddressInfo addr)
+		{
+			ShowInFunctionList(addr.Type, addr.Address);
+		}
+
+		public static void ShowInFunctionListContaining(CpuType cpuType, int relAddress)
+		{
+			DebuggerWindow? wnd = DebugWindowManager.GetDebugWindow<DebuggerWindow>(x => x.CpuType == cpuType);
+			if(wnd?.DataContext is DebuggerWindowViewModel model && model.FunctionList != null) {
+				FunctionViewModel? bestMatch = null;
+				foreach(var func in model.FunctionList.Functions) {
+					if(func.RelAddress >= 0 && func.RelAddress <= relAddress) {
+						if(bestMatch == null || func.RelAddress > bestMatch.RelAddress) {
+							bestMatch = func;
+						}
+					}
+				}
+				if(bestMatch != null) {
+					model.FunctionList.Selection.SelectedItem = bestMatch;
+				}
+			}
+		}
+
 		public void Sort(object? param)
 		{
 			UpdateFunctionList();
@@ -51,6 +87,8 @@ namespace Mesen.Debugger.ViewModels
 			{ "Function", (a, b) => string.Compare(a.LabelName, b.LabelName, StringComparison.OrdinalIgnoreCase) },
 			{ "RelAddr", (a, b) => a.RelAddress.CompareTo(b.RelAddress) },
 			{ "AbsAddr", (a, b) => a.AbsAddress.CompareTo(b.AbsAddress) },
+			{ "ExecCount", (a, b) => a.ExecCountValue.CompareTo(b.ExecCountValue) },
+			{ "LastExec", (a, b) => a.LastExecValue.CompareTo(b.LastExecValue) },
 		};
 
 		public void UpdateFunctionList()
@@ -59,6 +97,20 @@ namespace Mesen.Debugger.ViewModels
 
 			MemoryType prgMemType = CpuType.GetPrgRomMemoryType();
 			List<FunctionViewModel> sortedFunctions = DebugApi.GetCdlFunctions(CpuType.GetPrgRomMemoryType()).Select(f => new FunctionViewModel(new AddressInfo() { Address = (int)f, Type = prgMemType }, CpuType)).ToList();
+
+			// Batch-fetch memory access counters for all functions
+			int memSize = DebugApi.GetMemorySize(prgMemType);
+			if(memSize > 0) {
+				AddressCounters[] counters = DebugApi.GetMemoryAccessCounts((uint)0, (uint)memSize, prgMemType);
+				UInt64 masterClock = EmuApi.GetTimingInfo(CpuType).MasterClock;
+
+				foreach(FunctionViewModel vm in sortedFunctions) {
+					int addr = vm.AbsAddress;
+					if(addr >= 0 && addr < counters.Length) {
+						vm.SetCounters(counters[addr], masterClock);
+					}
+				}
+			}
 
 			SortHelper.SortList(sortedFunctions, SortState.SortOrder, _comparers, "AbsAddr");
 
@@ -88,7 +140,7 @@ namespace Mesen.Debugger.ViewModels
 					IsEnabled = () => Selection.SelectedItems.Count == 1,
 					OnClick = () => {
 						if(Selection.SelectedItem is FunctionViewModel vm) {
-							BreakpointManager.ToggleBreakpoint(vm.FuncAddr, CpuType);
+							BreakpointManager.EditBreakpointAtAddress(vm.FuncAddr, CpuType, parent);
 						}
 					}
 				},
@@ -148,12 +200,17 @@ namespace Mesen.Debugger.ViewModels
 		public string AbsAddressDisplay { get; }
 		public int AbsAddress => FuncAddr.Address;
 		public int RelAddress { get; private set; }
-		public string RelAddressDisplay => RelAddress >= 0 ? ("$" + RelAddress.ToString(_format)) : "<unavailable>";
+		public string RelAddressDisplay => RelAddress >= 0 ? ("$" + RelAddress.ToString(_format)) : ResourceHelper.GetMessage("lblUnavailable");
 		public object RowBrush => RelAddress >= 0 ? AvaloniaProperty.UnsetValue : Brushes.Gray;
 		public FontStyle RowStyle => RelAddress >= 0 ? FontStyle.Normal : FontStyle.Italic;
 
 		public CodeLabel? Label => LabelManager.GetLabel(FuncAddr);
-		public string LabelName => Label?.Label ?? "<no label>";
+		public string LabelName => Label?.Label ?? ResourceHelper.GetMessage("lblNoLabel");
+
+		public string ExecCount { get; private set; }
+		public string LastExec { get; private set; }
+		public UInt64 ExecCountValue { get; private set; }
+		public UInt64 LastExecValue { get; private set; }
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -170,6 +227,29 @@ namespace Mesen.Debugger.ViewModels
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LabelName)));
 		}
 
+		public void SetCounters(AddressCounters counters, UInt64 masterClock)
+		{
+			ExecCount = CodeTooltipHelper.FormatCount(counters.ExecCounter);
+			ExecCountValue = counters.ExecCounter;
+
+			if(counters.ExecStamp == 0) {
+				LastExec = "n/a";
+				LastExecValue = 0;
+			} else {
+				LastExecValue = masterClock - counters.ExecStamp;
+				if(ConfigManager.Config.Debug.Debugger.ShowLastExecTimeInSeconds) {
+					TimingInfo timing = EmuApi.GetTimingInfo(_cpuType);
+					double seconds = (double)LastExecValue / timing.MasterClockRate;
+					LastExec = seconds.ToString("0.###") + "s";
+				} else {
+					LastExec = CodeTooltipHelper.FormatCount(LastExecValue);
+				}
+			}
+
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExecCount)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LastExec)));
+		}
+
 		public FunctionViewModel(AddressInfo funcAddr, CpuType cpuType)
 		{
 			FuncAddr = funcAddr;
@@ -178,6 +258,9 @@ namespace Mesen.Debugger.ViewModels
 			_format = "X" + cpuType.GetAddressSize();
 
 			AbsAddressDisplay = "$" + FuncAddr.Address.ToString(_format);
+
+			ExecCount = "";
+			LastExec = "";
 		}
 	}
 }

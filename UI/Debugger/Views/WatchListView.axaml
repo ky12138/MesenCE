@@ -61,7 +61,7 @@
 			DisableSearch="True"
 		>
 			<DataBox.Columns>
-				<DataBoxTemplateColumn Header="{l:Translate colName}" CanUserResize="True" InitialWidth="200">
+				<DataBoxTemplateColumn ColumnName="Expression" Header="{l:Translate colName}" CanUserResize="True" InitialWidth="200">
 					<DataTemplate>
 						<v:WatchListTextBox
 							Classes="PreventShortcuts"
@@ -75,7 +75,7 @@
 						/>
 					</DataTemplate>
 				</DataBoxTemplateColumn>
-				<DataBoxTemplateColumn Header="{l:Translate colValue}" CanUserResize="True" InitialWidth="100">
+				<DataBoxTemplateColumn ColumnName="Value" Header="{l:Translate colValue}" CanUserResize="True" InitialWidth="100">
 					<DataTemplate>
 						<TextBlock
 							Padding="3 0 0 0"

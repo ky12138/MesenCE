@@ -188,7 +188,7 @@ namespace Mesen.Debugger.ViewModels
 					OnClick = () => {
 						if(SelectedEvent != null) {
 							int addr = (int)SelectedEvent.Value.ProgramCounter;
-							BreakpointManager.ToggleBreakpoint(new AddressInfo() { Address = addr, Type = CpuType.ToMemoryType() }, CpuType);
+							BreakpointManager.EditBreakpointAtAddress(new AddressInfo() { Address = addr, Type = CpuType.ToMemoryType() }, CpuType, _picViewer);
 						}
 					}
 				},
@@ -199,7 +199,7 @@ namespace Mesen.Debugger.ViewModels
 					OnClick = () => {
 						if(SelectedEvent?.Flags.HasFlag(EventFlags.ReadWriteOp) == true) {
 							int addr = (int)SelectedEvent.Value.Operation.Address;
-							BreakpointManager.ToggleBreakpoint(new AddressInfo() { Address = addr, Type = CpuType.ToMemoryType() }, CpuType);
+							BreakpointManager.EditBreakpointAtAddress(new AddressInfo() { Address = addr, Type = CpuType.ToMemoryType() }, CpuType, _picViewer);
 						}
 					}
 				},
@@ -570,7 +570,15 @@ namespace Mesen.Debugger.ViewModels
 		{
 			DebugEventInfo evt = _events[_index];
 			_color = evt.Color;
-			ProgramCounter = "$" + evt.ProgramCounter.ToString("X4");
+
+			string pcFormat = "X" + _cpuType.GetAddressSize();
+			string pc = "$" + evt.ProgramCounter.ToString(pcFormat);
+			CodeLabel? pcLabel = LabelManager.GetLabel(new AddressInfo() { Address = (int)evt.ProgramCounter, Type = _cpuType.ToMemoryType() });
+			if(pcLabel != null) {
+				pc = pcLabel.Label + " (" + pc + ")";
+			}
+			ProgramCounter = pc;
+
 			Scanline = evt.Scanline.ToString();
 			Cycle = evt.Cycle.ToString();
 			string address = "";

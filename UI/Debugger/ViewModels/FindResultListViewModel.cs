@@ -107,14 +107,14 @@ public partial class FindResultListViewModel : DisposableViewModel
 				OnClick = () => {
 					if(Selection.SelectedItem is FindResultViewModel vm) {
 						if(vm.Location.AbsAddress?.Address > 0) {
-							BreakpointManager.ToggleBreakpoint(vm.Location.AbsAddress.Value, Debugger.CpuType);
+							BreakpointManager.EditBreakpointAtAddress(vm.Location.AbsAddress.Value, Debugger.CpuType, parent);
 						} else if(vm.Location.RelAddress?.Address > 0) {
 							AddressInfo relAddress = vm.Location.RelAddress.Value;
 							AddressInfo absAddress = DebugApi.GetAbsoluteAddress(relAddress);
 							if(absAddress.Address >= 0) {
-								BreakpointManager.ToggleBreakpoint(absAddress, Debugger.CpuType);
+								BreakpointManager.EditBreakpointAtAddress(absAddress, Debugger.CpuType, parent);
 							} else if(relAddress.Address >= 0) {
-								BreakpointManager.ToggleBreakpoint(relAddress, Debugger.CpuType);
+								BreakpointManager.EditBreakpointAtAddress(relAddress, Debugger.CpuType, parent);
 							}
 						}
 					}
@@ -128,6 +128,19 @@ public partial class FindResultListViewModel : DisposableViewModel
 				OnClick = () => {
 					if(Selection.SelectedItem is FindResultViewModel vm) {
 						GoToResult(vm);
+					}
+				}
+			},
+			new ContextMenuAction() {
+				ActionType = ActionType.ViewInMemoryViewer,
+				IsEnabled = () => Selection.SelectedItems.Count == 1 && Selection.SelectedItem is FindResultViewModel vm && (vm.Location.RelAddress?.Address >= 0 || vm.Location.AbsAddress?.Address >= 0),
+				OnClick = () => {
+					if(Selection.SelectedItem is FindResultViewModel vm) {
+						if(vm.Location.RelAddress?.Address >= 0) {
+							MemoryToolsWindow.ShowInMemoryTools(vm.Location.RelAddress.Value.Type, vm.Location.RelAddress.Value.Address);
+						} else if(vm.Location.AbsAddress?.Address >= 0) {
+							MemoryToolsWindow.ShowInMemoryTools(vm.Location.AbsAddress.Value.Type, vm.Location.AbsAddress.Value.Address);
+						}
 					}
 				}
 			}

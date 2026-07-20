@@ -34,16 +34,19 @@
 		>
 			<DataBox.Columns>
 				<DataBoxTextColumn
+					ColumnName="Function"
 					Header="{l:Translate colFunction}"
 					Binding="{Binding EntryPoint, DataType={x:Type vm:StackInfo}}"
 					InitialWidth="100"
 				/>
 				<DataBoxTextColumn
+					ColumnName="PcAddress"
 					Header="{l:Translate colPcAddress}"
 					Binding="{Binding PcAddress, DataType={x:Type vm:StackInfo}}"
 					InitialWidth="90"
 				/>
 				<DataBoxTextColumn
+					ColumnName="RomAddress"
 					Header="{l:Translate colRomAddress}"
 					Binding="{Binding AbsAddress, DataType={x:Type vm:StackInfo}}"
 					InitialWidth="90"
