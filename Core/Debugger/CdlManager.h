@@ -24,6 +24,7 @@ public:
 	void MarkBytesAs(MemoryType memType, uint32_t start, uint32_t end, uint8_t flags);
 	CdlStatistics GetCdlStatistics(MemoryType memType);
 	uint32_t GetCdlFunctions(MemoryType memType, uint32_t functions[], uint32_t maxSize);
+	uint32_t GetCdlFunctionsWithLength(MemoryType memType, uint32_t functions[], uint32_t lengths[], uint32_t maxSize);
 	void ResetCdl(MemoryType memType);
 	void LoadCdlFile(MemoryType memType, char* cdlFile);
 	void SaveCdlFile(MemoryType memType, char* cdlFile);

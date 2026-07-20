@@ -1354,6 +1354,7 @@
 			<Control ID="colFunction">Function</Control>
 			<Control ID="colCpuAddr">CPU Addr</Control>
 			<Control ID="colRomAddr">ROM Addr</Control>
+			<Control ID="colFuncLength">Length</Control>
 			<Control ID="colExecCount">Exec Count</Control>
 			<Control ID="colLastExec">Last Exec</Control>
 		</Form>

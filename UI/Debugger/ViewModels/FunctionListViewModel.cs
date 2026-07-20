@@ -87,6 +87,7 @@ namespace Mesen.Debugger.ViewModels
 			{ "Function", (a, b) => string.Compare(a.LabelName, b.LabelName, StringComparison.OrdinalIgnoreCase) },
 			{ "RelAddr", (a, b) => a.RelAddress.CompareTo(b.RelAddress) },
 			{ "AbsAddr", (a, b) => a.AbsAddress.CompareTo(b.AbsAddress) },
+			{ "FuncLength", (a, b) => a.FunctionLength.CompareTo(b.FunctionLength) },
 			{ "ExecCount", (a, b) => a.ExecCountValue.CompareTo(b.ExecCountValue) },
 			{ "LastExec", (a, b) => a.LastExecValue.CompareTo(b.LastExecValue) },
 		};
@@ -96,7 +97,14 @@ namespace Mesen.Debugger.ViewModels
 			List<int> selectedIndexes = Selection.SelectedIndexes.ToList();
 
 			MemoryType prgMemType = CpuType.GetPrgRomMemoryType();
-			List<FunctionViewModel> sortedFunctions = DebugApi.GetCdlFunctions(CpuType.GetPrgRomMemoryType()).Select(f => new FunctionViewModel(new AddressInfo() { Address = (int)f, Type = prgMemType }, CpuType)).ToList();
+			var (funcAddresses, funcLengths) = DebugApi.GetCdlFunctionsWithLength(CpuType.GetPrgRomMemoryType());
+			List<FunctionViewModel> sortedFunctions = funcAddresses.Select((addr, i) => {
+				var vm = new FunctionViewModel(new AddressInfo() { Address = (int)addr, Type = prgMemType }, CpuType);
+				if(i < funcLengths.Length) {
+					vm.SetFunctionLength(funcLengths[i]);
+				}
+				return vm;
+			}).ToList();
 
 			// Batch-fetch memory access counters for all functions
 			int memSize = DebugApi.GetMemorySize(prgMemType);
@@ -212,6 +220,9 @@ namespace Mesen.Debugger.ViewModels
 		public UInt64 ExecCountValue { get; private set; }
 		public UInt64 LastExecValue { get; private set; }
 
+		public UInt32 FunctionLength { get; private set; }
+		public string FunctionLengthDisplay { get; private set; }
+
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public void Refresh()
@@ -250,6 +261,12 @@ namespace Mesen.Debugger.ViewModels
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LastExec)));
 		}
 
+		public void SetFunctionLength(UInt32 length)
+		{
+			FunctionLength = length;
+			FunctionLengthDisplay = length.ToString();
+		}
+
 		public FunctionViewModel(AddressInfo funcAddr, CpuType cpuType)
 		{
 			FuncAddr = funcAddr;
@@ -261,6 +278,8 @@ namespace Mesen.Debugger.ViewModels
 
 			ExecCount = "";
 			LastExec = "";
+			FunctionLength = 0;
+			FunctionLengthDisplay = "";
 		}
 	}
 }

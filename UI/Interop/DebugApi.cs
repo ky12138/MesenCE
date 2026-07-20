@@ -586,6 +586,20 @@ namespace Mesen.Interop
 			return functions;
 		}
 
+		[DllImport(DllPath)] private static extern UInt32 GetCdlFunctionsWithLength(MemoryType memType, IntPtr functions, IntPtr lengths, UInt32 maxSize);
+		public unsafe static (UInt32[] Addresses, UInt32[] Lengths) GetCdlFunctionsWithLength(MemoryType memType)
+		{
+			UInt32[] functions = new UInt32[0x40000];
+			UInt32[] lengths = new UInt32[0x40000];
+			UInt32 count;
+			fixed(UInt32* functionPtr = functions, lengthPtr = lengths) {
+				count = DebugApi.GetCdlFunctionsWithLength(memType, (IntPtr)functionPtr, (IntPtr)lengthPtr, (UInt32)functions.Length);
+			}
+			Array.Resize(ref functions, (int)count);
+			Array.Resize(ref lengths, (int)count);
+			return (functions, lengths);
+		}
+
 		[DllImport(DllPath, EntryPoint = "AssembleCode")] private static extern UInt32 AssembleCodeWrapper(CpuType cpuType, [MarshalAs(UnmanagedType.LPUTF8Str)] string code, UInt32 startAddress, [In, Out] Int16[] assembledCodeBuffer);
 		public static Int16[] AssembleCode(CpuType cpuType, string code, UInt32 startAddress)
 		{

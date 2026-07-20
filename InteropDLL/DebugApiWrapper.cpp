@@ -368,6 +368,11 @@ extern "C"
 		return WithDebugger(uint32_t, GetCdlManager()->GetCdlFunctions(memoryType, functions, maxSize));
 	}
 
+	DllExport uint32_t __stdcall GetCdlFunctionsWithLength(MemoryType memoryType, uint32_t functions[], uint32_t lengths[], uint32_t maxSize)
+	{
+		return WithDebugger(uint32_t, GetCdlManager()->GetCdlFunctionsWithLength(memoryType, functions, lengths, maxSize));
+	}
+
 	DllExport void __stdcall ResetCdl(MemoryType memoryType)
 	{
 		WithDebugger(void, GetCdlManager()->ResetCdl(memoryType));

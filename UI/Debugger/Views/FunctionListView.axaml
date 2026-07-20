@@ -60,6 +60,13 @@
 					InitialWidth="80"
 				/>
 				<DataBoxTextColumn
+					ColumnName="FuncLength"
+					Header="{l:Translate colFuncLength}"
+					Binding="{Binding FunctionLengthDisplay, DataType={x:Type vm:FunctionViewModel}}"
+					CanUserResize="True"
+					InitialWidth="60"
+				/>
+				<DataBoxTextColumn
 					ColumnName="ExecCount"
 					Header="{l:Translate colExecCount}"
 					Binding="{Binding ExecCount, DataType={x:Type vm:FunctionViewModel}}"

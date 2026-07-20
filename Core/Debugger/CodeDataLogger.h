@@ -71,9 +71,13 @@ public:
 	uint8_t GetFlags(uint32_t addr);
 
 	uint32_t GetFunctions(uint32_t functions[], uint32_t maxSize);
+	uint32_t GetFunctionsWithLength(uint32_t functions[], uint32_t lengths[], uint32_t maxSize);
 
 	void MarkBytesAs(uint32_t start, uint32_t end, uint8_t flags);
 	virtual void StripData(uint8_t* romBuffer, CdlStripOption flag);
 
 	virtual void RebuildPrgCache(Disassembler* dis);
+
+private:
+	uint32_t GetFunctionCodeLength(uint32_t startAddr, uint32_t endAddr);
 };

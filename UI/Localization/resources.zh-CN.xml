@@ -1353,6 +1353,7 @@
 			<Control ID="colFunction">标签</Control>
 			<Control ID="colCpuAddr">CPU地址</Control>
 			<Control ID="colRomAddr">ROM地址</Control>
+			<Control ID="colFuncLength">长度</Control>
 			<Control ID="colExecCount">执行次数</Control>
 			<Control ID="colLastExec">上次执行</Control>
 		</Form>

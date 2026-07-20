@@ -174,6 +174,50 @@ uint32_t CodeDataLogger::GetFunctions(uint32_t functions[], uint32_t maxSize)
 	return count;
 }
 
+uint32_t CodeDataLogger::GetFunctionsWithLength(uint32_t functions[], uint32_t lengths[], uint32_t maxSize)
+{
+	uint32_t count = 0;
+	uint32_t lastFuncAddr = 0;
+	bool hasLastFunc = false;
+
+	for(uint32_t i = 0, len = _memSize; i < len; i++) {
+		if(IsSubEntryPoint(i)) {
+			if(hasLastFunc) {
+				lengths[count - 1] = GetFunctionCodeLength(lastFuncAddr, i);
+			}
+			if(count < maxSize) {
+				functions[count] = i;
+				lengths[count] = 0;
+				count++;
+				lastFuncAddr = i;
+				hasLastFunc = true;
+			}
+		}
+	}
+
+	if(hasLastFunc && count > 0) {
+		lengths[count - 1] = GetFunctionCodeLength(lastFuncAddr, _memSize);
+	}
+
+	return count;
+}
+
+uint32_t CodeDataLogger::GetFunctionCodeLength(uint32_t startAddr, uint32_t endAddr)
+{
+	uint32_t len = 0;
+	for(uint32_t i = startAddr; i < endAddr; i++) {
+		if(i != startAddr && IsSubEntryPoint(i)) {
+			break;
+		}
+		if(_cdlData[i] & CdlFlags::Code) {
+			len++;
+		} else {
+			break;
+		}
+	}
+	return len;
+}
+
 void CodeDataLogger::MarkBytesAs(uint32_t start, uint32_t end, uint8_t flags)
 {
 	for(uint32_t i = start; i <= end; i++) {

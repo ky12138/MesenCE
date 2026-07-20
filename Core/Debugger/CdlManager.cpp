@@ -36,6 +36,12 @@ uint32_t CdlManager::GetCdlFunctions(MemoryType memType, uint32_t functions[], u
 	return cdl ? cdl->GetFunctions(functions, maxSize) : 0;
 }
 
+uint32_t CdlManager::GetCdlFunctionsWithLength(MemoryType memType, uint32_t functions[], uint32_t lengths[], uint32_t maxSize)
+{
+	CodeDataLogger* cdl = GetCodeDataLogger(memType);
+	return cdl ? cdl->GetFunctionsWithLength(functions, lengths, maxSize) : 0;
+}
+
 void CdlManager::ResetCdl(MemoryType memType)
 {
 	DebugBreakHelper helper(_debugger);
