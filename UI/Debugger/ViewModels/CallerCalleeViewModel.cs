@@ -35,7 +35,7 @@ namespace Mesen.Debugger.ViewModels
 		public List<int> ColumnWidths { get; } = new() { 50, 70, 70, 40 };
 		private CallerCalleeEntryModel? Entry => CallerSelection.SelectedItem ?? CalleeSelection.SelectedItem;
 
-		private string _format;
+		// private string _format;
 
 		[Obsolete("For designer only")]
 		public CallerCalleeViewModel() : this(CpuType.Snes, new()) { }
@@ -44,10 +44,10 @@ namespace Mesen.Debugger.ViewModels
 		{
 			CpuType = cpuType;
 			Debugger = debugger;
-			_format = "X" + cpuType.GetAddressSize();
+			// _format = "X" + cpuType.GetAddressSize();
 		}
 
-		public void UpdateForFunction(AddressInfo funcAddr)
+		public void UpdateForFunction(AddressInfo funcAddr, string funcName)
 		{
 			if(funcAddr.Address < 0) {
 				SelectedFunctionName = "";
@@ -57,11 +57,7 @@ namespace Mesen.Debugger.ViewModels
 				return;
 			}
 
-			CodeLabel? label = LabelManager.GetLabel(funcAddr);
-			string format = "X" + CpuType.GetAddressSize();
-			SelectedFunctionName = label != null
-				? label.Label + " ($" + funcAddr.Address.ToString(format) + ")"
-				: "$" + funcAddr.Address.ToString(format);
+			SelectedFunctionName = funcName;
 			SelectedFunctionAddress = funcAddr;
 
 			CallerCalleeRecord record = DebugApi.GetCallerCallee(CpuType, funcAddr);
@@ -69,15 +65,23 @@ namespace Mesen.Debugger.ViewModels
 			List<CallerCalleeEntryModel> callers = new();
 			for(int i = 0; i < record.CallerCount && i < 64; i++) {
 				CallerCalleeEntry caller = record.Callers[i];
-				if(caller.Address.Address >= 0) {
-					AddressInfo relAddr = DebugApi.GetRelativeAddress(caller.Address, CpuType);
+				AddressInfo absAddr = caller.Address;
+				if(absAddr.Address >= 0) {
+					AddressInfo relAddr = DebugApi.GetRelativeAddress(absAddr, CpuType);
+					if(!Debugger.RelAddressDisplayCache.TryGetValue(absAddr, out string? relAddressDisplay) ||
+						(relAddressDisplay == ResourceHelper.GetMessage("lblUnavailable") && relAddr.Address >= 0)) {
+						relAddressDisplay = relAddr.Address >= 0
+							? MemoryHelper.GetAddressStr(relAddr, false, true)
+							: ResourceHelper.GetMessage("lblUnavailable");
+						Debugger.RelAddressDisplayCache[absAddr] = relAddressDisplay;
+					}
 					callers.Add(new CallerCalleeEntryModel {
-						FuncAbsAddr = caller.Address,
-						FunctionName = GetFunctionName(caller.Address),
+						FuncAbsAddr = absAddr,
 						FuncRelAddr = relAddr,
-						RelAddress = relAddr.Address,
-						RelAddressDisplay = relAddr.Address >= 0 ? "$" + relAddr.Address.ToString(_format) : ResourceHelper.GetMessage("lblUnavailable"),
-						AbsAddressDisplay = "$" + caller.Address.Address.ToString(_format),
+						FunctionName = MemoryHelper.GetFunctionName(absAddr, true, false, false),
+						// RelAddress = relAddr.Address,
+						RelAddressDisplay = relAddressDisplay,
+						AbsAddressDisplay = MemoryHelper.GetAddressStr(absAddr, false, false),
 						CallCount = caller.CallCount.ToString(),
 						CallCountValue = caller.CallCount,
 					});
@@ -87,15 +91,23 @@ namespace Mesen.Debugger.ViewModels
 			List<CallerCalleeEntryModel> callees = new();
 			for(int i = 0; i < record.CalleeCount && i < 64; i++) {
 				CallerCalleeEntry callee = record.Callees[i];
-				if(callee.Address.Address >= 0) {
-					AddressInfo relAddr = DebugApi.GetRelativeAddress(callee.Address, CpuType);
+				AddressInfo absAddr = callee.Address;
+				if(absAddr.Address >= 0) {
+					AddressInfo relAddr = DebugApi.GetRelativeAddress(absAddr, CpuType);
+					if(!Debugger.RelAddressDisplayCache.TryGetValue(absAddr, out string? relAddressDisplay) ||
+						(relAddressDisplay == ResourceHelper.GetMessage("lblUnavailable") && relAddr.Address >= 0)) {
+						relAddressDisplay = relAddr.Address >= 0
+							? MemoryHelper.GetAddressStr(relAddr, false, true)
+							: ResourceHelper.GetMessage("lblUnavailable");
+						Debugger.RelAddressDisplayCache[absAddr] = relAddressDisplay;
+					}
 					callees.Add(new CallerCalleeEntryModel {
-						FuncAbsAddr = callee.Address,
-						FunctionName = GetFunctionName(callee.Address),
+						FuncAbsAddr = absAddr,
 						FuncRelAddr = relAddr,
-						RelAddress = relAddr.Address,
-						RelAddressDisplay = relAddr.Address >= 0 ? "$" + relAddr.Address.ToString(_format) : ResourceHelper.GetMessage("lblUnavailable"),
-						AbsAddressDisplay = "$" + callee.Address.Address.ToString(_format),
+						FunctionName = MemoryHelper.GetFunctionName(absAddr, true),
+						// RelAddress = relAddr.Address,
+						RelAddressDisplay = relAddressDisplay,
+						AbsAddressDisplay = MemoryHelper.GetAddressStr(absAddr, false, false),
 						CallCount = callee.CallCount.ToString(),
 						CallCountValue = callee.CallCount
 					});
@@ -106,32 +118,17 @@ namespace Mesen.Debugger.ViewModels
 			Callees.Replace(callees);
 		}
 
-		private string GetFunctionName(AddressInfo addr)
-		{
-			CodeLabel? label = LabelManager.GetLabel(addr);
-			return label?.Label ?? ResourceHelper.GetMessage("lblNoLabel");
-		}
-
-		private bool IsAbs() {
-			if(Entry != null && Entry.AbsAddressDisplay != Entry.RelAddressDisplay) {
-				return true;
-			}
-			return false;
-		}
-
-		private string GetHint(bool isAbs = false)
+		private string GetHintText(bool isAbs = false)
 		{
 			if(Entry == null) {
-				return string.Empty;
+				return "";
 			}
-			
 			if(isAbs) {
-				return Entry.AbsAddressDisplay + " [" + Entry.FuncAbsAddr.Type.GetShortName() + "]";
-			} else if(Entry.RelAddress >= 0) {
-				AddressInfo relAddr = DebugApi.GetRelativeAddress(Entry.FuncAbsAddr, CpuType);
-				return Entry.RelAddressDisplay + " [" + relAddr.Type.GetShortName() + "]";
+				return MemoryHelper.GetAddressStr(Entry.FuncAbsAddr);
+			} else if(Entry.FuncRelAddr.Address >= 0) {
+				return MemoryHelper.GetAddressStr(Entry.FuncRelAddr);
 			}
-			return string.Empty;
+			return Debugger.RelAddressDisplayCache[Entry.FuncAbsAddr] ?? "";
 		}
 
 		public void InitContextMenu(Control parent)
@@ -139,7 +136,7 @@ namespace Mesen.Debugger.ViewModels
 			AddDisposables(DebugShortcutManager.CreateContextMenu(parent, new object[] {
 				new ContextMenuAction() {
 					ActionType = ActionType.EditLabel,
-					HintText = () => GetHint(),
+					HintText = () => GetHintText(),
 					IsEnabled = () => Entry != null,
 					OnClick = () => {
 						if(Entry != null) {
@@ -148,12 +145,11 @@ namespace Mesen.Debugger.ViewModels
 						}
 					}
 				},
-
 				new ContextMenuSeparator(),
 				new ContextMenuAction() {
 					ActionType = ActionType.ToggleBreakpoint,
-					HintText = () => GetHint(),
-					IsEnabled = () => Entry != null,
+					HintText = () => GetHintText(),
+					IsEnabled = () => Entry?.FuncRelAddr.Address >= 0,
 					OnClick = () => {
 						if(Entry != null) {
 							BreakpointManager.EditBreakpointAtAddress(Entry.FuncRelAddr, CpuType, parent);
@@ -162,8 +158,8 @@ namespace Mesen.Debugger.ViewModels
 				},
 				new ContextMenuAction() {
 					ActionType = ActionType.ToggleBreakpoint,
-					HintText = () => GetHint(true),
-					IsVisible = () => IsAbs(),
+					HintText = () => GetHintText(true),
+					IsVisible = () => Entry?.FuncRelAddr.Type != Entry?.FuncAbsAddr.Type,
 					IsEnabled = () => Entry != null,
 					OnClick = () => {
 						if(Entry != null) {
@@ -171,34 +167,31 @@ namespace Mesen.Debugger.ViewModels
 						}
 					}
 				},
-
 				new ContextMenuSeparator(),
 				new ContextMenuAction() {
 					ActionType = ActionType.FindOccurrences,
-					HintText = () => GetHint(),
-					IsEnabled = () => Entry?.RelAddress >= 0,
+					HintText = () => GetHintText(),
+					IsEnabled = () => Entry?.FuncRelAddr.Address >= 0,
 					OnClick = () => {
-						if(Entry != null && Entry.RelAddress >= 0) {
+						if(Entry != null && Entry.FuncRelAddr.Address >= 0) {
 							DisassemblySearchOptions options = new() { MatchCase = true, MatchWholeWord = true };
-							Debugger.FindAllOccurrences(Entry.FunctionName ?? Entry.RelAddressDisplay, options);
+							Debugger.FindAllOccurrences(MemoryHelper.GetFunctionName(Entry.FuncRelAddr), options);
 						}
 					}
 				},
-
 				new ContextMenuAction() {
 					ActionType = ActionType.GoToLocation,
-					HintText = () => GetHint(),
-					IsEnabled = () => Entry?.RelAddress >= 0,
+					HintText = () => GetHintText(),
+					IsEnabled = () => Entry?.FuncRelAddr.Address >= 0,
 					OnClick = () => {
-						if(Entry != null && Entry.RelAddress >= 0) {
-							Debugger.ScrollToAddress(Entry.RelAddress);
+						if(Entry != null && Entry.FuncRelAddr.Address >= 0) {
+							Debugger.ScrollToAddress(Entry.FuncRelAddr.Address);
 						}
 					}
 				},
-
 				new ContextMenuAction() {
 					ActionType = ActionType.LocateInFunctionList,
-					HintText = () => GetHint(),
+					HintText = () => GetHintText(),
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CodeWindow_GoToLocation),
 					IsEnabled = () => Entry != null && Debugger.FunctionList != null,
 					OnClick = () => {
@@ -206,13 +199,12 @@ namespace Mesen.Debugger.ViewModels
 							FunctionListViewModel.ShowInFunctionList(Entry.FuncAbsAddr);
 						}
 					}
-				},
-				
+				},				
 				new ContextMenuSeparator(),
 				new ContextMenuAction() {
 					ActionType = ActionType.ViewInMemoryViewer,
-					HintText = () => GetHint(),
-					IsEnabled = () => Entry != null,
+					HintText = () => GetHintText(),
+					IsEnabled = () => Entry?.FuncRelAddr.Address >= 0,
 					OnClick = () => {
 						if(Entry != null) {
 							MemoryToolsWindow.ShowInMemoryTools(Entry.FuncRelAddr.Type, Entry.FuncRelAddr.Address);
@@ -221,8 +213,8 @@ namespace Mesen.Debugger.ViewModels
 				},
 				new ContextMenuAction() {
 					ActionType = ActionType.ViewInMemoryViewer,
-					HintText = () => GetHint(true),
-					IsVisible = () => IsAbs(),
+					HintText = () => GetHintText(true),
+					IsVisible = () => Entry?.FuncRelAddr.Type != Entry?.FuncAbsAddr.Type,
 					IsEnabled = () => Entry != null,
 					OnClick = () => {
 						if(Entry != null) {
@@ -232,15 +224,14 @@ namespace Mesen.Debugger.ViewModels
 				},
 			}));
 		}
-
 	}
 
 	public class CallerCalleeEntryModel
 	{
 		public AddressInfo FuncAbsAddr { get; set; }
-		public string FunctionName { get; set; } = "";
 		public AddressInfo FuncRelAddr { get; set; }
-		public int RelAddress { get; set; }
+		public string FunctionName { get; set; } = "";
+		// public int RelAddress { get; set; }
 		public string RelAddressDisplay { get; set; } = "";
 		public string AbsAddressDisplay { get; set; } = "";
 		public string CallCount { get; set; } = "";

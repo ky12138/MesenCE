@@ -245,7 +245,7 @@ namespace Mesen.Debugger
 			}
 		}
 
-		public static void EditBreakpointAtRange(AddressInfo startAddressinfo, int range, CpuType cpuType, Control parent)
+		public static void EditBreakpointAtRange(AddressInfo startAddressinfo, uint range, CpuType cpuType, Control parent, bool isHighAddr = false)
 		{
 			if(startAddressinfo.Address < 0) {
 				return;
@@ -260,7 +260,7 @@ namespace Mesen.Debugger
 				start = addr;
 				end = addr + length;
 			}
-
+			MemoryType memType = startAddressinfo.Type;
 			Breakpoint? existing = GetMatchingBreakpoint(start, end, memType);
 			Breakpoint bp;
 			if(existing != null) {

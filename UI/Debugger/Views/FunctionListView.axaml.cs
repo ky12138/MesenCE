@@ -32,23 +32,19 @@ namespace Mesen.Debugger.Views
 
 		private void OnCellDoubleClick(DataBoxCell cell)
 		{
-			if(DataContext is not FunctionListViewModel listModel || cell.DataContext is not FunctionViewModel vm) {
+			if(DataContext is not FunctionListViewModel listModel || cell.DataContext is not FunctionViewModel entry) {
 				return;
 			}
 
 			string? colName = cell.Column?.ColumnName;
 			if(colName == "Function") {
-				CodeLabel? label = vm.Label;
-				if(label == null) {
-					label = new CodeLabel(vm.FuncAddr);
-				}
-				LabelEditWindow.EditLabel(listModel.CpuType, this, label);
+				LabelEditWindow.EditLabel(listModel.CpuType, this, entry.Label ?? new CodeLabel(entry.FuncAbsAddr));
 			} else if(colName == "RelAddr") {
-				if(vm.RelAddress >= 0) {
-					listModel.Debugger.ScrollToAddress(vm.RelAddress);
+				if(entry.FuncRelAddr.Address >= 0) {
+					listModel.Debugger.ScrollToAddress(entry.FuncRelAddr.Address);
 				}
 			} else if(colName == "AbsAddr") {
-				MemoryToolsWindow.ShowInMemoryTools(vm.FuncAddr.Type, vm.FuncAddr.Address);
+				MemoryToolsWindow.ShowInMemoryTools(entry.FuncAbsAddr.Type, entry.FuncAbsAddr.Address);
 			}
 		}
 	}

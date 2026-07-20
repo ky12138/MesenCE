@@ -32,8 +32,8 @@ namespace Mesen.Debugger.ViewModels
 		public CpuType CpuType { get; }
 		public DebuggerWindowViewModel Debugger { get; }
 
-		[Obsolete("For designer only")]
-		public FunctionListViewModel() : this(CpuType.Snes, new()) { }
+		// [Obsolete("For designer only")]
+		// public FunctionListViewModel() : this(CpuType.Snes, new()) { }
 
 		public FunctionListViewModel(CpuType cpuType, DebuggerWindowViewModel debugger)
 		{
@@ -43,22 +43,22 @@ namespace Mesen.Debugger.ViewModels
 			SortState.SetColumnSort("AbsAddr", ListSortDirection.Ascending, true);
 		}
 
-		public static void ShowInFunctionList(MemoryType memType, int address)
+		public static void ShowInFunctionList(AddressInfo addr)
 		{
-			DebuggerWindow? wnd = DebugWindowManager.GetDebugWindow<DebuggerWindow>(x => x.CpuType == memType.ToCpuType());
+			DebuggerWindow? wnd = DebugWindowManager.GetDebugWindow<DebuggerWindow>(x => x.CpuType == addr.Type.ToCpuType());
 			if(wnd?.DataContext is DebuggerWindowViewModel model && model.FunctionList != null) {
 				FunctionViewModel? bestMatch = null;
 				foreach(var func in model.FunctionList.Functions) {
-					if(func.FuncAddr.Type == memType && func.FuncAddr.Address >= 0) {
+					if(func.FuncAbsAddr.Type == addr.Type && func.FuncAbsAddr.Address >= 0) {
 						int funcLen = (int)func.FunctionLength;
 						if(funcLen > 0) {
-							if(address >= func.FuncAddr.Address && address < func.FuncAddr.Address + funcLen) {
-								if(bestMatch == null || func.FuncAddr.Address > bestMatch.FuncAddr.Address) {
+							if(addr.Address >= func.FuncAbsAddr.Address && addr.Address < func.FuncAbsAddr.Address + funcLen) {
+								if(bestMatch == null || func.FuncAbsAddr.Address > bestMatch.FuncAbsAddr.Address) {
 									bestMatch = func;
 								}
 							}
 						} else {
-							if(func.FuncAddr.Address == address) {
+							if(func.FuncAbsAddr.Address == addr.Address) {
 								bestMatch = func;
 								break;
 							}
@@ -71,10 +71,6 @@ namespace Mesen.Debugger.ViewModels
 			}
 		}
 
-		public static void ShowInFunctionList(AddressInfo addr)
-		{
-			ShowInFunctionList(addr.Type, addr.Address);
-		}
 
 		public void Sort(object? param)
 		{
@@ -83,8 +79,8 @@ namespace Mesen.Debugger.ViewModels
 
 		private Dictionary<string, Func<FunctionViewModel, FunctionViewModel, int>> _comparers = new() {
 			{ "Function", (a, b) => string.Compare(a.LabelName, b.LabelName, StringComparison.OrdinalIgnoreCase) },
-			{ "RelAddr", (a, b) => a.RelAddress.CompareTo(b.RelAddress) },
-			{ "AbsAddr", (a, b) => a.AbsAddress.CompareTo(b.AbsAddress) },
+			{ "RelAddr", (a, b) => a.FuncRelAddr.Address.CompareTo(b.FuncRelAddr.Address) },
+			{ "AbsAddr", (a, b) => a.FuncAbsAddr.Address.CompareTo(b.FuncAbsAddr.Address) },
 			{ "FuncLength", (a, b) => a.FunctionLength.CompareTo(b.FunctionLength) },
 			{ "ExecCount", (a, b) => a.ExecCountValue.CompareTo(b.ExecCountValue) },
 			{ "LastExec", (a, b) => a.LastExecValue.CompareTo(b.LastExecValue) },
@@ -97,11 +93,20 @@ namespace Mesen.Debugger.ViewModels
 			MemoryType prgMemType = CpuType.GetPrgRomMemoryType();
 			var (funcAddresses, funcLengths) = DebugApi.GetCdlFunctionsWithLength(CpuType.GetPrgRomMemoryType());
 			List<FunctionViewModel> sortedFunctions = funcAddresses.Select((addr, i) => {
-				var vm = new FunctionViewModel(new AddressInfo() { Address = (int)addr, Type = prgMemType }, CpuType);
-				if(i < funcLengths.Length) {
-					vm.SetFunctionLength(funcLengths[i]);
+				AddressInfo absAddr = new() { Address = (int)addr, Type = prgMemType };
+				AddressInfo relAddr = DebugApi.GetRelativeAddress(absAddr, CpuType);
+				if(!Debugger.RelAddressDisplayCache.TryGetValue(absAddr, out string? relAddressDisplay) ||
+					(relAddressDisplay == ResourceHelper.GetMessage("lblUnavailable") && relAddr.Address >= 0)) {
+					relAddressDisplay = relAddr.Address >= 0
+						? MemoryHelper.GetAddressStr(relAddr, false, true)
+						: ResourceHelper.GetMessage("lblUnavailable");
+					Debugger.RelAddressDisplayCache[absAddr] = relAddressDisplay;
 				}
-				return vm;
+				var entry = new FunctionViewModel(absAddr, CpuType, relAddressDisplay);
+				if(i < funcLengths.Length) {
+					entry.SetFunctionLength(funcLengths[i]);
+				}
+				return entry;
 			}).ToList();
 
 			// Batch-fetch memory access counters for all functions
@@ -110,10 +115,10 @@ namespace Mesen.Debugger.ViewModels
 				AddressCounters[] counters = DebugApi.GetMemoryAccessCounts((uint)0, (uint)memSize, prgMemType);
 				UInt64 masterClock = EmuApi.GetTimingInfo(CpuType).MasterClock;
 
-				foreach(FunctionViewModel vm in sortedFunctions) {
-					int addr = vm.AbsAddress;
+				foreach(FunctionViewModel entry in sortedFunctions) {
+					int addr = entry.FuncAbsAddr.Address;
 					if(addr >= 0 && addr < counters.Length) {
-						vm.SetCounters(counters[addr], masterClock);
+						entry.SetCounters(counters[addr], masterClock);
 					}
 				}
 			}
@@ -124,71 +129,112 @@ namespace Mesen.Debugger.ViewModels
 			Selection.SelectIndexes(selectedIndexes, Functions.Count);
 		}
 
+		private string GetHintText(bool isAbs = false)
+		{
+			if(Selection.SelectedItem is not FunctionViewModel entry) {
+				return "";
+			}
+			if(isAbs) {
+				return MemoryHelper.GetAddressStr(entry.FuncAbsAddr);
+			} else if(entry.FuncRelAddr.Address >= 0) {
+				return MemoryHelper.GetAddressStr(entry.FuncRelAddr);
+			}
+			return "";
+		}
+		private string GetRangeHintText(bool isAbs = false)
+		{
+			if(Selection.SelectedItem is not FunctionViewModel entry) {
+				return "";
+			}
+			if(isAbs) {
+				return MemoryHelper.GetAddressStr(entry.FuncAbsAddr,entry.FunctionLength);
+			} else if(entry.FuncRelAddr.Address >= 0) {
+				return MemoryHelper.GetAddressStr(entry.FuncRelAddr,entry.FunctionLength);
+			}
+			return "";
+		}
 		public void InitContextMenu(Control parent)
 		{
 			AddDisposables(DebugShortcutManager.CreateContextMenu(parent, new object[] {
 				new ContextMenuAction() {
 					ActionType = ActionType.EditLabel,
+					HintText = () => GetHintText(),
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.FunctionList_EditLabel),
 					IsEnabled = () => Selection.SelectedItems.Count == 1,
 					OnClick = () => {
-						if(Selection.SelectedItem is FunctionViewModel vm) {
-							LabelEditWindow.EditLabel(CpuType, parent, vm.Label ?? new CodeLabel(vm.FuncAddr));
+						if(Selection.SelectedItem is FunctionViewModel entry) {
+							LabelEditWindow.EditLabel(CpuType, parent, entry.Label ?? new CodeLabel(entry.FuncAbsAddr));
 						}
 					}
 				},
-
 				new ContextMenuSeparator(),
-
 				new ContextMenuAction() {
 					ActionType = ActionType.ToggleBreakpoint,
+					HintText = () => GetHintText(),
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.FunctionList_ToggleBreakpoint),
 					IsEnabled = () => Selection.SelectedItems.Count == 1,
 					OnClick = () => {
-						if(Selection.SelectedItem is FunctionViewModel vm) {
-							BreakpointManager.EditBreakpointAtAddress(vm.FuncAddr, CpuType, parent);
+						if(Selection.SelectedItem is FunctionViewModel entry) {
+							BreakpointManager.EditBreakpointAtRange(entry.FuncRelAddr, entry.FunctionLength, CpuType, parent);
 						}
 					}
 				},
-
+				new ContextMenuAction() {
+					ActionType = ActionType.ToggleBreakpoint,
+					HintText = () => GetHintText(true),
+					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.FunctionList_ToggleBreakpoint),
+					IsEnabled = () => Selection.SelectedItems.Count == 1,
+					OnClick = () => {
+						if(Selection.SelectedItem is FunctionViewModel entry) {
+							BreakpointManager.EditBreakpointAtRange(entry.FuncAbsAddr, entry.FunctionLength, CpuType, parent);
+						}
+					}
+				},
 				new ContextMenuSeparator(),
-
 				new ContextMenuAction() {
 					ActionType = ActionType.FindOccurrences,
+					HintText = () => GetHintText(),
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.FunctionList_FindOccurrences),
-					IsEnabled = () => Selection.SelectedItems.Count == 1 && Selection.SelectedItem is FunctionViewModel vm && vm.RelAddress >= 0,
+					IsEnabled = () => Selection.SelectedItems.Count == 1 && Selection.SelectedItem is FunctionViewModel entry && entry.FuncRelAddr.Address >= 0,
 					OnClick = () => {
-						if(Selection.SelectedItem is FunctionViewModel vm && vm.RelAddress >= 0) {
+						if(Selection.SelectedItem is FunctionViewModel entry && entry.FuncRelAddr.Address >= 0) {
 							DisassemblySearchOptions options = new() { MatchCase = true, MatchWholeWord = true };
-							Debugger.FindAllOccurrences(vm.Label?.Label ?? vm.RelAddressDisplay, options);
+							Debugger.FindAllOccurrences(entry.Label?.Label ?? entry.RelAddressDisplay, options);
 						}
 					}
 				},
-
 				new ContextMenuAction() {
 					ActionType = ActionType.GoToLocation,
+					HintText = () => GetHintText(),
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.FunctionList_GoToLocation),
-					IsEnabled = () => Selection.SelectedItems.Count == 1 && Selection.SelectedItem is FunctionViewModel vm && vm.RelAddress >= 0,
+					IsEnabled = () => Selection.SelectedItems.Count == 1 && Selection.SelectedItem is FunctionViewModel entry && entry.FuncRelAddr.Address >= 0,
 					OnClick = () => {
-						if(Selection.SelectedItem is FunctionViewModel vm) {
-							if(vm.RelAddress >= 0) {
-								Debugger.ScrollToAddress(vm.RelAddress);
+						if(Selection.SelectedItem is FunctionViewModel entry) {
+							if(entry.FuncRelAddr.Address >= 0) {
+								Debugger.ScrollToAddress(entry.FuncRelAddr.Address);
 							}
 						}
 					}
 				},
-
 				new ContextMenuAction() {
 					ActionType = ActionType.ViewInMemoryViewer,
+					HintText = () => GetHintText(),
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.FunctionList_ViewInMemoryViewer),
 					IsEnabled = () => Selection.SelectedItems.Count == 1,
 					OnClick = () => {
-						if(Selection.SelectedItem is FunctionViewModel vm) {
-							AddressInfo addr = new AddressInfo() { Address = vm.RelAddress, Type = CpuType.ToMemoryType() };
-							if(addr.Address < 0) {
-								addr = vm.FuncAddr;
-							}
-							MemoryToolsWindow.ShowInMemoryTools(addr.Type, addr.Address);
+						if(Selection.SelectedItem is FunctionViewModel entry) {
+							MemoryToolsWindow.ShowInMemoryTools(entry.FuncRelAddr.Type, entry.FuncRelAddr.Address);
+						}
+					}
+				},
+				new ContextMenuAction() {
+					ActionType = ActionType.ViewInMemoryViewer,
+					HintText = () => GetHintText(true),
+					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.FunctionList_ViewInMemoryViewer),
+					IsEnabled = () => Selection.SelectedItems.Count == 1,
+					OnClick = () => {
+						if(Selection.SelectedItem is FunctionViewModel entry) {
+							MemoryToolsWindow.ShowInMemoryTools(entry.FuncAbsAddr.Type, entry.FuncRelAddr.Address);
 						}
 					}
 				},
@@ -198,19 +244,17 @@ namespace Mesen.Debugger.ViewModels
 
 	public class FunctionViewModel : INotifyPropertyChanged
 	{
-		private string _format;
 		private CpuType _cpuType;
 
-		public AddressInfo FuncAddr { get; private set; }
+		public AddressInfo FuncAbsAddr { get; private set; }
+		public AddressInfo FuncRelAddr { get; private set; }
 
 		public string AbsAddressDisplay { get; }
-		public int AbsAddress => FuncAddr.Address;
-		public int RelAddress { get; private set; }
-		public string RelAddressDisplay => RelAddress >= 0 ? ("$" + RelAddress.ToString(_format)) : ResourceHelper.GetMessage("lblUnavailable");
-		public object RowBrush => RelAddress >= 0 ? AvaloniaProperty.UnsetValue : Brushes.Gray;
-		public FontStyle RowStyle => RelAddress >= 0 ? FontStyle.Normal : FontStyle.Italic;
+		public string RelAddressDisplay { get; }
+		public object RowBrush => FuncRelAddr.Address >= 0 ? AvaloniaProperty.UnsetValue : Brushes.Gray;
+		public FontStyle RowStyle => FuncRelAddr.Address >= 0 ? FontStyle.Normal : FontStyle.Italic;
 
-		public CodeLabel? Label => LabelManager.GetLabel(FuncAddr);
+		public CodeLabel? Label => LabelManager.GetLabel(FuncAbsAddr);
 		public string LabelName => Label?.Label ?? ResourceHelper.GetMessage("lblNoLabel");
 
 		public string ExecCount { get; private set; }
@@ -225,12 +269,11 @@ namespace Mesen.Debugger.ViewModels
 
 		public void Refresh()
 		{
-			int addr = DebugApi.GetRelativeAddress(FuncAddr, _cpuType).Address;
-			if(addr != RelAddress) {
-				RelAddress = addr;
+			AddressInfo addr = DebugApi.GetRelativeAddress(FuncAbsAddr, _cpuType);
+			if(addr.Address != FuncRelAddr.Address) {
+				FuncRelAddr = addr;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RowBrush)));
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RowStyle)));
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RelAddressDisplay)));
 			}
 
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LabelName)));
@@ -265,14 +308,13 @@ namespace Mesen.Debugger.ViewModels
 			FunctionLengthDisplay = length.ToString();
 		}
 
-		public FunctionViewModel(AddressInfo funcAddr, CpuType cpuType)
+		public FunctionViewModel(AddressInfo funcAddr, CpuType cpuType, string relAddressDisplay)
 		{
-			FuncAddr = funcAddr;
+			FuncAbsAddr = funcAddr;
 			_cpuType = cpuType;
-			RelAddress = DebugApi.GetRelativeAddress(FuncAddr, _cpuType).Address;
-			_format = "X" + cpuType.GetAddressSize();
-
-			AbsAddressDisplay = "$" + FuncAddr.Address.ToString(_format);
+			FuncRelAddr = DebugApi.GetRelativeAddress(FuncAbsAddr, _cpuType);
+			AbsAddressDisplay = MemoryHelper.GetAddressStr(FuncAbsAddr, false, false);
+			RelAddressDisplay = relAddressDisplay;
 
 			ExecCount = "";
 			LastExec = "";

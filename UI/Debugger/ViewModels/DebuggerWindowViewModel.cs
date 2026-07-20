@@ -65,6 +65,8 @@ namespace Mesen.Debugger.ViewModels
 
 		public CpuType CpuType { get; private set; }
 		private UInt64 _masterClock = 0;
+		
+		public Dictionary<AddressInfo, string> RelAddressDisplayCache { get; } = new();
 
 		private bool _autoSwitchToSourceView = false;
 

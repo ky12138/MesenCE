@@ -178,9 +178,7 @@ namespace Mesen.Debugger.ViewModels
 						DeleteWatch(Selection.SelectedItems.ToList());
 					}
 				},
-
 				new ContextMenuSeparator(),
-
 				new ContextMenuAction() {
 					ActionType = ActionType.MoveUp,
 					RoutingStrategy = RoutingStrategies.Tunnel,
@@ -190,7 +188,6 @@ namespace Mesen.Debugger.ViewModels
 						MoveUp(Selection.SelectedIndex);
 					}
 				},
-
 				new ContextMenuAction() {
 					ActionType = ActionType.MoveDown,
 					RoutingStrategy = RoutingStrategies.Tunnel,
@@ -200,9 +197,7 @@ namespace Mesen.Debugger.ViewModels
 						MoveDown(Selection.SelectedIndex);
 					}
 				},
-
 				new ContextMenuSeparator(),
-
 				new ContextMenuAction() {
 					ActionType = ActionType.RowDisplayFormat,
 					SubActions = new() {
@@ -256,9 +251,7 @@ namespace Mesen.Debugger.ViewModels
 						}
 					}
 				},
-
 				new ContextMenuSeparator(),
-
 				new ContextMenuAction() {
 					ActionType = ActionType.WatchDecimalDisplay,
 					IsSelected = () => ConfigManager.Config.Debug.Debugger.WatchFormat == WatchFormatStyle.Signed,
@@ -291,7 +284,7 @@ namespace Mesen.Debugger.ViewModels
 				new ContextMenuAction() {
 					ActionType = ActionType.ViewInMemoryViewer,
 					IsEnabled = () => GetLocation() != null,
-					HintText = GetLocationHint,
+					HintText = () => GetHintText(),
 					OnClick = () => {
 						LocationInfo? location = GetLocation();
 						if(location != null && location.RelAddress != null) {
@@ -299,11 +292,10 @@ namespace Mesen.Debugger.ViewModels
 						}
 					}
 				},
-
 				new ContextMenuAction() {
 					ActionType = ActionType.GoToLocation,
 					IsEnabled = () => GetLocation() != null,
-					HintText = GetLocationHint,
+					HintText = () => GetHintText(),
 					OnClick = () => {
 						LocationInfo? location = GetLocation();
 						if(location != null && location.RelAddress != null) {
@@ -314,13 +306,14 @@ namespace Mesen.Debugger.ViewModels
 			}));
 		}
 
-		private string GetLocationHint()
+		private string GetHintText()
 		{
 			LocationInfo? location = GetLocation();
 			if(location?.Label != null) {
 				return location.Label.Label;
 			} else if(location?.RelAddress != null) {
-				return "$" + location.RelAddress.Value.Address.ToString("X" + CpuType.GetAddressSize());
+				return MemoryHelper.GetAddressStr(location.RelAddress.Value);
+				// "$" + location.RelAddress.Value.Address.ToString("X" + CpuType.GetAddressSize());
 			}
 			return "";
 		}

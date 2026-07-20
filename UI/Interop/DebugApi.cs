@@ -769,10 +769,17 @@ namespace Mesen.Interop
 		public UInt32 ExecCounter;
 	}
 
-	public struct AddressInfo
+	public struct AddressInfo : IEquatable<AddressInfo>
 	{
 		public Int32 Address;
 		public MemoryType Type;
+
+		public readonly bool Equals(AddressInfo other) => Address == other.Address && Type == other.Type;
+		public override readonly bool Equals(object? obj) => obj is AddressInfo other && Equals(other);
+		public override readonly int GetHashCode() => HashCode.Combine(Address, Type);
+
+		public static bool operator ==(AddressInfo left, AddressInfo right) => left.Equals(right);
+		public static bool operator !=(AddressInfo left, AddressInfo right) => !left.Equals(right);
 	}
 
 	public enum MemoryOperationType

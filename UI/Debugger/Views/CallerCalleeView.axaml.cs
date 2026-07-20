@@ -56,8 +56,8 @@ namespace Mesen.Debugger.Views
 				CodeLabel? label = LabelManager.GetLabel(entry.FuncAbsAddr);
 				LabelEditWindow.EditLabel(model.CpuType, this, label ?? new CodeLabel(entry.FuncAbsAddr));
 			} else if(colName == "RelAddr") {
-				if(entry.RelAddress >= 0) {
-					model.Debugger.ScrollToAddress(entry.RelAddress);
+				if(entry.FuncRelAddr.Address >= 0) {
+					model.Debugger.ScrollToAddress(entry.FuncRelAddr.Address);
 				}
 			} else if(colName == "AbsAddr") {
 				MemoryToolsWindow.ShowInMemoryTools(entry.FuncAbsAddr.Type, entry.FuncAbsAddr.Address);

@@ -8,95 +8,87 @@ namespace Mesen.Debugger.Utilities
 	public static class MemoryHelper
 	{
 		public static string GetAddressStr(AddressInfo addr, bool withMemType = true, bool withPage = false) {
-			string page = withPage ? GetPageText(addr) : "";
-			string memType = withMemType ? addr.Type.GetShortName() + " " : "";
-			return addr.Address >= 0
-				? page + memType + $"${addr.Address.ToString(addr.Type.GetFormatString())}"
-				: "";
-		}
-		public static string GetAddressStr(AddressInfo addr, CpuType cpu, bool withMemType = true, bool withPage = false) {
-			string page = $" [{GetPageText(addr.Address,cpu)}]";
-			string memType = withMemType ? cpu.ToMemoryType().GetShortName() + " " : "";
-			return addr.Address >= 0
-				? page + memType + $"$({addr.Address.ToString(GetStrFormat(cpu))})"
-				: "";
-		}
-
-		public static string GetAddressStr(AddressInfo addr, int range, bool withMemType = true, bool withPage = false) {
-			if(range <= 0) {
+			if(addr.Address < 0) {
 				return "";
 			}
+			string format = addr.Type.GetFormatString();
 			string page = withPage ? GetPageText(addr) : "";
 			string memType = withMemType ? addr.Type.GetShortName() + " " : "";
-			string format = GetStrFormat(addr.Type.ToCpuType());
-			return addr.Address >= 0
-				? page + memType + $"$({addr.Address.ToString(format)}-{(addr.Address + range).ToString(format)})"
-				: "";
+			return page + memType + $"${addr.Address.ToString(format)}";
 		}
-		public static string GetAddressStr(AddressInfo addr, CpuType cpu, int range, bool withMemType = true, bool withPage = false) {
-			if(range <= 0) {
+		public static string GetAddressStr(int addr, MemoryType mem, bool withMemType = true, bool withPage = false) {
+			if(addr < 0) {
 				return "";
 			}
-			string page = withPage ? GetPageText(addr.Address,cpu) : "";
-			string memType = withMemType ? cpu.ToMemoryType().GetShortName() + " " : "";
-			string format = GetStrFormat(cpu);
-			return addr.Address >= 0
-				? page + memType + $"$({addr.Address.ToString(format)}-{(addr.Address + range).ToString(format)})"
-				: "";
+			string format = mem.GetFormatString();
+			string page = withPage ? GetPageText(addr,mem) : "";
+			string memType = withMemType ? mem.GetShortName() + " " : "";
+			return page + memType + $"$({addr.ToString(format)})";
 		}
 
-		public static string GetStrFormat(CpuType cpu) {
-			return $"X{cpu.GetAddressSize()}";
+		public static string GetAddressStr(AddressInfo addr, uint range, bool isAddrHigh = false, bool withMemType = true, bool withPage = false) {
+			if(addr.Address < 0) {
+				return "";
+			}
+			string format = addr.Type.GetFormatString();
+			string page = withPage ? GetPageText(addr) : "";
+			string memType = withMemType ? addr.Type.GetShortName() + " " : "";
+			string addrStart = isAddrHigh 
+				? (addr.Address - (int)range).ToString(format) 
+				: addr.Address.ToString(format);
+			return page + memType + $"${addrStart}-${(addr.Address + range).ToString(format)}";
+		}
+		public static string GetAddressStr(int addr, MemoryType mem, uint range, bool isAddrHigh = false, bool withMemType = true, bool withPage = false) {
+			if(addr < 0) {
+				return "";
+			}
+			string format = mem.GetFormatString();
+			string page = withPage ? GetPageText(addr,mem) : "";
+			string memType = withMemType ? mem.GetShortName() + " " : "";
+			string addrStart = isAddrHigh 
+				? (addr - (int)range).ToString(format) 
+				: addr.ToString(format);
+			return page + memType + $"${addrStart}-${(addr + range).ToString(format)}";
 		}
 
-		public static string GetFunctionName(AddressInfo addr, bool isLabel = false)
+		public static string GetFunctionName(AddressInfo addr, bool isLabel = false, bool withMemType = false, bool withPage = false)
 		{
 			CodeLabel? label = LabelManager.GetLabel(addr);
 			return label?.Label 
 				?? (isLabel 
 					? ResourceHelper.GetMessage("lblNoLabel")
-					: GetAddressStr(addr,false,false) 
+					: GetAddressStr(addr,withMemType,withPage) 
 				);
 		}
-		public static string GetFunctionName(AddressInfo addr, CpuType cpu, bool isLabel = false)
+		public static string GetFunctionName(int addr, MemoryType mem, bool isLabel = false, bool withMemType = false, bool withPage = false)
 		{
-			CodeLabel? label = LabelManager.GetLabel(addr);
+			CodeLabel? label = LabelManager.GetLabel((uint)addr,mem);
 			return label?.Label 
 				?? (isLabel 
 					? ResourceHelper.GetMessage("lblNoLabel")
-					: GetAddressStr(addr,cpu,false,false) 
+					: GetAddressStr(addr,mem,withMemType,withPage) 
 				);
 		}
 
-
-		public static string GetPageText(int address, CpuType cpu) {
-			return GetPageText(address,cpu.ToMemoryType());
-		}
-		public static string GetPageText(int address, MemoryType memType) {
-			int page = GetPage(address,memType);
+		public static string GetPageText(int addr, MemoryType mem) {
+			int page = GetPage(addr,mem);
 			return page != -1 
 				? page.ToString("X2") + ":" 
 				: "";
 		}
 		public static string GetPageText(AddressInfo addr) {
-			int page = GetPage(addr.Address,addr.Type);
-			return page != -1 
-				? page.ToString("X2") + ":" 
-				: "";
+			return GetPageText(addr.Address,addr.Type);
 		}
-		public static int GetPage(int address, CpuType cpu) {
-			return GetPage(address,cpu.ToMemoryType());
-		}
-		public static int GetPage(int address, MemoryType memType)
+		public static int GetPage(int addr, MemoryType mem)
 		{
 			try {
-				return memType switch {
-					MemoryType.NesMemory => GetNesCpuPage(address),
-					MemoryType.NesPpuMemory => GetNesPpuPage(address),
-					MemoryType.GameboyMemory => GetGameboyPage(address),
-					MemoryType.PceMemory => GetPcePage(address),
-					MemoryType.SmsMemory => GetSmsPage(address),
-					MemoryType.WsMemory => GetWsPage(address),
+				return mem switch {
+					MemoryType.NesMemory => GetNesCpuPage(addr),
+					MemoryType.NesPpuMemory => GetNesPpuPage(addr),
+					MemoryType.GameboyMemory => GetGameboyPage(addr),
+					MemoryType.PceMemory => GetPcePage(addr),
+					MemoryType.SmsMemory => GetSmsPage(addr),
+					MemoryType.WsMemory => GetWsPage(addr),
 					_ => -1
 				};
 			} catch {
@@ -104,10 +96,10 @@ namespace Mesen.Debugger.Utilities
 			}
 		}
 
-		private static int GetNesCpuPage(int address)
+		private static int GetNesCpuPage(int addr)
 		{
 			NesCartridgeState state = DebugApi.GetConsoleState<NesState>(ConsoleType.Nes).Cartridge;
-			int index = address >> 8;
+			int index = addr >> 8;
 			if(index < 0x40 || index >= 0x100) {
 				return -1;
 			}
@@ -122,10 +114,10 @@ namespace Mesen.Debugger.Utilities
 			};
 		}
 
-		private static int GetNesPpuPage(int address)
+		private static int GetNesPpuPage(int addr)
 		{
 			NesCartridgeState state = DebugApi.GetConsoleState<NesState>(ConsoleType.Nes).Cartridge;
-			int index = address >> 8;
+			int index = addr >> 8;
 			if(index < 0x00 || index >= 0x40) {
 				return -1;
 			}
@@ -144,11 +136,11 @@ namespace Mesen.Debugger.Utilities
 			return page;
 		}
 
-		private static int GetGameboyPage(int address)
+		private static int GetGameboyPage(int addr)
 		{
 			GbState gbState = DebugApi.GetConsoleState<GbState>(ConsoleType.Gameboy);
 			GbMemoryManagerState state = gbState.MemoryManager;
-			int index = address >> 8;
+			int index = addr >> 8;
 			if(index < 0 || index >= 0xFE) {
 				return -1;
 			}
@@ -174,28 +166,28 @@ namespace Mesen.Debugger.Utilities
 			return (int)(state.MemoryOffset[index] / (uint)bankSize);
 		}
 
-		private static int GetPcePage(int address)
+		private static int GetPcePage(int addr)
 		{
 			PceState state = DebugApi.GetConsoleState<PceState>(ConsoleType.PcEngine);
-			int bankIndex = address >> 13;
+			int bankIndex = addr >> 13;
 			if(bankIndex < 0 || bankIndex >= 8) {
 				return -1;
 			}
 			return state.MemoryManager.Mpr[bankIndex];
 		}
 
-		private static int GetSmsPage(int address)
+		private static int GetSmsPage(int addr)
 		{
-			AddressInfo absAddr = DebugApi.GetAbsoluteAddress(new AddressInfo() { Address = address, Type = MemoryType.SmsMemory });
+			AddressInfo absAddr = DebugApi.GetAbsoluteAddress(new AddressInfo() { Address = addr, Type = MemoryType.SmsMemory });
 			if(absAddr.Address < 0) {
 				return -1;
 			}
 			return absAddr.Address / 0x400;
 		}
 
-		private static int GetWsPage(int address)
+		private static int GetWsPage(int addr)
 		{
-			AddressInfo absAddr = DebugApi.GetAbsoluteAddress(new AddressInfo() { Address = address, Type = MemoryType.WsMemory });
+			AddressInfo absAddr = DebugApi.GetAbsoluteAddress(new AddressInfo() { Address = addr, Type = MemoryType.WsMemory });
 			if(absAddr.Address < 0) {
 				return -1;
 			}

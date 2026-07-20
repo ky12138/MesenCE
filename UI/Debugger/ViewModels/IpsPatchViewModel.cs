@@ -349,7 +349,7 @@ namespace Mesen.Debugger.ViewModels
 		{
 			if(Selection.SelectedItem is IpsRecordViewModel record && _ownerWindow != null) {
 				CpuType cpuType = record.TargetMemory.ToCpuType();
-				BreakpointManager.EditBreakpointAtRange(record.TargetAddress, record.EffectiveLength, cpuType, _ownerWindow);
+				BreakpointManager.EditBreakpointAtRange(record.TargetAddress, (uint)record.EffectiveLength, cpuType, _ownerWindow);
 			}
 		}
 

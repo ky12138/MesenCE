@@ -35,12 +35,12 @@ namespace Mesen.Debugger.Views
 			}
 
 			string? colName = cell.Column?.ColumnName;
-			if(colName == "PcAddress") {
-				model.GoToLocation(stack);
-			} else if(colName == "RomAddress" && stack.Address.Address >= 0) {
-				MemoryToolsWindow.ShowInMemoryTools(stack.Address.Type, stack.Address.Address);
+			if(colName == "PcAddress" && stack.PcRelAddr.Address >= 0) {
+				model.Debugger.ScrollToAddress(stack.PcRelAddr.Address);
+			} else if(colName == "RomAddress" && stack.PcAbsAddr.Address >= 0) {
+				MemoryToolsWindow.ShowInMemoryTools(stack.PcAbsAddr.Type, stack.PcAbsAddr.Address);
 			} else if(colName == "Function") {
-				FunctionListViewModel.ShowInFunctionList(stack.Address);
+				FunctionListViewModel.ShowInFunctionList(stack.PcAbsAddr);
 			}
 		}
 	}

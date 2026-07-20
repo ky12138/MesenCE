@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Selection;
 using Avalonia.Media;
@@ -13,7 +12,6 @@ using Mesen.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Mesen.Debugger.ViewModels
 {
@@ -54,111 +52,122 @@ namespace Mesen.Debugger.ViewModels
 
 			List<StackInfo> stack = new List<StackInfo>();
 			for(int i = 0; i < stackFrames.Length; i++) {
-				bool isMapped = DebugApi.GetRelativeAddress(stackFrames[i].AbsSource, CpuType).Address >= 0;
+
+				AddressInfo pcAbsAddr = stackFrames[i].AbsSource;
+				AddressInfo pcRelAddr = DebugApi.GetRelativeAddress(pcAbsAddr, CpuType);
+				bool isMapped = pcRelAddr.Address >= 0;
 				stack.Insert(0, new StackInfo() {
-					EntryPoint = GetEntryPoint(i == 0 ? null : stackFrames[i - 1]),
-					EntryPointAddr = i == 0 ? null : stackFrames[i - 1].AbsTarget,
-					RelAddress = stackFrames[i].Source,
-					Address = stackFrames[i].AbsSource,
+					EntryPointStr = GetEntryPointStr(i == 0 ? null : stackFrames[i - 1]),
+					EntryPointAbsAddr = i == 0 ? null : stackFrames[i - 1].AbsTarget,
+					PcAbsAddr = pcAbsAddr,
+					PcRelAddr = pcRelAddr,
 					RowBrush = isMapped ? AvaloniaProperty.UnsetValue : Brushes.Gray,
 					RowStyle = isMapped ? FontStyle.Normal : FontStyle.Italic
 				});
 			}
 
 			//Add current location
+			AddressInfo curPcRelAddr = new AddressInfo() { Address = (int)DebugApi.GetProgramCounter(CpuType, true), Type = CpuType.ToMemoryType() };
 			stack.Insert(0, new StackInfo() {
-				EntryPoint = GetEntryPoint(stackFrames.Length > 0 ? stackFrames[^1] : null),
-				EntryPointAddr = stackFrames.Length > 0 ? stackFrames[^1].AbsTarget : null,
-				RelAddress = DebugApi.GetProgramCounter(CpuType, true),
-				Address = DebugApi.GetAbsoluteAddress(new AddressInfo() { Address = (int)DebugApi.GetProgramCounter(CpuType, true), Type = CpuType.ToMemoryType() })
+				EntryPointStr = GetEntryPointStr(stackFrames.Length > 0 ? stackFrames[^1] : null),
+				EntryPointAbsAddr = stackFrames.Length > 0 ? stackFrames[^1].AbsTarget : null,
+				PcAbsAddr = DebugApi.GetAbsoluteAddress(curPcRelAddr),
+				PcRelAddr = curPcRelAddr
 			});
 
 			return stack;
 		}
 
-		private string GetEntryPoint(StackFrameInfo? stackFrame)
+		private string GetEntryPointStr(StackFrameInfo? stackFrame)
 		{
 			if(stackFrame == null) {
 				return "[bottom of stack]";
 			}
 
 			StackFrameInfo entry = stackFrame.Value;
-
-			string format = "X" + CpuType.GetAddressSize();
 			CodeLabel? label = entry.AbsTarget.Address >= 0 ? LabelManager.GetLabel(entry.AbsTarget) : null;
+			string entryRelStr = MemoryHelper.GetAddressStr((int)entry.Target, CpuType.ToMemoryType());
 			if(label != null) {
-				return label.Label + " ($" + entry.Target.ToString(format) + ")";
+				return label.Label + " (" + entryRelStr + ")";
 			} else if(entry.Flags == StackFrameFlags.Nmi) {
-				return "[nmi] $" + entry.Target.ToString(format);
+				return "[nmi] " + entryRelStr;
 			} else if(entry.Flags == StackFrameFlags.Irq) {
-				return "[irq] $" + entry.Target.ToString(format);
+				return "[irq] " + entryRelStr;
 			}
-
-			return "$" + entry.Target.ToString(format);
+			return entryRelStr;
 		}
 
-		private bool IsMapped(StackInfo entry)
+		private string GetHintText(bool isAbs = false)
 		{
-			return DebugApi.GetRelativeAddress(entry.Address, CpuType).Address >= 0;
-		}
-
-		public void GoToLocation(StackInfo entry)
-		{
-			if(IsMapped(entry)) {
-				Debugger.ScrollToAddress((int)entry.RelAddress);
+			if(Selection.SelectedItem is StackInfo entry && entry.EntryPointAbsAddr != null) {
+				if(entry.EntryPointAbsAddr.Value.Address >= 0 && isAbs) {
+					return MemoryHelper.GetAddressStr(entry.PcAbsAddr);
+				} else {
+					return MemoryHelper.GetAddressStr(entry.PcRelAddr, true, true);
+				}
 			}
+			return "";
 		}
-
 		public void InitContextMenu(Control parent)
 		{
 			AddDisposables(DebugShortcutManager.CreateContextMenu(parent, new object[] {
 				new ContextMenuAction() {
 					ActionType = ActionType.EditLabel,
+					HintText= () => GetHintText(),
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CallStack_EditLabel),
-					IsEnabled = () => Selection.SelectedItem is StackInfo entry && entry.EntryPointAddr != null,
+					IsEnabled = () => Selection.SelectedItem is StackInfo entry && entry.EntryPointAbsAddr != null,
 					OnClick = () => {
-						if(Selection.SelectedItem is StackInfo entry && entry.EntryPointAddr != null) {
-							AddressInfo addr = entry.EntryPointAddr.Value;
-							CodeLabel? label = LabelManager.GetLabel((uint)addr.Address, addr.Type);
-							if(label == null) {
-								label = new CodeLabel() {
-									Address = (uint)entry.EntryPointAddr.Value.Address,
-									MemoryType = entry.EntryPointAddr.Value.Type
-								};
+						if(Selection.SelectedItem is StackInfo entry && entry.EntryPointAbsAddr != null) {
+							CodeLabel? label = LabelManager.GetLabel(entry.EntryPointAbsAddr.Value);
+							if(label != null) {
+								LabelEditWindow.EditLabel(CpuType, parent, label);
 							}
-							LabelEditWindow.EditLabel(CpuType, parent, label);
+							label = new CodeLabel(entry.EntryPointAbsAddr.Value);
 						}
 					}
 				},
-
 				new ContextMenuAction() {
 					ActionType = ActionType.GoToLocation,
+					HintText= () => GetHintText(),
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CallStack_GoToLocation),
-					IsEnabled = () => Selection.SelectedItem is StackInfo entry && IsMapped(entry),
+					IsEnabled = () => Selection.SelectedItem is StackInfo entry && entry.PcRelAddr.Address >= 0,
 					OnClick = () => {
-						if(Selection.SelectedItem is StackInfo entry) {
-							GoToLocation(entry);
+						if(Selection.SelectedItem is StackInfo entry && entry.PcRelAddr.Address >= 0) {
+							Debugger.ScrollToAddress(entry.PcRelAddr.Address);
 						}
 					}
 				},
-
 				new ContextMenuAction() {
 					ActionType = ActionType.LocateInFunctionList,
+					HintText= () => GetHintText(),
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CodeWindow_GoToLocation),
-					IsEnabled = () => Selection.SelectedItem is StackInfo entry && entry.Address.Address >= 0 && Debugger.FunctionList != null,
+					IsEnabled = () => Selection.SelectedItem is StackInfo entry && entry.PcAbsAddr.Address >= 0 && Debugger.FunctionList != null,
 					OnClick = () => {
-						if(Selection.SelectedItem is StackInfo entry && entry.Address.Address >= 0) {
-							FunctionListViewModel.ShowInFunctionList(entry.Address);
+						if(Selection.SelectedItem is StackInfo entry && entry.PcAbsAddr.Address >= 0) {
+							FunctionListViewModel.ShowInFunctionList(entry.PcAbsAddr);
+						}
+					}
+				},
+				new ContextMenuSeparator(),
+				new ContextMenuAction() {
+					ActionType = ActionType.ViewInMemoryViewer,
+					HintText= () => GetHintText(),
+					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CallStack_GoToLocation),
+					IsEnabled = () => Selection.SelectedItem is StackInfo entry && entry.PcRelAddr.Address >= 0,
+					OnClick = () => {
+						if(Selection.SelectedItem is StackInfo entry && entry.PcRelAddr.Address >= 0) {
+							MemoryToolsWindow.ShowInMemoryTools(entry.PcRelAddr.Type, entry.PcRelAddr.Address);
 						}
 					}
 				},
 				new ContextMenuAction() {
 					ActionType = ActionType.ViewInMemoryViewer,
+					HintText= () => GetHintText(true),
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CallStack_GoToLocation),
-					IsEnabled = () => Selection.SelectedItem is StackInfo entry && entry.Address.Address >= 0,
+					IsEnabled = () => Selection.SelectedItem is StackInfo entry && entry.PcAbsAddr.Address >= 0,
 					OnClick = () => {
-						if(Selection.SelectedItem is StackInfo entry && entry.Address.Address >= 0) {
-							MemoryToolsWindow.ShowInMemoryTools(entry.Address.Type, entry.Address.Address);
+						if(Selection.SelectedItem is StackInfo entry && entry.PcAbsAddr.Address >= 0) {
+							MemoryToolsWindow.ShowInMemoryTools(entry.PcAbsAddr.Type, entry.PcAbsAddr.Address);
 						}
 					}
 				},
@@ -168,26 +177,16 @@ namespace Mesen.Debugger.ViewModels
 
 	public class StackInfo
 	{
-		public string EntryPoint { get; set; } = "";
+		public string EntryPointStr { get; set; } = "";
 
-		public string PcAddress => $"${RelAddress:X4}";
+		public string PcRelAddressStr => MemoryHelper.GetAddressStr(PcRelAddr);
+		public string PcAbsAddressStr => MemoryHelper.GetAddressStr(PcAbsAddr);
 
-		public string AbsAddress
-		{
-			get
-			{
-				if(Address.Address >= 0) {
-					return $"${Address.Address:X4} [{Address.Type.GetShortName()}]";
-				} else {
-					return "";
-				}
-			}
-		}
+		public AddressInfo? EntryPointAbsAddr { get; set; }
 
-		public AddressInfo? EntryPointAddr { get; set; }
-
-		public UInt32 RelAddress { get; set; }
-		public AddressInfo Address { get; set; }
+		// public UInt32 PcRelAddress { get; set; }
+		public AddressInfo PcAbsAddr { get; set; }
+		public AddressInfo PcRelAddr { get; set; }
 
 		public object RowBrush { get; set; } = AvaloniaProperty.UnsetValue;
 		public FontStyle RowStyle { get; set; }
