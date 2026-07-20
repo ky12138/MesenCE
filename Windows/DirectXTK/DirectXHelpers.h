@@ -126,8 +126,8 @@ namespace DirectX
         resource->SetPrivateData(WKPDID_D3DDebugObjectName, TNameLength - 1, name);
 #endif
 #else
-        UNREFERENCED_PARAMETER(resource);
-        UNREFERENCED_PARAMETER(name);
+        (void)resource;
+        (void)name;
 #endif
     }
 
@@ -146,8 +146,8 @@ namespace DirectX
         }
 #endif
 #else
-        UNREFERENCED_PARAMETER(resource);
-        UNREFERENCED_PARAMETER(name);
+        (void)resource;
+        (void)name;
 #endif
     }
 

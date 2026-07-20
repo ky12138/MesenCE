@@ -3,11 +3,14 @@
 
 #ifdef _WIN32
 	#include <winsock2.h>
-	#include <natupnp.h>
+	#if __has_include(<natupnp.h>)
+		#include <natupnp.h>
+		#define HAS_NATUPNP 1
+	#endif
 	#include <ws2tcpip.h>
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) && defined(HAS_NATUPNP)
 bool UPnPPortMapper::AddNATPortMapping(uint16_t internalPort, uint16_t externalPort, IPProtocol protocol)
 {
 	bool result = false;

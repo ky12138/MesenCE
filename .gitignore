@@ -53,6 +53,8 @@ build/
 
 # Libretro build files
 *.o
+*.d
+*.dll
 
 # Visual C++ cache files
 ipch/
@@ -190,3 +192,13 @@ packages/*
 
 TestHelper/*
 UI/Dependencies.zip
+.vscode/
+global.json
+.editorconfig
+UI/nuget.config
+**/packages.lock.json
+**/AGENTS.md
+**/CODEX.md
+**/CLAUDE.md
+.codebuddy
+forks

@@ -1,0 +1,49 @@
+name: dotnet format check
+
+on:
+  push:
+    branches:
+      - "master"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  dotnet-format:
+    if: ${{ (github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository) }}
+    strategy:
+      matrix:
+        platform: [
+            #{ netversion: 6.x, targetframework: net6.0 },
+            { netversion: 8.x, targetframework: net8.0 },
+          ]
+      fail-fast: false
+    runs-on: windows-2025-vs2026
+
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ matrix.platform.netversion }}
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            Directory.Packages.props
+            global.json
+            **/packages.lock.json
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ matrix.platform.targetframework }}-${{ hashFiles('**/*.csproj', '**/*.sln') }}
+          restore-keys: |
+            nuget-${{ matrix.platform.targetframework }}-
+            nuget-
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Format
+        run: dotnet format --verify-no-changes --verbosity diagnostic UI/UI.csproj

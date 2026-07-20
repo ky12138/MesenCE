@@ -15,7 +15,16 @@
 	<PropertyGroup>
 		<!-- This security feature is new in .NET 9 and can decrease performance by around 10% when enabled. -->
 		<CetCompat>false</CetCompat>
-
+		<SkipRestore>true</SkipRestore>
+  		<Configuration>Debug</Configuration>
+		<!-- <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+		<RestoreLockedMode>true</RestoreLockedMode> -->
+  	</PropertyGroup>
+	<PropertyGroup>
+  		<UseSharedCompilation>true</UseSharedCompilation>
+		<RunAnalyzers>true</RunAnalyzers>
+		<RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
+		<RunAnalyzerDuringBuild>false</RunAnalyzerDuringBuild>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<ApplicationIcon>Assets\Icon.ico</ApplicationIcon>
@@ -28,17 +37,33 @@
 		<CheckEolTargetFramework>false</CheckEolTargetFramework>
 		<SelfContained>false</SelfContained>
 		<DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
-		<IsAotCompatible>true</IsAotCompatible>
-		
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<WarningsNotAsErrors>IL2026;IL2070;IL2075;IL2104;IL3050;IL3053</WarningsNotAsErrors>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(RuntimeIdentifier)'=='osx-x64' Or '$(RuntimeIdentifier)'=='osx-arm64' Or '$(RuntimeIdentifier)'=='linux-x64' Or '$(RuntimeIdentifier)'=='linux-arm64'">
 		<SolutionDir>..</SolutionDir>
 	</PropertyGroup>
+
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <OutputPath>$(SolutionDir)\bin\$(RuntimeIdentifier)\Debug\</OutputPath>
+		<DebugSymbols>false</DebugSymbols>
+    	<DebugType>none</DebugType>
+
+		<ImplicitUsings>disable</ImplicitUsings>
+		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+		<!-- <EmitCompilerGeneratedFiles>false</EmitCompilerGeneratedFiles> -->
+		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+		<!-- <GenerateAssemblyInfo>false</GenerateAssemblyInfo> -->
+
+		<!-- <_AvaloniaSkipXamlCompilation >true</_AvaloniaSkipXamlCompilation> -->
+		<!-- <AvaloniaXamlCreateSourceInfo>false</AvaloniaXamlCreateSourceInfo>
+		<AvaloniaNameGeneratorIsEnabled>false</AvaloniaNameGeneratorIsEnabled> -->
+
+		<!-- <GenerateRuntimeConfigurationFiles>false</GenerateRuntimeConfigurationFiles> -->
+		<!-- <GenerateDependencyFile>false</GenerateDependencyFile> -->
+    	<!-- <GenerateDocumentationFile>false</GenerateDocumentationFile> -->
+    	<OutputPath>$(SolutionDir)\bin\$(RuntimeIdentifier)\Debug\</OutputPath>
+		<Optimize>true</Optimize>
   </PropertyGroup>
+
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
 	  <OutputPath>$(SolutionDir)\bin\$(RuntimeIdentifier)\Release\</OutputPath>
 	  <Optimize>false</Optimize>
