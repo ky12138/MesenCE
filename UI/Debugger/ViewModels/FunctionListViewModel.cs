@@ -88,6 +88,7 @@ namespace Mesen.Debugger.ViewModels
 
 		public void UpdateFunctionList()
 		{
+			Debugger.EnsureCacheLoaded();
 			List<int> selectedIndexes = Selection.SelectedIndexes.ToList();
 
 			MemoryType prgMemType = CpuType.GetPrgRomMemoryType();
@@ -101,6 +102,7 @@ namespace Mesen.Debugger.ViewModels
 						? MemoryHelper.GetAddressStr(relAddr, false, true)
 						: ResourceHelper.GetMessage("lblUnavailable");
 					Debugger.RelAddressDisplayCache[absAddr] = relAddressDisplay;
+					Debugger.MarkCacheDirty();
 				}
 				var entry = new FunctionViewModel(absAddr, CpuType, relAddressDisplay);
 				if(i < funcLengths.Length) {

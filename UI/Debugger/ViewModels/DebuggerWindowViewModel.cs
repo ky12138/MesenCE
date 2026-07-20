@@ -20,7 +20,10 @@ using Mesen.Windows;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Mesen.Debugger.ViewModels
@@ -67,6 +70,11 @@ namespace Mesen.Debugger.ViewModels
 		private UInt64 _masterClock = 0;
 		
 		public Dictionary<AddressInfo, string> RelAddressDisplayCache { get; } = new();
+
+		private bool _cacheLoaded;
+		private int _unsavedChanges;
+		private DateTime _lastCacheSave = DateTime.MinValue;
+		private object _cacheLock = new();
 
 		private bool _autoSwitchToSourceView = false;
 
@@ -248,11 +256,90 @@ namespace Mesen.Debugger.ViewModels
 		{
 			Config.SavedDockLayout = DockFactory.ToDockDefinition(DockLayout);
 
+			SaveCache();
+
 			DebugWorkspaceManager.SymbolProviderChanged -= DebugWorkspaceManager_SymbolProviderChanged;
 			LabelManager.OnLabelUpdated -= LabelManager_OnLabelUpdated;
 			BreakpointManager.BreakpointsChanged -= BreakpointManager_BreakpointsChanged;
 			BreakpointManager.RemoveCpuType(CpuType);
 			ConfigApi.SetDebuggerFlag(CpuType.GetDebuggerFlag(), false);
+		}
+
+		public void MarkCacheDirty()
+		{
+			EnsureCacheLoaded();
+			Interlocked.Increment(ref _unsavedChanges);
+			DebounceSaveCache();
+		}
+
+		private async void DebounceSaveCache()
+		{
+			await Task.Delay(3000);
+			SaveCache();
+		}
+
+		public void SaveCache()
+		{
+			int changes = Interlocked.Exchange(ref _unsavedChanges, 0);
+			if(changes == 0 && _cacheLoaded) {
+				return;
+			}
+
+			string romName = EmuApi.GetRomInfo().GetRomName();
+			if(string.IsNullOrEmpty(romName)) {
+				return;
+			}
+
+			string path = Path.Combine(ConfigManager.DebuggerFolder, romName + "_RelAddr.json");
+
+			var data = new RelAddressCacheData();
+			var entries = new List<RelAddressCacheEntry>();
+			foreach(var kvp in RelAddressDisplayCache) {
+				entries.Add(new RelAddressCacheEntry {
+					Address = kvp.Key.Address,
+					Type = kvp.Key.Type,
+					Display = kvp.Value
+				});
+			}
+			data.CacheByCpu[CpuType] = entries;
+
+			string json = JsonSerializer.Serialize(data, typeof(RelAddressCacheData), MesenSerializerContext.Default);
+			FileHelper.WriteAllText(path, json);
+		}
+
+		public void EnsureCacheLoaded()
+		{
+			if(_cacheLoaded) {
+				return;
+			}
+			lock(_cacheLock) {
+				if(_cacheLoaded) {
+					return;
+				}
+
+				string romName = EmuApi.GetRomInfo().GetRomName();
+				if(string.IsNullOrEmpty(romName)) {
+					_cacheLoaded = true;
+					return;
+				}
+
+				string path = Path.Combine(ConfigManager.DebuggerFolder, romName + "_RelAddr.json");
+				if(File.Exists(path)) {
+					try {
+						string fileData = File.ReadAllText(path);
+						var data = JsonSerializer.Deserialize(fileData, typeof(RelAddressCacheData), MesenSerializerContext.Default) as RelAddressCacheData;
+						if(data?.CacheByCpu.TryGetValue(CpuType, out var entries) == true) {
+							foreach(var e in entries) {
+								var key = new AddressInfo { Address = e.Address, Type = e.Type };
+								RelAddressDisplayCache.TryAdd(key, e.Display);
+							}
+						}
+					} catch {
+					}
+				}
+
+				_cacheLoaded = true;
+			}
 		}
 
 		private void Config_PropertyChanged(object? sender, PropertyChangedEventArgs e)

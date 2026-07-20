@@ -49,6 +49,8 @@ namespace Mesen.Debugger.ViewModels
 
 		public void UpdateForFunction(AddressInfo funcAddr, string funcName)
 		{
+			Debugger.EnsureCacheLoaded();
+
 			if(funcAddr.Address < 0) {
 				SelectedFunctionName = "";
 				SelectedFunctionAddress = default;
@@ -74,6 +76,7 @@ namespace Mesen.Debugger.ViewModels
 							? MemoryHelper.GetAddressStr(relAddr, false, true)
 							: ResourceHelper.GetMessage("lblUnavailable");
 						Debugger.RelAddressDisplayCache[absAddr] = relAddressDisplay;
+						Debugger.MarkCacheDirty();
 					}
 					callers.Add(new CallerCalleeEntryModel {
 						FuncAbsAddr = absAddr,
@@ -100,6 +103,7 @@ namespace Mesen.Debugger.ViewModels
 							? MemoryHelper.GetAddressStr(relAddr, false, true)
 							: ResourceHelper.GetMessage("lblUnavailable");
 						Debugger.RelAddressDisplayCache[absAddr] = relAddressDisplay;
+						Debugger.MarkCacheDirty();
 					}
 					callees.Add(new CallerCalleeEntryModel {
 						FuncAbsAddr = absAddr,

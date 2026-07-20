@@ -2,6 +2,7 @@
 using Mesen.Debugger;
 using Mesen.Debugger.Labels;
 using Mesen.Debugger.Utilities;
+using Mesen.Debugger.ViewModels;
 using Mesen.Utilities;
 using Mesen.ViewModels;
 using System;
@@ -38,6 +39,7 @@ namespace Mesen.Utilities
 [JsonSerializable(typeof(GameConfig))]
 [JsonSerializable(typeof(DebugWorkspace))]
 [JsonSerializable(typeof(UpdateInfo))]
+[JsonSerializable(typeof(RelAddressCacheData))]
 [JsonSourceGenerationOptions(
 	WriteIndented = true,
 	IgnoreReadOnlyProperties = true,
