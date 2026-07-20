@@ -42,6 +42,7 @@
 					<Setter Property="Foreground" Value="{Binding RowForeground, DataType={x:Type vm:FunctionNode}}" />
 					<Setter Property="FontStyle" Value="{Binding RowStyle, DataType={x:Type vm:FunctionNode}}" />
 					<Setter Property="FontWeight" Value="{Binding RowWeight, DataType={x:Type vm:FunctionNode}}" />
+					<Setter Property="Opacity" Value="{Binding RowOpacity, DataType={x:Type vm:FunctionNode}}" />
 				</Style>
 			</DataBox.Styles>
 				<DataBox.Columns>

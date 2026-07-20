@@ -45,6 +45,15 @@ namespace Mesen.Debugger.ViewModels
 			("colColorCyan", "#00ACC1"), ("colColorGray", "#757575")
 		};
 
+		// 把颜色 hex 转为本地化名称（固定颜色）或原始 hex（自定义颜色）。
+		internal static string GetColorDisplayName(string? hex)
+		{
+			if(hex == null) return "";
+			foreach(var c in ColorPalette)
+				if(c.Hex == hex) return ResourceHelper.GetMessage(c.Key);
+			return hex;
+		}
+
 		private readonly Dictionary<string, Func<FunctionNode, FunctionNode, int>> _comparers = new() {
 			{ "Function", (a, b) => string.Compare(a.FunctionName, b.FunctionName, StringComparison.OrdinalIgnoreCase) },
 			{ "RelAddr", (a, b) => a.FuncRelAddr.Address.CompareTo(b.FuncRelAddr.Address) },
@@ -192,8 +201,9 @@ namespace Mesen.Debugger.ViewModels
 			UpdateFunctionList();
 		}
 
-		private void SetBlockedByColor(string? color, bool blocked)
+		private void SetBlockedByColor(bool blocked)
 		{
+			var color = Selection.SelectedItems.OfType<FunctionNode>().Select(e => Debugger.GetFuncMeta(e.FuncAbsAddr)?.FunctionColor).FirstOrDefault(c => c != null);
 			if(color == null) return;
 			foreach(var kvp in Debugger.FuncMetaCache.Where(kv => kv.Value.FunctionColor == color))
 				kvp.Value.Blocked = blocked;
@@ -202,39 +212,18 @@ namespace Mesen.Debugger.ViewModels
 			UpdateFunctionList();
 		}
 
-		private List<object> BuildColorBlockActions(Control parent, bool blocked)
-		{
-			return ColorPalette.Select(c => (object)new ContextMenuAction {
-				ActionType = ActionType.Custom,
-				CustomText = ResourceHelper.GetMessage(c.Key),
-				OnClick = () => SetBlockedByColor(c.Hex, blocked)
-			}).ToList();
-		}
-
 		private List<object> BuildBlockActions(Control parent) => new() {
-			new ContextMenuAction {
-				ActionType = ActionType.Custom,
-				CustomText = ResourceHelper.GetMessage("mnuBlockFunction"),
-				IsEnabled = () => Selection.SelectedItems.Count > 0,
-				OnClick = () => BlockSelected(true)
-			},
-			new ContextMenuAction {
-				ActionType = ActionType.Custom,
-				CustomText = ResourceHelper.GetMessage("mnuUnblockFunction"),
-				IsEnabled = () => Selection.SelectedItems.Count > 0,
-				OnClick = () => BlockSelected(false)
-			},
+			new ContextMenuAction { ActionType = ActionType.Custom, CustomText = ResourceHelper.GetMessage("mnuBlockFunction"), IsEnabled = () => Selection.SelectedItems.Count > 0, OnClick = () => BlockSelected(true) },
+			new ContextMenuAction { ActionType = ActionType.Custom, CustomText = ResourceHelper.GetMessage("mnuUnblockFunction"), IsEnabled = () => Selection.SelectedItems.Count > 0, OnClick = () => BlockSelected(false) },
 			new ContextMenuSeparator(),
-			new ContextMenuAction {
-				ActionType = ActionType.Custom,
-				CustomText = ResourceHelper.GetMessage("mnuBlockByColor"),
-				SubActions = BuildColorBlockActions(parent, true)
-			},
-			new ContextMenuAction {
-				ActionType = ActionType.Custom,
-				CustomText = ResourceHelper.GetMessage("mnuUnblockByColor"),
-				SubActions = BuildColorBlockActions(parent, false)
-			},
+			new ContextMenuAction { ActionType = ActionType.Custom, CustomText = ResourceHelper.GetMessage("mnuBlockByColor"),
+				HintText = () => GetColorDisplayName(Selection.SelectedItems.OfType<FunctionNode>().Select(e => Debugger.GetFuncMeta(e.FuncAbsAddr)?.FunctionColor).FirstOrDefault(x => x != null)),
+				IsEnabled = () => Selection.SelectedItems.OfType<FunctionNode>().Any(e => Debugger.GetFuncMeta(e.FuncAbsAddr)?.FunctionColor != null),
+				OnClick = () => SetBlockedByColor(true) },
+			new ContextMenuAction { ActionType = ActionType.Custom, CustomText = ResourceHelper.GetMessage("mnuUnblockByColor"),
+				HintText = () => GetColorDisplayName(Selection.SelectedItems.OfType<FunctionNode>().Select(e => Debugger.GetFuncMeta(e.FuncAbsAddr)?.FunctionColor).FirstOrDefault(x => x != null)),
+				IsEnabled = () => Selection.SelectedItems.OfType<FunctionNode>().Any(e => Debugger.GetFuncMeta(e.FuncAbsAddr)?.FunctionColor != null),
+				OnClick = () => SetBlockedByColor(false) },
 		};
 
 		private void MarkSelected()
@@ -407,6 +396,7 @@ namespace Mesen.Debugger.ViewModels
 			}
 		}
 		public FontStyle RowStyle => IsPageInUse ? FontStyle.Normal : FontStyle.Italic;
+		public double RowOpacity => IsPageInUse ? 1.0 : 0.7;
 		public FontWeight RowWeight => _debugger.GetFuncMeta(AbsAddr)?.Blocked == true ? FontWeight.Bold : FontWeight.Normal;
 		public bool IsBlocked => _debugger.GetFuncMeta(AbsAddr)?.Blocked ?? false;
 

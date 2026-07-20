@@ -1400,6 +1400,7 @@
 			<Control ID="chkTrackDummy">Dummy accesses</Control>
 			<Control ID="chkTrackPpu">PPU render reads</Control>
 			<Control ID="chkShowAllFunctions">Show all functions</Control>
+			<Control ID="lblShowBlocked">Show blocked</Control>
 		</Form>
 
 		<Form ID="LabelListView">
@@ -2525,6 +2526,10 @@ E
 		<Message ID="mnuUnblockFunction">Unblock</Message>
 		<Message ID="mnuBlockByColor">Block by Color</Message>
 		<Message ID="mnuUnblockByColor">Unblock by Color</Message>
+		<Message ID="mnuBlockByMemType">Block by Memory Type</Message>
+		<Message ID="mnuUnblockByMemType">Unblock by Memory Type</Message>
+		<Message ID="mnuBlockByRw">Block by R/W</Message>
+		<Message ID="mnuUnblockByRw">Unblock by R/W</Message>
 		<Message ID="mnuBlockMenu">Block</Message>
 		<Message ID="mnuMarkFunctionAccess">Track Memory Access</Message>
 		<Message ID="mnuClearColor">Clear Color</Message>

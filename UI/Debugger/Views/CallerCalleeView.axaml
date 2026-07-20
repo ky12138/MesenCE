@@ -47,6 +47,7 @@
 						<Setter Property="Foreground" Value="{Binding RowForeground, DataType={x:Type vm:CallerCalleeEntry}}" />
 						<Setter Property="FontStyle" Value="{Binding RowStyle, DataType={x:Type vm:CallerCalleeEntry}}" />
 						<Setter Property="FontWeight" Value="{Binding RowWeight, DataType={x:Type vm:CallerCalleeEntry}}" />
+						<Setter Property="Opacity" Value="{Binding RowOpacity, DataType={x:Type vm:CallerCalleeEntry}}" />
 					</Style>
 				</DataBox.Styles>
 				<DataBox.Columns>
@@ -110,6 +111,7 @@
 						<Setter Property="Foreground" Value="{Binding RowForeground, DataType={x:Type vm:CallerCalleeEntry}}" />
 						<Setter Property="FontStyle" Value="{Binding RowStyle, DataType={x:Type vm:CallerCalleeEntry}}" />
 						<Setter Property="FontWeight" Value="{Binding RowWeight, DataType={x:Type vm:CallerCalleeEntry}}" />
+						<Setter Property="Opacity" Value="{Binding RowOpacity, DataType={x:Type vm:CallerCalleeEntry}}" />
 					</Style>
 				</DataBox.Styles>
 				<DataBox.Columns>
@@ -153,10 +155,11 @@
 					<CheckBox Grid.Column="2" Content="{l:Translate chkShowAllFunctions}" IsChecked="{Binding ShowAllFunctions}" />
 					<Button Grid.Column="3" Content="{l:Translate btnRetrack}" Command="{Binding RetrackCommand}" />
 				</Grid>
-				<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,4">
+				<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,4" Spacing="8">
 					<CheckBox Content="{l:Translate chkTrackExec}" IsChecked="{Binding TrackInstructionFetch}" />
 					<CheckBox Content="{l:Translate chkTrackDummy}" IsChecked="{Binding TrackDummy}" />
 					<CheckBox Content="{l:Translate chkTrackPpu}" IsChecked="{Binding TrackPpuRender}" />
+					<CheckBox Content="{l:Translate lblShowBlocked}" IsChecked="{Binding ShowBlockedRanges}" />
 				</StackPanel>
 				<Grid Grid.Row="2" RowDefinitions="Auto,*">
 					<TextBlock Grid.Row="0" Text="{l:Translate lblNoAccessData}" IsVisible="{Binding !HasAccessData}" />
@@ -167,17 +170,23 @@
 						Selection="{Binding AccessRangeSelection}"
 						IsVisible="{Binding HasAccessData}"
 						GridLinesVisibility="All"
+						SelectionMode="Multiple"
 						ColumnWidths="{Binding AccessRangesColumnWidths}"
 						PointerPressed="OnAccessPointerPressed"
-						CellClick="OnAccessCellClick"
 						CellDoubleClick="OnAccessRangeCellDoubleClick"
 						SortMode="Multiple"
 						SortState="{Binding AccessRangeSortState}"
 						SortCommand="{Binding AccessRangeSortCommand}"
 						>
 						<DataBox.Styles>
+							<Style Selector="DataBoxRow /template/ Rectangle#BackgroundRectangle">
+								<Setter Property="Fill" Value="{Binding RowBackground, DataType={x:Type vm:AccessRangeViewModel}}" />
+							</Style>
 							<Style Selector="DataBoxRow">
+								<Setter Property="Foreground" Value="{Binding RowForeground, DataType={x:Type vm:AccessRangeViewModel}}" />
 								<Setter Property="FontStyle" Value="{Binding RowStyle, DataType={x:Type vm:AccessRangeViewModel}}" />
+								<Setter Property="FontWeight" Value="{Binding RowWeight, DataType={x:Type vm:AccessRangeViewModel}}" />
+								<Setter Property="Opacity" Value="{Binding RowOpacity, DataType={x:Type vm:AccessRangeViewModel}}" />
 							</Style>
 						</DataBox.Styles>
 						<DataBox.Columns>

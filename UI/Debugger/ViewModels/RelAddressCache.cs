@@ -52,14 +52,24 @@ namespace Mesen.Debugger.ViewModels
 		public RwFlags Flags { get; set; }
 		public MemoryType MemType { get; set; }
 
-		// ROM 区间的相对地址拆分（page + 相对地址），与 RelAddressCacheEntry 同构：
-		// 只存两个整数，显示串由 MemoryHelper.FormatRelDisplay 在展示时重建，不再
-		// 把格式化字符串写入 JSON。-1 / null 时分别按 WhenWritingDefault /
-		// WhenWritingNull 省略以精简序列化。
-		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-		public int RelPage { get; set; } = -1;
+		// ROM 区间的相对地址拆分（page + 相对地址），与 RelAddressCacheEntry 同构。
+		// -1 表示无页，通过 *Ser shadow prop 省略写入。
+		private int _relPage = -1;
+		[JsonIgnore]
+		public int RelPage { get => _relPage; set => _relPage = value; }
+		[JsonPropertyName("RelPage")]
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		public int? RelPageSer { get => _relPage < 0 ? null : _relPage; set => _relPage = value ?? -1; }
+
 		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 		public int? RelAddress { get; set; }
+
+		// Range color/block state — persisted in JSON so it survives window
+		// close/reopen, same as FuncMeta for functions.
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		public string? RangeColor { get; set; }
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+		public bool Blocked { get; set; }
 
 		// Access counters — only populated by live tracking while a function is
 		// marked. Deliberately NOT serialized into the JSON cache.

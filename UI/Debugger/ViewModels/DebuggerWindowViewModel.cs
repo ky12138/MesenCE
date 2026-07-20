@@ -434,6 +434,10 @@ namespace Mesen.Debugger.ViewModels
 			// so that functions marked only in FunctionList (which don't go through
 			// CallerCallee's GetLive path) also get their access data persisted.
 			SampleMarkedFunctionMemoryAccess();
+
+			// After Union (inside SampleMarkedFunctionMemoryAccess) the range objects
+			// are new — carry color/block state from the live view-models into them.
+			SyncRangeMetaToCache();
 			FillRangeDisplays();
 
 			string path = Path.Combine(ConfigManager.DebuggerFolder, romName + "_RelAddr.json");
@@ -467,6 +471,23 @@ namespace Mesen.Debugger.ViewModels
 		// ROM only — RAM needs no page/rel split. Ranges already displayed have these
 		// set by the VM's BuildRelAddrDisplay and are skipped via the HasValue guard,
 		// so this only back-fills the unshown ones.
+		// Write back range color/block state from the live view-models into
+		// FuncMetaCache so they survive serialization and window reopen.
+		private void SyncRangeMetaToCache()
+		{
+			if(CallerCallee == null) return;
+			foreach(var vm in CallerCallee.MarkedAccessRanges) {
+				foreach(var meta in FuncMetaCache.Values) {
+					if(meta.MemoryAccess?.Ranges == null) continue;
+					var range = meta.MemoryAccess.Ranges.FirstOrDefault(r => r.Start == vm.Start && r.MemType == vm.MemType);
+					if(range == null) continue;
+				range.RangeColor = vm.RangeColor;
+				range.Blocked = vm.Blocked;
+					break;
+				}
+			}
+		}
+
 		private void FillRangeDisplays()
 		{
 			foreach(var meta in FuncMetaCache.Values) {

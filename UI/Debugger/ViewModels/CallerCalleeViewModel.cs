@@ -50,8 +50,9 @@ namespace Mesen.Debugger.ViewModels
 		[ObservableProperty] public partial MesenList<AccessRangeViewModel> MarkedAccessRanges { get; private set; } = new();
 		[ObservableProperty] public partial bool HasAccessData { get; private set; }
 		[ObservableProperty] public partial bool ShowAllFunctions { get; set; }
+		[ObservableProperty] public partial bool ShowBlockedRanges { get; set; } = true;
 
-		[ObservableProperty] public partial SelectionModel<AccessRangeViewModel?> AccessRangeSelection { get; set; } = new() { SingleSelect = true };
+		[ObservableProperty] public partial SelectionModel<AccessRangeViewModel?> AccessRangeSelection { get; set; } = new() { SingleSelect = false };
 		public AccessRangeViewModel? SelectedAccessRange => AccessRangeSelection.SelectedItem;
 
 		[ObservableProperty] public partial SortState AccessRangeSortState { get; set; } = new();
@@ -296,6 +297,17 @@ namespace Mesen.Debugger.ViewModels
 			var newTop = new List<AccessRangeViewModel>();
 			foreach(var r in merged.Ranges) {
 				AddressInfo funcAddr = targets.FirstOrDefault(t => t.Address >= 0);
+
+				// Restore persisted color/block state from FuncMetaCache.
+				foreach(var meta in Debugger.FuncMetaCache.Values) {
+					if(meta.MemoryAccess?.Ranges == null) continue;
+					var cached = meta.MemoryAccess.Ranges.FirstOrDefault(c => c.Start == r.Start && c.MemType == r.MemType);
+					if(cached == null) continue;
+					r.RangeColor = cached.RangeColor;
+					r.Blocked = cached.Blocked;
+					break;
+				}
+
 				var id = r.Identity;
 				countMap.TryGetValue((r.MemType, r.Start), out var counts);
 				if(_accessRangeByIdentity.TryGetValue(id, out var existing)) {
@@ -313,10 +325,18 @@ namespace Mesen.Debugger.ViewModels
 			foreach(var key in _accessRangeByIdentity.Keys.ToList())
 				if(!seenIds.Contains(key)) _accessRangeByIdentity.Remove(key);
 
+			// Filter blocked ranges unless ShowBlockedRanges is enabled.
+			if(!ShowBlockedRanges) {
+				newTop = newTop.Where(r => !r.IsBlocked).ToList();
+				hasData = newTop.Count > 0;
+			}
+
 			_topAccessRanges = newTop;
 			HasAccessData = hasData;
 			RebuildAccessRangeList();
 		}
+
+		partial void OnShowBlockedRangesChanged(bool value) => UpdateMarkedAccessRanges();
 
 		// ----- Colors / block / mark -----
 
@@ -368,8 +388,11 @@ namespace Mesen.Debugger.ViewModels
 			Debugger.NotifyFuncAppearanceChanged();
 		}
 
-		private void SetBlockedByColor(string? color, bool blocked)
+		private void SetBlockedByColor(bool blocked)
 		{
+			var e = Entry;
+			if(e == null) return;
+			string? color = Debugger.GetFuncMeta(e.FuncAbsAddr)?.FunctionColor;
 			if(color == null) return;
 			foreach(var kvp in Debugger.FuncMetaCache.Where(kv => kv.Value.FunctionColor == color))
 				kvp.Value.Blocked = blocked;
@@ -377,48 +400,22 @@ namespace Mesen.Debugger.ViewModels
 			Debugger.NotifyFuncAppearanceChanged();
 		}
 
-		private List<object> BuildColorBlockActions(Control parent, bool blocked)
-		{
-			var actions = new List<object>();
-			foreach(var c in FunctionListViewModel.ColorPalette) {
-				actions.Add(new ContextMenuAction {
-					ActionType = ActionType.Custom,
-					CustomText = ResourceHelper.GetMessage(c.Key),
-					OnClick = () => SetBlockedByColor(c.Hex, blocked)
-				});
-			}
-			return actions;
-		}
-
-		// 屏蔽子菜单：屏蔽/取消屏蔽选中项 + 按颜色屏蔽/取消屏蔽（与函数颜色菜单同构）。
 		private List<object> BuildBlockActions(Control parent)
 		{
-			var actions = new List<object> {
-				new ContextMenuAction {
-					ActionType = ActionType.Custom,
-					CustomText = ResourceHelper.GetMessage("mnuBlockFunction"),
-					IsEnabled = () => Entry != null,
-					OnClick = () => BlockSelected(true)
-				},
-				new ContextMenuAction {
-					ActionType = ActionType.Custom,
-					CustomText = ResourceHelper.GetMessage("mnuUnblockFunction"),
-					IsEnabled = () => Entry != null,
-					OnClick = () => BlockSelected(false)
-				},
+			string? GetColor() { var e = Entry; return e != null ? Debugger.GetFuncMeta(e.FuncAbsAddr)?.FunctionColor : null; }
+			return new List<object> {
+				new ContextMenuAction { ActionType = ActionType.Custom, CustomText = ResourceHelper.GetMessage("mnuBlockFunction"), IsEnabled = () => Entry != null, OnClick = () => BlockSelected(true) },
+				new ContextMenuAction { ActionType = ActionType.Custom, CustomText = ResourceHelper.GetMessage("mnuUnblockFunction"), IsEnabled = () => Entry != null, OnClick = () => BlockSelected(false) },
 				new ContextMenuSeparator(),
-				new ContextMenuAction {
-					ActionType = ActionType.Custom,
-					CustomText = ResourceHelper.GetMessage("mnuBlockByColor"),
-					SubActions = BuildColorBlockActions(parent, true)
-				},
-				new ContextMenuAction {
-					ActionType = ActionType.Custom,
-					CustomText = ResourceHelper.GetMessage("mnuUnblockByColor"),
-					SubActions = BuildColorBlockActions(parent, false)
-				},
+				new ContextMenuAction { ActionType = ActionType.Custom, CustomText = ResourceHelper.GetMessage("mnuBlockByColor"),
+					HintText = () => FunctionListViewModel.GetColorDisplayName(GetColor()),
+					IsEnabled = () => GetColor() != null,
+					OnClick = () => SetBlockedByColor(true) },
+				new ContextMenuAction { ActionType = ActionType.Custom, CustomText = ResourceHelper.GetMessage("mnuUnblockByColor"),
+					HintText = () => FunctionListViewModel.GetColorDisplayName(GetColor()),
+					IsEnabled = () => GetColor() != null,
+					OnClick = () => SetBlockedByColor(false) },
 			};
-			return actions;
 		}
 
 		private void MarkSelected()
@@ -572,25 +569,107 @@ namespace Mesen.Debugger.ViewModels
 			AddressInfo GetAbs() => SelectedAccessRange == null ? default : new AddressInfo { Type = SelectedAccessRange.MemType, Address = (int)SelectedAccessRange.Start };
 			AddressInfo GetRel()
 			{
-				AccessRangeViewModel? range = SelectedAccessRange;
-				if(range == null) {
-					return default;
-				}
-				// Reuse the relative address already cached on the range (computed
-				// once in its constructor) instead of a fresh P/Invoke each call.
-				AddressInfo rel = range.RelAddr;
+				var range = SelectedAccessRange;
+				if(range == null) return default;
+				var rel = range.RelAddr;
 				return rel.Address >= 0 ? rel : default;
 			}
 
+			void ForEachSelected(Action<AccessRangeViewModel> action)
+			{
+				foreach(var r in AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>()) {
+					action(r);
+					foreach(var c in r.Children) action(c);
+				}
+			}
+			void ForAllRanges(Action<AccessRangeViewModel> action)
+			{
+				foreach(var r in MarkedAccessRanges) {
+					action(r);
+					foreach(var c in r.Children) action(c);
+				}
+			}
+			void MarkCacheDirty() => Debugger.MarkCacheDirty();
+
+			void SetRangeColor(string? hex)
+			{
+				bool any = false;
+				ForEachSelected(r => { r.RangeColor = hex; r.RefreshVisual(); any = true; });
+				if(!any) { var r = SelectedAccessRange; if(r != null) { r.RangeColor = hex; r.RefreshVisual(); } }
+				if(any || SelectedAccessRange != null) MarkCacheDirty();
+			}
+			async Task PickRangeColor(Control parent)
+			{
+				var model = new ColorPickerViewModel() { Color = Colors.White };
+				if(await new ColorPickerWindow { DataContext = model }.ShowCenteredDialog<bool>(parent.GetWindow()))
+					SetRangeColor(model.Color.ToString());
+			}
+
+			void BlockRangeByColor(bool blocked)
+			{
+				var color = AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().FirstOrDefault(r => r.RangeColor != null)?.RangeColor;
+				if(color == null) return;
+				ForAllRanges(r => { if(r.RangeColor == color) r.Blocked = blocked; });
+				RefreshAccessRangeVisuals();
+				MarkCacheDirty();
+			}
+			void BlockRangeByMemType(bool blocked)
+			{
+				var mt = AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().FirstOrDefault()?.MemType;
+				if(mt == null) return;
+				ForAllRanges(r => { if(r.MemType == mt.Value) r.Blocked = blocked; });
+				RefreshAccessRangeVisuals();
+				MarkCacheDirty();
+			}
+			void BlockRangeByRw(bool blocked)
+			{
+				var f = AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().FirstOrDefault()?.Flags;
+				if(f == null) return;
+				ForAllRanges(r => { if(r.Flags == f.Value) r.Blocked = blocked; });
+				RefreshAccessRangeVisuals();
+				MarkCacheDirty();
+			}
+
+			List<object> BuildRangeColorActions() {
+				var acts = FunctionListViewModel.ColorPalette.Select(c => (object)new ContextMenuAction {
+					ActionType = ActionType.Custom, CustomText = ResourceHelper.GetMessage(c.Key),
+					OnClick = () => SetRangeColor(c.Hex)
+				}).ToList();
+				acts.Add(new ContextMenuSeparator());
+				acts.Add(new ContextMenuAction {
+					ActionType = ActionType.Custom,
+					CustomText = ResourceHelper.GetMessage("mnuClearColor"),
+					OnClick = () => SetRangeColor(null) 
+				});
+				acts.Add(new ContextMenuAction {
+					ActionType = ActionType.Custom,
+					CustomText = ResourceHelper.GetMessage("mnuCustomColor"),
+					OnClick = () => _ = PickRangeColor(accessGrid) 
+				});
+				return acts;
+			}
 			AddDisposables(DebugShortcutManager.CreateContextMenu(accessGrid, new List<object> {
+				new ContextMenuAction() {
+					ActionType = ActionType.EditLabel,
+					HintText = () => MemoryHelper.GetAddrStr(GetAbs()),
+					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.FunctionList_EditLabel),
+					IsEnabled = () => SelectedAccessRange != null,
+					OnClick = () => {
+						var a = GetAbs();
+						CodeLabel? label = LabelManager.GetLabel(a);
+						if(a.Address >= 0 && SelectedAccessRange != null) {
+							LabelEditWindow.EditLabel(CpuType, accessGrid, label ?? new CodeLabel(a));
+						}
+					}
+				},
 				new ContextMenuAction() {
 					ActionType = ActionType.ToggleBreakpoint,
 					HintText = () => MemoryHelper.GetAddrStr(GetRel()),
 					IsEnabled = () => GetRel().Address >= 0 && SelectedAccessRange != null,
 					OnClick = () => {
-						AddressInfo addr = GetRel();
-						if(addr.Address >= 0 && SelectedAccessRange != null) {
-							BreakpointManager.EditBreakpointAtRange(addr, SelectedAccessRange.SpanLength, CpuType, accessGrid);
+						var a = GetRel();
+						if(a.Address >= 0 && SelectedAccessRange != null) {
+							BreakpointManager.EditBreakpointAtRange(a, SelectedAccessRange.SpanLength, CpuType, accessGrid);
 						}
 					}
 				},
@@ -600,9 +679,9 @@ namespace Mesen.Debugger.ViewModels
 					IsVisible = () => GetRel().Type != GetAbs().Type,
 					IsEnabled = () => SelectedAccessRange != null,
 					OnClick = () => {
-						AddressInfo addr = GetAbs();
-						if(addr.Address >= 0 && SelectedAccessRange != null) {
-							BreakpointManager.EditBreakpointAtRange(addr, SelectedAccessRange.SpanLength, CpuType, accessGrid);
+						var a = GetAbs();
+						if(a.Address >= 0 && SelectedAccessRange != null) {
+							BreakpointManager.EditBreakpointAtRange(a, SelectedAccessRange.SpanLength, CpuType, accessGrid);
 						}
 					}
 				},
@@ -612,9 +691,9 @@ namespace Mesen.Debugger.ViewModels
 					HintText = () => MemoryHelper.GetAddrStr(GetRel()),
 					IsEnabled = () => GetRel().Address >= 0,
 					OnClick = () => {
-						AddressInfo addr = GetRel();
-						if(addr.Address >= 0) {
-							MemoryToolsWindow.ShowInMemoryTools(addr.Type, addr.Address);
+						var a = GetRel();
+						if(a.Address >= 0) {
+							MemoryToolsWindow.ShowInMemoryTools(a.Type, a.Address);
 						}
 					}
 				},
@@ -623,14 +702,102 @@ namespace Mesen.Debugger.ViewModels
 					HintText = () => MemoryHelper.GetAddrStr(GetAbs()),
 					IsVisible = () => GetRel().Type != GetAbs().Type,
 					IsEnabled = () => SelectedAccessRange != null,
-					OnClick = () => {
-						AddressInfo addr = GetAbs();
-						if(addr.Address >= 0) {
-							MemoryToolsWindow.ShowInMemoryTools(addr.Type, addr.Address);
+					OnClick = () => { 
+						var a = GetAbs();
+						if(a.Address >= 0) {
+							MemoryToolsWindow.ShowInMemoryTools(a.Type, a.Address);
 						}
+					} 
+				},
+				new ContextMenuSeparator(),
+				new ContextMenuAction() {
+					ActionType = ActionType.Custom,
+					CustomText = ResourceHelper.GetMessage("mnuFunctionColor"),
+					SubActions = BuildRangeColorActions()
+				},
+				new ContextMenuAction() {
+					ActionType = ActionType.Custom,
+					CustomText = ResourceHelper.GetMessage("mnuBlockMenu"), SubActions = new List<object> {
+						new ContextMenuAction {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuBlockFunction"),
+							IsEnabled = () => AccessRangeSelection.SelectedItems.Count > 0,
+							OnClick = () => { ForEachSelected(r => { r.Blocked = true; r.RefreshVisual(); }); RefreshAccessRangeVisuals(); MarkCacheDirty(); }
+						},
+						new ContextMenuAction {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuUnblockFunction"),
+							IsEnabled = () => AccessRangeSelection.SelectedItems.Count > 0,
+							OnClick = () => { ForEachSelected(r => { r.Blocked = false; r.RefreshVisual(); }); RefreshAccessRangeVisuals(); MarkCacheDirty(); }
+						},
+						new ContextMenuSeparator(),
+						new ContextMenuAction {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuBlockByColor"),
+							HintText = () => FunctionListViewModel.GetColorDisplayName(AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().FirstOrDefault(r => r.RangeColor != null)?.RangeColor),
+							IsEnabled = () => AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().Any(r => r.RangeColor != null),
+							OnClick = () => BlockRangeByColor(true) 
+						},
+						new ContextMenuAction {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuUnblockByColor"),
+							HintText = () => FunctionListViewModel.GetColorDisplayName(AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().FirstOrDefault(r => r.RangeColor != null)?.RangeColor),
+							IsEnabled = () => AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().Any(r => r.RangeColor != null),
+							OnClick = () => BlockRangeByColor(false) 
+						},
+						new ContextMenuSeparator(),
+						new ContextMenuAction {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuBlockByMemType"),
+							HintText = () => { 
+								var r = AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().FirstOrDefault();
+								return r?.MemType.GetShortName() ?? "";
+							},
+							IsEnabled = () => AccessRangeSelection.SelectedItems.Count > 0,
+							OnClick = () => BlockRangeByMemType(true)
+						},
+						new ContextMenuAction {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuUnblockByMemType"),
+							HintText = () => { 
+								var r = AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().FirstOrDefault();
+								return r?.MemType.GetShortName() ?? "";
+							},
+							IsEnabled = () => AccessRangeSelection.SelectedItems.Count > 0,
+							OnClick = () => BlockRangeByMemType(false)
+						},
+						new ContextMenuSeparator(),
+						new ContextMenuAction {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuBlockByRw"),
+							HintText = () => { 
+								var r = AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().FirstOrDefault();
+								return r?.RwDisplay ?? "";
+							},
+							IsEnabled = () => AccessRangeSelection.SelectedItems.Count > 0,
+							OnClick = () => BlockRangeByRw(true) 
+						},
+						new ContextMenuAction {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuUnblockByRw"),
+							HintText = () => { 
+								var r = AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().FirstOrDefault();
+								return r?.RwDisplay ?? "";
+							},
+							IsEnabled = () => AccessRangeSelection.SelectedItems.Count > 0,
+							OnClick = () => BlockRangeByRw(false)
+						},
 					}
 				},
 			}));
+		}
+
+		private void RefreshAccessRangeVisuals()
+		{
+			foreach(var r in MarkedAccessRanges) {
+				r.RefreshVisual();
+				foreach(var c in r.Children) c.RefreshVisual();
+			}
 		}
 	}
 
@@ -649,6 +816,7 @@ namespace Mesen.Debugger.ViewModels
 		public object RowForeground => Node.RowForeground;
 		public FontStyle RowStyle => Node.RowStyle;
 		public FontWeight RowWeight => Node.RowWeight;
+		public double RowOpacity => Node.RowOpacity;
 		public bool IsBlocked => Node.IsBlocked;
 		public CodeLabel? Label => Node.Label;
 		public bool IsMarked { get => Node.IsMarked; set => Node.IsMarked = value; }

@@ -66,31 +66,17 @@ namespace Mesen.Debugger.Views
 			base.OnDataContextChanged(e);
 		}
 
-		private void OnAccessCellClick(DataBoxCell cell)
-		{
-			if(DataContext is not CallerCalleeViewModel model || cell.DataContext is not AccessRangeViewModel range) {
-				return;
-			}
-			// Track the clicked row so the access-panel context menu acts on it
-			// (covers right-click, which otherwise wouldn't change selection).
-			model.AccessRangeSelection.SelectedItem = range;
-		}
-
-		// Select the access row under the pointer synchronously on right-press, so
-		// the context menu (which opens on release) already has a valid target.
+		// Select the access row under the pointer on right-press, so the context
+		// menu (opened on release) acts on the correct row. Left-click multi-select
+		// is handled by DataBox's SelectionMode="Multiple" — don't override it.
 		private void OnAccessPointerPressed(object? sender, PointerPressedEventArgs e)
 		{
-			if(DataContext is not CallerCalleeViewModel model) {
-				return;
-			}
-			if(!e.GetCurrentPoint(this).Properties.IsRightButtonPressed) {
-				return;
-			}
+			if(DataContext is not CallerCalleeViewModel model) return;
+			if(!e.GetCurrentPoint(this).Properties.IsRightButtonPressed) return;
 			if(e.Source is Visual src) {
-				DataBoxRow? row = src.GetSelfAndVisualAncestors().OfType<DataBoxRow>().FirstOrDefault();
-				if(row?.DataContext is AccessRangeViewModel range) {
+				var row = src.GetSelfAndVisualAncestors().OfType<DataBoxRow>().FirstOrDefault();
+				if(row?.DataContext is AccessRangeViewModel range)
 					model.AccessRangeSelection.SelectedItem = range;
-				}
 			}
 		}
 

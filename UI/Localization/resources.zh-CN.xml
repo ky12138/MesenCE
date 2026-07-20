@@ -1396,10 +1396,11 @@
 			<Control ID="colAccessCount">访问</Control>
 			<Control ID="lblNoAccessData">尚未记录内存访问（标记函数后运行游戏即可）</Control>
 			<Control ID="btnRetrack">重新跟踪</Control>
-			<Control ID="chkTrackExec">记录指令取指</Control>
-			<Control ID="chkTrackDummy">记录Dummy访问</Control>
-			<Control ID="chkTrackPpu">记录PPU渲染读取</Control>
+			<Control ID="chkTrackExec">指令取指</Control>
+			<Control ID="chkTrackDummy">Dummy访问</Control>
+			<Control ID="chkTrackPpu">PPU渲染读取</Control>
 			<Control ID="chkShowAllFunctions">显示页面内函数的记录</Control>
+			<Control ID="lblShowBlocked">显示被屏蔽</Control>
 		</Form>
 
 		<Form ID="LabelListView">
@@ -2523,6 +2524,10 @@ E
 		<Message ID="mnuUnblockFunction">取消屏蔽</Message>
 		<Message ID="mnuBlockByColor">按颜色屏蔽</Message>
 		<Message ID="mnuUnblockByColor">按颜色取消屏蔽</Message>
+		<Message ID="mnuBlockByMemType">按内存类型屏蔽</Message>
+		<Message ID="mnuUnblockByMemType">按内存类型取消屏蔽</Message>
+		<Message ID="mnuBlockByRw">按 R/W 屏蔽</Message>
+		<Message ID="mnuUnblockByRw">按 R/W 取消屏蔽</Message>
 		<Message ID="mnuBlockMenu">屏蔽</Message>
 		<Message ID="mnuMarkFunctionAccess">跟踪内存访问</Message>
 		<Message ID="mnuClearColor">清除颜色</Message>

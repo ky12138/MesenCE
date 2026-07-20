@@ -68,13 +68,17 @@ namespace Mesen.Debugger.Utilities
 			string page = withPage ? GetPageText((int)start, mem) : "";
 			string memType = withMemType ? mem.GetShortName() + " " : "";
 			string addrStr;
+			CodeLabel? label = LabelManager.GetLabel(start, mem);
+			string labelStr = label?.Label ?? ("$" + start.ToString(format));
 			if(interval > 1 && length > 1) {
-				addrStr = "$" + start.ToString(format) + "×" + length + " step$" + interval.ToString("X1");
+				addrStr = $"{labelStr}×{length} step:0x{interval.ToString("X")}";
 			} else if(length <= 1) {
-				addrStr = "$" + start.ToString(format);
+				addrStr = labelStr;
 			} else {
-				uint end = start + (length - 1) * (interval > 0 ? interval : 1);
-				addrStr = "$" + start.ToString(format) + "-$" + end.ToString(format);
+				string end = label?.Label != null
+					? $"~0x{(length - 1).ToString("x")}"
+					: "-$" + (start + (length - 1) * (interval > 0 ? interval : 1)).ToString(format);
+				addrStr = labelStr + end;
 			}
 			return page + memType + addrStr;
 		}
@@ -109,24 +113,24 @@ namespace Mesen.Debugger.Utilities
 		// cache the value returned by GetPageSize and only re-query on ROM load.
 		// This keeps GetPage a pure integer division with zero P/Invoke in the hot
 		// path, replacing the old GetConsoleState/GetPpuState serialization.
-		private static readonly Dictionary<MemoryType, int> _pageSizeCache = new();
-		private static readonly NotificationListener _romLoadListener = new NotificationListener();
+		private static readonly Dictionary<MemoryType, int> PageSizeCache = new();
+		private static readonly NotificationListener RomLoadListener = new NotificationListener();
 		static MemoryHelper()
 		{
-			_romLoadListener.OnNotification += (e) => {
+			RomLoadListener.OnNotification += (e) => {
 				if(e.NotificationType == ConsoleNotificationType.GameLoaded) {
-					_pageSizeCache.Clear();
+					PageSizeCache.Clear();
 				}
 			};
 		}
 
 		private static int GetCachedPageSize(MemoryType memType)
 		{
-			if(_pageSizeCache.TryGetValue(memType, out int size)) {
+			if(PageSizeCache.TryGetValue(memType, out int size)) {
 				return size;
 			}
 			int s = DebugApi.GetPageSize(memType);
-			_pageSizeCache[memType] = s;
+			PageSizeCache[memType] = s;
 			return s;
 		}
 
