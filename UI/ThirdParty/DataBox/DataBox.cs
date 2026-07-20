@@ -377,9 +377,9 @@ public class DataBox : TemplatedControl
 		return false;
 	}
 
-	private string ConvertToText()
+	private string BuildText(IEnumerable? items)
 	{
-		if(Items == null || _rowsPresenter == null) {
+		if(items == null || _rowsPresenter == null) {
 			return string.Empty;
 		}
 
@@ -403,7 +403,7 @@ public class DataBox : TemplatedControl
 		}
 		sb.Append(Environment.NewLine);
 
-		foreach(object item in Items) {
+		foreach(object item in items) {
 			for(int i = 0; i < Columns.Count; i++) {
 				DataBoxColumn column = Columns[i];
 				if(column is DataBoxTextColumn textColumn && textColumn.Binding is CompiledBinding columnBinding) {
@@ -429,9 +429,53 @@ public class DataBox : TemplatedControl
 		return sb.ToString();
 	}
 
-	public void CopyToClipboard()
+	public string ConvertToText() => BuildText(Items);
+	public string ConvertToText(IEnumerable? items) => BuildText(items);
+	public void CopyToClipboard() => CopyToClipboard(Items);
+	public void CopyToClipboard(IEnumerable? items) =>
+		ApplicationHelper.GetMainWindow()?.Clipboard?.SetTextAsync(ConvertToText(items));
+
+	// 仅表头行（不含换行），供递归复制时拼装自定义文本。
+	public string GetHeader()
 	{
-		ApplicationHelper.GetMainWindow()?.Clipboard?.SetTextAsync(ConvertToText());
+		StringBuilder sb = new();
+		for(int i = 0; i < Columns.Count; i++) {
+			DataBoxColumn column = Columns[i];
+			if(column is DataBoxTextColumn textColumn) {
+				sb.Append(textColumn.Header?.ToString() ?? "");
+				if(i < Columns.Count - 1) {
+					sb.Append(",");
+				}
+			}
+		}
+		return sb.ToString();
+	}
+
+	// 单行单元格文本（逗号分隔，不含换行），供递归复制时按深度缩进。
+	public string FormatRow(object item)
+	{
+		if(_rowsPresenter == null) {
+			return "";
+		}
+
+		StringBuilder sb = new();
+		for(int i = 0; i < Columns.Count; i++) {
+			DataBoxColumn column = Columns[i];
+			if(column is DataBoxTextColumn textColumn && textColumn.Binding is CompiledBinding columnBinding) {
+#pragma warning disable IL2026, IL3050 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
+				Binding binding = new Binding(columnBinding.Path?.ToString() ?? "");
+#pragma warning restore IL2026, IL3050 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
+				binding.Source = item;
+				ValueGetter getter = new ValueGetter();
+				getter.Bind(ValueGetter.ValueProperty, binding);
+
+				sb.Append(getter.Value);
+				if(i < Columns.Count - 1) {
+					sb.Append(",");
+				}
+			}
+		}
+		return sb.ToString();
 	}
 
 	public int GetRowIndex(DataBoxRow row)

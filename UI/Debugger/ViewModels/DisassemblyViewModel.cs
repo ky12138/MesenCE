@@ -328,6 +328,65 @@ namespace Mesen.Debugger.ViewModels
 			ApplicationHelper.GetMainWindow()?.Clipboard?.SetTextAsync(code);
 		}
 
+		// 复制光标所在函数的记录（标签,CPU地址,ROM地址,次数）+ 可选访问记录与汇编。
+		// 选中区间落在某函数体内时复制该函数；找不到对应函数则不复制。
+		public void CopyFunctionAtCursor(bool includeAccess, bool includeAssembly)
+		{
+			int addr = SelectionStart;
+			if(addr < 0) {
+				return;
+			}
+			var fl = Debugger.FunctionList;
+			if(fl == null) {
+				return;
+			}
+			FunctionNode? best = null;
+			foreach(var func in fl.Functions) {
+				if(func.FuncRelAddr.Address >= 0) {
+					int start = func.FuncRelAddr.Address;
+					int len = (int)func.FunctionLength;
+					if(len > 0) {
+						if(addr >= start && addr < start + len) {
+							if(best == null || start > best.FuncRelAddr.Address) {
+								best = func;
+							}
+						}
+					} else if(start == addr) {
+						best = func;
+						break;
+					}
+				}
+			}
+			if(best != null) {
+				FunctionClipboardExporter.CopyFunction(Debugger, CpuType, best, includeAccess, includeAssembly);
+			}
+		}
+
+		// 导出某函数的反汇编文本（按相对地址区间）。临时改写选择范围后恢复，
+		// 不影响调用方的选中状态。relStart < 0 或 length == 0 时返回空串。
+		public string GetFunctionDisassembly(int relStart, uint length)
+		{
+			if(relStart < 0 || length == 0) {
+				return "";
+			}
+
+			DebuggerConfig cfg = Config.Debugger;
+			int savedStart = SelectionStart;
+			int savedEnd = SelectionEnd;
+			int savedRow = SelectedRowAddress;
+			int savedAnchor = SelectionAnchor;
+			try {
+				SelectionStart = relStart;
+				SelectionEnd = relStart + (int)length - 1;
+				return GetSelection(cfg.CopyAddresses, cfg.CopyByteCode, cfg.CopyComments, cfg.CopyBlockHeaders, out _, true);
+			} finally {
+				SelectionStart = savedStart;
+				SelectionEnd = savedEnd;
+				SelectedRowAddress = savedRow;
+				SelectionAnchor = savedAnchor;
+			}
+		}
+
 		public string GetSelection(bool getAddresses, bool getByteCode, bool getComments, bool getHeaders, out int byteCount, bool skipGeneratedJmpSubLabels)
 		{
 			ICodeDataProvider dp = DataProvider;

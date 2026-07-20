@@ -39,10 +39,18 @@ namespace Mesen.Debugger.Views
 				var callees = NameScope.GetNameScope(this)?.Find<DataBox>("calleesGrid");
 				var access = NameScope.GetNameScope(this)?.Find<DataBox>("accessGrid");
 				if(callers != null && callees != null) {
+					model.CallersGrid = callers;
+					model.CalleesGrid = callees;
 					model.InitContextMenu(callers, callees);
 				}
 				if(access != null) {
+					model.AccessGrid = access;
 					model.InitAccessContextMenu(access);
+				}
+				var reverse = NameScope.GetNameScope(this)?.Find<DataBox>("reverseGrid");
+				if(reverse != null) {
+					model.ReverseGrid = reverse;
+					model.InitReverseContextMenu(reverse);
 				}
 			}
 			base.OnDataContextChanged(e);
@@ -70,9 +78,9 @@ namespace Mesen.Debugger.Views
 
 			if(cell.Column?.ColumnName == "Marked") {
 				bool newValue = !entry.IsMarked;
-				// Only toggle selections within the same grid as the clicked entry.
-				// The Caller/Callee grids have independent SelectionModels, so a
-				// selection in each would otherwise toggle both at once.
+				// 互斥同步已移入 ViewModel（OnCallerOrCalleeSelectionChanged），
+				// 同一时刻只有一个 grid 持有选中项。这里按 entry 所属集合取对应
+				// SelectedItems，在 SingleSelect 下最多 1 项，等价于只切换当前行。
 				var sameGridSelection = model.Callers.Contains(entry)
 					? model.CallerSelection.SelectedItems
 					: model.CalleeSelection.SelectedItems;
@@ -113,7 +121,7 @@ namespace Mesen.Debugger.Views
 				CodeLabel? label = LabelManager.GetLabel(entry.FuncAbsAddr);
 				LabelEditWindow.EditLabel(model.CpuType, this, label ?? new CodeLabel(entry.FuncAbsAddr));
 			} else if(colName == "RelAddr") {
-				if(entry.FuncRelAddr.Address >= 0) {
+				if(entry.IsPageInUse) {
 					model.Debugger.ScrollToAddress(entry.FuncRelAddr.Address);
 				}
 			} else if(colName == "AbsAddr") {

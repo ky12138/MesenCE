@@ -14,7 +14,9 @@ using Mesen.Utilities;
 using Mesen.ViewModels;
 using Mesen.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
+using System.Windows.Input;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,6 +35,15 @@ namespace Mesen.Debugger.ViewModels
 		public bool IsUpdatingSelection { get; private set; }
 		[ObservableProperty] public partial SortState SortState { get; set; } = new();
 		[ObservableProperty] public partial bool ShowBlocked { get; set; } = ConfigManager.Config.Debug.Debugger.ShowBlockedFunctions;
+
+		// 复制选项（供"复制全部"按钮与右键菜单共用）
+		[ObservableProperty] public partial bool CopyWithAccess { get; set; }
+		[ObservableProperty] public partial bool CopyWithAssembly { get; set; }
+
+		// 由视图在 DataContext 变更时注入，供导出器生成 databox 行文本。
+		internal DataBox? Grid { get; set; }
+
+		public ICommand CopyAllCommand { get; }
 
 		public List<int> ColumnWidths { get; } = ConfigManager.Config.Debug.Debugger.FunctionListColumnWidths;
 		public CpuType CpuType { get; }
@@ -77,6 +88,20 @@ namespace Mesen.Debugger.ViewModels
 			CpuType = cpuType;
 			Debugger = debugger;
 			SortState.SetColumnSort("AbsAddr", ListSortDirection.Ascending, true);
+			CopyAllCommand = new RelayCommand(CopyAll);
+		}
+
+		private void CopyAll()
+		{
+			FunctionClipboardExporter.CopyFunctionList(this, Functions, CopyWithAccess, CopyWithAssembly);
+		}
+
+		private void CopySelected(bool withAccess, bool withAssembly)
+		{
+			var nodes = Selection.SelectedItems.OfType<FunctionNode>().ToList();
+			if(nodes.Count > 0) {
+				FunctionClipboardExporter.CopyFunctionList(this, nodes, withAccess, withAssembly);
+			}
 		}
 
 		public void Sort(object? param) => UpdateFunctionList();
@@ -152,6 +177,10 @@ namespace Mesen.Debugger.ViewModels
 				foreach(var key in _index.Keys.ToList())
 					if(!live.Contains(key)) _index.Remove(key);
 			}
+
+			// FunctionList 刷新时批量快照调用图到缓存（去抖），使所有函数的 caller/callee
+			// 结构在重开 ROM 时即可通过缓存兜底显示，无需逐个进入 Caller/Callee 面板。
+			Debugger.ScheduleCallerCalleeSnapshot();
 		}
 
 		public FunctionNode GetOrCreateNode(AddressInfo absAddr)
@@ -261,9 +290,10 @@ namespace Mesen.Debugger.ViewModels
 					ActionType = ActionType.ToggleBreakpoint,
 					HintText = () => GetHintText(),
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.FunctionList_ToggleBreakpoint),
+					IsVisible = () => Selection.SelectedItem is FunctionNode entry && entry.IsPageInUse,
 					IsEnabled = () => Selection.SelectedItems.Count == 1,
 					OnClick = () => {
-						if(Selection.SelectedItem is FunctionNode entry) {
+						if(Selection.SelectedItem is FunctionNode entry && entry.IsPageInUse) {
 							BreakpointManager.EditBreakpointAtRange(entry.FuncRelAddr, entry.FunctionLength, CpuType, parent);
 						}
 					}
@@ -284,10 +314,10 @@ namespace Mesen.Debugger.ViewModels
 					ActionType = ActionType.FindOccurrences,
 					HintText = () => GetHintText(),
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.FunctionList_FindOccurrences),
-					IsEnabled = () => Selection.SelectedItems.Count == 1 && Selection.SelectedItem is FunctionNode entry && entry.FuncRelAddr.Address >= 0,
+					IsEnabled = () => Selection.SelectedItems.Count == 1,
 					OnClick = () => {
-						if(Selection.SelectedItem is FunctionNode entry && entry.FuncRelAddr.Address >= 0) {
-							DisassemblySearchOptions options = new() { MatchCase = true, MatchWholeWord = true };
+					if(Selection.SelectedItem is FunctionNode entry) {
+						DisassemblySearchOptions options = new() { MatchCase = true, MatchWholeWord = true };
 							Debugger.FindAllOccurrences(entry.Label?.Label ?? entry.RelAddressDisplay, options);
 						}
 					}
@@ -296,23 +326,23 @@ namespace Mesen.Debugger.ViewModels
 					ActionType = ActionType.GoToLocation,
 					HintText = () => GetHintText(),
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.FunctionList_GoToLocation),
-					IsEnabled = () => Selection.SelectedItems.Count == 1 && Selection.SelectedItem is FunctionNode entry && entry.FuncRelAddr.Address >= 0,
-					OnClick = () => {
-						if(Selection.SelectedItem is FunctionNode entry) {
-							if(entry.FuncRelAddr.Address >= 0) {
-								Debugger.ScrollToAddress(entry.FuncRelAddr.Address);
-							}
-						}
-					}
-				},
-				new ContextMenuAction() {
-					ActionType = ActionType.ViewInMemoryViewer,
-					HintText = () => GetHintText(),
-					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.FunctionList_ViewInMemoryViewer),
+					IsVisible = () => Selection.SelectedItem is FunctionNode entry && entry.IsPageInUse,
 					IsEnabled = () => Selection.SelectedItems.Count == 1,
 					OnClick = () => {
-						if(Selection.SelectedItem is FunctionNode entry) {
-							MemoryToolsWindow.ShowInMemoryTools(entry.FuncRelAddr.Type, entry.FuncRelAddr.Address);
+					if(Selection.SelectedItem is FunctionNode entry && entry.IsPageInUse) {
+						Debugger.ScrollToAddress(entry.FuncRelAddr.Address);
+					}
+				}
+				},
+				new ContextMenuAction() {
+				ActionType = ActionType.ViewInMemoryViewer,
+				HintText = () => GetHintText(),
+				Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.FunctionList_ViewInMemoryViewer),
+				IsVisible = () => Selection.SelectedItem is FunctionNode entry && entry.IsPageInUse,
+				IsEnabled = () => Selection.SelectedItems.Count == 1,
+				OnClick = () => {
+					if(Selection.SelectedItem is FunctionNode entry && entry.IsPageInUse) {
+						MemoryToolsWindow.ShowInMemoryTools(entry.FuncRelAddr.Type, entry.FuncRelAddr.Address);
 						}
 					}
 				},
@@ -343,6 +373,38 @@ namespace Mesen.Debugger.ViewModels
 					CustomText = ResourceHelper.GetMessage("mnuMarkFunctionAccess"),
 					IsEnabled = () => Selection.SelectedItems.Count > 0,
 					OnClick = () => MarkSelected()
+				},
+				new ContextMenuSeparator(),
+				new ContextMenuAction() {
+					ActionType = ActionType.Custom,
+					CustomText = ResourceHelper.GetMessage("mnuCopySelected"),
+					IsEnabled = () => Selection.SelectedItems.Count > 0,
+					SubActions = new List<object> {
+						new ContextMenuAction() {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuCopyRecords"),
+							IsEnabled = () => Selection.SelectedItems.Count > 0,
+							OnClick = () => CopySelected(false, false)
+						},
+						new ContextMenuAction() {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuCopyWithAccess"),
+							IsEnabled = () => Selection.SelectedItems.Count > 0,
+							OnClick = () => CopySelected(true, false)
+						},
+						new ContextMenuAction() {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuCopyWithAssembly"),
+							IsEnabled = () => Selection.SelectedItems.Count > 0,
+							OnClick = () => CopySelected(false, true)
+						},
+						new ContextMenuAction() {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuCopyAllInfo"),
+							IsEnabled = () => Selection.SelectedItems.Count > 0,
+							OnClick = () => CopySelected(true, true)
+						},
+					}
 				},
 			}));
 		}
@@ -410,7 +472,7 @@ namespace Mesen.Debugger.ViewModels
 		public FontWeight RowWeight => _debugger.GetFuncMeta(AbsAddr)?.Blocked == true ? FontWeight.Bold : FontWeight.Normal;
 		public bool IsBlocked => _debugger.GetFuncMeta(AbsAddr)?.Blocked ?? false;
 
-		private bool IsPageInUse
+		public bool IsPageInUse
 		{
 			get
 			{

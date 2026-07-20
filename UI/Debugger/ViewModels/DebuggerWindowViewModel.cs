@@ -75,6 +75,11 @@ namespace Mesen.Debugger.ViewModels
 		// RelPage 直接取自缓存，避免每次重建显示串都重算 GetPage（PCE 还会 P/Invoke）。
 		public Dictionary<AddressInfo, (int? RelPage, int? RelAddress)> RelAddressCache { get; } = new();
 
+		// 调用关系缓存（仅结构，不含次数）。key = 函数绝对地址。
+		// 双向存储：每个函数同时记录其 Callers 与 Callees，随用户浏览逐步填满，
+		// 跨会话累积边安全（调用图对同一 ROM 是静态的）。
+		public Dictionary<AddressInfo, (List<CallerCalleeRef> Callers, List<CallerCalleeRef> Callees)> CallerCalleeCache { get; } = new();
+
 		// 当前 CPU 地址空间正在使用的 PRG 页集合，由 MemoryMappings.CpuMappings 各块的
 		// Page 汇总而来。Function List 以此为「页」单位判断函数是否处于当前可寻址空间：
 		// 页不在此集合中的函数一律斜体。每次 UpdateFunctionList 重建前刷新，避免逐函数
@@ -375,6 +380,98 @@ namespace Mesen.Debugger.ViewModels
 			DebounceSaveCache();
 		}
 
+		/// <summary>记录函数的调用关系（双向补边到 CallerCalleeCache）。func 的 Callers/Callees
+		/// 来自本次采样，全量覆盖；并反向为邻居补边，使调用图随浏览逐步填满。仅结构、不含次数。</summary>
+		public void RecordCallerCallee(AddressInfo func, List<CallerCalleeRef> callers, List<CallerCalleeRef> callees)
+		{
+			bool changed = false;
+			if(!CallerCalleeCache.TryGetValue(func, out var ex) || !SameSet(ex.Callers, callers) || !SameSet(ex.Callees, callees)) {
+				CallerCalleeCache[func] = (callers, callees);
+				changed = true;
+			}
+			// 反向边合并（去重）：callerX 调用 func ⇒ callerX.Callees += func；func 调用 calleeB ⇒ calleeB.Callers += func
+			foreach(var c in callers) changed |= AddEdge(c, isCalleeSide: true, func);
+			foreach(var c in callees) changed |= AddEdge(c, isCalleeSide: false, func);
+			if(changed) MarkCacheDirty();
+		}
+
+		private bool AddEdge(CallerCalleeRef neighbor, bool isCalleeSide, AddressInfo func)
+		{
+			var key = new AddressInfo { Address = neighbor.Address, Type = neighbor.Type };
+			if(!CallerCalleeCache.TryGetValue(key, out var item)) {
+				item = (new List<CallerCalleeRef>(), new List<CallerCalleeRef>());
+				CallerCalleeCache[key] = item;
+			}
+			var target = isCalleeSide ? item.Callees : item.Callers;
+			if(target.Any(r => r.Address == func.Address && r.Type == func.Type)) {
+				return false;
+			}
+			target.Add(new CallerCalleeRef { Address = func.Address, Type = func.Type, Page = GetCachedPage(func) });
+			return true;
+		}
+
+		private static bool SameSet(List<CallerCalleeRef>? a, List<CallerCalleeRef>? b)
+		{
+			if(ReferenceEquals(a, b)) {
+				return true;
+			}
+			if(a == null || b == null) {
+				return a == null && b == null;
+			}
+			if(a.Count != b.Count) {
+				return false;
+			}
+			var setB = new HashSet<(int, MemoryType)>(b.Select(r => (r.Address, r.Type)));
+			return a.All(r => setB.Contains((r.Address, r.Type)));
+		}
+
+		/// <summary>从 profiler 的调用图 tracker 批量导出全部调用边，聚合为每函数的
+		/// Callers/Callees 并写入 CallerCalleeCache（双向）。供 FunctionList 刷新时一次性
+		/// 填充所有函数的调用关系缓存，避免逐函数 P/Invoke。仅结构、不含次数（次数为 0）。</summary>
+		public void SnapshotAllCallerCallee()
+		{
+			EnsureCacheLoaded();
+			var edges = DebugApi.GetAllCallerCallee(CpuType);
+			if(edges.Count == 0) {
+				return;
+			}
+			var byFunc = new Dictionary<AddressInfo, (List<CallerCalleeRef> Callers, List<CallerCalleeRef> Callees)>();
+			foreach(var e in edges) {
+				var callerKey = new AddressInfo { Address = e.CallerAddress, Type = e.CallerType };
+				var calleeKey = new AddressInfo { Address = e.CalleeAddress, Type = e.CalleeType };
+				var callerRef = new CallerCalleeRef { Address = e.CallerAddress, Type = e.CallerType, Page = GetCachedPage(callerKey) };
+				var calleeRef = new CallerCalleeRef { Address = e.CalleeAddress, Type = e.CalleeType, Page = GetCachedPage(calleeKey) };
+				// callee 的 Callers 包含 caller
+				if(!byFunc.TryGetValue(calleeKey, out var ci)) { ci = (new List<CallerCalleeRef>(), new List<CallerCalleeRef>()); byFunc[calleeKey] = ci; }
+				if(!ci.Callers.Any(r => r.Address == e.CallerAddress && r.Type == e.CallerType)) ci.Callers.Add(callerRef);
+				// caller 的 Callees 包含 callee
+				if(!byFunc.TryGetValue(callerKey, out var pi)) { pi = (new List<CallerCalleeRef>(), new List<CallerCalleeRef>()); byFunc[callerKey] = pi; }
+				if(!pi.Callees.Any(r => r.Address == e.CalleeAddress && r.Type == e.CalleeType)) pi.Callees.Add(calleeRef);
+			}
+			bool changed = false;
+			foreach(var kvp in byFunc) {
+				if(!CallerCalleeCache.TryGetValue(kvp.Key, out var ex) || !SameSet(ex.Callers, kvp.Value.Callers) || !SameSet(ex.Callees, kvp.Value.Callees)) {
+					CallerCalleeCache[kvp.Key] = kvp.Value;
+					changed = true;
+				}
+			}
+			if(changed) MarkCacheDirty();
+		}
+
+		private int _pendingCcSnapshot;
+		/// <summary>FunctionList 刷新时请求批量快照调用图；去抖以避免每次暂停都做 P/Invoke。</summary>
+		public void ScheduleCallerCalleeSnapshot()
+		{
+			EnsureCacheLoaded();
+			if(Interlocked.Exchange(ref _pendingCcSnapshot, 1) == 0) {
+				Task.Run(async () => {
+					await Task.Delay(2000);
+					Interlocked.Exchange(ref _pendingCcSnapshot, 0);
+					SnapshotAllCallerCallee();
+				});
+			}
+		}
+
 		/// <summary>函数维度的标记元数据（按 AddressInfo 索引，运行时字典）</summary>
 		public Dictionary<AddressInfo, FuncMeta> FuncMetaCache { get; } = new();
 
@@ -452,18 +549,26 @@ namespace Mesen.Debugger.ViewModels
 
 			var data = new RelAddressCacheData();
 			var entries = new List<RelAddressCacheEntry>();
-			foreach(var kvp in RelAddressCache) {
+			var allKeys = new HashSet<AddressInfo>(RelAddressCache.Keys);
+			allKeys.UnionWith(CallerCalleeCache.Keys);
+			foreach(var key in allKeys) {
 				var entry = new RelAddressCacheEntry {
-					Address = kvp.Key.Address,
-					Type = kvp.Key.Type,
-					RelPage = kvp.Value.RelPage ?? -1,
-					RelAddress = kvp.Value.RelAddress
+					Address = key.Address,
+					Type = key.Type
 				};
-				if(FuncMetaCache.TryGetValue(kvp.Key, out var meta) && meta.HasData) {
+				if(RelAddressCache.TryGetValue(key, out var rel)) {
+					entry.RelPage = rel.RelPage ?? -1;
+					entry.RelAddress = rel.RelAddress;
+				}
+				if(FuncMetaCache.TryGetValue(key, out var meta) && meta.HasData) {
 					entry.FunctionColor = meta.FunctionColor;
 					entry.Blocked = meta.Blocked;
 					entry.Marked = meta.Marked;
 					entry.MemoryAccess = meta.MemoryAccess;
+				}
+				if(CallerCalleeCache.TryGetValue(key, out var cc)) {
+					entry.Callers = cc.Callers.Count > 0 ? cc.Callers : null;
+					entry.Callees = cc.Callees.Count > 0 ? cc.Callees : null;
 				}
 				entries.Add(entry);
 			}
@@ -515,17 +620,21 @@ namespace Mesen.Debugger.ViewModels
 		// so this only back-fills the unshown ones.
 		// Write back range color/block state from the live view-models into
 		// FuncMetaCache so they survive serialization and window reopen.
-		private void SyncRangeMetaToCache()
+		internal void SyncRangeMetaToCache()
 		{
 			if(CallerCallee == null) return;
+			// A memory address is typically present in every function meta that
+			// accessed it, so write the color/block state into ALL matching cache
+			// ranges (not just the first). Otherwise restore, which may hit a
+			// different "first match" after the dictionary is rebuilt on reload,
+			// would read a stale (unblocked) copy and ignore the cached state.
 			foreach(var vm in CallerCallee.MarkedAccessRanges) {
 				foreach(var meta in FuncMetaCache.Values) {
 					if(meta.MemoryAccess?.Ranges == null) continue;
-					var range = meta.MemoryAccess.Ranges.FirstOrDefault(r => r.Start == vm.Start && r.MemType == vm.MemType);
-					if(range == null) continue;
-					range.RangeColor = vm.RangeColor;
-					range.Blocked = vm.Blocked;
-					break;
+					foreach(var range in meta.MemoryAccess.Ranges.Where(r => r.Start == vm.Start && r.MemType == vm.MemType)) {
+						range.RangeColor = vm.RangeColor;
+						range.Blocked = vm.Blocked;
+					}
 				}
 			}
 		}
@@ -585,6 +694,12 @@ namespace Mesen.Debugger.ViewModels
 										Marked = e.Marked,
 										MemoryAccess = e.MemoryAccess
 									};
+								}
+								if(e.Callers != null || e.Callees != null) {
+									CallerCalleeCache[key] = (
+										e.Callers ?? new List<CallerCalleeRef>(),
+										e.Callees ?? new List<CallerCalleeRef>()
+									);
 								}
 							}
 							FillRangeDisplays();

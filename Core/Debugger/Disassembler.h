@@ -62,5 +62,11 @@ public:
 	}
 
 	uint32_t GetDisassemblyOutput(CpuType type, uint32_t address, CodeLineData output[], uint32_t rowCount);
+	// Disassemble a PRG/ROM address range directly, without requiring the bank to
+	// be mapped into the CPU address space. Used to copy assembly for functions
+	// that currently have no CPU (relative) address. Bytes are read straight from
+	// ROM; the ROM address is used as the synthetic PC so relative branch targets
+	// stay self-consistent within the ROM space.
+	uint32_t GetDisassemblyOutputForAbsoluteRange(CpuType type, MemoryType romType, uint32_t startAddr, uint32_t length, CodeLineData output[], uint32_t rowCount);
 	int32_t GetDisassemblyRowAddress(CpuType type, uint32_t address, int32_t rowOffset);
 };

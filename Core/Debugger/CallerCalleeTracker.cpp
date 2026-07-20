@@ -50,6 +50,26 @@ void CallerCalleeTracker::GetCallerCalleeData(AddressInfo& funcAddr, CallerCalle
 	}
 }
 
+void CallerCalleeTracker::GetAllEdges(std::vector<CallerCalleeEdge>& out, size_t maxEdges) const
+{
+	out.clear();
+	out.reserve(std::min(_calleeMap.size() * 8, maxEdges));
+	for(auto& [callerKey, callees] : _calleeMap) {
+		for(auto& [calleeKey, count] : callees) {
+			if(out.size() >= maxEdges) {
+				return;
+			}
+			CallerCalleeEdge e;
+			e.CallerAddress = callerKey & 0x00FFFFFF;
+			e.CallerType = (MemoryType)((callerKey >> 24) & 0xFF);
+			e.CalleeAddress = calleeKey & 0x00FFFFFF;
+			e.CalleeType = (MemoryType)((calleeKey >> 24) & 0xFF);
+			e.CallCount = count;
+			out.push_back(e);
+		}
+	}
+}
+
 void CallerCalleeTracker::Reset()
 {
 	_callerMap.clear();

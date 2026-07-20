@@ -1378,6 +1378,9 @@
 			<Control ID="colLastExec">Last Exec</Control>
 			<Control ID="colMarked">M</Control>
 			<Control ID="lblShowBlocked">Show blocked</Control>
+			<Control ID="btnCopyAll">Copy All</Control>
+			<Control ID="chkCopyWithAccess">With Access</Control>
+			<Control ID="chkCopyWithAssembly">With Assembly</Control>
 		</Form>
 
 		<Form ID="CallerCalleeView">
@@ -1407,6 +1410,13 @@
 			<Control ID="chkTrackPpu">PPU render reads</Control>
 			<Control ID="chkShowAllFunctions">Show all functions</Control>
 			<Control ID="lblShowBlocked">Show blocked</Control>
+			<Control ID="btnCopyAll">Copy All</Control>
+			<Control ID="btnCopyAllRecords">Copy All Records</Control>
+			<Control ID="btnCopyCallGraph">Copy Call Graph</Control>
+			<Control ID="lblCopyDepth">Depth</Control>
+			<Control ID="chkCopyWithAccess">With Access</Control>
+			<Control ID="chkCopyWithAssembly">With Assembly</Control>
+			<Control ID="chkShowCached">Show cached</Control>
 		</Form>
 
 		<Form ID="LabelListView">
@@ -2539,6 +2549,21 @@ E
 		<Message ID="mnuUnblockByRw">Unblock by R/W</Message>
 		<Message ID="mnuBlockMenu">Block</Message>
 		<Message ID="mnuMarkFunctionAccess">Track Memory Access</Message>
+		<Message ID="mnuCopySelected">Copy Selected Records</Message>
+		<Message ID="mnuCopyRecords">Records Only</Message>
+		<Message ID="mnuCopyWithAccess">With Access</Message>
+		<Message ID="mnuCopyWithAssembly">With Assembly</Message>
+		<Message ID="mnuCopyAllInfo">All Info</Message>
+		<Message ID="mnuCopyCallerCallee">Copy Function Records</Message>
+		<Message ID="mnuCopyCallGraph">Copy Call Graph</Message>
+		<Message ID="msgCopyInfoHeader">Copied {1} of {0}:</Message>
+		<Message ID="lblCopyPartRecords">records</Message>
+		<Message ID="lblCopyPartAccess">access</Message>
+		<Message ID="lblCopyPartAssembly">assembly</Message>
+		<Message ID="lblCopyPartGraph">call graph</Message>
+		<Message ID="lblCopyGraphHeader">label,cpuAddr,romAddr,count</Message>
+		<Message ID="lblCopyCtxFunctions">function list</Message>
+		<Message ID="mnuCopyFunction">Copy Function</Message>
 		<Message ID="mnuClearColor">Clear Color</Message>
 		<Message ID="mnuCustomColor">Custom...</Message>
 		<Message ID="colColorRed">Red</Message>

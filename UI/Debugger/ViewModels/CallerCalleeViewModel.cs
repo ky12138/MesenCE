@@ -60,6 +60,9 @@ namespace Mesen.Debugger.ViewModels
 		[ObservableProperty] public partial bool HasAccessData { get; private set; }
 		[ObservableProperty] public partial bool ShowAllFunctions { get; set; }
 		[ObservableProperty] public partial bool ShowBlockedRanges { get; set; } = true;
+		// 是否合并显示缓存中的调用关系（非 live、次数为 0）记录。开启时，即使无实时采样，
+		// 也能从 FunctionList 刷新时批量快照的缓存中看到调用结构；关闭时只显示实时采样结果。
+		[ObservableProperty] public partial bool ShowCached { get; set; } = true;
 
 		[ObservableProperty] public partial SelectionModel<AccessRangeViewModel?> AccessRangeSelection { get; set; } = new() { SingleSelect = false };
 		public AccessRangeViewModel? SelectedAccessRange => AccessRangeSelection.SelectedItem;
@@ -71,6 +74,25 @@ namespace Mesen.Debugger.ViewModels
 		[ObservableProperty] public partial bool IsBreakpointMode { get; private set; }
 		[ObservableProperty] public partial string SelectedBreakpointTitle { get; private set; } = "";
 		public ICommand ClearReverseCommand { get; }
+		public ICommand CopyAllCallerCalleeCommand { get; }
+		public ICommand CopyAsciiGraphCommand { get; }
+		public ICommand CopyReverseAsciiGraphCommand { get; }
+		public ICommand CopyAllReverseCommand { get; }
+		public ICommand CopyReverseCommand { get; }
+		// 顶部工具栏按钮：断点模式下作用于反向记录，否则作用于 caller/callee。
+		public ICommand ActiveCopyAllCommand => IsBreakpointMode ? CopyAllReverseCommand : CopyAllCallerCalleeCommand;
+		public ICommand ActiveCopyGraphCommand => IsBreakpointMode ? CopyReverseAsciiGraphCommand : CopyAsciiGraphCommand;
+
+		// 复制选项
+		[ObservableProperty] public partial int CopyDepth { get; set; } = 1;
+		[ObservableProperty] public partial bool CopyWithAccess { get; set; }
+		[ObservableProperty] public partial bool CopyWithAssembly { get; set; }
+
+		// 由视图注入，供导出器生成 databox 行文本。
+		internal DataBox? CallersGrid { get; set; }
+		internal DataBox? CalleesGrid { get; set; }
+		internal DataBox? AccessGrid { get; set; }
+		internal DataBox? ReverseGrid { get; set; }
 
 		[ObservableProperty] public partial SortState AccessRangeSortState { get; set; } = new();
 		public ICommand AccessRangeSortCommand { get; }
@@ -92,8 +114,31 @@ namespace Mesen.Debugger.ViewModels
 		private Dictionary<RangeIdentity, AccessRangeViewModel> _accessRangeByIdentity = new();
 
 		private CallerCalleeEntry? Entry => CallerSelection.SelectedItem ?? CalleeSelection.SelectedItem;
+
+		// Caller/Callee 面板逻辑上只有"一个活动行"。两个 DataBox 各自持有独立的
+		// SelectionModel，若不在此同步，点 Callers 再点 Callees 会让两侧同时高亮，
+		// 而 Entry（?? 取 Caller 优先）会悄悄忽略 Callee 那侧。任一选择变化时清空另一侧。
+		private void OnCallerOrCalleeSelectionChanged(bool isCaller)
+		{
+			if(_suppressCallerCalleeSync) {
+				return;
+			}
+			_suppressCallerCalleeSync = true;
+			try {
+				if(isCaller && CalleeSelection.SelectedItem != null) {
+					CalleeSelection.SelectedItem = null;
+				} else if(!isCaller && CallerSelection.SelectedItem != null) {
+					CallerSelection.SelectedItem = null;
+				}
+			} finally {
+				_suppressCallerCalleeSync = false;
+			}
+			UpdateMarkedAccessRanges();
+		}
+
 		public NavigationHistory<NavigationEntry> History { get; } = new();
 		private bool _navigating;
+		private bool _suppressCallerCalleeSync;
 
 		// 布局切换：断点记录模式隐藏 Callers/Callees/访问记录面板，仅显示反向面板
 		public bool ShowCallers => !IsBreakpointMode && HasCallers;
@@ -105,6 +150,8 @@ namespace Mesen.Debugger.ViewModels
 			OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowCallers)));
 			OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowCallees)));
 			OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowFuncPanel)));
+			OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActiveCopyAllCommand)));
+			OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActiveCopyGraphCommand)));
 		}
 		partial void OnHasCallersChanged(bool value) => OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowCallers)));
 		partial void OnHasCalleesChanged(bool value) => OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowCallees)));
@@ -115,6 +162,8 @@ namespace Mesen.Debugger.ViewModels
 		private AddressInfo _reverseStartAddr;
 		private uint _reverseEndAddr;
 		private MemoryType _reverseMemType;
+		// 反向面板完整数据；显示/复制时按 ShowBlockedRanges 过滤被屏蔽函数。
+		private List<MemoryAccessFunctionEntry> _allReverseEntries = new();
 
 		public bool CanGoBack => History.CanGoBack();
 		public bool CanGoForward => History.CanGoForward();
@@ -148,16 +197,35 @@ namespace Mesen.Debugger.ViewModels
 
 		partial void OnShowAllFunctionsChanged(bool value) => UpdateMarkedAccessRanges();
 
+		partial void OnShowCachedChanged(bool value)
+		{
+			// 切换时按当前函数重算显示（合并/剔除缓存记录），但不写入导航历史
+			if(SelectedFunctionAddress.Address >= 0) {
+				bool wasNavigating = _navigating;
+				_navigating = true;
+				try {
+					UpdateForFunction(SelectedFunctionAddress, SelectedFunctionName);
+				} finally {
+					_navigating = wasNavigating;
+				}
+			}
+		}
+
 		public CallerCalleeViewModel(CpuType cpuType, DebuggerWindowViewModel debugger)
 		{
 			CpuType = cpuType;
 			Debugger = debugger;
 			RetrackCommand = new RelayCommand(() => Retrack());
 			ClearReverseCommand = new RelayCommand(() => ClearReverse());
+			CopyAllCallerCalleeCommand = new RelayCommand(CopyAllCallerCallee);
+			CopyAsciiGraphCommand = new RelayCommand(CopyAsciiGraph);
+			CopyReverseAsciiGraphCommand = new RelayCommand(CopyReverseAsciiGraph);
+			CopyAllReverseCommand = new RelayCommand(CopyAllReverse);
+			CopyReverseCommand = new RelayCommand(CopySelectedReverse);
 			AccessRangeSortCommand = new RelayCommand<object?>(SortAccessRanges);
 			AccessRangeSortState.SetColumnSort("MemType", ListSortDirection.Ascending, true);
-			CallerSelection.SelectionChanged += (_, _) => UpdateMarkedAccessRanges();
-			CalleeSelection.SelectionChanged += (_, _) => UpdateMarkedAccessRanges();
+			CallerSelection.SelectionChanged += (_, _) => OnCallerOrCalleeSelectionChanged(isCaller: true);
+			CalleeSelection.SelectionChanged += (_, _) => OnCallerOrCalleeSelectionChanged(isCaller: false);
 			Debugger.FuncMetaChanged += () => OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedFunctionMarked)));
 		}
 
@@ -239,32 +307,137 @@ namespace Mesen.Debugger.ViewModels
 			if(!_navigating) History.AddHistory(new NavigationEntry(NavigationKind.Function, funcAddr));
 
 			var record = DebugApi.GetCallerCallee(CpuType, funcAddr);
-			var callers = Enumerable.Range(0, (int)Math.Min(record.CallerCount, 64))
+			bool hasLive = record.CallerCount > 0 || record.CalleeCount > 0;
+
+			// 实时采样结果（含次数），最多 64 条
+			var liveCallers = Enumerable.Range(0, (int)Math.Min(record.CallerCount, 64))
 				.Select(i => {
 					var c = record.Callers[i]; return c.Address.Address >= 0
 						? new CallerCalleeEntry(GetFunctionNode(c.Address)) { CallCount = c.CallCount.ToString(), CallCountValue = c.CallCount }
 						: null;
 				})
 				.Where(e => e != null).Cast<CallerCalleeEntry>().ToList();
-			Callers.Replace(callers);
-			HasCallers = callers.Count > 0;
-			var callees = Enumerable.Range(0, (int)Math.Min(record.CalleeCount, 64))
+			var liveCallees = Enumerable.Range(0, (int)Math.Min(record.CalleeCount, 64))
 				.Select(i => {
 					var c = record.Callees[i]; return c.Address.Address >= 0
 						? new CallerCalleeEntry(GetFunctionNode(c.Address)) { CallCount = c.CallCount.ToString(), CallCountValue = c.CallCount }
 						: null;
 				})
 				.Where(e => e != null).Cast<CallerCalleeEntry>().ToList();
-			Callees.Replace(callees);
-			HasCallees = callees.Count > 0;
+
+			var displayCallers = hasLive ? new List<CallerCalleeEntry>(liveCallers) : new List<CallerCalleeEntry>();
+			var displayCallees = hasLive ? new List<CallerCalleeEntry>(liveCallees) : new List<CallerCalleeEntry>();
+			if(hasLive) {
+				// 记录到缓存（双向补边），供重开 ROM 尚未采样时兜底显示结构
+				Debugger.RecordCallerCallee(
+					funcAddr,
+					liveCallers.Select(e => ToRef(e.FuncAbsAddr)).ToList(),
+					liveCallees.Select(e => ToRef(e.FuncAbsAddr)).ToList()
+				);
+			}
+
+			// 合并缓存（非 live、次数为 0）记录；ShowCached 关闭时只显示实时数据。
+			// 缓存记录与实时记录按 (Address, Type) 去重，避免重复显示。
+			if(ShowCached && Debugger.CallerCalleeCache.TryGetValue(funcAddr, out var cached)) {
+				var liveCallerKeys = new HashSet<(int, MemoryType)>(displayCallers.Select(e => (e.FuncAbsAddr.Address, e.FuncAbsAddr.Type)));
+				foreach(var r in cached.Callers) {
+					if(!liveCallerKeys.Contains((r.Address, r.Type))) {
+						displayCallers.Add(new CallerCalleeEntry(GetFunctionNode(ToAddr(r))) { CallCount = "", CallCountValue = 0 });
+					}
+				}
+				var liveCalleeKeys = new HashSet<(int, MemoryType)>(displayCallees.Select(e => (e.FuncAbsAddr.Address, e.FuncAbsAddr.Type)));
+				foreach(var r in cached.Callees) {
+					if(!liveCalleeKeys.Contains((r.Address, r.Type))) {
+						displayCallees.Add(new CallerCalleeEntry(GetFunctionNode(ToAddr(r))) { CallCount = "", CallCountValue = 0 });
+					}
+				}
+			}
+
+			Callers.Replace(displayCallers);
+			HasCallers = displayCallers.Count > 0;
+			Callees.Replace(displayCallees);
+			HasCallees = displayCallees.Count > 0;
 			UpdateMarkedAccessRanges();
 		}
 
-		private FunctionNode GetFunctionNode(AddressInfo absAddr)
+		public FunctionNode GetFunctionNode(AddressInfo absAddr)
 		{
 			if(Debugger.FunctionList != null) return Debugger.FunctionList.GetOrCreateNode(absAddr);
 			string display = Debugger.GetOrUpdateRelAddressDisplay(absAddr, out AddressInfo relAddr);
 			return new FunctionNode(absAddr, CpuType, Debugger, display, relAddr, Debugger.GetCachedPage(absAddr));
+		}
+
+		// 绝对地址 → 调用关系引用（带 page）；用于把实时采样结果写入缓存。
+		private CallerCalleeRef ToRef(AddressInfo addr)
+			=> new CallerCalleeRef { Address = addr.Address, Type = addr.Type, Page = Debugger.GetCachedPage(addr) };
+		// 调用关系引用 → 绝对地址；用于从缓存兜底重建函数节点。
+		private static AddressInfo ToAddr(CallerCalleeRef r)
+			=> new AddressInfo { Address = r.Address, Type = r.Type };
+
+		// ----- 复制（导出到剪贴板） -----
+
+		public void CopyAllCallerCallee() => CopyAllCallerCallee(CopyWithAccess, CopyWithAssembly);
+		public void CopyAllCallerCallee(bool includeAccess, bool includeAssembly)
+		{
+			var roots = Callers.Concat(Callees).ToList();
+			if(roots.Count > 0) {
+				FunctionClipboardExporter.CopyCallerCallee(this, roots, CopyDepth, includeAccess, includeAssembly);
+			}
+		}
+
+		public void CopySelectedCallerCallee() => CopySelectedCallerCallee(CopyWithAccess, CopyWithAssembly);
+		public void CopySelectedCallerCallee(bool includeAccess, bool includeAssembly)
+		{
+			var roots = CallerSelection.SelectedItems.OfType<CallerCalleeEntry>()
+				.Concat(CalleeSelection.SelectedItems.OfType<CallerCalleeEntry>())
+				.ToList();
+			if(roots.Count > 0) {
+				FunctionClipboardExporter.CopyCallerCallee(this, roots, CopyDepth, includeAccess, includeAssembly);
+			}
+		}
+
+		public void CopyAsciiGraph()
+		{
+			var roots = Callers.Concat(Callees).ToList();
+			if(roots.Count > 0) {
+				FunctionClipboardExporter.CopyAsciiGraph(this, roots, CopyDepth);
+			}
+		}
+
+		public void CopySelectedAsciiGraph()
+		{
+			var roots = CallerSelection.SelectedItems.OfType<CallerCalleeEntry>()
+				.Concat(CalleeSelection.SelectedItems.OfType<CallerCalleeEntry>())
+				.ToList();
+			if(roots.Count > 0) {
+				FunctionClipboardExporter.CopyAsciiGraph(this, roots, CopyDepth);
+			}
+		}
+
+		// ----- 断点记录（反向）复制 -----
+		public void CopyAllReverse() => CopyAllReverse(CopyWithAccess, CopyWithAssembly);
+		public void CopyAllReverse(bool includeAccess, bool includeAssembly)
+		{
+			if(AccessedByFunctions.Count > 0) {
+				FunctionClipboardExporter.CopyReverseRecords(this, AccessedByFunctions, CopyDepth, includeAccess, includeAssembly);
+			}
+		}
+
+		public void CopySelectedReverse() => CopySelectedReverse(CopyWithAccess, CopyWithAssembly);
+		public void CopySelectedReverse(bool includeAccess, bool includeAssembly)
+		{
+			var nodes = AccessedBySelection.SelectedItems.OfType<MemoryAccessFunctionEntry>().ToList();
+			if(nodes.Count > 0) {
+				FunctionClipboardExporter.CopyReverseRecords(this, nodes, CopyDepth, includeAccess, includeAssembly);
+			}
+		}
+
+		// 断点记录（反向）调用关系图：对每个访问过目标地址的函数展开 caller/callee 树。
+		public void CopyReverseAsciiGraph()
+		{
+			if(AccessedByFunctions.Count > 0) {
+				FunctionClipboardExporter.CopyReverseAsciiGraph(this, AccessedByFunctions, CopyDepth);
+			}
 		}
 
 		public void GoBack()
@@ -363,6 +536,16 @@ namespace Mesen.Debugger.ViewModels
 			}
 			AccessedByFunctions.Replace(entries);
 			HasReverseData = entries.Count > 0;
+			_allReverseEntries = entries;
+			ApplyReverseFilter();
+		}
+
+		// 按 ShowBlockedRanges 过滤反向面板中被屏蔽的函数，使"显示"与"复制"一致。
+		private void ApplyReverseFilter()
+		{
+			var list = ShowBlockedRanges ? _allReverseEntries : _allReverseEntries.Where(e => !e.IsBlocked).ToList();
+			AccessedByFunctions.Replace(list);
+			HasReverseData = list.Count > 0;
 		}
 
 		// 清空反向（断点记录）数据后重新加载当前断点视图
@@ -438,14 +621,17 @@ namespace Mesen.Debugger.ViewModels
 			foreach(var r in merged.Ranges) {
 				AddressInfo funcAddr = targets.FirstOrDefault(t => t.Address >= 0);
 
-				// Restore persisted color/block state from FuncMetaCache.
+				// Restore persisted color/block state from FuncMetaCache. The same
+				// range is present in every function meta that accessed it, and the
+				// state may have been saved into only some of those copies, so
+				// aggregate across ALL metas (blocked if any copy is blocked, color
+				// = first non-null) instead of trusting a single "first match".
 				foreach(var meta in Debugger.FuncMetaCache.Values) {
 					if(meta.MemoryAccess?.Ranges == null) continue;
 					var cached = meta.MemoryAccess.Ranges.FirstOrDefault(c => c.Start == r.Start && c.MemType == r.MemType);
 					if(cached == null) continue;
-					r.RangeColor = cached.RangeColor;
-					r.Blocked = cached.Blocked;
-					break;
+					if(cached.Blocked) r.Blocked = true;
+					if(r.RangeColor == null && cached.RangeColor != null) r.RangeColor = cached.RangeColor;
 				}
 
 				var id = r.Identity;
@@ -476,7 +662,13 @@ namespace Mesen.Debugger.ViewModels
 			RebuildAccessRangeList();
 		}
 
-		partial void OnShowBlockedRangesChanged(bool value) => UpdateMarkedAccessRanges();
+		partial void OnShowBlockedRangesChanged(bool value)
+		{
+			UpdateMarkedAccessRanges();
+			if(IsBreakpointMode) {
+				ApplyReverseFilter();
+			}
+		}
 
 		// ----- Colors / block / mark -----
 
@@ -577,7 +769,7 @@ namespace Mesen.Debugger.ViewModels
 			}
 			if(isAbs) {
 				return MemoryHelper.GetAddrStr(Entry.FuncAbsAddr);
-			} else if(Entry.FuncRelAddr.Address >= 0) {
+			} else if(Entry.IsPageInUse) {
 				return MemoryHelper.GetAddrStr(Entry.FuncRelAddr);
 			}
 			return Debugger.GetRelAddressDisplay(Entry.FuncAbsAddr);
@@ -599,14 +791,14 @@ namespace Mesen.Debugger.ViewModels
 				},
 				new ContextMenuSeparator(),
 				new ContextMenuAction() {
-					ActionType = ActionType.ToggleBreakpoint,
-					HintText = () => GetHintText(),
-					IsEnabled = () => Entry?.FuncRelAddr.Address >= 0,
-					OnClick = () => {
-						if(Entry != null) {
-							BreakpointManager.EditBreakpointAtAddress(Entry.FuncRelAddr, CpuType, parent);
-						}
+				ActionType = ActionType.ToggleBreakpoint,
+				HintText = () => GetHintText(),
+				IsEnabled = () => Entry?.IsPageInUse == true,
+				OnClick = () => {
+					if(Entry != null) {
+						BreakpointManager.EditBreakpointAtAddress(Entry.FuncRelAddr, CpuType, parent);
 					}
+				}
 				},
 				new ContextMenuAction() {
 					ActionType = ActionType.ToggleBreakpoint,
@@ -621,25 +813,25 @@ namespace Mesen.Debugger.ViewModels
 				},
 				new ContextMenuSeparator(),
 				new ContextMenuAction() {
-					ActionType = ActionType.FindOccurrences,
-					HintText = () => GetHintText(),
-					IsEnabled = () => Entry?.FuncRelAddr.Address >= 0,
-					OnClick = () => {
-						if(Entry != null && Entry.FuncRelAddr.Address >= 0) {
-							DisassemblySearchOptions options = new() { MatchCase = true, MatchWholeWord = true };
-							Debugger.FindAllOccurrences(MemoryHelper.GetFunctionName(Entry.FuncRelAddr), options);
-						}
+				ActionType = ActionType.FindOccurrences,
+				HintText = () => GetHintText(),
+				IsEnabled = () => Entry?.IsPageInUse == true,
+				OnClick = () => {
+					if(Entry != null && Entry.IsPageInUse) {
+						DisassemblySearchOptions options = new() { MatchCase = true, MatchWholeWord = true };
+						Debugger.FindAllOccurrences(MemoryHelper.GetFunctionName(Entry.FuncRelAddr), options);
 					}
+				}
 				},
 				new ContextMenuAction() {
-					ActionType = ActionType.GoToLocation,
-					HintText = () => GetHintText(),
-					IsEnabled = () => Entry?.FuncRelAddr.Address >= 0,
-					OnClick = () => {
-						if(Entry != null && Entry.FuncRelAddr.Address >= 0) {
-							Debugger.ScrollToAddress(Entry.FuncRelAddr.Address);
-						}
+				ActionType = ActionType.GoToLocation,
+				HintText = () => GetHintText(),
+				IsEnabled = () => Entry?.IsPageInUse == true,
+				OnClick = () => {
+					if(Entry != null && Entry.IsPageInUse) {
+						Debugger.ScrollToAddress(Entry.FuncRelAddr.Address);
 					}
+				}
 				},
 				new ContextMenuAction() {
 					ActionType = ActionType.LocateInFunctionList,
@@ -654,14 +846,14 @@ namespace Mesen.Debugger.ViewModels
 				},
 				new ContextMenuSeparator(),
 				new ContextMenuAction() {
-					ActionType = ActionType.ViewInMemoryViewer,
-					HintText = () => GetHintText(),
-					IsEnabled = () => Entry?.FuncRelAddr.Address >= 0,
-					OnClick = () => {
-						if(Entry != null) {
-							MemoryToolsWindow.ShowInMemoryTools(Entry.FuncRelAddr.Type, Entry.FuncRelAddr.Address);
-						}
+				ActionType = ActionType.ViewInMemoryViewer,
+				HintText = () => GetHintText(),
+				IsEnabled = () => Entry?.IsPageInUse == true,
+				OnClick = () => {
+					if(Entry != null && Entry.IsPageInUse) {
+						MemoryToolsWindow.ShowInMemoryTools(Entry.FuncRelAddr.Type, Entry.FuncRelAddr.Address);
 					}
+				}
 				},
 				new ContextMenuAction() {
 					ActionType = ActionType.ViewInMemoryViewer,
@@ -692,6 +884,44 @@ namespace Mesen.Debugger.ViewModels
 					IsEnabled = () => Entry != null,
 					OnClick = () => MarkSelected()
 				},
+				new ContextMenuSeparator(),
+				new ContextMenuAction() {
+					ActionType = ActionType.Custom,
+					CustomText = ResourceHelper.GetMessage("mnuCopyCallerCallee"),
+					IsEnabled = () => Entry != null,
+					SubActions = new List<object> {
+						new ContextMenuAction() {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuCopyRecords"),
+							IsEnabled = () => Entry != null,
+							OnClick = () => CopySelectedCallerCallee()
+						},
+						new ContextMenuAction() {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuCopyWithAccess"),
+							IsEnabled = () => Entry != null,
+							OnClick = () => CopySelectedCallerCallee(true, false)
+						},
+						new ContextMenuAction() {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuCopyWithAssembly"),
+							IsEnabled = () => Entry != null,
+							OnClick = () => CopySelectedCallerCallee(false, true)
+						},
+						new ContextMenuAction() {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuCopyAllInfo"),
+							IsEnabled = () => Entry != null,
+							OnClick = () => CopySelectedCallerCallee(true, true)
+						},
+						new ContextMenuAction() {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuCopyCallGraph"),
+							IsEnabled = () => Entry != null,
+							OnClick = () => CopySelectedAsciiGraph()
+						},
+					}
+				},
 			};
 		}
 
@@ -702,6 +932,45 @@ namespace Mesen.Debugger.ViewModels
 		{
 			AddDisposables(DebugShortcutManager.CreateContextMenu(callers, BuildFunctionContextMenuActions(callers)));
 			AddDisposables(DebugShortcutManager.CreateContextMenu(callees, BuildFunctionContextMenuActions(callees)));
+		}
+
+		// 反向（断点记录）面板右键菜单：复制选中记录 / 含访问 / 含汇编 / 全部信息。
+		public void InitReverseContextMenu(DataBox reverseGrid)
+		{
+			ReverseGrid = reverseGrid;
+			AddDisposables(DebugShortcutManager.CreateContextMenu(reverseGrid, new object[] {
+				new ContextMenuAction() {
+					ActionType = ActionType.Custom,
+					CustomText = ResourceHelper.GetMessage("mnuCopySelected"),
+					IsEnabled = () => AccessedBySelection.SelectedItems.Count > 0,
+					SubActions = new List<object> {
+						new ContextMenuAction() {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuCopyRecords"),
+							IsEnabled = () => AccessedBySelection.SelectedItems.Count > 0,
+							OnClick = () => CopySelectedReverse(false, false)
+						},
+						new ContextMenuAction() {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuCopyWithAccess"),
+							IsEnabled = () => AccessedBySelection.SelectedItems.Count > 0,
+							OnClick = () => CopySelectedReverse(true, false)
+						},
+						new ContextMenuAction() {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuCopyWithAssembly"),
+							IsEnabled = () => AccessedBySelection.SelectedItems.Count > 0,
+							OnClick = () => CopySelectedReverse(false, true)
+						},
+						new ContextMenuAction() {
+							ActionType = ActionType.Custom,
+							CustomText = ResourceHelper.GetMessage("mnuCopyAllInfo"),
+							IsEnabled = () => AccessedBySelection.SelectedItems.Count > 0,
+							OnClick = () => CopySelectedReverse(true, true)
+						},
+					}
+				}
+			}));
 		}
 
 		public void InitAccessContextMenu(DataBox accessGrid)
@@ -960,6 +1229,7 @@ namespace Mesen.Debugger.ViewModels
 		public FontWeight RowWeight => Node.RowWeight;
 		public double RowOpacity => Node.RowOpacity;
 		public bool IsBlocked => Node.IsBlocked;
+		public bool IsPageInUse => Node.IsPageInUse;
 		public CodeLabel? Label => Node.Label;
 		public bool IsMarked { get => Node.IsMarked; set => Node.IsMarked = value; }
 
@@ -1031,6 +1301,7 @@ namespace Mesen.Debugger.ViewModels
 		public AddressInfo FuncAbsAddr => _node.AbsAddr;
 		public AddressInfo FuncRelAddr => _node.RelAddr;
 		public string FunctionName => _node.FunctionName;
+		public UInt32 FunctionLength => _node.FunctionLength;
 		public string RelAddressDisplay => _node.RelAddressDisplay;
 		public string AbsAddressDisplay => _node.AbsAddressDisplay;
 		public object RowBackground => _node.RowBackground;
@@ -1039,6 +1310,7 @@ namespace Mesen.Debugger.ViewModels
 		public FontWeight RowWeight => _node.RowWeight;
 		public double RowOpacity => _node.RowOpacity;
 		public bool IsBlocked => _node.IsBlocked;
+		public bool IsPageInUse => _node.IsPageInUse;
 		public CodeLabel? Label => _node.Label;
 		public bool IsMarked { get => _node.IsMarked; set => _node.IsMarked = value; }
 

@@ -43,6 +43,7 @@ namespace Mesen.Utilities
 [JsonSerializable(typeof(FuncMemoryAccess))]
 [JsonSerializable(typeof(AccessRange))]
 [JsonSerializable(typeof(RwFlags))]
+[JsonSerializable(typeof(CallerCalleeRef))]
 [JsonSerializable(typeof(ReverseAccessCacheData))]
 [JsonSerializable(typeof(ReverseAccessEntry))]
 [JsonSerializable(typeof(ReverseAccessFunc))]

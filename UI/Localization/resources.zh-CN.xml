@@ -1378,6 +1378,9 @@
 			<Control ID="colLastExec">上次执行</Control>
 			<Control ID="colMarked">记录</Control>
 			<Control ID="lblShowBlocked">显示被屏蔽</Control>
+			<Control ID="btnCopyAll">复制全部</Control>
+			<Control ID="chkCopyWithAccess">含访问</Control>
+			<Control ID="chkCopyWithAssembly">含汇编</Control>
 		</Form>
 
 		<Form ID="CallerCalleeView">
@@ -1407,6 +1410,13 @@
 			<Control ID="chkTrackPpu">PPU渲染读取</Control>
 			<Control ID="chkShowAllFunctions">显示页面内函数的记录</Control>
 			<Control ID="lblShowBlocked">显示被屏蔽</Control>
+			<Control ID="btnCopyAll">复制全部</Control>
+			<Control ID="btnCopyAllRecords">复制全部</Control>
+			<Control ID="btnCopyCallGraph">复制调用图</Control>
+			<Control ID="lblCopyDepth">深度</Control>
+			<Control ID="chkCopyWithAccess">含访问</Control>
+			<Control ID="chkCopyWithAssembly">含汇编</Control>
+			<Control ID="chkShowCached">显示缓存</Control>
 		</Form>
 
 		<Form ID="LabelListView">
@@ -2537,6 +2547,21 @@ E
 		<Message ID="mnuUnblockByRw">按 R/W 取消屏蔽</Message>
 		<Message ID="mnuBlockMenu">屏蔽</Message>
 		<Message ID="mnuMarkFunctionAccess">跟踪内存访问</Message>
+		<Message ID="mnuCopySelected">复制选中记录</Message>
+		<Message ID="mnuCopyRecords">仅记录</Message>
+		<Message ID="mnuCopyWithAccess">含访问</Message>
+		<Message ID="mnuCopyWithAssembly">含汇编</Message>
+		<Message ID="mnuCopyAllInfo">全部信息</Message>
+		<Message ID="mnuCopyCallerCallee">复制函数记录</Message>
+		<Message ID="mnuCopyCallGraph">复制调用关系图</Message>
+		<Message ID="msgCopyInfoHeader">复制了{0}的{1}信息:</Message>
+		<Message ID="lblCopyPartRecords">记录</Message>
+		<Message ID="lblCopyPartAccess">访问</Message>
+		<Message ID="lblCopyPartAssembly">汇编</Message>
+		<Message ID="lblCopyPartGraph">调用图</Message>
+		<Message ID="lblCopyGraphHeader">标签,CPU地址,ROM地址,次数</Message>
+		<Message ID="lblCopyCtxFunctions">函数列表</Message>
+		<Message ID="mnuCopyFunction">复制函数</Message>
 		<Message ID="mnuClearColor">清除颜色</Message>
 		<Message ID="mnuCustomColor">自定义...</Message>
 		<Message ID="colColorRed">红</Message>

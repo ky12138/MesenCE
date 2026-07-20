@@ -14,6 +14,7 @@ using Mesen.Debugger.ViewModels;
 using Mesen.Debugger.ViewModels.DebuggerDock;
 using Mesen.Debugger.Windows;
 using Mesen.Interop;
+using Mesen.Localization;
 using Mesen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -96,13 +97,44 @@ namespace Mesen.Debugger.Views
 					}
 				},
 				new ContextMenuSeparator() { IsVisible = () => !IsMarginClick },
-				new ContextMenuAction() {
-					ActionType = ActionType.Copy,
-					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.Copy),
-					IsVisible = () => !IsMarginClick,
-					OnClick = () => Model.CopySelection()
-				},
-				new ContextMenuSeparator() { IsVisible = () => !IsMarginClick },
+			new ContextMenuAction() {
+				ActionType = ActionType.Copy,
+				Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.Copy),
+				IsVisible = () => !IsMarginClick,
+				OnClick = () => Model.CopySelection()
+			},
+			new ContextMenuAction() {
+				ActionType = ActionType.Custom,
+				CustomText = ResourceHelper.GetMessage("mnuCopyFunction"),
+				IsVisible = () => !IsMarginClick,
+				SubActions = new List<object> {
+					new ContextMenuAction() {
+						ActionType = ActionType.Custom,
+						CustomText = ResourceHelper.GetMessage("mnuCopyRecords"),
+						IsVisible = () => !IsMarginClick,
+						OnClick = () => Model.CopyFunctionAtCursor(false, false)
+					},
+					new ContextMenuAction() {
+						ActionType = ActionType.Custom,
+						CustomText = ResourceHelper.GetMessage("mnuCopyWithAccess"),
+						IsVisible = () => !IsMarginClick,
+						OnClick = () => Model.CopyFunctionAtCursor(true, false)
+					},
+					new ContextMenuAction() {
+						ActionType = ActionType.Custom,
+						CustomText = ResourceHelper.GetMessage("mnuCopyWithAssembly"),
+						IsVisible = () => !IsMarginClick,
+						OnClick = () => Model.CopyFunctionAtCursor(false, true)
+					},
+					new ContextMenuAction() {
+						ActionType = ActionType.Custom,
+						CustomText = ResourceHelper.GetMessage("mnuCopyAllInfo"),
+						IsVisible = () => !IsMarginClick,
+						OnClick = () => Model.CopyFunctionAtCursor(true, true)
+					},
+				}
+			},
+			new ContextMenuSeparator() { IsVisible = () => !IsMarginClick },
 				new ContextMenuAction() {
 					ActionType = ActionType.ToggleBreakpoint,
 					Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(DebuggerShortcut.CodeWindow_ToggleBreakpoint),

@@ -132,7 +132,7 @@ namespace Mesen.Debugger.ViewModels
 			// Normalize to [Start, End] (End accounts for any stride) and sort by
 			// (MemType, Start) so spans of the same memory type are adjacent.
 			var norm = spans
-				.Select(r => (MemType: r.MemType, Start: r.Start, End: r.End, Interval: r.Interval, Flags: r.Flags, RelPage: r.RelPage, RelAddress: r.RelAddress))
+				.Select(r => (MemType: r.MemType, Start: r.Start, End: r.End, Interval: r.Interval, Flags: r.Flags, RelPage: r.RelPage, RelAddress: r.RelAddress, RangeColor: r.RangeColor, Blocked: r.Blocked))
 				.OrderBy(x => (int)x.MemType)
 				.ThenBy(x => x.Start)
 				.ToList();
@@ -145,9 +145,12 @@ namespace Mesen.Debugger.ViewModels
 				bool sameSpan = n.MemType == cur.MemType && n.Interval == cur.Interval && n.Start <= cur.End + 1;
 				if(sameSpan) {
 					// Contiguous/overlapping within the same type & stride: extend
-					// the span and OR the R/W flags.
+					// the span, OR the R/W flags, and carry the color/block state
+					// (blocked if any part is blocked; first non-null color wins).
 					cur.End = Math.Max(cur.End, n.End);
 					cur.Flags |= n.Flags;
+					cur.Blocked |= n.Blocked;
+					cur.RangeColor ??= n.RangeColor;
 				} else {
 					merged.Add(MakeSpan(cur));
 					cur = n;
@@ -162,11 +165,12 @@ namespace Mesen.Debugger.ViewModels
 			return result;
 		}
 
-		private static AccessRange MakeSpan((MemoryType MemType, uint Start, uint End, uint Interval, RwFlags Flags, int RelPage, int? RelAddress) s)
+		private static AccessRange MakeSpan((MemoryType MemType, uint Start, uint End, uint Interval, RwFlags Flags, int RelPage, int? RelAddress, string? RangeColor, bool Blocked) s)
 		{
 			// Persisted union is always a contiguous span (stride collapsed to 1).
 			// RelPage/RelAddress are carried forward from the span's start so the
 			// ROM display survives the merge without recomputing on reload.
+			// Color/block state is preserved so the cached blocking survives merges.
 			return new AccessRange {
 				Start = s.Start,
 				Length = s.End - s.Start + 1,
@@ -174,7 +178,9 @@ namespace Mesen.Debugger.ViewModels
 				MemType = s.MemType,
 				Flags = s.Flags,
 				RelPage = s.RelPage,
-				RelAddress = s.RelAddress
+				RelAddress = s.RelAddress,
+				RangeColor = s.RangeColor,
+				Blocked = s.Blocked
 			};
 		}
 	}
@@ -208,6 +214,24 @@ namespace Mesen.Debugger.ViewModels
 		public bool Marked { get; set; }              // 是否特殊标记（监视）
 		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 		public FuncMemoryAccess? MemoryAccess { get; set; } // 标记后采样的读写记录
+
+		// 调用关系（仅结构，不含次数）：调用本函数的函数 / 本函数调用的函数。
+		// 次数来自运行时 profiler 采样，随每次运行变化，缓存无意义，故不持久化。
+		// 双向都存（每条边出现两次），读取直接、逻辑简单。
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		public List<CallerCalleeRef>? Callers { get; set; }
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		public List<CallerCalleeRef>? Callees { get; set; }
+	}
+
+	/// <summary>调用关系中的一个函数引用：仅缓存绝对地址与 page（不缓存次数）。</summary>
+	public class CallerCalleeRef
+	{
+		public int Address { get; set; }
+		public MemoryType Type { get; set; }
+		// 函数的 rel page；-1 时省略以精简序列化。
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+		public int Page { get; set; } = -1;
 	}
 
 	/// <summary>反向（断点记录）内存访问的一条持久化记录：某连续地址区间，及其访问它的函数列表。区间合并自断点的 Length，函数列表嵌套避免逐函数膨胀。</summary>

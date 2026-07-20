@@ -698,6 +698,62 @@ uint32_t Disassembler::GetDisassemblyOutput(CpuType type, uint32_t address, Code
 	return row;
 }
 
+uint32_t Disassembler::GetDisassemblyOutputForAbsoluteRange(CpuType type, MemoryType romType, uint32_t startAddr, uint32_t length, CodeLineData output[], uint32_t rowCount)
+{
+	// Disassemble a range of PRG/ROM addresses directly, without requiring the
+	// bank to be mapped into the CPU address space. Used to copy assembly for
+	// functions that currently have no CPU (relative) address. Bytes are read
+	// straight from ROM (DisassemblyInfo::Initialize reads from romType), and the
+	// ROM address is used as the synthetic PC (row.CpuAddress) so that relative
+	// branch targets stay self-consistent within the ROM space.
+	if(startAddr == (uint32_t)-1 || length == 0 || romType == MemoryType::None) {
+		return 0;
+	}
+
+	uint32_t memSize = _memoryDumper->GetMemorySize(romType);
+	if(startAddr >= memSize) {
+		return 0;
+	}
+
+	uint32_t end = startAddr + length;
+	if(end > memSize || end < startAddr) {
+		//Clamp to the end of the memory range (also guards against overflow).
+		end = memSize;
+	}
+
+	uint8_t cpuFlags[4] = {};
+	for(int i = 0; i < 4; i++) {
+		//Per-byte flags (used by GBA to pick ARM/Thumb); identical for other CPUs.
+		cpuFlags[i] = _debugger->GetMainDebugger()->GetCpuFlags(i);
+	}
+
+	DisassemblerSource& src = GetSource(romType);
+
+	uint32_t row = 0;
+	uint32_t addr = startAddr;
+	while(addr < end && row < rowCount) {
+		//Use a reference so the cache entry is warmed (matching BuildCache); this
+		//also lets GetLineData reuse the initialized DisassemblyInfo below.
+		DisassemblyInfo& disInfo = src.Cache[addr];
+		if(!disInfo.IsInitialized()) {
+			disInfo.Initialize(addr, cpuFlags[addr & 0x03], type, romType, _memoryDumper);
+		}
+		uint8_t opSize = disInfo.GetOpSize();
+		if(opSize == 0) {
+			//Invalid/uninitialized opcode: advance one byte to avoid an infinite loop.
+			opSize = 1;
+		}
+
+		AddressInfo info = { (int32_t)addr, romType };
+		DisassemblyResult result(info, (int32_t)addr, 0);
+		GetLineData(result, type, romType, output[row]);
+		row++;
+		addr += opSize;
+	}
+
+	return row;
+}
+
 uint16_t Disassembler::GetMaxBank(CpuType cpuType)
 {
 	AddressInfo relAddress = {};

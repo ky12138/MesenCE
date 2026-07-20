@@ -75,6 +75,24 @@ namespace Mesen.Interop
 			return result;
 		}
 
+		// 从 ROM 绝对地址区间反汇编（函数无 CPU 地址时使用）。
+		[DllImport(DllPath)] private static extern UInt32 GetDisassemblyOutputForAbsoluteRange(CpuType type, MemoryType romType, UInt32 startAddr, UInt32 length, [In, Out] InteropCodeLineData[] lineData, UInt32 rowCount);
+		public static InteropCodeLineData[] GetDisassemblyOutputForAbsoluteRange(CpuType type, MemoryType romType, UInt32 startAddr, UInt32 length, UInt32 rowCount)
+		{
+			InteropCodeLineData[] rows = new InteropCodeLineData[rowCount];
+			for(int i = 0; i < rowCount; i++) {
+				rows[i].Comment = new byte[1000];
+				rows[i].Text = new byte[1000];
+				rows[i].ByteCode = new byte[8];
+			}
+
+			UInt32 resultCount = DebugApi.GetDisassemblyOutputForAbsoluteRange(type, romType, startAddr, length, rows, rowCount);
+
+			InteropCodeLineData[] result = new InteropCodeLineData[resultCount];
+			Array.Copy(rows, result, resultCount);
+			return result;
+		}
+
 		[DllImport(DllPath)] public static extern int GetDisassemblyRowAddress(CpuType type, UInt32 address, int rowOffset);
 		[DllImport(DllPath)] public static extern int SearchDisassembly(CpuType type, [MarshalAs(UnmanagedType.LPUTF8Str)] string searchString, int startAddress, DisassemblySearchOptions options);
 
@@ -503,6 +521,29 @@ namespace Mesen.Interop
 				record.CalleeCount = (UInt32)Marshal.ReadInt32(ptr);
 
 				return record;
+			} finally {
+				Marshal.FreeHGlobal(buffer);
+			}
+		}
+
+		// ---- 调用图的批量导出（供 FunctionList 刷新时一次性填充缓存） ----
+		[DllImport(DllPath, EntryPoint = "GetAllCallerCallee")] private static extern void GetAllCallerCalleeWrapper(CpuType type, IntPtr output, UInt32 maxEntries, out UInt32 outCount);
+
+		private const int CallerCalleeEdgeSize = 24; // int32 + MemoryType(4) + int32 + MemoryType(4) + uint64
+		private const int CallerCalleeEdgeMaxEntries = 65536;
+
+		public static List<CallerCalleeEdge> GetAllCallerCallee(CpuType type)
+		{
+			int bufferSize = CallerCalleeEdgeMaxEntries * CallerCalleeEdgeSize;
+			IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
+			try {
+				GetAllCallerCalleeWrapper(type, buffer, (UInt32)CallerCalleeEdgeMaxEntries, out UInt32 count);
+				var list = new List<CallerCalleeEdge>();
+				for(int i = 0; i < count; i++) {
+					IntPtr ptr = new IntPtr(buffer.ToInt64() + (long)(i * CallerCalleeEdgeSize));
+					list.Add(Marshal.PtrToStructure<CallerCalleeEdge>(ptr));
+				}
+				return list;
 			} finally {
 				Marshal.FreeHGlobal(buffer);
 			}
@@ -1781,6 +1822,18 @@ namespace Mesen.Interop
 		public UInt32 CallerCount;
 		public CallerCalleeEntry[] Callees;
 		public UInt32 CalleeCount;
+	}
+
+	// 调用图的一条有向边（caller -> callee），与 C++ CallerCalleeEdge 布局一致，
+	// packed(1) = 24 字节（int32 + MemoryType(4) + int32 + MemoryType(4) + uint64）。
+	[StructLayout(LayoutKind.Sequential, Pack = 1)]
+	public struct CallerCalleeEdge
+	{
+		public Int32 CallerAddress;
+		public MemoryType CallerType;
+		public Int32 CalleeAddress;
+		public MemoryType CalleeType;
+		public UInt64 CallCount;
 	}
 
 	public enum StackFrameFlags

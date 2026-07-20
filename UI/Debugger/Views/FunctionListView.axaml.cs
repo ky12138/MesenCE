@@ -26,6 +26,7 @@ namespace Mesen.Debugger.Views
 		protected override void OnDataContextChanged(EventArgs e)
 		{
 			if(DataContext is FunctionListViewModel model) {
+				model.Grid = NameScope.GetNameScope(this)?.Find<DataBox>("functionGrid");
 				model.InitContextMenu(this);
 			}
 			base.OnDataContextChanged(e);
@@ -61,7 +62,7 @@ namespace Mesen.Debugger.Views
 			if(colName == "Function") {
 				LabelEditWindow.EditLabel(listModel.CpuType, this, entry.Label ?? new CodeLabel(entry.FuncAbsAddr));
 			} else if(colName == "RelAddr") {
-				if(entry.FuncRelAddr.Address >= 0) {
+				if(entry.IsPageInUse) {
 					listModel.Debugger.ScrollToAddress(entry.FuncRelAddr.Address);
 				}
 			} else if(colName == "AbsAddr") {

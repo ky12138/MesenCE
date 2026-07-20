@@ -99,6 +99,11 @@ extern "C"
 		return WithDebugger(uint32_t, GetDisassembler()->GetDisassemblyOutput(type, lineIndex, output, rowCount));
 	}
 
+	DllExport uint32_t __stdcall GetDisassemblyOutputForAbsoluteRange(CpuType type, MemoryType romType, uint32_t startAddr, uint32_t length, CodeLineData output[], uint32_t rowCount)
+	{
+		return WithDebugger(uint32_t, GetDisassembler()->GetDisassemblyOutputForAbsoluteRange(type, romType, startAddr, length, output, rowCount));
+	}
+
 	DllExport uint32_t __stdcall GetDisassemblyRowAddress(CpuType type, uint32_t address, int32_t rowOffset)
 	{
 		return WithDebugger(uint32_t, GetDisassembler()->GetDisassemblyRowAddress(type, address, rowOffset));
@@ -221,6 +226,26 @@ extern "C"
 			if(dbg->GetCallstackManager(cpuType)) {
 				DebugBreakHelper helper(dbg);
 				dbg->GetCallstackManager(cpuType)->GetProfiler()->GetCallerCalleeTracker()->GetCallerCalleeData(funcAddr, *output);
+			}
+		});
+	}
+
+	// Dump every recorded (caller -> callee, count) edge for JSON persistence /
+	// bulk caller/callee cache population. outCount receives the number of edges
+	// written (capped at maxEntries).
+	DllExport void __stdcall GetAllCallerCallee(CpuType cpuType, CallerCalleeEdge* output, uint32_t maxEntries, uint32_t* outCount)
+	{
+		*outCount = 0;
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
+			if(dbg->GetCallstackManager(cpuType)) {
+				DebugBreakHelper helper(dbg);
+				std::vector<CallerCalleeEdge> all;
+				dbg->GetCallstackManager(cpuType)->GetProfiler()->GetCallerCalleeTracker()->GetAllEdges(all, maxEntries);
+				uint32_t n = (uint32_t)std::min<size_t>(all.size(), maxEntries);
+				for(uint32_t i = 0; i < n; i++) {
+					output[i] = all[i];
+				}
+				*outCount = n;
 			}
 		});
 	}
