@@ -1746,6 +1746,7 @@
 			<Control ID="chkBreakOnRead">读取</Control>
 			<Control ID="chkBreakOnWrite">写入</Control>
 			<Control ID="chkBreakOnExec">执行</Control>
+			<Control ID="chkBitWrite">位写入</Control>
 
 			<Control ID="lblBreakpointType">内存类型:</Control>
 			<Control ID="lblBreakOn">中断于:</Control>

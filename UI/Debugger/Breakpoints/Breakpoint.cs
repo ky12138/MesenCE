@@ -26,6 +26,8 @@ namespace Mesen.Debugger
 		[ObservableProperty] public partial bool AnyAddress { get; set; } = false;
 		[ObservableProperty] public partial bool IsAssert { get; set; } = false;
 		[ObservableProperty] public partial string Condition { get; set; } = "";
+		[ObservableProperty] public partial bool BitWrite { get; set; }
+		[ObservableProperty] public partial int BitNumber { get; set; } = 1;
 
 		public Breakpoint()
 		{
@@ -180,6 +182,8 @@ namespace Mesen.Debugger
 			BreakOnWrite = copy.BreakOnWrite;
 			Forbid = copy.Forbid;
 			CpuType = copy.CpuType;
+			BitWrite = copy.BitWrite;
+			BitNumber = copy.BitNumber;
 		}
 	}
 

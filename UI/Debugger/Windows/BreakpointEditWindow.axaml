@@ -45,7 +45,7 @@
 		<Grid
 			DockPanel.Dock="Right"
 			ColumnDefinitions="Auto,*"
-			RowDefinitions="Auto,Auto,Auto,*"
+			RowDefinitions="Auto,Auto,Auto,Auto,*"
 			Margin="5 0 5 0"
 		>
 			<TextBlock Grid.Column="0" Grid.Row="0" Text="{l:Translate lblBreakpointType}" />
@@ -61,12 +61,20 @@
 			<TextBlock Grid.Column="0" Grid.Row="1" Text="{l:Translate lblBreakOn}" IsVisible="{Binding !Breakpoint.Forbid}" />
 			<StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1" IsVisible="{Binding !Breakpoint.Forbid}">
 				<CheckBox Content="{l:Translate chkBreakOnRead}" IsChecked="{Binding Breakpoint.BreakOnRead}" />
-				<CheckBox Content="{l:Translate chkBreakOnWrite}" IsChecked="{Binding Breakpoint.BreakOnWrite}" Margin="10 0 0 0" />
+				<CheckBox Content="{l:Translate chkBreakOnWrite}" IsChecked="{Binding Breakpoint.BreakOnWrite}" Margin="5 0 0 0"/>
 				<CheckBox
 					Content="{l:Translate chkBreakOnExec}"
 					IsChecked="{Binding Breakpoint.BreakOnExec}"
-					Margin="10 0 0 0"
+					Margin="5 0 0 0"
 					IsVisible="{Binding CanExec}"
+				/>
+				<CheckBox Content="{l:Translate chkBitWrite}" IsChecked="{Binding Breakpoint.BitWrite}" Margin="5 0 0 0"/>
+				<NumericUpDown
+					Value="{Binding Breakpoint.BitNumber}"
+					Minimum="1" Maximum="32"
+					Width="10" Margin="2 0 0 0"
+					IsVisible="{Binding IsBitWrite}"
+					IsEnabled="{Binding IsBitWrite}"
 				/>
 			</StackPanel>
 
@@ -79,8 +87,8 @@
 				<c:MesenNumericTextBox Value="{Binding Breakpoint.EndAddress}" Hex="True" Trim="True" Width="60" />
 			</StackPanel>
 
-			<TextBlock Grid.Column="0" Grid.Row="3" Text="{l:Translate lblCondition}" />
-			<Grid ColumnDefinitions="*,Auto,Auto" Grid.Column="1" Grid.Row="3">
+			<TextBlock Grid.Column="0" Grid.Row="4" Text="{l:Translate lblCondition}" />
+			<Grid ColumnDefinitions="*,Auto,Auto" Grid.Column="1" Grid.Row="4">
 				<TextBox
 					AcceptsReturn="True"
 					TextWrapping="Wrap"

@@ -1747,6 +1747,7 @@
 			<Control ID="chkBreakOnRead">Read</Control>
 			<Control ID="chkBreakOnWrite">Write</Control>
 			<Control ID="chkBreakOnExec">Execution</Control>
+			<Control ID="chkBitWrite">Bit Write</Control>
 
 			<Control ID="lblBreakpointType">Memory type:</Control>
 			<Control ID="lblBreakOn">Break on:</Control>

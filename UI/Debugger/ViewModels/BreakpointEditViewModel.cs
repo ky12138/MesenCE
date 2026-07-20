@@ -25,6 +25,7 @@ namespace Mesen.Debugger.ViewModels
 		[ObservableProperty] public partial string MaxAddress { get; private set; } = "";
 		[ObservableProperty] public partial bool CanExec { get; private set; } = false;
 		[ObservableProperty] public partial bool HasDummyOperations { get; private set; } = false;
+		[ObservableProperty] public partial bool IsBitWrite { get; private set; }
 
 		public Enum[] AvailableMemoryTypes { get; private set; } = Array.Empty<Enum>();
 
@@ -85,6 +86,52 @@ namespace Mesen.Debugger.ViewModels
 				UpdateButtonState();
 			}));
 
+			AddDisposable(Breakpoint.ObserveProp(nameof(Breakpoint.BitWrite), () => {
+				IsBitWrite = Breakpoint.BitWrite;
+				if(Breakpoint.BitWrite) {
+					Breakpoint.BreakOnWrite = true;
+					Breakpoint.BreakOnRead = false;
+					Breakpoint.BreakOnExec = false;
+					Breakpoint.EndAddress = Breakpoint.StartAddress;
+					UpdateBitWriteCondition();
+				}
+			}));
+
+			AddDisposable(Breakpoint.ObserveProp(nameof(Breakpoint.BitNumber), () => {
+				if(IsBitWrite && Breakpoint.BitNumber >= 1 && Breakpoint.BitNumber <= 32) {
+					UpdateBitWriteCondition();
+				}
+			}));
+
+			AddDisposable(Breakpoint.ObserveProp(nameof(Breakpoint.StartAddress), () => {
+				if(IsBitWrite) {
+					Breakpoint.EndAddress = Breakpoint.StartAddress;
+				}
+			}));
+
+			AddDisposable(Breakpoint.ObserveProp(nameof(Breakpoint.BitWrite), () => {
+				IsBitWrite = Breakpoint.BitWrite;
+				if(Breakpoint.BitWrite) {
+					Breakpoint.BreakOnWrite = true;
+					Breakpoint.BreakOnRead = false;
+					Breakpoint.BreakOnExec = false;
+					Breakpoint.EndAddress = Breakpoint.StartAddress;
+					UpdateBitWriteCondition();
+				}
+			}));
+
+			AddDisposable(Breakpoint.ObserveProp(nameof(Breakpoint.BitNumber), () => {
+				if(IsBitWrite && Breakpoint.BitNumber >= 1 && Breakpoint.BitNumber <= 32) {
+					UpdateBitWriteCondition();
+				}
+			}));
+
+			AddDisposable(Breakpoint.ObserveProp(nameof(Breakpoint.StartAddress), () => {
+				if(IsBitWrite) {
+					Breakpoint.EndAddress = Breakpoint.StartAddress;
+				}
+			}));
+
 			AddDisposable(Breakpoint.ObserveProp([
 				nameof(Breakpoint.BreakOnExec),
 				nameof(Breakpoint.BreakOnRead),
@@ -109,6 +156,23 @@ namespace Mesen.Debugger.ViewModels
 				}
 			}
 			OkEnabled = enabled;
+		}
+
+		private void UpdateBitWriteCondition()
+		{
+			int n = Breakpoint.BitNumber;
+			if(n < 1 || n > 32) return;
+
+			string mask = "(1 << " + (n - 1) + ")";
+			string readOp;
+			if(n <= 8) {
+				readOp = "[Address]";
+			} else if(n <= 16) {
+				readOp = "{Address}";
+			} else {
+				readOp = "#Address";
+			}
+			Breakpoint.Condition = "(" + readOp + " & " + mask + ") != (Value & " + mask + ")";
 		}
 	}
 }
