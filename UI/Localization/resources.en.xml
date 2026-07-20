@@ -1383,6 +1383,8 @@
 		<Form ID="WatchListView">
 			<Control ID="colName">Name</Control>
 			<Control ID="colValue">Value</Control>
+			<Control ID="colDecimal">Decimal</Control>
+			<Control ID="colBinary">Binary</Control>
 		</Form>
 		
 		<Form ID="QuickSearchView">

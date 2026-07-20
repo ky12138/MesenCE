@@ -86,6 +86,26 @@
 						/>
 					</DataTemplate>
 				</DataBoxTemplateColumn>
+				<DataBoxTemplateColumn ColumnName="Decimal" Header="{l:Translate colDecimal}" CanUserResize="True" InitialWidth="100">
+					<DataTemplate>
+						<TextBlock
+							Padding="3 0 0 0"
+							VerticalAlignment="Center"
+							x:DataType="md:WatchValueInfo"
+							Text="{Binding DecimalValue}"
+						/>
+					</DataTemplate>
+				</DataBoxTemplateColumn>
+				<DataBoxTemplateColumn ColumnName="Binary" Header="{l:Translate colBinary}" CanUserResize="True" InitialWidth="100">
+					<DataTemplate>
+						<TextBlock
+							Padding="3 0 0 0"
+							VerticalAlignment="Center"
+							x:DataType="md:WatchValueInfo"
+							Text="{Binding BinaryValue}"
+						/>
+					</DataTemplate>
+				</DataBoxTemplateColumn>
 			</DataBox.Columns>
 		</DataBox>
 	</Border>

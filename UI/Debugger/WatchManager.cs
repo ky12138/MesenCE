@@ -83,6 +83,8 @@ namespace Mesen.Debugger
 				ProcessFormatSpecifier(ref exprToEvaluate, ref style, ref byteLength);
 
 				Int64 numericValue = -1;
+				string decimalValue = "";
+				string binaryValue = "";
 
 				bool forceHasChanged = false;
 				Match match = _arrayWatchRegex.Match(expression);
@@ -102,10 +104,18 @@ namespace Mesen.Debugger
 						case EvalResultType.DivideBy0: newValue = "<division by zero>"; forceHasChanged = true; break;
 						case EvalResultType.OutOfScope: newValue = "<label out of scope>"; forceHasChanged = true; break;
 					}
+
+					if(numericValue >= 0) {
+						decimalValue = FormatValue(numericValue, WatchFormatStyle.Signed, byteLength);
+						binaryValue = FormatValue(numericValue, WatchFormatStyle.Binary, byteLength);
+					} else if(resultType == EvalResultType.Boolean) {
+						decimalValue = result == 0 ? "false" : "true";
+						binaryValue = result == 0 ? "false" : "true";
+					}
 				}
 
 				bool isChanged = forceHasChanged || (i < previousValues.Count ? (previousValues[i].Value != newValue) : false);
-				list.Add(new WatchValueInfo() { Expression = expression, Value = newValue, IsChanged = isChanged, NumericValue = numericValue });
+				list.Add(new WatchValueInfo() { Expression = expression, Value = newValue, IsChanged = isChanged, NumericValue = numericValue, DecimalValue = decimalValue, BinaryValue = binaryValue });
 			}
 
 			list.Add(new WatchValueInfo());
@@ -311,6 +321,8 @@ namespace Mesen.Debugger
 		[ObservableProperty] public partial string Value { get; set; } = "";
 		[ObservableProperty] public partial string Expression { get; set; } = "";
 		[ObservableProperty] public partial bool IsChanged { get; set; } = false;
+		[ObservableProperty] public partial string DecimalValue { get; set; } = "";
+		[ObservableProperty] public partial string BinaryValue { get; set; } = "";
 		public Int64 NumericValue { get; set; } = -1;
 	}
 

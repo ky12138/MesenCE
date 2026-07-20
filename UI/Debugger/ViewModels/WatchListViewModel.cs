@@ -70,6 +70,8 @@ namespace Mesen.Debugger.ViewModels
 					WatchEntries[i].Value = newEntries[i].Value;
 					WatchEntries[i].NumericValue = newEntries[i].NumericValue;
 					WatchEntries[i].IsChanged = newEntries[i].IsChanged;
+					WatchEntries[i].DecimalValue = newEntries[i].DecimalValue;
+					WatchEntries[i].BinaryValue = newEntries[i].BinaryValue;
 				}
 			}
 		}
@@ -252,35 +254,6 @@ namespace Mesen.Debugger.ViewModels
 					}
 				},
 				new ContextMenuSeparator(),
-				new ContextMenuAction() {
-					ActionType = ActionType.WatchDecimalDisplay,
-					IsSelected = () => ConfigManager.Config.Debug.Debugger.WatchFormat == WatchFormatStyle.Signed,
-					OnClick = () => {
-						ConfigManager.Config.Debug.Debugger.WatchFormat = WatchFormatStyle.Signed;
-						UpdateWatch();
-					}
-				},
-
-				new ContextMenuAction() {
-					ActionType = ActionType.WatchHexDisplay,
-					IsSelected = () => ConfigManager.Config.Debug.Debugger.WatchFormat == WatchFormatStyle.Hex,
-					OnClick = () => {
-						ConfigManager.Config.Debug.Debugger.WatchFormat = WatchFormatStyle.Hex;
-						UpdateWatch();
-					}
-				},
-
-				new ContextMenuAction() {
-					ActionType = ActionType.WatchBinaryDisplay,
-					IsSelected = () => ConfigManager.Config.Debug.Debugger.WatchFormat == WatchFormatStyle.Binary,
-					OnClick = () => {
-						ConfigManager.Config.Debug.Debugger.WatchFormat = WatchFormatStyle.Binary;
-						UpdateWatch();
-					}
-				},
-
-				new ContextMenuSeparator(),
-
 				new ContextMenuAction() {
 					ActionType = ActionType.ViewInMemoryViewer,
 					IsEnabled = () => GetLocation() != null,

@@ -1382,6 +1382,8 @@
 		<Form ID="WatchListView">
 			<Control ID="colName">名称</Control>
 			<Control ID="colValue">值</Control>
+			<Control ID="colDecimal">十进制</Control>
+			<Control ID="colBinary">二进制</Control>
 		</Form>
 		
 		<Form ID="QuickSearchView">
