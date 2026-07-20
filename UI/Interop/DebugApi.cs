@@ -556,6 +556,90 @@ namespace Mesen.Interop
 			}
 		}
 
+		[DllImport(DllPath, EntryPoint = "GetMemoryAccessFunctions")] private static extern void GetMemoryAccessFunctionsWrapper(CpuType type, Int32 memType, UInt32 start, UInt32 end, IntPtr output);
+		[DllImport(DllPath, EntryPoint = "ResetReverseMemoryAccess")] public static extern void ResetReverseMemoryAccess(CpuType type);
+
+		// Reverse memory access: per-function records for addresses within [start, end]
+		// of the given memory type (driven by Record breakpoints). The C++ struct is
+		// packed(1): int32 FuncAddress, MemoryType FuncType(4), uint8 Flags, uint32
+		// AccessCount (13 bytes each), followed by a uint32 Count.
+		public static List<MemoryAccessFunction> GetMemoryAccessFunctions(CpuType type, MemoryType memType, uint start, uint end)
+		{
+			const int entrySize = 13;
+			const int maxEntries = 1024;
+			int bufferSize = maxEntries * entrySize + 4;
+			IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
+			try {
+				DebugApi.GetMemoryAccessFunctionsWrapper(type, (Int32)memType, start, end, buffer);
+				return ParseMemoryAccessFunctions(buffer, entrySize, maxEntries);
+			} finally {
+				Marshal.FreeHGlobal(buffer);
+			}
+		}
+
+		private static List<MemoryAccessFunction> ParseMemoryAccessFunctions(IntPtr buffer, int entrySize, int maxEntries)
+		{
+			List<MemoryAccessFunction> functions = new();
+			UInt32 count = (UInt32)Marshal.ReadInt32(buffer, maxEntries * entrySize);
+			for(int i = 0; i < count && i < maxEntries; i++) {
+				IntPtr ptr = new IntPtr(buffer.ToInt64() + (long)(i * entrySize));
+				int funcAddr = Marshal.ReadInt32(ptr);
+				MemoryType funcType = (MemoryType)Marshal.ReadInt32(ptr, 4);
+				byte flags = Marshal.ReadByte(ptr, 8);
+				uint accessCount = (uint)Marshal.ReadInt32(ptr, 9);
+				functions.Add(new MemoryAccessFunction() {
+					FuncAddress = funcAddr,
+					FuncType = funcType,
+					Flags = (RwFlags)flags,
+					AccessCount = accessCount
+				});
+			}
+			return functions;
+		}
+
+		// ---- 反向内存访问的 JSON 持久化（dump/load） ----
+		[DllImport(DllPath, EntryPoint = "HasReverseMemoryAccess")] public static extern bool HasReverseMemoryAccess(CpuType type);
+		[DllImport(DllPath, EntryPoint = "GetAllReverseMemoryAccess")] private static extern void GetAllReverseMemoryAccessWrapper(CpuType type, IntPtr output, UInt32 maxEntries, out UInt32 outCount);
+		[DllImport(DllPath, EntryPoint = "LoadReverseMemoryAccess")] private static extern void LoadReverseMemoryAccessWrapper(CpuType type, IntPtr input, UInt32 count);
+
+		private const int ReverseDumpEntrySize = 21; // int32 + MemoryType(4) + int32 + MemoryType(4) + byte + uint32
+		private const int ReverseDumpMaxEntries = 65536;
+
+		public static List<ReverseAccessDumpRecord> GetAllReverseMemoryAccess(CpuType type)
+		{
+			int bufferSize = ReverseDumpMaxEntries * ReverseDumpEntrySize;
+			IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
+			try {
+				GetAllReverseMemoryAccessWrapper(type, buffer, (UInt32)ReverseDumpMaxEntries, out UInt32 count);
+				var list = new List<ReverseAccessDumpRecord>();
+				for(int i = 0; i < count; i++) {
+					IntPtr ptr = new IntPtr(buffer.ToInt64() + (long)(i * ReverseDumpEntrySize));
+					list.Add(Marshal.PtrToStructure<ReverseAccessDumpRecord>(ptr));
+				}
+				return list;
+			} finally {
+				Marshal.FreeHGlobal(buffer);
+			}
+		}
+
+		public static void LoadReverseMemoryAccess(CpuType type, List<ReverseAccessDumpRecord> records)
+		{
+			if(records == null || records.Count == 0) {
+				return;
+			}
+			int bufferSize = records.Count * ReverseDumpEntrySize;
+			IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
+			try {
+				for(int i = 0; i < records.Count; i++) {
+					IntPtr ptr = new IntPtr(buffer.ToInt64() + (long)(i * ReverseDumpEntrySize));
+					Marshal.StructureToPtr(records[i], ptr, false);
+				}
+				LoadReverseMemoryAccessWrapper(type, buffer, (UInt32)records.Count);
+			} finally {
+				Marshal.FreeHGlobal(buffer);
+			}
+		}
+
 		// Shared parser for the packed FunctionAccessRange[] buffer produced by the
 		// C++ tracker (uint32 Start, uint32 Length, MemoryType(4), uint8 Flags,
 		// uint32 ReadCount, uint32 WriteCount, uint32 AccessCount, uint32 Interval
@@ -1918,5 +2002,26 @@ namespace Mesen.Interop
 		[MarshalAs(UnmanagedType.I1)] public bool Right;
 		[MarshalAs(UnmanagedType.I1)] public bool Select;
 		[MarshalAs(UnmanagedType.I1)] public bool Start;
+	}
+
+	/// <summary>反向内存访问记录：某地址被某函数访问的 r/w/e 类型与次数</summary>
+	public class MemoryAccessFunction
+	{
+		public Int32 FuncAddress { get; set; }
+		public MemoryType FuncType { get; set; }
+		public RwFlags Flags { get; set; }
+		public UInt32 AccessCount { get; set; }
+	}
+
+	/// <summary>反向内存访问的持久化记录（与 C++ ReverseAccessDumpRecord 布局一致，packed(1) = 21 字节）。连续地址区间合并为一条。</summary>
+	[StructLayout(LayoutKind.Sequential, Pack = 1)]
+	public struct ReverseAccessDumpRecord
+	{
+		public Int32 StartAddr;
+		public Int32 EndAddr;
+		public MemoryType MemType;
+		public Int32 FuncAddress;
+		public MemoryType FuncType;
+		public Byte Flags;
 	}
 }

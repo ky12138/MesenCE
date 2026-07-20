@@ -25,6 +25,7 @@ private:
 	vector<ExpressionData> _rpnList[BreakpointTypeCount];
 	bool _hasBreakpoint;
 	bool _hasBreakpointType[BreakpointTypeCount] = {};
+	bool _hasRecordBreakpoint = false;
 
 	vector<Breakpoint> _forbidBreakpoints;
 	vector<ExpressionData> _forbidRpn;

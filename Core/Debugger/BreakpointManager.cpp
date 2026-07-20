@@ -6,7 +6,11 @@
 #include "Debugger/DebugUtilities.h"
 #include "Debugger/ExpressionEvaluator.h"
 #include "Debugger/BaseEventManager.h"
+#include "Debugger/ReverseMemoryAccessTracker.h"
+#include "Debugger/CallstackManager.h"
+#include "Debugger/Profiler.h"
 #include "Shared/MemoryOperationType.h"
+#include <functional>
 
 BreakpointManager::BreakpointManager(Debugger* debugger, IDebugger* cpuDebugger, CpuType cpuType, BaseEventManager* eventManager)
 {
@@ -21,6 +25,7 @@ BreakpointManager::BreakpointManager(Debugger* debugger, IDebugger* cpuDebugger,
 void BreakpointManager::SetBreakpoints(Breakpoint breakpoints[], uint32_t count)
 {
 	_hasBreakpoint = false;
+	_hasRecordBreakpoint = false;
 	for(int i = 0; i < BreakpointManager::BreakpointTypeCount; i++) {
 		_breakpoints[i].clear();
 		_rpnList[i].clear();
@@ -31,6 +36,16 @@ void BreakpointManager::SetBreakpoints(Breakpoint breakpoints[], uint32_t count)
 	_forbidRpn.clear();
 
 	_bpExpEval.reset(new ExpressionEvaluator(_debugger, _cpuDebugger, _cpuType));
+
+	// Record breakpoints no longer reset the reverse tracker on change; the
+	// accumulated data now persists until the debugger window closes (Debugger
+	// destruction) and is restored from JSON. Keep the flag for HasRecordBreakpoint().
+	for(uint32_t j = 0; j < count; j++) {
+		Breakpoint& bp = breakpoints[j];
+		if(bp.IsRecord() && !bp.HasBreakpointType(BreakpointType::Forbid)) {
+			_hasRecordBreakpoint = true;
+		}
+	}
 
 	for(uint32_t j = 0; j < count; j++) {
 		Breakpoint& bp = breakpoints[j];
@@ -50,7 +65,7 @@ void BreakpointManager::SetBreakpoints(Breakpoint breakpoints[], uint32_t count)
 
 		for(int i = 0; i < BreakpointManager::BreakpointTypeCount; i++) {
 			MemoryOperationType opType = (MemoryOperationType)i;
-			if((bp.IsMarked() || bp.IsEnabled()) && bp.HasBreakpointType(GetBreakpointType(opType))) {
+			if((bp.IsMarked() || bp.IsEnabled() || bp.IsRecord()) && bp.HasBreakpointType(GetBreakpointType(opType))) {
 				CpuType cpuType = bp.GetCpuType();
 				if(_cpuType != cpuType) {
 					continue;
@@ -73,6 +88,7 @@ void BreakpointManager::SetBreakpoints(Breakpoint breakpoints[], uint32_t count)
 			}
 		}
 	}
+
 }
 
 bool BreakpointManager::IsForbidden(MemoryOperationInfo* memoryOpPtr, AddressInfo& relAddr, AddressInfo& absAddr)
@@ -132,6 +148,13 @@ int BreakpointManager::InternalCheckBreakpoint(MemoryOperationInfo operationInfo
 
 			if(breakpoints[i].IsMarked() && processMarkedBreakpoints) {
 				_eventManager->AddEvent(DebugEventType::Breakpoint, operationInfo, breakpoints[i].GetId());
+			}
+			if(breakpoints[i].IsRecord() && processMarkedBreakpoints) {
+				// Record (but never pause) accesses to this address. RecordReverseMemoryAccess
+				// resolves the current function and the reverse tracker internally, so this
+				// hot path stays a single stable call and BreakpointManager.cpp does not need
+				// to know about the tracker's internals.
+				RecordReverseMemoryAccess(_debugger, _cpuType, breakpoints[i], operationInfo, address);
 			}
 			if(breakpoints[i].IsEnabled()) {
 				return breakpoints[i].GetId();

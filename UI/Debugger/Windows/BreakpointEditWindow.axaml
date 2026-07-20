@@ -39,6 +39,7 @@
 			/>
 			<CheckBox Content="{l:Translate chkMark}" IsChecked="{Binding Breakpoint.MarkEvent}" IsVisible="{Binding !Breakpoint.Forbid}" />
 			<CheckBox Content="{l:Translate chkEnable}" IsChecked="{Binding Breakpoint.Enabled}" IsVisible="{Binding !Breakpoint.Forbid}" />
+			<CheckBox Content="{l:Translate chkRecord}" IsChecked="{Binding Breakpoint.Record}" IsVisible="{Binding !Breakpoint.Forbid}" />
 			<CheckBox Content="{l:Translate chkEnableForbid}" IsChecked="{Binding Breakpoint.Enabled}" IsVisible="{Binding Breakpoint.Forbid}" />
 		</StackPanel>
 

@@ -30,24 +30,6 @@ namespace Mesen.Debugger.Views
 			AvaloniaXamlLoader.Load(this);
 		}
 
-		// Mouse X-button navigation (back = XButton1, forward = XButton2), mirroring
-		// DisassemblyView. Only acts on the X buttons so left/right clicks keep their
-		// existing behavior (selection, context menu).
-		protected override void OnPointerPressed(PointerPressedEventArgs e)
-		{
-			base.OnPointerPressed(e);
-
-			if(DataContext is not CallerCalleeViewModel model) {
-				return;
-			}
-			PointerPointProperties props = e.GetCurrentPoint(this).Properties;
-			if(props.IsXButton1Pressed) {
-				model.GoBack();
-			} else if(props.IsXButton2Pressed) {
-				model.GoForward();
-			}
-		}
-
 		protected override void OnDataContextChanged(EventArgs e)
 		{
 			if(DataContext is CallerCalleeViewModel model) {
@@ -156,7 +138,7 @@ namespace Mesen.Debugger.Views
 			}
 		}
 
-		private void OnSelectedFunctionPointerPressed(object? sender, PointerPressedEventArgs e)
+		private void OnSelectedFuncPointerPressed(object? sender, PointerPressedEventArgs e)
 		{
 			if(DataContext is not CallerCalleeViewModel model) {
 				return;
@@ -175,6 +157,14 @@ namespace Mesen.Debugger.Views
 					MemoryToolsWindow.ShowInMemoryTools(funcAddr.Type, funcAddr.Address);
 				}
 			}
+		}
+
+		private void OnReverseCellDoubleClick(DataBoxCell cell)
+		{
+			if(DataContext is not CallerCalleeViewModel model || cell.DataContext is not MemoryAccessFunctionEntry entry) {
+				return;
+			}
+			FunctionListViewModel.ShowInFunctionList(entry.FuncAbsAddr);
 		}
 	}
 }

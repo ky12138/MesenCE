@@ -47,6 +47,7 @@
     <ClInclude Include="Debugger\FrozenAddressManager.h" />
     <ClInclude Include="Debugger\StepBackManager.h" />
     <ClInclude Include="Debugger\CallerCalleeTracker.h" />
+    <ClInclude Include="Debugger\ReverseMemoryAccessTracker.h" />
     <ClInclude Include="Gameboy\APU\GbChannelDac.h" />
     <ClInclude Include="Gameboy\APU\GbEnvelope.h" />
     <ClInclude Include="Gameboy\Carts\Eeprom93Lc56.h" />
@@ -841,6 +842,7 @@
     <ClCompile Include="Debugger\StepBackManager.cpp" />
     <ClCompile Include="Debugger\CallerCalleeTracker.cpp" />
     <ClCompile Include="Debugger\FunctionMemoryAccessTracker.cpp" />
+    <ClCompile Include="Debugger\ReverseMemoryAccessTracker.cpp" />
     <ClCompile Include="Debugger\AddressPage.cpp" />
     <ClCompile Include="Gameboy\Debugger\DummyGbCpu.cpp" />
     <ClCompile Include="Gameboy\Debugger\GbTraceLogger.cpp" />

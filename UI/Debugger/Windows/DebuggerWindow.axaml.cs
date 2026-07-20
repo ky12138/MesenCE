@@ -49,12 +49,45 @@ namespace Mesen.Debugger.Windows
 
 			AddHandler(DragDrop.DropEvent, OnDrop);
 
+			// 鼠标侧键导航（后退=XButton1，前进=XButton2），作用于 CallerCalleeView 整个界面。
+			// 在窗口根以 Tunnel + handledEventsToo 注册，确保覆盖标题/按钮/空白等所有区域，
+			// 不受其内部子控件（DataBox 等）是否处理 PointerPressed 的影响。
+			AddHandler(InputElement.PointerPressedEvent, OnCallerCalleeXButton, RoutingStrategies.Tunnel, true);
+
 			_model.Config.LoadWindowSettings(this);
 		}
 
 		private void InitializeComponent()
 		{
 			AvaloniaXamlLoader.Load(this);
+		}
+
+		// 鼠标侧键导航（后退=XButton1，前进=XButton2）：在窗口根以 Tunnel 注册，最先收到
+		// 所有指针事件。判断光标是否落在某个 CallerCalleeView 的屏幕矩形内（而非依赖事件源
+		// 的视觉祖先，因为 Dock 工具外壳可能把事件源替换为外壳元素，导致按祖先判断失效），
+		// 从而覆盖该视图的整个界面（标题/按钮/空白区/各 DataBox），且不影响其它面板。
+		private void OnCallerCalleeXButton(object? sender, PointerPressedEventArgs e)
+		{
+			PointerPointProperties props = e.GetCurrentPoint(this).Properties;
+			if(!props.IsXButton1Pressed && !props.IsXButton2Pressed) {
+				return;
+			}
+			Point pos = e.GetCurrentPoint(this).Position;
+			foreach(CallerCalleeView view in this.GetVisualDescendants().OfType<CallerCalleeView>()) {
+				Point? topLeft = view.TranslatePoint(new Point(0, 0), this);
+				if(topLeft == null) {
+					continue;
+				}
+				Rect rect = new Rect(topLeft.Value, view.Bounds.Size);
+				if(rect.Contains(pos) && view.DataContext is CallerCalleeViewModel model) {
+					if(props.IsXButton1Pressed) {
+						model.GoBack();
+					} else if(props.IsXButton2Pressed) {
+						model.GoForward();
+					}
+					return;
+				}
+			}
 		}
 
 		public void RefreshDisassembly()

@@ -28,6 +28,9 @@ namespace Mesen.Debugger.ViewModels
 	{
 		[ObservableProperty] public partial MesenList<FunctionNode> Functions { get; private set; } = new();
 		[ObservableProperty] public partial SelectionModel<FunctionNode?> Selection { get; set; } = new() { SingleSelect = false };
+		// 标记 UpdateFunctionList 内部对 Selection 的重新应用，避免触发 caller/callee
+		// 面板的自动同步（否则每次暂停刷新都会把面板强制切回函数模式，丢失断点记录模式）。
+		public bool IsUpdatingSelection { get; private set; }
 		[ObservableProperty] public partial SortState SortState { get; set; } = new();
 		[ObservableProperty] public partial bool ShowBlocked { get; set; } = ConfigManager.Config.Debug.Debugger.ShowBlockedFunctions;
 
@@ -134,8 +137,15 @@ namespace Mesen.Debugger.ViewModels
 
 			List<FunctionNode> visible = ShowBlocked ? sortedFunctions : sortedFunctions.Where(f => !f.IsBlocked).ToList();
 			SortHelper.SortList(visible, SortState.SortOrder, _comparers, "AbsAddr");
-			Functions.Replace(visible);
-			Selection.SelectIndexes(selectedIndexes, Functions.Count);
+			// 重建列表并重新应用选择期间标记，避免 SelectionChanged 触发 caller/callee 的
+			// 自动同步（程序化重选不应切换面板模式）。
+			IsUpdatingSelection = true;
+			try {
+				Functions.Replace(visible);
+				Selection.SelectIndexes(selectedIndexes, Functions.Count);
+			} finally {
+				IsUpdatingSelection = false;
+			}
 
 			if(_index.Count > sortedFunctions.Count) {
 				var live = new HashSet<AddressInfo>(sortedFunctions.Select(f => f.AbsAddr));

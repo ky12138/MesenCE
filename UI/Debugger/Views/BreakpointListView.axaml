@@ -66,6 +66,13 @@
 					IsVisible="{Binding !Breakpoint.Forbid, DataType={x:Type vm:BreakpointViewModel}}" 
 					InitialWidth="15"
 				/>
+				<DataBoxCheckBoxColumn 
+					ColumnName="Record" 
+					Header="{l:Translate colRecord}" 
+					Binding="{Binding Breakpoint.Record, DataType={x:Type vm:BreakpointViewModel}}" 
+					IsVisible="{Binding !Breakpoint.Forbid, DataType={x:Type vm:BreakpointViewModel}}" 
+					InitialWidth="15"
+				/>
 				<DataBoxTextColumn 
 					ColumnName="Type" 
 					Header="{l:Translate colType}" 

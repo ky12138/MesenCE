@@ -20,6 +20,7 @@
 #include "Core/Debugger/Profiler.h"
 #include "Core/Debugger/CallerCalleeTracker.h"
 #include "Core/Debugger/FunctionMemoryAccessTracker.h"
+#include "Core/Debugger/ReverseMemoryAccessTracker.h"
 #include "Core/Debugger/DebugBreakHelper.h"
 #include "Core/Debugger/AddressPage.h"
 #include "Core/Debugger/IAssembler.h"
@@ -274,6 +275,75 @@ extern "C"
 			if(dbg->GetCallstackManager(cpuType)) {
 				DebugBreakHelper helper(dbg);
 				dbg->GetCallstackManager(cpuType)->GetProfiler()->GetFunctionMemoryAccessTracker()->Reset();
+			}
+		});
+	}
+
+	// Reverse memory access: aggregate, per function, all accesses recorded for
+	// addresses within [start, end] of the given memory type (driven by Record
+	// breakpoints). Output is a packed MemoryAccessFunctionRecord.
+	DllExport void __stdcall GetMemoryAccessFunctions(CpuType cpuType, int32_t memType, uint32_t start, uint32_t end, MemoryAccessFunctionRecord* output)
+	{
+		output->Count = 0;
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
+			if(dbg->GetCallstackManager(cpuType)) {
+				DebugBreakHelper helper(dbg);
+				dbg->GetCallstackManager(cpuType)->GetProfiler()->GetReverseMemoryAccessTracker()->GetMemoryAccessFunctions((MemoryType)memType, start, end, *output);
+			}
+		});
+	}
+
+	// Clear all reverse (Record-breakpoint) access data.
+	DllExport void __stdcall ResetReverseMemoryAccess(CpuType cpuType)
+	{
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
+			if(dbg->GetCallstackManager(cpuType)) {
+				DebugBreakHelper helper(dbg);
+				dbg->GetCallstackManager(cpuType)->GetProfiler()->GetReverseMemoryAccessTracker()->Reset();
+			}
+		});
+	}
+
+	// True when any reverse (Record-breakpoint) access data has been recorded.
+	DllExport bool __stdcall HasReverseMemoryAccess(CpuType cpuType)
+	{
+		bool result = false;
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
+			if(dbg->GetCallstackManager(cpuType)) {
+				DebugBreakHelper helper(dbg);
+				result = dbg->GetCallstackManager(cpuType)->GetProfiler()->GetReverseMemoryAccessTracker()->HasRecorded();
+			}
+		});
+		return result;
+	}
+
+	// Dump every recorded (mem, func, flags, count) entry for JSON persistence.
+	// outCount receives the number of records written (capped at maxEntries).
+	DllExport void __stdcall GetAllReverseMemoryAccess(CpuType cpuType, ReverseAccessDumpRecord* output, uint32_t maxEntries, uint32_t* outCount)
+	{
+		*outCount = 0;
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
+			if(dbg->GetCallstackManager(cpuType)) {
+				DebugBreakHelper helper(dbg);
+				std::vector<ReverseAccessDumpRecord> all;
+				dbg->GetCallstackManager(cpuType)->GetProfiler()->GetReverseMemoryAccessTracker()->GetAllRecords(all, maxEntries);
+				uint32_t n = (uint32_t)std::min<size_t>(all.size(), maxEntries);
+				for(uint32_t i = 0; i < n; i++) {
+					output[i] = all[i];
+				}
+				*outCount = n;
+			}
+		});
+	}
+
+	// Re-insert persisted (mem, func, flags, count) entries into the tracker.
+	DllExport void __stdcall LoadReverseMemoryAccess(CpuType cpuType, ReverseAccessDumpRecord* input, uint32_t count)
+	{
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
+			if(dbg->GetCallstackManager(cpuType) && count > 0) {
+				DebugBreakHelper helper(dbg);
+				std::vector<ReverseAccessDumpRecord> all(input, input + count);
+				dbg->GetCallstackManager(cpuType)->GetProfiler()->GetReverseMemoryAccessTracker()->LoadRecords(all);
 			}
 		});
 	}

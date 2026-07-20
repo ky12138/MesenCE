@@ -19,8 +19,13 @@ public:
 
 	uint32_t GetId();
 	CpuType GetCpuType();
+	MemoryType GetMemoryType();
+	int32_t GetStartAddr();
+	int32_t GetEndAddr();
+	BreakpointTypeFlags GetTypeFlags();
 	bool IsEnabled();
 	bool IsMarked();
+	bool IsRecord();
 	bool IsAllowedForOpType(MemoryOperationType opType);
 
 private:
@@ -33,5 +38,6 @@ private:
 	bool _enabled;
 	bool _markEvent;
 	bool _ignoreDummyOperations;
+	bool _record = false;
 	char _condition[1000];
 };

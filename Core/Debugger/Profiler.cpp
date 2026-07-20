@@ -133,6 +133,7 @@ void Profiler::InternalReset()
 	_functions[ResetFunctionIndex].Address = { ResetFunctionIndex, MemoryType::None };
 	_callerCalleeTracker.Reset();
 	_funcMemAccessTracker.Reset();
+	_reverseMemAccessTracker.Reset();
 }
 
 void Profiler::GetProfilerData(ProfiledFunction* profilerData, uint32_t& functionCount)
@@ -160,6 +161,11 @@ CallerCalleeTracker* Profiler::GetCallerCalleeTracker()
 FunctionMemoryAccessTracker* Profiler::GetFunctionMemoryAccessTracker()
 {
 	return &_funcMemAccessTracker;
+}
+
+ReverseMemoryAccessTracker* Profiler::GetReverseMemoryAccessTracker()
+{
+	return &_reverseMemAccessTracker;
 }
 
 AddressInfo Profiler::GetCurrentFunctionAddress()

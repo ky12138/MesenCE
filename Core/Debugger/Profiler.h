@@ -3,6 +3,7 @@
 #include "Debugger/DebugTypes.h"
 #include "Debugger/CallerCalleeTracker.h"
 #include "Debugger/FunctionMemoryAccessTracker.h"
+#include "Debugger/ReverseMemoryAccessTracker.h"
 
 class Debugger;
 class IDebugger;
@@ -37,6 +38,7 @@ private:
 
 	CallerCalleeTracker _callerCalleeTracker;
 	FunctionMemoryAccessTracker _funcMemAccessTracker;
+	ReverseMemoryAccessTracker _reverseMemAccessTracker;
 
 	void InternalReset();
 	void UpdateCycles();
@@ -53,6 +55,7 @@ public:
 	void GetProfilerData(ProfiledFunction* profilerData, uint32_t& functionCount);
 	CallerCalleeTracker* GetCallerCalleeTracker();
 	FunctionMemoryAccessTracker* GetFunctionMemoryAccessTracker();
+	ReverseMemoryAccessTracker* GetReverseMemoryAccessTracker();
 
 	// Absolute address of the function currently executing (or {-1, None} when none).
 	AddressInfo GetCurrentFunctionAddress();

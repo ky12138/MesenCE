@@ -17,7 +17,9 @@ namespace Mesen.Debugger.ViewModels
 		None = 0,
 		Read = 1,
 		Write = 2,
-		ReadWrite = Read | Write
+		Execute = 4,
+		ReadWrite = Read | Write,
+		ReadWriteExec = Read | Write | Execute
 	}
 
 	/// <summary>Stable identity of an access range, independent of live counters.</summary>
@@ -135,7 +137,7 @@ namespace Mesen.Debugger.ViewModels
 				.ThenBy(x => x.Start)
 				.ToList();
 
-			const int MaxSpans = 4096; // hard bound on cache size (pathological disjoint access)
+			const int maxSpans = 4096; // hard bound on cache size (pathological disjoint access)
 			var merged = new List<AccessRange>();
 			var cur = norm[0];
 			for(int i = 1; i < norm.Count; i++) {
@@ -153,8 +155,8 @@ namespace Mesen.Debugger.ViewModels
 			}
 			merged.Add(MakeSpan(cur));
 
-			if(merged.Count > MaxSpans) {
-				merged = merged.GetRange(0, MaxSpans);
+			if(merged.Count > maxSpans) {
+				merged = merged.GetRange(0, maxSpans);
 			}
 			result.Ranges = merged;
 			return result;
@@ -206,5 +208,31 @@ namespace Mesen.Debugger.ViewModels
 		public bool Marked { get; set; }              // 是否特殊标记（监视）
 		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 		public FuncMemoryAccess? MemoryAccess { get; set; } // 标记后采样的读写记录
+	}
+
+	/// <summary>反向（断点记录）内存访问的一条持久化记录：某连续地址区间，及其访问它的函数列表。区间合并自断点的 Length，函数列表嵌套避免逐函数膨胀。</summary>
+	public class ReverseAccessEntry
+	{
+		public int StartAddr { get; set; }
+		public int EndAddr { get; set; }
+		public MemoryType MemType { get; set; }
+		// 访问该区间的函数集合（嵌套），取代逐函数平铺，大幅精简 JSON。
+		public List<ReverseAccessFunc> Functions { get; set; } = new();
+	}
+
+	/// <summary>区间内的一个访问函数及其 r/w/e 标记。</summary>
+	public class ReverseAccessFunc
+	{
+		public int FuncAddress { get; set; }
+		public MemoryType FuncType { get; set; }
+		// 读写执行标记：默认 0 时省略以精简序列化（记录项恒 >= 1）。
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+		public RwFlags Flags { get; set; }
+	}
+
+	/// <summary>反向内存访问的 JSON 缓存（按 CpuType 分桶，镜像 RelAddressCacheData）。</summary>
+	public class ReverseAccessCacheData
+	{
+		public Dictionary<CpuType, List<ReverseAccessEntry>> EntriesByCpu { get; set; } = new();
 	}
 }

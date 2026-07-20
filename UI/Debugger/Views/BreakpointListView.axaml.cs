@@ -35,9 +35,9 @@ namespace Mesen.Debugger.Views
 
 		private void OnCellClick(DataBoxCell cell)
 		{
-			if(DataContext is BreakpointListViewModel bpList && cell.DataContext is BreakpointViewModel) {
+			if(DataContext is BreakpointListViewModel bpList && cell.DataContext is BreakpointViewModel vm) {
 				string? columnName = cell.Column?.ColumnName ?? "";
-				if(columnName == "Enabled" || columnName == "Marked" || columnName == "Read" || columnName == "Write" || columnName == "Exec") {
+				if(columnName == "Enabled" || columnName == "Marked" || columnName == "Read" || columnName == "Write" || columnName == "Exec" || columnName == "Record") {
 					bool newValue = !bpList.Selection.SelectedItems.Any(bp => {
 						if(bp == null) return false;
 						return columnName switch {
@@ -46,6 +46,7 @@ namespace Mesen.Debugger.Views
 							"Read" => bp.Breakpoint.BreakOnRead,
 							"Write" => bp.Breakpoint.BreakOnWrite,
 							"Exec" => bp.Breakpoint.BreakOnExec,
+							"Record" => bp.Breakpoint.Record,
 							_ => false,
 						};
 					});
@@ -58,12 +59,16 @@ namespace Mesen.Debugger.Views
 								case "Read": bp.Breakpoint.BreakOnRead = newValue; break;
 								case "Write": bp.Breakpoint.BreakOnWrite = newValue; break;
 								case "Exec": bp.Breakpoint.BreakOnExec = newValue; break;
+								case "Record": bp.Breakpoint.Record = newValue; break;
 							}
 						}
 					}
 
 					DebugWorkspaceManager.AutoSave();
 					BreakpointManager.RefreshBreakpoints();
+				} else if(vm.Breakpoint.Record && bpList.Debugger.CallerCallee != null) {
+					// 单击带 Record 的断点：在 caller\callee 面板显示被哪些函数访问过
+					bpList.Debugger.CallerCallee.ShowForBreakpoint(vm.Breakpoint);
 				}
 			}
 		}

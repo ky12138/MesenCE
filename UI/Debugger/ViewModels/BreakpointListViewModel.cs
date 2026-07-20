@@ -45,6 +45,7 @@ namespace Mesen.Debugger.ViewModels
 		private Dictionary<string, Func<BreakpointViewModel, BreakpointViewModel, int>> _comparers = new() {
 			{ "Enabled", (a, b) => a.Breakpoint.Enabled.CompareTo(b.Breakpoint.Enabled) },
 			{ "Marked", (a, b) => a.Breakpoint.MarkEvent.CompareTo(b.Breakpoint.MarkEvent) },
+			{ "Record", (a, b) => a.Breakpoint.Record.CompareTo(b.Breakpoint.Record) },
 			{ "Type", (a, b) => string.Compare(a.Breakpoint.ToReadableType(), b.Breakpoint.ToReadableType(), StringComparison.OrdinalIgnoreCase) },
 			{ "Address", (a, b) => string.Compare(a.Breakpoint.GetAddressString(true), b.Breakpoint.GetAddressString(true), StringComparison.OrdinalIgnoreCase) },
 			{ "Condition", (a, b) => string.Compare(a.Breakpoint.Condition, b.Breakpoint.Condition, StringComparison.OrdinalIgnoreCase) },

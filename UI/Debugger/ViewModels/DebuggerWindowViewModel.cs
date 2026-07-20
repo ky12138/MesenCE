@@ -1,4 +1,4 @@
-﻿using Avalonia.Controls;
+using Avalonia.Controls;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Dock.Model.Controls;
@@ -253,6 +253,11 @@ namespace Mesen.Debugger.ViewModels
 				var functionList = FunctionList;
 				var callerCallee = CallerCallee;
 				functionList.Selection.SelectionChanged += (s, e) => {
+					// 跳过 UpdateFunctionList 内部的程序化重选（暂停/刷新时），否则会
+					// 把 caller/callee 面板强制切回函数模式，丢失断点记录模式。
+					if(functionList.IsUpdatingSelection) {
+						return;
+					}
 					if(functionList.Selection?.SelectedItem is FunctionNode vm) {
 						callerCallee.UpdateForFunction(vm.FuncAbsAddr,
 							vm.FuncRelAddr.Address >= 0
@@ -420,8 +425,11 @@ namespace Mesen.Debugger.ViewModels
 
 		public void SaveCache()
 		{
+			// Reverse (Record-breakpoint) data lives only in the C++ tracker; persist
+			// it whenever it exists, even if no other cache entry changed.
+			bool hasReverse = DebugApi.HasReverseMemoryAccess(CpuType);
 			int changes = Interlocked.Exchange(ref _unsavedChanges, 0);
-			if(changes == 0 && _cacheLoaded) {
+			if(changes == 0 && _cacheLoaded && !hasReverse) {
 				return;
 			}
 
@@ -463,6 +471,40 @@ namespace Mesen.Debugger.ViewModels
 
 			string json = JsonSerializer.Serialize(data, typeof(RelAddressCacheData), MesenSerializerContext.Default);
 			FileHelper.WriteAllText(path, json);
+
+			// Persist reverse (Record-breakpoint) memory access data so it survives
+			// window close/reopen, mirroring the AccessRange cache. No data -> drop
+			// the stale file so it is not reloaded next session.
+			string reversePath = Path.Combine(ConfigManager.DebuggerFolder, romName + "_ReverseAccess.json");
+			if(hasReverse) {
+				var rdata = new ReverseAccessCacheData();
+				var rentries = new List<ReverseAccessEntry>();
+				// Group the flat (range, func) records by memory range so each range
+				// becomes one compact entry with a nested function list.
+				var byRange = new Dictionary<(MemoryType, int, int), ReverseAccessEntry>();
+				foreach(var r in DebugApi.GetAllReverseMemoryAccess(CpuType)) {
+					var key = (r.MemType, r.StartAddr, r.EndAddr);
+					if(!byRange.TryGetValue(key, out var entry)) {
+						entry = new ReverseAccessEntry {
+							StartAddr = r.StartAddr,
+							EndAddr = r.EndAddr,
+							MemType = r.MemType
+						};
+						byRange[key] = entry;
+						rentries.Add(entry);
+					}
+					entry.Functions.Add(new ReverseAccessFunc {
+						FuncAddress = r.FuncAddress,
+						FuncType = r.FuncType,
+						Flags = (RwFlags)r.Flags
+					});
+				}
+				rdata.EntriesByCpu[CpuType] = rentries;
+				string rjson = JsonSerializer.Serialize(rdata, typeof(ReverseAccessCacheData), MesenSerializerContext.Default);
+				FileHelper.WriteAllText(reversePath, rjson);
+			} else if(File.Exists(reversePath)) {
+				File.Delete(reversePath);
+			}
 		}
 
 		// Fill each range's RelPage/RelAddress once (for marked functions whose
@@ -481,8 +523,8 @@ namespace Mesen.Debugger.ViewModels
 					if(meta.MemoryAccess?.Ranges == null) continue;
 					var range = meta.MemoryAccess.Ranges.FirstOrDefault(r => r.Start == vm.Start && r.MemType == vm.MemType);
 					if(range == null) continue;
-				range.RangeColor = vm.RangeColor;
-				range.Blocked = vm.Blocked;
+					range.RangeColor = vm.RangeColor;
+					range.Blocked = vm.Blocked;
 					break;
 				}
 			}
@@ -546,6 +588,33 @@ namespace Mesen.Debugger.ViewModels
 								}
 							}
 							FillRangeDisplays();
+						}
+					} catch {
+					}
+				}
+
+				// Restore reverse (Record-breakpoint) memory access data persisted
+				// from a previous session so it shows up without re-recording.
+				string reversePath = Path.Combine(ConfigManager.DebuggerFolder, romName + "_ReverseAccess.json");
+				if(File.Exists(reversePath)) {
+					try {
+						string rfile = File.ReadAllText(reversePath);
+						var rdata = JsonSerializer.Deserialize(rfile, typeof(ReverseAccessCacheData), MesenSerializerContext.Default) as ReverseAccessCacheData;
+						if(rdata?.EntriesByCpu.TryGetValue(CpuType, out var rentries) == true && rentries.Count > 0) {
+							var recs = new List<ReverseAccessDumpRecord>();
+							foreach(var e in rentries) {
+								foreach(var f in e.Functions) {
+									recs.Add(new ReverseAccessDumpRecord {
+										StartAddr = e.StartAddr,
+										EndAddr = e.EndAddr,
+										MemType = e.MemType,
+										FuncAddress = f.FuncAddress,
+										FuncType = f.FuncType,
+										Flags = (byte)f.Flags
+									});
+								}
+							}
+							DebugApi.LoadReverseMemoryAccess(CpuType, recs);
 						}
 					} catch {
 					}
@@ -647,6 +716,7 @@ namespace Mesen.Debugger.ViewModels
 			BreakpointList.RefreshBreakpointList();
 			LabelList.RefreshLabelList();
 			FunctionList?.UpdateFunctionList();
+			CallerCallee?.RefreshCurrent();
 			WatchList.UpdateWatch();
 			CallStack.UpdateCallStack();
 		}

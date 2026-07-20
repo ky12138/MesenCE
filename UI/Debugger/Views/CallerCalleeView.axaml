@@ -20,12 +20,12 @@
 	<Border BorderThickness="0 1 0 0" BorderBrush="{StaticResource MesenGrayBorderColor}">
 		<Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,2*">
 			<!-- Callers Header -->
-			<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="4,0,4,2" >
-				<CheckBox IsChecked="{Binding SelectedFunctionMarked}" VerticalAlignment="Center" />
-				<TextBlock Text="{Binding SelectedFunctionName}" Opacity="0.7" Cursor="Hand" PointerPressed="OnSelectedFunctionPointerPressed" />
-				<TextBlock Text=" " IsVisible="{Binding HasCallers}" />
-				<TextBlock FontWeight="Bold" Text="{l:Translate lblCallers}" IsVisible="{Binding HasCallers}" />
-			</StackPanel>
+			<Grid Grid.Row="0" RowDefinitions="Auto,Auto" ColumnDefinitions="Auto,Auto" IsVisible="{Binding ShowFuncPanel}">
+				<TextBlock Grid.Row="0" Grid.Column="0" FontWeight="Bold" Text="{l:Translate lblFuncAccess}" VerticalAlignment="Center" Margin="4,0,0,0" />
+				<CheckBox Grid.Row="0" Grid.Column="1" Content="{l:Translate colMarked}" IsChecked="{Binding SelectedFunctionMarked}" VerticalAlignment="Center" />
+				<TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding SelectedFunctionName}" VerticalAlignment="Center" Margin="8,0,0,0" Opacity="0.7" Cursor="Hand" PointerPressed="OnSelectedFuncPointerPressed" />
+				<TextBlock Grid.Row="1" Grid.Column="1" FontWeight="Bold" Text="{l:Translate lblCallers}" IsVisible="{Binding ShowCallers}" />
+			</Grid>
 
 			<!-- Callers DataBox -->
 			<DataBox
@@ -33,7 +33,7 @@
 				Grid.Row="2"
 				Items="{Binding Callers}"
 				Selection="{Binding CallerSelection}"
-				IsVisible="{Binding HasCallers}"
+				IsVisible="{Binding ShowCallers}"
 				GridLinesVisibility="All"
 				CellClick="OnCellClick"
 				CellDoubleClick="OnCallerCellDoubleClick"
@@ -55,7 +55,7 @@
 						ColumnName="Marked"
 						Header="{l:Translate colMarked}"
 						Binding="{Binding IsMarked, DataType={x:Type vm:CallerCalleeEntry}}"
-						InitialWidth="20"
+						InitialWidth="30"
 					/>
 					<DataBoxTextColumn
 						ColumnName="Function"
@@ -85,8 +85,8 @@
 			</DataBox>
 
 			<!-- Callees Header -->
-			<StackPanel Grid.Row="3" Orientation="Horizontal" Margin="4,8,4,2" IsVisible="{Binding HasCallees}">
-				<TextBlock Text="{Binding SelectedFunctionName}" Opacity="0.7" Cursor="Hand" PointerPressed="OnSelectedFunctionPointerPressed" />
+			<StackPanel Grid.Row="3" Orientation="Horizontal" Margin="4,8,4,2" IsVisible="{Binding ShowCallees}">
+				<TextBlock Text="{Binding SelectedFunctionName}" Opacity="0.7" Cursor="Hand" PointerPressed="OnSelectedFuncPointerPressed" />
 				<TextBlock Text=" " />
 				<TextBlock FontWeight="Bold" Text="{l:Translate lblCallees}" />
 			</StackPanel>
@@ -97,7 +97,7 @@
 				Grid.Row="4"
 				Items="{Binding Callees}"
 				Selection="{Binding CalleeSelection}"
-				IsVisible="{Binding HasCallees}"
+				IsVisible="{Binding ShowCallees}"
 				GridLinesVisibility="All"
 				CellClick="OnCellClick"
 				CellDoubleClick="OnCalleeCellDoubleClick"
@@ -119,7 +119,7 @@
 						ColumnName="Marked"
 						Header="{l:Translate colMarked}"
 						Binding="{Binding IsMarked, DataType={x:Type vm:CallerCalleeEntry}}"
-						InitialWidth="20"
+						InitialWidth="30"
 					/>
 					<DataBoxTextColumn
 						ColumnName="Function"
@@ -148,8 +148,8 @@
 				</DataBox.Columns>
 			</DataBox>
 
-			<!-- 访问记录面板 -->
-			<Grid Grid.Row="5" Margin="4,4,4,4" RowDefinitions="Auto,Auto,*">
+			<!-- 访问记录面板（函数记录模式） -->
+			<Grid Grid.Row="5" Margin="4,4,4,4" RowDefinitions="Auto,Auto,*" IsVisible="{Binding SelectedFunctionMarked}">
 				<Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,Auto">
 					<TextBlock Grid.Column="0" FontWeight="Bold" Text="{l:Translate lblMemoryAccess}" VerticalAlignment="Center" Margin="4,0,0,0" />
 					<CheckBox Grid.Column="2" Content="{l:Translate chkShowAllFunctions}" IsChecked="{Binding ShowAllFunctions}" />
@@ -225,6 +225,78 @@
 								Header="{l:Translate colAccessCount}"
 								Binding="{Binding AccessCountDisplay, DataType={x:Type vm:AccessRangeViewModel}}"
 								InitialWidth="30"
+							/>
+						</DataBox.Columns>
+					</DataBox>
+				</Grid>
+			</Grid>
+
+			<!-- 断点记录（反向）面板：仅断点记录模式显示 -->
+			<Grid Grid.Row="5" Margin="4,4,4,4" RowDefinitions="Auto,*" IsVisible="{Binding IsBreakpointMode}">
+				<Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
+					<TextBlock Grid.Column="0" FontWeight="Bold" Text="{l:Translate lblBreakpointAccess}" VerticalAlignment="Center" Margin="4,0,0,0" />
+					<TextBlock Grid.Column="1" Text="{Binding SelectedBreakpointTitle}" VerticalAlignment="Center" Margin="8,0,0,0" Opacity="0.8" />
+					<Button Grid.Column="2" Content="{l:Translate btnClearRecords}" Command="{Binding ClearReverseCommand}" />
+				</Grid>
+				<Grid Grid.Row="1" RowDefinitions="Auto,*">
+					<TextBlock Grid.Row="0" Text="{l:Translate lblNoBreakpointAccessData}" IsVisible="{Binding !HasReverseData}" />
+					<DataBox
+						x:Name="reverseGrid"
+						Grid.Row="1"
+						Items="{Binding AccessedByFunctions}"
+						Selection="{Binding AccessedBySelection}"
+						IsVisible="{Binding HasReverseData}"
+						GridLinesVisibility="All"
+						CellDoubleClick="OnReverseCellDoubleClick"
+						ColumnWidths="{Binding ReverseColumnWidths}"
+					>
+						<DataBox.Styles>
+							<Style Selector="DataBoxRow /template/ Rectangle#BackgroundRectangle">
+								<Setter Property="Fill" Value="{Binding RowBackground, DataType={x:Type vm:MemoryAccessFunctionEntry}}" />
+							</Style>
+							<Style Selector="DataBoxRow">
+								<Setter Property="Foreground" Value="{Binding RowForeground, DataType={x:Type vm:MemoryAccessFunctionEntry}}" />
+								<Setter Property="FontStyle" Value="{Binding RowStyle, DataType={x:Type vm:MemoryAccessFunctionEntry}}" />
+								<Setter Property="FontWeight" Value="{Binding RowWeight, DataType={x:Type vm:MemoryAccessFunctionEntry}}" />
+								<Setter Property="Opacity" Value="{Binding RowOpacity, DataType={x:Type vm:MemoryAccessFunctionEntry}}" />
+							</Style>
+						</DataBox.Styles>
+						<DataBox.Columns>
+							<DataBoxCheckBoxColumn
+								ColumnName="Marked"
+								Header="{l:Translate colMarked}"
+								Binding="{Binding IsMarked, DataType={x:Type vm:MemoryAccessFunctionEntry}}"
+								InitialWidth="30"
+							/>
+							<DataBoxTextColumn
+								ColumnName="Function"
+								Header="{l:Translate colFunction}"
+								Binding="{Binding FunctionName, DataType={x:Type vm:MemoryAccessFunctionEntry}}"
+								InitialWidth="45"
+							/>
+							<DataBoxTextColumn
+								ColumnName="RelAddr"
+								Header="{l:Translate colCpuAddr}"
+								Binding="{Binding RelAddressDisplay, DataType={x:Type vm:MemoryAccessFunctionEntry}}"
+								InitialWidth="70"
+							/>
+							<DataBoxTextColumn
+								ColumnName="AbsAddr"
+								Header="{l:Translate colRomAddr}"
+								Binding="{Binding AbsAddressDisplay, DataType={x:Type vm:MemoryAccessFunctionEntry}}"
+								InitialWidth="70"
+							/>
+							<DataBoxTextColumn
+								ColumnName="AccessCount"
+								Header="{l:Translate colAccessCount}"
+								Binding="{Binding AccessCount, DataType={x:Type vm:MemoryAccessFunctionEntry}}"
+								InitialWidth="40"
+							/>
+							<DataBoxTextColumn
+								ColumnName="Rwe"
+								Header="{l:Translate colRwe}"
+								Binding="{Binding RweDisplay, DataType={x:Type vm:MemoryAccessFunctionEntry}}"
+								InitialWidth="40"
 							/>
 						</DataBox.Columns>
 					</DataBox>

@@ -56,6 +56,26 @@ CpuType Breakpoint::GetCpuType()
 	return _cpuType;
 }
 
+MemoryType Breakpoint::GetMemoryType()
+{
+	return _memoryType;
+}
+
+int32_t Breakpoint::GetStartAddr()
+{
+	return _startAddr;
+}
+
+int32_t Breakpoint::GetEndAddr()
+{
+	return _endAddr;
+}
+
+BreakpointTypeFlags Breakpoint::GetTypeFlags()
+{
+	return _type;
+}
+
 bool Breakpoint::IsEnabled()
 {
 	return _enabled;
@@ -64,6 +84,11 @@ bool Breakpoint::IsEnabled()
 bool Breakpoint::IsMarked()
 {
 	return _markEvent;
+}
+
+bool Breakpoint::IsRecord()
+{
+	return _record;
 }
 
 bool Breakpoint::IsAllowedForOpType(MemoryOperationType opType)

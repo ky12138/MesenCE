@@ -3,6 +3,7 @@ using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Selection;
 using Avalonia.Media;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DataBoxControl;
@@ -38,12 +39,20 @@ namespace Mesen.Debugger.ViewModels
 		[ObservableProperty] public partial string SelectedFunctionName { get; private set; } = "";
 		[ObservableProperty] public partial AddressInfo SelectedFunctionAddress { get; private set; }
 
-		public bool SelectedFunctionMarked {
+		public bool SelectedFunctionMarked
+		{
 			get => SelectedFunctionAddress.Address >= 0 && Debugger.GetFuncMeta(SelectedFunctionAddress)?.Marked == true;
-			set {
+			set
+			{
 				if(SelectedFunctionAddress.Address < 0 || value == SelectedFunctionMarked) return;
-				var entry = Entry;
-				if(entry != null) entry.IsMarked = value; // reuse FunctionNode.IsMarked setter
+				// 标记的是面板头部当前查看的函数本身（SelectedFunctionAddress），而非列表里选中的行。
+				// 直接写入 FuncMeta，与 FunctionNode.IsMarked 的逻辑保持一致。
+				var m = Debugger.GetOrAddFuncMeta(SelectedFunctionAddress);
+				m.Marked = value;
+				Debugger.MarkCacheDirty();
+				Debugger.NotifyFuncMetaChanged();
+				OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedFunctionMarked)));
+				DebugApi.SetFunctionMemoryAccessTracked(CpuType, SelectedFunctionAddress, value);
 			}
 		}
 
@@ -55,11 +64,20 @@ namespace Mesen.Debugger.ViewModels
 		[ObservableProperty] public partial SelectionModel<AccessRangeViewModel?> AccessRangeSelection { get; set; } = new() { SingleSelect = false };
 		public AccessRangeViewModel? SelectedAccessRange => AccessRangeSelection.SelectedItem;
 
+		// ----- 断点记录（反向内存访问） -----
+		[ObservableProperty] public partial MesenList<MemoryAccessFunctionEntry> AccessedByFunctions { get; private set; } = new();
+		[ObservableProperty] public partial SelectionModel<MemoryAccessFunctionEntry?> AccessedBySelection { get; set; } = new() { SingleSelect = true };
+		[ObservableProperty] public partial bool HasReverseData { get; private set; }
+		[ObservableProperty] public partial bool IsBreakpointMode { get; private set; }
+		[ObservableProperty] public partial string SelectedBreakpointTitle { get; private set; } = "";
+		public ICommand ClearReverseCommand { get; }
+
 		[ObservableProperty] public partial SortState AccessRangeSortState { get; set; } = new();
 		public ICommand AccessRangeSortCommand { get; }
 
-		public List<int> ColumnWidths { get; } = new() { 20, 45, 70, 70, 40 };
-		public List<int> AccessRangesColumnWidths { get; } = new() { 160, 25, 50, 30, 30, 30 };
+		public List<int> ColumnWidths { get; } = new() { 30, 45, 70, 70, 40 };
+		public List<int> AccessRangesColumnWidths { get; } = new() { 170, 25, 50, 30, 30, 30 };
+		public List<int> ReverseColumnWidths { get; } = new() { 30, 45, 70, 70, 40, 40 };
 
 		private readonly Dictionary<string, Func<AccessRangeViewModel, AccessRangeViewModel, int>> _accessRangeComparers = new() {
 			{ "Range", (a, b) => a.Start.CompareTo(b.Start) },
@@ -74,8 +92,29 @@ namespace Mesen.Debugger.ViewModels
 		private Dictionary<RangeIdentity, AccessRangeViewModel> _accessRangeByIdentity = new();
 
 		private CallerCalleeEntry? Entry => CallerSelection.SelectedItem ?? CalleeSelection.SelectedItem;
-		public NavigationHistory<AddressInfo> History { get; } = new();
+		public NavigationHistory<NavigationEntry> History { get; } = new();
 		private bool _navigating;
+
+		// 布局切换：断点记录模式隐藏 Callers/Callees/访问记录面板，仅显示反向面板
+		public bool ShowCallers => !IsBreakpointMode && HasCallers;
+		public bool ShowCallees => !IsBreakpointMode && HasCallees;
+		public bool ShowFuncPanel => !IsBreakpointMode && !string.IsNullOrEmpty(SelectedFunctionName);
+
+		partial void OnIsBreakpointModeChanged(bool value)
+		{
+			OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowCallers)));
+			OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowCallees)));
+			OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowFuncPanel)));
+		}
+		partial void OnHasCallersChanged(bool value) => OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowCallers)));
+		partial void OnHasCalleesChanged(bool value) => OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowCallees)));
+		partial void OnSelectedFunctionNameChanged(string value) => OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowFuncPanel)));
+		partial void OnSelectedFunctionAddressChanged(AddressInfo value) => OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedFunctionMarked)));
+
+		// 反向（断点记录）查询参数，供 Clear 后重新加载
+		private AddressInfo _reverseStartAddr;
+		private uint _reverseEndAddr;
+		private MemoryType _reverseMemType;
 
 		public bool CanGoBack => History.CanGoBack();
 		public bool CanGoForward => History.CanGoForward();
@@ -114,6 +153,7 @@ namespace Mesen.Debugger.ViewModels
 			CpuType = cpuType;
 			Debugger = debugger;
 			RetrackCommand = new RelayCommand(() => Retrack());
+			ClearReverseCommand = new RelayCommand(() => ClearReverse());
 			AccessRangeSortCommand = new RelayCommand<object?>(SortAccessRanges);
 			AccessRangeSortState.SetColumnSort("MemType", ListSortDirection.Ascending, true);
 			CallerSelection.SelectionChanged += (_, _) => UpdateMarkedAccessRanges();
@@ -179,6 +219,12 @@ namespace Mesen.Debugger.ViewModels
 		public void UpdateForFunction(AddressInfo funcAddr, string funcName)
 		{
 			Debugger.EnsureCacheLoaded();
+			// 离开断点记录模式，回到函数记录模式
+			IsBreakpointMode = false;
+			AccessedByFunctions.Replace(new List<MemoryAccessFunctionEntry>());
+			HasReverseData = false;
+			SelectedBreakpointTitle = "";
+
 			if(funcAddr.Address < 0) {
 				SelectedFunctionName = ""; SelectedFunctionAddress = default;
 				Callers.Replace(new List<CallerCalleeEntry>()); HasCallers = false;
@@ -190,23 +236,23 @@ namespace Mesen.Debugger.ViewModels
 			SelectedFunctionName = funcName;
 			SelectedFunctionAddress = funcAddr;
 			OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedFunctionMarked)));
-			if(!_navigating) History.AddHistory(funcAddr);
+			if(!_navigating) History.AddHistory(new NavigationEntry(NavigationKind.Function, funcAddr));
 
 			var record = DebugApi.GetCallerCallee(CpuType, funcAddr);
 			var callers = Enumerable.Range(0, (int)Math.Min(record.CallerCount, 64))
 				.Select(i => {
-					var c = record.Callers[i]; return c.Address.Address >= 0 
-						? new CallerCalleeEntry(GetFunctionNode(c.Address)) { CallCount = c.CallCount.ToString(), CallCountValue = c.CallCount } 
-						: null; 
+					var c = record.Callers[i]; return c.Address.Address >= 0
+						? new CallerCalleeEntry(GetFunctionNode(c.Address)) { CallCount = c.CallCount.ToString(), CallCountValue = c.CallCount }
+						: null;
 				})
 				.Where(e => e != null).Cast<CallerCalleeEntry>().ToList();
 			Callers.Replace(callers);
 			HasCallers = callers.Count > 0;
 			var callees = Enumerable.Range(0, (int)Math.Min(record.CalleeCount, 64))
 				.Select(i => {
-					var c = record.Callees[i]; return c.Address.Address >= 0 
-						? new CallerCalleeEntry(GetFunctionNode(c.Address)) { CallCount = c.CallCount.ToString(), CallCountValue = c.CallCount } 
-						: null; 
+					var c = record.Callees[i]; return c.Address.Address >= 0
+						? new CallerCalleeEntry(GetFunctionNode(c.Address)) { CallCount = c.CallCount.ToString(), CallCountValue = c.CallCount }
+						: null;
 				})
 				.Where(e => e != null).Cast<CallerCalleeEntry>().ToList();
 			Callees.Replace(callees);
@@ -235,25 +281,119 @@ namespace Mesen.Debugger.ViewModels
 			}
 		}
 
-		// Jump to a historical function. The entry point is always FunctionList, so
-		// we re-select the matching row to keep the highlight in sync; _navigating
+		// Jump to a historical entry (function or breakpoint-access). _navigating
 		// suppresses re-recording into the history.
-		private void NavigateTo(AddressInfo funcAddr)
+		private void NavigateTo(NavigationEntry entry)
 		{
-			if(funcAddr.Address < 0) return;
+			if(entry == null) return;
 			_navigating = true;
 			try {
-				var fl = Debugger.FunctionList;
-				if(fl != null) {
-					var match = fl.Functions.FirstOrDefault(f => f.FuncAbsAddr.Type == funcAddr.Type && f.FuncAbsAddr.Address == funcAddr.Address);
-					if(match != null) {
-						if(fl.Selection.SelectedItem != match) fl.Selection.SelectedItem = match;
-						else UpdateForFunction(funcAddr, MemoryHelper.GetFunctionName(funcAddr, true));
-						return;
+				if(entry.Kind == NavigationKind.Function) {
+					var fl = Debugger.FunctionList;
+					if(fl != null) {
+						var match = fl.Functions.FirstOrDefault(f => f.FuncAbsAddr.Type == entry.Address.Type && f.FuncAbsAddr.Address == entry.Address.Address);
+						if(match != null) {
+							if(fl.Selection.SelectedItem != match) fl.Selection.SelectedItem = match;
+							else UpdateForFunction(entry.Address, MemoryHelper.GetFunctionName(entry.Address, true));
+							return;
+						}
 					}
+					UpdateForFunction(entry.Address, MemoryHelper.GetFunctionName(entry.Address, true));
+				} else {
+					// 断点记录（反向）历史条目
+					LoadBreakpointAccess(entry.Address, entry.EndAddress, entry.Address.Type, entry.Title);
 				}
-				UpdateForFunction(funcAddr, MemoryHelper.GetFunctionName(funcAddr, true));
-			} finally { _navigating = false; }
+			} finally {
+				// FunctionList.Selection.SelectionChanged 触发的 UpdateForFunction 可能被延迟到
+				// 下一个 dispatcher 帧执行；若此处同步复位 _navigating，则那次回调会把回退/前进
+				// 动作误当作新导航写入历史，AddHistory 中的 ClearForwardHistory 会清空前进栈，
+				// 导致 GoBack/GoForward 失效。用低优先级 Post 复位可覆盖同步/异步两种时序。
+				Dispatcher.UIThread.Post(() => _navigating = false, DispatcherPriority.Background);
+			}
+		}
+
+		// 从断点列表单击 Record 断点进入：加载被哪些函数访问过该地址
+		public void ShowForBreakpoint(Breakpoint bp)
+		{
+			Debugger.EnsureCacheLoaded();
+			if(bp.StartAddress > bp.EndAddress) {
+				return;
+			}
+			LoadBreakpointAccess(
+				new AddressInfo { Type = bp.MemoryType, Address = (int)bp.StartAddress },
+				bp.EndAddress,
+				bp.MemoryType,
+				bp.GetAddressString(true)
+			);
+			if(!_navigating) {
+				History.AddHistory(new NavigationEntry(
+					NavigationKind.BreakpointAccess,
+					new AddressInfo { Type = bp.MemoryType, Address = (int)bp.StartAddress },
+					bp.EndAddress,
+					bp.GetAddressString(true)
+				));
+			}
+		}
+
+		// 加载某地址区间被哪些函数访问过（反向），并切换到断点记录模式
+		private void LoadBreakpointAccess(AddressInfo startAddr, uint endAddr, MemoryType memType, string? title)
+		{
+			IsBreakpointMode = true;
+			SelectedBreakpointTitle = title ?? "";
+			_reverseStartAddr = startAddr;
+			_reverseEndAddr = endAddr;
+			_reverseMemType = memType;
+
+			// 清空函数记录模式的展示
+			Callers.Replace(new List<CallerCalleeEntry>());
+			HasCallers = false;
+			Callees.Replace(new List<CallerCalleeEntry>());
+			HasCallees = false;
+			MarkedAccessRanges.Replace(new List<AccessRangeViewModel>());
+			HasAccessData = false;
+			SelectedFunctionName = "";
+			SelectedFunctionAddress = default;
+			OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedFunctionMarked)));
+
+			var records = DebugApi.GetMemoryAccessFunctions(CpuType, memType, (uint)startAddr.Address, endAddr);
+			var entries = new List<MemoryAccessFunctionEntry>();
+			foreach(var r in records) {
+				var node = GetFunctionNode(new AddressInfo { Type = r.FuncType, Address = r.FuncAddress });
+				entries.Add(new MemoryAccessFunctionEntry(node, r.AccessCount, r.Flags));
+			}
+			AccessedByFunctions.Replace(entries);
+			HasReverseData = entries.Count > 0;
+		}
+
+		// 清空反向（断点记录）数据后重新加载当前断点视图
+		public void ClearReverse()
+		{
+			DebugApi.ResetReverseMemoryAccess(CpuType);
+			// 标记缓存脏，使清空态持久化（SaveCache 发现无反向数据会删除旧 JSON）。
+			Debugger.MarkCacheDirty();
+			if(IsBreakpointMode) {
+				LoadBreakpointAccess(_reverseStartAddr, _reverseEndAddr, _reverseMemType, SelectedBreakpointTitle);
+			}
+		}
+
+		// 暂停/继续时按「当前模式」刷新面板数据，但不切换模式、不写入导航历史：
+		// - 函数模式：重新拉取 caller/callee 与访问计数（实时更新）；
+		// - 断点记录模式：重新拉取反向内存访问数据（实时更新）。
+		// 若不刷新，断点记录模式在暂停后既不更新也不会被误清空。
+		public void RefreshCurrent()
+		{
+			_navigating = true;
+			try {
+				if(IsBreakpointMode) {
+					if(_reverseStartAddr.Address >= 0) {
+						LoadBreakpointAccess(_reverseStartAddr, _reverseEndAddr, _reverseMemType, SelectedBreakpointTitle);
+					}
+				} else if(SelectedFunctionAddress.Address >= 0) {
+					UpdateForFunction(SelectedFunctionAddress, SelectedFunctionName);
+				}
+			} finally {
+				Dispatcher.UIThread.Post(() => _navigating = false, DispatcherPriority.Background);
+			}
 		}
 
 		internal void UpdateMarkedAccessRanges()
@@ -630,21 +770,23 @@ namespace Mesen.Debugger.ViewModels
 				MarkCacheDirty();
 			}
 
-			List<object> BuildRangeColorActions() {
+			List<object> BuildRangeColorActions()
+			{
 				var acts = FunctionListViewModel.ColorPalette.Select(c => (object)new ContextMenuAction {
-					ActionType = ActionType.Custom, CustomText = ResourceHelper.GetMessage(c.Key),
+					ActionType = ActionType.Custom,
+					CustomText = ResourceHelper.GetMessage(c.Key),
 					OnClick = () => SetRangeColor(c.Hex)
 				}).ToList();
 				acts.Add(new ContextMenuSeparator());
 				acts.Add(new ContextMenuAction {
 					ActionType = ActionType.Custom,
 					CustomText = ResourceHelper.GetMessage("mnuClearColor"),
-					OnClick = () => SetRangeColor(null) 
+					OnClick = () => SetRangeColor(null)
 				});
 				acts.Add(new ContextMenuAction {
 					ActionType = ActionType.Custom,
 					CustomText = ResourceHelper.GetMessage("mnuCustomColor"),
-					OnClick = () => _ = PickRangeColor(accessGrid) 
+					OnClick = () => _ = PickRangeColor(accessGrid)
 				});
 				return acts;
 			}
@@ -702,12 +844,12 @@ namespace Mesen.Debugger.ViewModels
 					HintText = () => MemoryHelper.GetAddrStr(GetAbs()),
 					IsVisible = () => GetRel().Type != GetAbs().Type,
 					IsEnabled = () => SelectedAccessRange != null,
-					OnClick = () => { 
+					OnClick = () => {
 						var a = GetAbs();
 						if(a.Address >= 0) {
 							MemoryToolsWindow.ShowInMemoryTools(a.Type, a.Address);
 						}
-					} 
+					}
 				},
 				new ContextMenuSeparator(),
 				new ContextMenuAction() {
@@ -736,20 +878,20 @@ namespace Mesen.Debugger.ViewModels
 							CustomText = ResourceHelper.GetMessage("mnuBlockByColor"),
 							HintText = () => FunctionListViewModel.GetColorDisplayName(AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().FirstOrDefault(r => r.RangeColor != null)?.RangeColor),
 							IsEnabled = () => AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().Any(r => r.RangeColor != null),
-							OnClick = () => BlockRangeByColor(true) 
+							OnClick = () => BlockRangeByColor(true)
 						},
 						new ContextMenuAction {
 							ActionType = ActionType.Custom,
 							CustomText = ResourceHelper.GetMessage("mnuUnblockByColor"),
 							HintText = () => FunctionListViewModel.GetColorDisplayName(AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().FirstOrDefault(r => r.RangeColor != null)?.RangeColor),
 							IsEnabled = () => AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().Any(r => r.RangeColor != null),
-							OnClick = () => BlockRangeByColor(false) 
+							OnClick = () => BlockRangeByColor(false)
 						},
 						new ContextMenuSeparator(),
 						new ContextMenuAction {
 							ActionType = ActionType.Custom,
 							CustomText = ResourceHelper.GetMessage("mnuBlockByMemType"),
-							HintText = () => { 
+							HintText = () => {
 								var r = AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().FirstOrDefault();
 								return r?.MemType.GetShortName() ?? "";
 							},
@@ -759,7 +901,7 @@ namespace Mesen.Debugger.ViewModels
 						new ContextMenuAction {
 							ActionType = ActionType.Custom,
 							CustomText = ResourceHelper.GetMessage("mnuUnblockByMemType"),
-							HintText = () => { 
+							HintText = () => {
 								var r = AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().FirstOrDefault();
 								return r?.MemType.GetShortName() ?? "";
 							},
@@ -770,17 +912,17 @@ namespace Mesen.Debugger.ViewModels
 						new ContextMenuAction {
 							ActionType = ActionType.Custom,
 							CustomText = ResourceHelper.GetMessage("mnuBlockByRw"),
-							HintText = () => { 
+							HintText = () => {
 								var r = AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().FirstOrDefault();
 								return r?.RwDisplay ?? "";
 							},
 							IsEnabled = () => AccessRangeSelection.SelectedItems.Count > 0,
-							OnClick = () => BlockRangeByRw(true) 
+							OnClick = () => BlockRangeByRw(true)
 						},
 						new ContextMenuAction {
 							ActionType = ActionType.Custom,
 							CustomText = ResourceHelper.GetMessage("mnuUnblockByRw"),
-							HintText = () => { 
+							HintText = () => {
 								var r = AccessRangeSelection.SelectedItems.OfType<AccessRangeViewModel>().FirstOrDefault();
 								return r?.RwDisplay ?? "";
 							},
@@ -834,6 +976,86 @@ namespace Mesen.Debugger.ViewModels
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsBlocked)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMarked)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FunctionName)));
+		}
+	}
+
+	// 统一导航历史条目：区分"函数记录"与"断点记录（反向）"两类目标，
+	// 使 GoBack/GoForward 可在两者间任意切换。
+	public enum NavigationKind
+	{
+		Function,
+		BreakpointAccess
+	}
+
+	public class NavigationEntry
+	{
+		public NavigationKind Kind { get; }
+		// 函数模式：函数绝对地址；断点模式：断点起始地址（Type = 断点 MemoryType）
+		public AddressInfo Address { get; }
+		public uint EndAddress { get; }
+		public string? Title { get; }
+
+		public NavigationEntry(NavigationKind kind, AddressInfo address, uint endAddress = 0, string? title = null)
+		{
+			Kind = kind;
+			Address = address;
+			EndAddress = endAddress;
+			Title = title;
+		}
+
+		public override bool Equals(object? obj)
+		{
+			if(obj is not NavigationEntry other) {
+				return false;
+			}
+			return Kind == other.Kind
+				&& Address.Type == other.Address.Type
+				&& Address.Address == other.Address.Address
+				&& EndAddress == other.EndAddress;
+		}
+
+		public override int GetHashCode()
+		{
+			return HashCode.Combine((int)Kind, (int)Address.Type, Address.Address, EndAddress);
+		}
+	}
+
+	// 反向（断点记录）面板中的一行：某函数访问过目标地址的 r/w/e 类型与次数
+	public class MemoryAccessFunctionEntry
+	{
+		private readonly FunctionNode _node;
+		public uint AccessCount { get; }
+		public RwFlags Flags { get; }
+		public string RweDisplay => FormatRwe(Flags);
+
+		public AddressInfo FuncAbsAddr => _node.AbsAddr;
+		public AddressInfo FuncRelAddr => _node.RelAddr;
+		public string FunctionName => _node.FunctionName;
+		public string RelAddressDisplay => _node.RelAddressDisplay;
+		public string AbsAddressDisplay => _node.AbsAddressDisplay;
+		public object RowBackground => _node.RowBackground;
+		public object RowForeground => _node.RowForeground;
+		public FontStyle RowStyle => _node.RowStyle;
+		public FontWeight RowWeight => _node.RowWeight;
+		public double RowOpacity => _node.RowOpacity;
+		public bool IsBlocked => _node.IsBlocked;
+		public CodeLabel? Label => _node.Label;
+		public bool IsMarked { get => _node.IsMarked; set => _node.IsMarked = value; }
+
+		public MemoryAccessFunctionEntry(FunctionNode node, uint accessCount, RwFlags flags)
+		{
+			_node = node;
+			AccessCount = accessCount;
+			Flags = flags;
+		}
+
+		private static string FormatRwe(RwFlags f)
+		{
+			string s = "";
+			if(f.HasFlag(RwFlags.Read)) s += "R";
+			if(f.HasFlag(RwFlags.Write)) s += "W";
+			if(f.HasFlag(RwFlags.Execute)) s += "X";
+			return s;
 		}
 	}
 }

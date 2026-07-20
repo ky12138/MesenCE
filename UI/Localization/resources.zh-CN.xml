@@ -1352,6 +1352,7 @@
 			<Control ID="colRead">读</Control>
 			<Control ID="colWrite">写</Control>
 			<Control ID="colExec">执行</Control>
+			<Control ID="colRecord">记录</Control>
 			<Control ID="colType">类型</Control>
 			<Control ID="colAddress">地址</Control>
 			<Control ID="colCondition">条件</Control>
@@ -1395,6 +1396,11 @@
 			<Control ID="colWriteCount">写</Control>
 			<Control ID="colAccessCount">访问</Control>
 			<Control ID="lblNoAccessData">尚未记录内存访问（标记函数后运行游戏即可）</Control>
+			<Control ID="lblFuncAccess">函数记录</Control>
+			<Control ID="lblBreakpointAccess">断点记录</Control>
+			<Control ID="colRwe">读写执行</Control>
+			<Control ID="btnClearRecords">清空记录</Control>
+			<Control ID="lblNoBreakpointAccessData">该断点尚未记录到访问（开启记录后运行游戏即可）</Control>
 			<Control ID="btnRetrack">重新跟踪</Control>
 			<Control ID="chkTrackExec">指令取指</Control>
 			<Control ID="chkTrackDummy">Dummy访问</Control>
@@ -1845,6 +1851,7 @@
 			<Control ID="chkIgnoreDummyOperations">忽略虚拟读/写</Control>
 			<Control ID="chkMark">在事件查看器上标记</Control>
 			<Control ID="chkEnable">中断执行</Control>
+			<Control ID="chkRecord">记录访问（不中断）</Control>
 			<Control ID="chkEnableForbid">启用</Control>
 
 			<Control ID="lblConditionError">条件包含无效语法或符号。</Control>

@@ -18,6 +18,7 @@ namespace Mesen.Debugger
 
 		[ObservableProperty] public partial bool Enabled { get; set; } = true;
 		[ObservableProperty] public partial bool MarkEvent { get; set; }
+		[ObservableProperty] public partial bool Record { get; set; }
 		[ObservableProperty] public partial bool IgnoreDummyOperations { get; set; } = true;
 		[ObservableProperty] public partial MemoryType MemoryType { get; set; }
 		[ObservableProperty] public partial UInt32 StartAddress { get; set; }
@@ -100,6 +101,7 @@ namespace Mesen.Debugger
 				MarkEvent = MarkEvent,
 				IgnoreDummyOperations = IgnoreDummyOperations,
 				Enabled = Enabled,
+				Record = Record,
 				StartAddress = (Int32)StartAddress,
 				EndAddress = (Int32)EndAddress
 			};
@@ -176,6 +178,7 @@ namespace Mesen.Debugger
 			MarkEvent = copy.MarkEvent;
 			IgnoreDummyOperations = copy.IgnoreDummyOperations;
 			Enabled = copy.Enabled;
+			Record = copy.Record;
 			Condition = copy.Condition;
 			BreakOnExec = copy.BreakOnExec;
 			BreakOnRead = copy.BreakOnRead;

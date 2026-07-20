@@ -1,4 +1,4 @@
-﻿using Mesen.Config;
+using Mesen.Config;
 using Mesen.Debugger;
 using Mesen.Debugger.Labels;
 using Mesen.Debugger.Utilities;
@@ -43,6 +43,9 @@ namespace Mesen.Utilities
 [JsonSerializable(typeof(FuncMemoryAccess))]
 [JsonSerializable(typeof(AccessRange))]
 [JsonSerializable(typeof(RwFlags))]
+[JsonSerializable(typeof(ReverseAccessCacheData))]
+[JsonSerializable(typeof(ReverseAccessEntry))]
+[JsonSerializable(typeof(ReverseAccessFunc))]
 [JsonSourceGenerationOptions(
 	WriteIndented = true,
 	IgnoreReadOnlyProperties = true,

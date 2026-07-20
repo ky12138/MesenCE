@@ -1352,6 +1352,7 @@
 			<Control ID="colRead">R</Control>
 			<Control ID="colWrite">W</Control>
 			<Control ID="colExec">X</Control>
+			<Control ID="colRecord">Rec</Control>
 			<Control ID="colType">Type</Control>
 			<Control ID="colAddress">Address</Control>
 			<Control ID="colCondition">Condition</Control>
@@ -1395,6 +1396,11 @@
 			<Control ID="colWriteCount">Writes</Control>
 			<Control ID="colAccessCount">Accesses</Control>
 			<Control ID="lblNoAccessData">No memory access recorded yet (mark a function, then run the game)</Control>
+			<Control ID="lblFuncAccess">Function Access</Control>
+			<Control ID="lblBreakpointAccess">Breakpoint Access</Control>
+			<Control ID="colRwe">R/W/E</Control>
+			<Control ID="btnClearRecords">Clear records</Control>
+			<Control ID="lblNoBreakpointAccessData">No accesses recorded for this breakpoint yet (enable Record, then run the game)</Control>
 			<Control ID="btnRetrack">Re-track</Control>
 			<Control ID="chkTrackExec">Instruction fetch</Control>
 			<Control ID="chkTrackDummy">Dummy accesses</Control>
@@ -1833,6 +1839,7 @@
 			<Control ID="chkBreakOnWrite">Write</Control>
 			<Control ID="chkBreakOnExec">Execution</Control>
 			<Control ID="chkBitWrite">Bit Write</Control>
+			<Control ID="chkRecord">Record accesses (no pause)</Control>
 
 			<Control ID="lblBreakpointType">Memory type:</Control>
 			<Control ID="lblBreakOn">Break on:</Control>
