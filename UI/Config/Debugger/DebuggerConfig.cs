@@ -118,11 +118,13 @@ namespace Mesen.Config
 		Disassemble
 	}
 
+	[Flags]
 	public enum AddressDisplayType
 	{
-		CpuAddress,
-		AbsAddress,
-		Both,
-		BothCompact
+		None = 0,
+		CpuAddress = 1,
+		AbsAddress = 2,
+		Mapping = 4,
+		Compact = 8,
 	}
 }

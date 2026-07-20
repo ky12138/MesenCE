@@ -154,18 +154,38 @@ namespace Mesen.Debugger
 			return ByteCodeStr;
 		}
 
-		public string GetAddressText(AddressDisplayType addressDisplayType, string addrFormat)
+		public string GetAddressText(AddressDisplayType addressDisplayType, string addrFormat, string mappingName = "")
 		{
+			if(addressDisplayType == AddressDisplayType.None) {
+				return "";
+			}
+
 			string addressText = HasAddress ? Address.ToString(addrFormat) : "";
 			string absAddress = AbsoluteAddress.Address >= 0 && !IsAddressHidden ? AbsoluteAddress.Address.ToString(addrFormat) : "";
 			string compactAbsAddress = AbsoluteAddress.Address >= 0 && !IsAddressHidden ? (AbsoluteAddress.Address >> 12).ToString("X") : "";
-			return addressDisplayType switch {
-				AddressDisplayType.CpuAddress => addressText,
-				AddressDisplayType.AbsAddress => absAddress,
-				AddressDisplayType.Both => (addressText + (string.IsNullOrEmpty(absAddress) ? "" : " [" + absAddress + "]")).Trim(),
-				AddressDisplayType.BothCompact => (addressText + (string.IsNullOrEmpty(compactAbsAddress) ? "" : " [" + compactAbsAddress + "]")).Trim(),
-				_ => throw new NotImplementedException()
-			};
+
+			bool showCpu = addressDisplayType.HasFlag(AddressDisplayType.CpuAddress);
+			bool showAbs = addressDisplayType.HasFlag(AddressDisplayType.AbsAddress);
+			bool showMapping = addressDisplayType.HasFlag(AddressDisplayType.Mapping);
+			bool compact = addressDisplayType.HasFlag(AddressDisplayType.Compact);
+
+			string result = "";
+			if(showCpu) {
+				result = addressText;
+			}
+			if(showAbs) {
+				string absText = compact ? compactAbsAddress : absAddress;
+				if(!string.IsNullOrEmpty(absText)) {
+					string bracket = "[" + absText + "]";
+					result = string.IsNullOrEmpty(result) ? bracket : result + " " + bracket;
+				}
+			}
+
+			if(showMapping && !string.IsNullOrEmpty(mappingName)) {
+				result = string.IsNullOrEmpty(result) ? mappingName : mappingName + ":" + result;
+			}
+
+			return result;
 		}
 	}
 

@@ -225,12 +225,13 @@ namespace Mesen.Debugger.Controls
 			}
 		}
 
-		private static string GetBlockText(MemoryMappingBlock block)
+		internal static string GetBlockText(MemoryMappingBlock block, bool withSgin = true)
 		{
+			string sign = withSgin ? "$" : "";
 			if(string.IsNullOrEmpty(block.Name)) {
-				return block.Page >= 0 ? $"${block.Page:X2}" : "";
+				return block.Page >= 0 ? $"{sign}{block.Page:X2}" : "";
 			} else if(block.Page >= 0) {
-				return $"{block.Name} (${block.Page:X2})";
+				return $"{block.Name} ({sign}{block.Page:X2})";
 			} else {
 				return block.Name;
 			}
