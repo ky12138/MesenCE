@@ -202,6 +202,8 @@ namespace Mesen.Debugger.ViewModels
 			CallStack = AddDisposable(new CallStackViewModel(CpuType, this));
 			WatchList = AddDisposable(new WatchListViewModel(CpuType));
 			ConsoleStatus = CpuType switch {
+				CpuType.Nes => new NesStatusViewModel(),
+#if !NES_ONLY
 				CpuType.Snes => new SnesStatusViewModel(CpuType.Snes),
 				CpuType.Spc => new SpcStatusViewModel(),
 				CpuType.NecDsp => new NecDspStatusViewModel(),
@@ -210,11 +212,11 @@ namespace Mesen.Debugger.ViewModels
 				CpuType.Cx4 => new Cx4StatusViewModel(),
 				CpuType.St018 => new St018StatusViewModel(),
 				CpuType.Gameboy => new GbStatusViewModel(),
-				CpuType.Nes => new NesStatusViewModel(),
 				CpuType.Pce => new PceStatusViewModel(),
 				CpuType.Sms => new SmsStatusViewModel(),
 				CpuType.Gba => new GbaStatusViewModel(),
 				CpuType.Ws => new WsStatusViewModel(),
+#endif
 				_ => null
 			};
 

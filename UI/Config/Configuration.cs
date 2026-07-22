@@ -27,14 +27,18 @@ namespace Mesen.Config
 		[ObservableProperty] public partial AudioConfig Audio { get; set; } = new();
 		[ObservableProperty] public partial InputConfig Input { get; set; } = new();
 		[ObservableProperty] public partial EmulationConfig Emulation { get; set; } = new();
+#if !NES_ONLY
 		[ObservableProperty] public partial SnesConfig Snes { get; set; } = new();
+#endif
 		[ObservableProperty] public partial NesConfig Nes { get; set; } = new();
+#if !NES_ONLY
 		[ObservableProperty] public partial GameboyConfig Gameboy { get; set; } = new();
 		[ObservableProperty] public partial PcEngineConfig PcEngine { get; set; } = new();
 		[ObservableProperty] public partial SmsConfig Sms { get; set; } = new();
 		[ObservableProperty] public partial CvConfig Cv { get; set; } = new();
 		[ObservableProperty] public partial GbaConfig Gba { get; set; } = new();
 		[ObservableProperty] public partial WsConfig Ws { get; set; } = new();
+#endif
 		[ObservableProperty] public partial PreferencesConfig Preferences { get; set; } = new();
 		[ObservableProperty] public partial AudioPlayerConfig AudioPlayer { get; set; } = new();
 		[ObservableProperty] public partial DebugConfig Debug { get; set; } = new();
@@ -83,14 +87,16 @@ namespace Mesen.Config
 			Audio.ApplyConfig();
 			Input.ApplyConfig();
 			Emulation.ApplyConfig();
+			Nes.ApplyConfig();
+#if !NES_ONLY
 			Gameboy.ApplyConfig();
 			Gba.ApplyConfig();
 			PcEngine.ApplyConfig();
-			Nes.ApplyConfig();
 			Snes.ApplyConfig();
 			Sms.ApplyConfig();
 			Cv.ApplyConfig();
 			Ws.ApplyConfig();
+#endif
 			Preferences.ApplyConfig();
 			AudioPlayer.ApplyConfig();
 			Debug.ApplyConfig();
@@ -112,6 +118,7 @@ namespace Mesen.Config
 
 		public void UpgradeConfig()
 		{
+#if !NES_ONLY
 			if(ConfigUpgrade < (int)ConfigUpgradeHint.SmsInput) {
 				Sms.InitializeDefaults(DefaultKeyMappings);
 			}
@@ -127,6 +134,7 @@ namespace Mesen.Config
 			if(ConfigUpgrade < (int)ConfigUpgradeHint.WsInput) {
 				Ws.InitializeDefaults(DefaultKeyMappings);
 			}
+#endif
 
 			ConfigUpgrade = (int)ConfigUpgradeHint.NextValue - 1;
 			Version = EmuApi.GetMesenVersion().ToString(3);
@@ -135,14 +143,16 @@ namespace Mesen.Config
 		public void InitializeDefaults()
 		{
 			if(ConfigUpgrade == (int)ConfigUpgradeHint.FirstRun) {
-				Snes.InitializeDefaults(DefaultKeyMappings);
 				Nes.InitializeDefaults(DefaultKeyMappings);
+#if !NES_ONLY
+				Snes.InitializeDefaults(DefaultKeyMappings);
 				Gameboy.InitializeDefaults(DefaultKeyMappings);
 				Gba.InitializeDefaults(DefaultKeyMappings);
 				PcEngine.InitializeDefaults(DefaultKeyMappings);
 				Sms.InitializeDefaults(DefaultKeyMappings);
 				Cv.InitializeDefaults(DefaultKeyMappings);
 				Ws.InitializeDefaults(DefaultKeyMappings);
+#endif
 				ConfigUpgrade = (int)ConfigUpgradeHint.NextValue - 1;
 			}
 			Preferences.InitializeDefaultShortcuts();

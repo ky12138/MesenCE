@@ -55,6 +55,7 @@ namespace Mesen.ViewModels
 					Nes ??= AddDisposable(new NesConfigViewModel(Preferences.Config));
 					break;
 
+#if !NES_ONLY
 				case ConfigWindowTab.Snes: Snes ??= AddDisposable(new SnesConfigViewModel()); break;
 				case ConfigWindowTab.Gameboy: Gameboy ??= AddDisposable(new GameboyConfigViewModel()); break;
 				case ConfigWindowTab.Gba: Gba ??= AddDisposable(new GbaConfigViewModel()); break;
@@ -62,6 +63,7 @@ namespace Mesen.ViewModels
 				case ConfigWindowTab.Sms: Sms ??= AddDisposable(new SmsConfigViewModel()); break;
 				case ConfigWindowTab.Ws: Ws ??= AddDisposable(new WsConfigViewModel()); break;
 				case ConfigWindowTab.OtherConsoles: OtherConsoles ??= AddDisposable(new OtherConsolesConfigViewModel()); break;
+#endif
 
 				case ConfigWindowTab.Preferences: Preferences ??= AddDisposable(new PreferencesConfigViewModel()); break;
 			}
@@ -84,12 +86,14 @@ namespace Mesen.ViewModels
 			ConfigManager.Config.Preferences = Preferences?.OriginalConfig ?? ConfigManager.Config.Preferences;
 			ConfigManager.Config.Emulation = Emulation?.OriginalConfig ?? ConfigManager.Config.Emulation;
 			ConfigManager.Config.Nes = Nes?.OriginalConfig ?? ConfigManager.Config.Nes;
+#if !NES_ONLY
 			ConfigManager.Config.Snes = Snes?.OriginalConfig ?? ConfigManager.Config.Snes;
 			ConfigManager.Config.Gameboy = Gameboy?.OriginalConfig ?? ConfigManager.Config.Gameboy;
 			ConfigManager.Config.Gba = Gba?.OriginalConfig ?? ConfigManager.Config.Gba;
 			ConfigManager.Config.PcEngine = PcEngine?.OriginalConfig ?? ConfigManager.Config.PcEngine;
 			ConfigManager.Config.Sms = Sms?.OriginalConfig ?? ConfigManager.Config.Sms;
 			ConfigManager.Config.Cv = OtherConsoles?.CvOriginalConfig ?? ConfigManager.Config.Cv;
+#endif
 			ConfigManager.Config.ApplyConfig();
 			ConfigManager.Config.Save();
 		}
@@ -102,14 +106,16 @@ namespace Mesen.ViewModels
 				Video?.OriginalConfig.IsIdentical(ConfigManager.Config.Video) == false ||
 				Preferences?.OriginalConfig.IsIdentical(ConfigManager.Config.Preferences) == false ||
 				Emulation?.OriginalConfig.IsIdentical(ConfigManager.Config.Emulation) == false ||
-				Nes?.OriginalConfig.IsIdentical(ConfigManager.Config.Nes) == false ||
-				Snes?.OriginalConfig.IsIdentical(ConfigManager.Config.Snes) == false ||
-				Gameboy?.OriginalConfig.IsIdentical(ConfigManager.Config.Gameboy) == false ||
-				Gba?.OriginalConfig.IsIdentical(ConfigManager.Config.Gba) == false ||
-				PcEngine?.OriginalConfig.IsIdentical(ConfigManager.Config.PcEngine) == false ||
-				Sms?.OriginalConfig.IsIdentical(ConfigManager.Config.Sms) == false ||
-				Ws?.OriginalConfig.IsIdentical(ConfigManager.Config.Ws) == false ||
-				OtherConsoles?.CvOriginalConfig.IsIdentical(ConfigManager.Config.Cv) == false
+				Nes?.OriginalConfig.IsIdentical(ConfigManager.Config.Nes) == false
+#if !NES_ONLY
+				|| Snes?.OriginalConfig.IsIdentical(ConfigManager.Config.Snes) == false
+				|| Gameboy?.OriginalConfig.IsIdentical(ConfigManager.Config.Gameboy) == false
+				|| Gba?.OriginalConfig.IsIdentical(ConfigManager.Config.Gba) == false
+				|| PcEngine?.OriginalConfig.IsIdentical(ConfigManager.Config.PcEngine) == false
+				|| Sms?.OriginalConfig.IsIdentical(ConfigManager.Config.Sms) == false
+				|| Ws?.OriginalConfig.IsIdentical(ConfigManager.Config.Ws) == false
+				|| OtherConsoles?.CvOriginalConfig.IsIdentical(ConfigManager.Config.Cv) == false
+#endif
 			);
 		}
 	}

@@ -129,10 +129,11 @@ namespace Mesen.Debugger.ViewModels
 			List<RegisterViewerTab> tabs = new List<RegisterViewerTab>();
 			BaseState lastState = _state;
 
-			if(lastState is SnesState snesState) {
-				tabs = SnesRegisterViewer.GetTabs(ref snesState, _romInfo.CpuTypes, _snesReg4210, _snesReg4211, _snesReg4212);
-			} else if(lastState is NesState nesState) {
+			if(lastState is NesState nesState) {
 				tabs = NesRegisterViewer.GetTabs(ref nesState);
+#if !NES_ONLY
+			} else if(lastState is SnesState snesState) {
+				tabs = SnesRegisterViewer.GetTabs(ref snesState, _romInfo.CpuTypes, _snesReg4210, _snesReg4211, _snesReg4212);
 			} else if(lastState is GbState gbState) {
 				tabs = GbRegisterViewer.GetTabs(ref gbState);
 			} else if(lastState is PceState pceState) {
@@ -143,6 +144,7 @@ namespace Mesen.Debugger.ViewModels
 				tabs = GbaRegisterViewer.GetTabs(ref gbaState);
 			} else if(lastState is WsState wsState) {
 				tabs = WsRegisterViewer.GetTabs(ref wsState);
+#endif
 			}
 
 			foreach(RegisterViewerTab tab in tabs) {

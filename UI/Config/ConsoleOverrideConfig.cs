@@ -30,9 +30,10 @@ public partial class ConsoleOverrideConfig : BaseConfig<GameConfig>
 		}
 
 		switch(romInfo.ConsoleType) {
+			case ConsoleType.Nes: return ConfigManager.Config.Nes.ConfigOverrides;
+#if !NES_ONLY
 			case ConsoleType.Snes: return ConfigManager.Config.Snes.ConfigOverrides;
 			case ConsoleType.Gameboy: return ConfigManager.Config.Gameboy.ConfigOverrides;
-			case ConsoleType.Nes: return ConfigManager.Config.Nes.ConfigOverrides;
 			case ConsoleType.PcEngine: return ConfigManager.Config.PcEngine.ConfigOverrides;
 			case ConsoleType.Sms:
 				if(romInfo.Format == RomFormat.ColecoVision) {
@@ -44,6 +45,7 @@ public partial class ConsoleOverrideConfig : BaseConfig<GameConfig>
 				}
 			case ConsoleType.Gba: return ConfigManager.Config.Gba.ConfigOverrides;
 			case ConsoleType.Ws: return ConfigManager.Config.Ws.ConfigOverrides;
+#endif
 		}
 
 		return null;

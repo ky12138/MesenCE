@@ -68,6 +68,7 @@ namespace Mesen.Config
 				UsePredictiveBreakpoints = Debugger.UsePredictiveBreakpoints,
 				SingleBreakpointPerInstruction = Debugger.SingleBreakpointPerInstruction,
 
+#if !NES_ONLY
 				SnesBreakOnBrk = Debugger.Snes.BreakOnBrk,
 				SnesBreakOnCop = Debugger.Snes.BreakOnCop,
 				SnesBreakOnWdm = Debugger.Snes.BreakOnWdm,
@@ -86,6 +87,7 @@ namespace Mesen.Config
 				GbBreakOnInvalidOpCode = Debugger.Gameboy.GbBreakOnInvalidOpCode,
 				GbBreakOnNopLoad = Debugger.Gameboy.GbBreakOnNopLoad,
 				GbBreakOnOamCorruption = Debugger.Gameboy.GbBreakOnOamCorruption,
+#endif
 
 				NesBreakOnBrk = Debugger.Nes.BreakOnBrk,
 				NesBreakOnUnofficialOpCode = Debugger.Nes.BreakOnUnofficialOpCode,
@@ -99,6 +101,7 @@ namespace Mesen.Config
 				NesBreakOnInvalidOamWrite = Debugger.Nes.BreakOnInvalidOamWrite,
 				NesBreakOnDmaInputRead = Debugger.Nes.BreakOnDmaInputRead,
 
+#if !NES_ONLY
 				PceBreakOnBrk = Debugger.Pce.BreakOnBrk,
 				PceBreakOnUnofficialOpCode = Debugger.Pce.BreakOnUnofficialOpCode,
 				PceBreakOnInvalidVramAddress = Debugger.Pce.BreakOnInvalidVramAddress,
@@ -111,6 +114,7 @@ namespace Mesen.Config
 				GbaDisMode = Debugger.Gba.DisassemblyMode,
 
 				WsBreakOnUndefinedOpCode = Debugger.Ws.BreakOnUndefinedOpCode,
+#endif
 
 				ScriptAllowIoOsAccess = ScriptWindow.AllowIoOsAccess,
 				ScriptAllowNetworkAccess = ScriptWindow.AllowNetworkAccess,
@@ -220,7 +224,9 @@ namespace Mesen.Config
 		[MarshalAs(UnmanagedType.I1)] public bool GbaBreakOnNopLoad;
 		[MarshalAs(UnmanagedType.I1)] public bool GbaBreakOnInvalidOpCode;
 		[MarshalAs(UnmanagedType.I1)] public bool GbaBreakOnUnalignedMemAccess;
+#if !NES_ONLY
 		public GbaDisassemblyMode GbaDisMode;
+#endif
 
 		[MarshalAs(UnmanagedType.I1)] public bool WsBreakOnUndefinedOpCode;
 

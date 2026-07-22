@@ -279,6 +279,14 @@ namespace Mesen.Utilities
 		private (Func<bool>? get, Action<bool>? set) GetFlagSetterGetter(VideoLayer layer)
 		{
 			switch(MainWindowViewModel.Instance.RomInfo.ConsoleType) {
+				case ConsoleType.Nes:
+					switch(layer) {
+						case VideoLayer.Bg1: return (() => ConfigManager.Config.Nes.DisableBackground, (val) => ConfigManager.Config.Nes.DisableBackground = val);
+						case VideoLayer.Sprite1: return (() => ConfigManager.Config.Nes.DisableSprites, (val) => ConfigManager.Config.Nes.DisableSprites = val);
+					}
+					break;
+
+#if !NES_ONLY
 				case ConsoleType.Snes:
 					switch(layer) {
 						case VideoLayer.Bg1: return (() => ConfigManager.Config.Snes.HideBgLayer1, (val) => ConfigManager.Config.Snes.HideBgLayer1 = val);
@@ -286,13 +294,6 @@ namespace Mesen.Utilities
 						case VideoLayer.Bg3: return (() => ConfigManager.Config.Snes.HideBgLayer3, (val) => ConfigManager.Config.Snes.HideBgLayer3 = val);
 						case VideoLayer.Bg4: return (() => ConfigManager.Config.Snes.HideBgLayer4, (val) => ConfigManager.Config.Snes.HideBgLayer4 = val);
 						case VideoLayer.Sprite1: return (() => ConfigManager.Config.Snes.HideSprites, (val) => ConfigManager.Config.Snes.HideSprites = val);
-					}
-					break;
-
-				case ConsoleType.Nes:
-					switch(layer) {
-						case VideoLayer.Bg1: return (() => ConfigManager.Config.Nes.DisableBackground, (val) => ConfigManager.Config.Nes.DisableBackground = val);
-						case VideoLayer.Sprite1: return (() => ConfigManager.Config.Nes.DisableSprites, (val) => ConfigManager.Config.Nes.DisableSprites = val);
 					}
 					break;
 
@@ -343,6 +344,7 @@ namespace Mesen.Utilities
 						case VideoLayer.Sprite1: return (() => ConfigManager.Config.Ws.DisableSprites, (val) => ConfigManager.Config.Ws.DisableSprites = val);
 					}
 					break;
+#endif
 			}
 
 			return (null, null);
@@ -364,13 +366,14 @@ namespace Mesen.Utilities
 
 		private void EnableAllLayers()
 		{
+			ConfigManager.Config.Nes.DisableBackground = false;
+			ConfigManager.Config.Nes.DisableSprites = false;
+#if !NES_ONLY
 			ConfigManager.Config.Snes.HideBgLayer1 = false;
 			ConfigManager.Config.Snes.HideBgLayer2 = false;
 			ConfigManager.Config.Snes.HideBgLayer3 = false;
 			ConfigManager.Config.Snes.HideBgLayer4 = false;
 			ConfigManager.Config.Snes.HideSprites = false;
-			ConfigManager.Config.Nes.DisableBackground = false;
-			ConfigManager.Config.Nes.DisableSprites = false;
 			ConfigManager.Config.Gameboy.DisableBackground = false;
 			ConfigManager.Config.Gameboy.DisableSprites = false;
 			ConfigManager.Config.Gba.HideBgLayer1 = false;
@@ -387,20 +390,23 @@ namespace Mesen.Utilities
 			ConfigManager.Config.Ws.HideBgLayer1 = false;
 			ConfigManager.Config.Ws.HideBgLayer2 = false;
 			ConfigManager.Config.Ws.DisableSprites = false;
+#endif
 			UpdateAllCoreConfig();
 			DisplayMessageHelper.DisplayMessage("Debug", ResourceHelper.GetMessage("AllLayersEnabled"));
 		}
 
 		private void UpdateAllCoreConfig()
 		{
-			ConfigManager.Config.Snes.ApplyConfig();
 			ConfigManager.Config.Nes.ApplyConfig();
+#if !NES_ONLY
+			ConfigManager.Config.Snes.ApplyConfig();
 			ConfigManager.Config.Gameboy.ApplyConfig();
 			ConfigManager.Config.Gba.ApplyConfig();
 			ConfigManager.Config.PcEngine.ApplyConfig();
 			ConfigManager.Config.Sms.ApplyConfig();
 			ConfigManager.Config.Cv.ApplyConfig();
 			ConfigManager.Config.Ws.ApplyConfig();
+#endif
 		}
 
 		private void SetEmulationSpeed(uint emulationSpeed)

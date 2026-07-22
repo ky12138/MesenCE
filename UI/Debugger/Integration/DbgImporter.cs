@@ -917,9 +917,11 @@ namespace Mesen.Debugger.Integration
 		public static DbgImporter? Import(RomFormat romFormat, string path, bool importComments, bool showResult)
 		{
 			DbgImporter? importer = romFormat switch {
+#if !NES_ONLY
 				RomFormat.Sfc => new SnesDbgImporter(romFormat),
-				RomFormat.iNes or RomFormat.Nsf or RomFormat.VsSystem or RomFormat.VsDualSystem or RomFormat.Fds => new NesDbgImporter(romFormat),
 				RomFormat.Pce or RomFormat.PceHes => new PceDbgImporter(romFormat),
+#endif
+				RomFormat.iNes or RomFormat.Nsf or RomFormat.VsSystem or RomFormat.VsDualSystem or RomFormat.Fds => new NesDbgImporter(romFormat),
 				_ => null
 			};
 

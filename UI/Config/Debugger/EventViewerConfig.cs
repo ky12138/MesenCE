@@ -20,12 +20,16 @@ namespace Mesen.Config
 		[ObservableProperty] public partial bool ShowListView { get; set; } = true;
 		[ObservableProperty] public partial double ListViewHeight { get; set; } = 200;
 
+#if !NES_ONLY
 		[ObservableProperty] public partial SnesEventViewerConfig SnesConfig { get; set; } = new SnesEventViewerConfig();
+#endif
 		[ObservableProperty] public partial NesEventViewerConfig NesConfig { get; set; } = new NesEventViewerConfig();
+#if !NES_ONLY
 		[ObservableProperty] public partial GbEventViewerConfig GbConfig { get; set; } = new GbEventViewerConfig();
 		[ObservableProperty] public partial GbaEventViewerConfig GbaConfig { get; set; } = new GbaEventViewerConfig();
 		[ObservableProperty] public partial PceEventViewerConfig PceConfig { get; set; } = new PceEventViewerConfig();
 		[ObservableProperty] public partial SmsEventViewerConfig SmsConfig { get; set; } = new SmsEventViewerConfig();
 		[ObservableProperty] public partial WsEventViewerConfig WsConfig { get; set; } = new WsEventViewerConfig();
+#endif
 	}
 }

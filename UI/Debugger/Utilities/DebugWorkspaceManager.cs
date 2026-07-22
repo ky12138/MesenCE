@@ -181,13 +181,16 @@ namespace Mesen.Debugger.Utilities
 							BassLabelFile.Import(path, showResult, CpuType.Gameboy);
 						}
 					} else {
+#if !NES_ONLY
 						if(_romInfo.ConsoleType == ConsoleType.PcEngine && PceasSymbolImporter.IsValidFile(symContent)) {
 							PceasSymbolImporter importer = new PceasSymbolImporter();
 							importer.Import(path, showResult);
 							SymbolProvider = importer;
 						} else if(_romInfo.ConsoleType == ConsoleType.PcEngine && LegacyPceasSymbolFile.IsValidFile(symContent)) {
 							LegacyPceasSymbolFile.Import(path, showResult);
-						} else {
+						} else
+#endif
+						{
 							BassLabelFile.Import(path, showResult, _romInfo.ConsoleType.GetMainCpuType());
 						}
 					}

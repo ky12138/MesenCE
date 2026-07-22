@@ -196,6 +196,7 @@ public class CommandLineHelper
 		result["Video"] = GetSwichesForObject("video.", typeof(VideoConfig));
 		result["Preferences"] = GetSwichesForObject("preferences.", typeof(PreferencesConfig));
 		result["NES"] = GetSwichesForObject("nes.", typeof(NesConfig));
+#if !NES_ONLY
 		result["SNES"] = GetSwichesForObject("snes.", typeof(SnesConfig));
 		result["Game Boy"] = GetSwichesForObject("gameBoy.", typeof(GameboyConfig));
 		result["GBA"] = GetSwichesForObject("gba.", typeof(GbaConfig));
@@ -203,6 +204,7 @@ public class CommandLineHelper
 		result["SMS"] = GetSwichesForObject("sms.", typeof(SmsConfig));
 		result["WS"] = GetSwichesForObject("ws.", typeof(WsConfig));
 		result["CV"] = GetSwichesForObject("cv.", typeof(CvConfig));
+#endif
 
 		return result;
 	}

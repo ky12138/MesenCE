@@ -87,6 +87,7 @@ namespace Mesen.Controls
 						}
 						break;
 
+#if !NES_ONLY
 					case ConfigWindowTab.Snes:
 						if(cfg.Snes != null) {
 							cfg.Snes.SelectedTab = ConfigType switch {
@@ -152,6 +153,7 @@ namespace Mesen.Controls
 							};
 						}
 						break;
+#endif
 				}
 			}
 		}

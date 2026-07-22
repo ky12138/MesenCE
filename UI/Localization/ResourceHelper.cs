@@ -38,7 +38,12 @@ namespace Mesen.Localization
 				}
 
 #pragma warning disable IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
-				Dictionary<string, Type> enumTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsEnum).ToDictionary(t => t.Name);
+				Dictionary<string, Type> enumTypes;
+				try {
+					enumTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsEnum).ToDictionary(t => t.Name);
+				} catch(ReflectionTypeLoadException ex) {
+					enumTypes = ex.Types.Where(t => t != null && t.IsEnum).ToDictionary(t => t!.Name)!;
+				}
 #pragma warning restore IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
 
 				foreach(XmlNode node in _resources.SelectNodes("/Resources/Enums/Enum")!) {
@@ -50,7 +55,8 @@ namespace Mesen.Localization
 							}
 						}
 					} else {
-						throw new Exception("Unknown enum type: " + enumName);
+						// Skip enums that are not part of this build (e.g. NES-only builds)
+						continue;
 					}
 				}
 

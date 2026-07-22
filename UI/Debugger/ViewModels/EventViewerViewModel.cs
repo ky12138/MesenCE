@@ -231,13 +231,15 @@ namespace Mesen.Debugger.ViewModels
 		private void InitForCpuType()
 		{
 			ConsoleConfig = CpuType switch {
-				CpuType.Snes => Config.SnesConfig,
 				CpuType.Nes => Config.NesConfig,
+#if !NES_ONLY
+				CpuType.Snes => Config.SnesConfig,
 				CpuType.Gameboy => Config.GbConfig,
 				CpuType.Pce => Config.PceConfig,
 				CpuType.Sms => Config.SmsConfig,
 				CpuType.Gba => Config.GbaConfig,
 				CpuType.Ws => Config.WsConfig,
+#endif
 				_ => throw new Exception("Invalid cpu type")
 			};
 		}
@@ -382,10 +384,11 @@ namespace Mesen.Debugger.ViewModels
 
 		public void UpdateConfig()
 		{
-			if(ConsoleConfig is SnesEventViewerConfig snesCfg) {
-				DebugApi.SetEventViewerConfig(CpuType, snesCfg.ToInterop());
-			} else if(ConsoleConfig is NesEventViewerConfig nesCfg) {
+			if(ConsoleConfig is NesEventViewerConfig nesCfg) {
 				DebugApi.SetEventViewerConfig(CpuType, nesCfg.ToInterop());
+#if !NES_ONLY
+			} else if(ConsoleConfig is SnesEventViewerConfig snesCfg) {
+				DebugApi.SetEventViewerConfig(CpuType, snesCfg.ToInterop());
 			} else if(ConsoleConfig is GbEventViewerConfig gbCfg) {
 				DebugApi.SetEventViewerConfig(CpuType, gbCfg.ToInterop());
 			} else if(ConsoleConfig is GbaEventViewerConfig gbaCfg) {
@@ -396,6 +399,7 @@ namespace Mesen.Debugger.ViewModels
 				DebugApi.SetEventViewerConfig(CpuType, smsCfg.ToInterop());
 			} else if(ConsoleConfig is WsEventViewerConfig wsCfg) {
 				DebugApi.SetEventViewerConfig(CpuType, wsCfg.ToInterop());
+#endif
 			}
 		}
 

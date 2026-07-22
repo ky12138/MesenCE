@@ -478,5 +478,7 @@ public struct WsState : BaseState
 	public WsCartState Cart;
 	public WsEepromState CartEeprom;
 	public WsRtcState CartRtc;
+#if !NES_ONLY
 	public WsModel Model;
+#endif
 }

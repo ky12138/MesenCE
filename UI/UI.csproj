@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
@@ -30,6 +30,8 @@
 		<RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
 
 		<LessUi>true</LessUi>
+		<NesOnly>true</NesOnly>
+		
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<ApplicationIcon>Assets\Icon.ico</ApplicationIcon>
@@ -787,5 +789,163 @@
 		<Compile Remove="ViewModels/MovieRecordConfigViewModel.cs" />
 		<AvaloniaXaml Remove="Windows/VideoRecordWindow.axaml" />
 		<AvaloniaXaml Remove="Windows/MovieRecordWindow.axaml" />
+	</ItemGroup>
+
+	<!-- ===== Stage 2: NES-only platform exclusion (coarse) ===== -->
+	<!-- Build with -p:NesOnly=true to exclude all non-NES platform code. -->
+	<!-- Per-platform splitting is deferred to a later stage. -->
+	<PropertyGroup>
+		<NesOnly Condition="'$(NesOnly)'==''">false</NesOnly>
+		<DefineConstants Condition="'$(NesOnly)'=='true' And '$(DefineConstants)'==''">NES_ONLY</DefineConstants>
+		<DefineConstants Condition="'$(NesOnly)'=='true' And '$(DefineConstants)'!=''">$(DefineConstants);NES_ONLY</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup Condition="'$(NesOnly)'=='true'">
+		<!-- Debugger status views (non-NES) -->
+		<Compile Remove="Debugger/StatusViews/SnesStatusViewModel.cs" />
+		<Compile Remove="Debugger/StatusViews/GbStatusViewModel.cs" />
+		<Compile Remove="Debugger/StatusViews/GbaStatusViewModel.cs" />
+		<Compile Remove="Debugger/StatusViews/PceStatusViewModel.cs" />
+		<Compile Remove="Debugger/StatusViews/SmsStatusViewModel.cs" />
+		<Compile Remove="Debugger/StatusViews/WsStatusViewModel.cs" />
+		<Compile Remove="Debugger/StatusViews/SpcStatusViewModel.cs" />
+		<Compile Remove="Debugger/StatusViews/NecDspStatusViewModel.cs" />
+		<Compile Remove="Debugger/StatusViews/GsuStatusViewModel.cs" />
+		<Compile Remove="Debugger/StatusViews/Cx4StatusViewModel.cs" />
+		<Compile Remove="Debugger/StatusViews/St018StatusViewModel.cs" />
+		<AvaloniaXaml Remove="Debugger/StatusViews/SnesStatusView.axaml" />
+		<AvaloniaXaml Remove="Debugger/StatusViews/GbStatusView.axaml" />
+		<AvaloniaXaml Remove="Debugger/StatusViews/GbaStatusView.axaml" />
+		<AvaloniaXaml Remove="Debugger/StatusViews/PceStatusView.axaml" />
+		<AvaloniaXaml Remove="Debugger/StatusViews/SmsStatusView.axaml" />
+		<AvaloniaXaml Remove="Debugger/StatusViews/WsStatusView.axaml" />
+		<AvaloniaXaml Remove="Debugger/StatusViews/SpcStatusView.axaml" />
+		<AvaloniaXaml Remove="Debugger/StatusViews/NecDspStatusView.axaml" />
+		<AvaloniaXaml Remove="Debugger/StatusViews/GsuStatusView.axaml" />
+		<AvaloniaXaml Remove="Debugger/StatusViews/Cx4StatusView.axaml" />
+		<AvaloniaXaml Remove="Debugger/StatusViews/St018StatusView.axaml" />
+		<Compile Remove="Debugger/StatusViews/SnesStatusView.axaml.cs" />
+		<Compile Remove="Debugger/StatusViews/GbStatusView.axaml.cs" />
+		<Compile Remove="Debugger/StatusViews/GbaStatusView.axaml.cs" />
+		<Compile Remove="Debugger/StatusViews/PceStatusView.axaml.cs" />
+		<Compile Remove="Debugger/StatusViews/SmsStatusView.axaml.cs" />
+		<Compile Remove="Debugger/StatusViews/WsStatusView.axaml.cs" />
+		<Compile Remove="Debugger/StatusViews/SpcStatusView.axaml.cs" />
+		<Compile Remove="Debugger/StatusViews/NecDspStatusView.axaml.cs" />
+		<Compile Remove="Debugger/StatusViews/GsuStatusView.axaml.cs" />
+		<Compile Remove="Debugger/StatusViews/Cx4StatusView.axaml.cs" />
+		<Compile Remove="Debugger/StatusViews/St018StatusView.axaml.cs" />
+
+		<!-- Register viewers (non-NES) -->
+		<Compile Remove="Debugger/RegisterViewer/SnesRegisterViewer.cs" />
+		<Compile Remove="Debugger/RegisterViewer/GbRegisterViewer.cs" />
+		<Compile Remove="Debugger/RegisterViewer/PceRegisterViewer.cs" />
+		<Compile Remove="Debugger/RegisterViewer/SmsRegisterViewer.cs" />
+		<Compile Remove="Debugger/RegisterViewer/GbaRegisterViewer.cs" />
+		<Compile Remove="Debugger/RegisterViewer/WsRegisterViewer.cs" />
+
+		<!-- Platform config classes -->
+		<Compile Remove="Config/SnesConfig.cs" />
+		<Compile Remove="Config/SnesControllerConfig.cs" />
+		<Compile Remove="Config/GameboyConfig.cs" />
+		<Compile Remove="Config/GbaConfig.cs" />
+		<Compile Remove="Config/PcEngineConfig.cs" />
+		<Compile Remove="Config/SmsConfig.cs" />
+		<Compile Remove="Config/SmsControllerConfig.cs" />
+		<Compile Remove="Config/CvConfig.cs" />
+		<Compile Remove="Config/CvControllerConfig.cs" />
+		<Compile Remove="Config/WsConfig.cs" />
+
+		<!-- Platform debugger/eventviewer config classes -->
+		<Compile Remove="Config/Debugger/SnesDebuggerConfig.cs" />
+		<Compile Remove="Config/Debugger/SnesEventViewerConfig.cs" />
+		<Compile Remove="Config/Debugger/GbDebuggerConfig.cs" />
+		<Compile Remove="Config/Debugger/GbEventViewerConfig.cs" />
+		<Compile Remove="Config/Debugger/GbaDebuggerConfig.cs" />
+		<Compile Remove="Config/Debugger/GbaEventViewerConfig.cs" />
+		<Compile Remove="Config/Debugger/PceDebuggerConfig.cs" />
+		<Compile Remove="Config/Debugger/PceEventViewerConfig.cs" />
+		<Compile Remove="Config/Debugger/SmsDebuggerConfig.cs" />
+		<Compile Remove="Config/Debugger/SmsEventViewerConfig.cs" />
+		<Compile Remove="Config/Debugger/WsDebuggerConfig.cs" />
+		<Compile Remove="Config/Debugger/WsEventViewerConfig.cs" />
+
+		<!-- Platform config view models -->
+		<Compile Remove="ViewModels/SnesConfigViewModel.cs" />
+		<Compile Remove="ViewModels/GameboyConfigViewModel.cs" />
+		<Compile Remove="ViewModels/GbaConfigViewModel.cs" />
+		<Compile Remove="ViewModels/PceConfigViewModel.cs" />
+		<Compile Remove="ViewModels/SmsConfigViewModel.cs" />
+		<Compile Remove="ViewModels/WsConfigViewModel.cs" />
+		<Compile Remove="ViewModels/OtherConsolesConfigViewModel.cs" />
+
+		<!-- Platform input config view models -->
+		<Compile Remove="ViewModels/SnesInputConfigViewModel.cs" />
+		<Compile Remove="ViewModels/PceInputConfigViewModel.cs" />
+		<Compile Remove="ViewModels/SmsInputConfigViewModel.cs" />
+		<Compile Remove="ViewModels/CvInputConfigViewModel.cs" />
+
+		<!-- Platform config views (axaml + cs) -->
+		<AvaloniaXaml Remove="Views/SnesConfigView.axaml" />
+		<AvaloniaXaml Remove="Views/SnesInputConfigView.axaml" />
+		<AvaloniaXaml Remove="Views/GameboyConfigView.axaml" />
+		<AvaloniaXaml Remove="Views/GbaConfigView.axaml" />
+		<AvaloniaXaml Remove="Views/PceConfigView.axaml" />
+		<AvaloniaXaml Remove="Views/PceInputConfigView.axaml" />
+		<AvaloniaXaml Remove="Views/SmsConfigView.axaml" />
+		<AvaloniaXaml Remove="Views/SmsInputConfigView.axaml" />
+		<AvaloniaXaml Remove="Views/WsConfigView.axaml" />
+		<AvaloniaXaml Remove="Views/CvConfigView.axaml" />
+		<AvaloniaXaml Remove="Views/OtherConsolesConfigView.axaml" />
+		<Compile Remove="Views/SnesConfigView.axaml.cs" />
+		<Compile Remove="Views/SnesInputConfigView.axaml.cs" />
+		<Compile Remove="Views/GameboyConfigView.axaml.cs" />
+		<Compile Remove="Views/GbaConfigView.axaml.cs" />
+		<Compile Remove="Views/PceConfigView.axaml.cs" />
+		<Compile Remove="Views/PceInputConfigView.axaml.cs" />
+		<Compile Remove="Views/SmsConfigView.axaml.cs" />
+		<Compile Remove="Views/SmsInputConfigView.axaml.cs" />
+		<Compile Remove="Views/WsConfigView.axaml.cs" />
+		<Compile Remove="Views/CvConfigView.axaml.cs" />
+		<Compile Remove="Views/OtherConsolesConfigView.axaml.cs" />
+
+		<!-- Platform event viewer config views (axaml + cs) -->
+		<AvaloniaXaml Remove="Debugger/Views/SnesEventViewerConfigView.axaml" />
+		<AvaloniaXaml Remove="Debugger/Views/GbEventViewerConfigView.axaml" />
+		<AvaloniaXaml Remove="Debugger/Views/GbaEventViewerConfigView.axaml" />
+		<AvaloniaXaml Remove="Debugger/Views/PceEventViewerConfigView.axaml" />
+		<AvaloniaXaml Remove="Debugger/Views/SmsEventViewerConfigView.axaml" />
+		<AvaloniaXaml Remove="Debugger/Views/WsEventViewerConfigView.axaml" />
+		<Compile Remove="Debugger/Views/SnesEventViewerConfigView.axaml.cs" />
+		<Compile Remove="Debugger/Views/GbEventViewerConfigView.axaml.cs" />
+		<Compile Remove="Debugger/Views/GbaEventViewerConfigView.axaml.cs" />
+		<Compile Remove="Debugger/Views/PceEventViewerConfigView.axaml.cs" />
+		<Compile Remove="Debugger/Views/SmsEventViewerConfigView.axaml.cs" />
+		<Compile Remove="Debugger/Views/WsEventViewerConfigView.axaml.cs" />
+
+		<!-- Platform controller views (non-NES) -->
+		<AvaloniaXaml Remove="Views/SnesControllerView.axaml" />
+		<AvaloniaXaml Remove="Views/SnesNttDataKeypadControllerView.axaml" />
+		<AvaloniaXaml Remove="Views/GbaControllerView.axaml" />
+		<AvaloniaXaml Remove="Views/PceControllerView.axaml" />
+		<AvaloniaXaml Remove="Views/PceAvenuePad6View.axaml" />
+		<AvaloniaXaml Remove="Views/SmsControllerView.axaml" />
+		<AvaloniaXaml Remove="Views/WsControllerView.axaml" />
+		<AvaloniaXaml Remove="Views/WsControllerVerticalView.axaml" />
+		<AvaloniaXaml Remove="Views/WsPcv2ControllerView.axaml" />
+		<Compile Remove="Views/SnesControllerView.axaml.cs" />
+		<Compile Remove="Views/SnesNttDataKeypadControllerView.cs" />
+		<Compile Remove="Views/GbaControllerView.axaml.cs" />
+		<Compile Remove="Views/PceControllerView.axaml.cs" />
+		<Compile Remove="Views/PceAvenuePad6View.axaml.cs" />
+		<Compile Remove="Views/SmsControllerView.axaml.cs" />
+		<Compile Remove="Views/WsControllerView.axaml.cs" />
+		<Compile Remove="Views/WsControllerVerticalView.axaml.cs" />
+		<Compile Remove="Views/WsPcv2ControllerView.axaml.cs" />
+
+		<!-- Platform symbol importers (non-NES) -->
+		<Compile Remove="Debugger/Integration/SnesDbgImporter.cs" />
+		<Compile Remove="Debugger/Integration/PceDbgImporter.cs" />
+		<Compile Remove="Debugger/Integration/PceasSymbolImporter.cs" />
+		<Compile Remove="Debugger/Integration/LegacyPceasSymbolFile.cs" />
 	</ItemGroup>
 </Project>

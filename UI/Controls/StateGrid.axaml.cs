@@ -254,9 +254,12 @@ namespace Mesen.Controls
 			}
 
 			List<KeyMapping> mappings = new List<ControllerConfig>() {
-				ConfigManager.Config.Nes.Port1, ConfigManager.Config.Snes.Port1, ConfigManager.Config.PcEngine.Port1,
+				ConfigManager.Config.Nes.Port1,
+#if !NES_ONLY
+				ConfigManager.Config.Snes.Port1, ConfigManager.Config.PcEngine.Port1,
 				ConfigManager.Config.Gameboy.Controller, ConfigManager.Config.Gba.Controller, ConfigManager.Config.Sms.Port1,
 				ConfigManager.Config.Ws.ControllerHorizontal
+#endif
 			}.SelectMany((a) => new List<KeyMapping>() { a.Mapping1, a.Mapping2, a.Mapping3, a.Mapping4 }).ToList();
 
 			List<ushort> keyCodes = InputApi.GetPressedKeys();

@@ -30,6 +30,7 @@ namespace Mesen.Debugger.Windows
 					Palette = ConfigManager.Config.Nes.UserPalette;
 					break;
 
+#if !NES_ONLY
 				case CpuType.Pce:
 					Palette = ConfigManager.Config.PcEngine.Palette;
 					break;
@@ -45,6 +46,8 @@ namespace Mesen.Debugger.Windows
 					ColumnCount = 4;
 					SelectedPalette = selectedPalette % 4;
 					break;
+#endif
+
 
 				case CpuType.Sms:
 					Palette = GenerateSmsPalette();

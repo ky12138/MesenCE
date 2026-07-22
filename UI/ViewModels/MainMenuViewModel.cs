@@ -413,13 +413,16 @@ namespace Mesen.ViewModels
 					),
 					SubActions = new List<object>() {
 						GetRegionMenuItem(ConsoleRegion.Auto),
+#if !NES_ONLY
 						GetPcEngineModelMenuItem(PceConsoleType.Auto),
 						GetWsModelMenuItem(WsModel.Auto),
+#endif
 						new ContextMenuSeparator(),
 						GetRegionMenuItem(ConsoleRegion.Ntsc),
 						GetRegionMenuItem(ConsoleRegion.NtscJapan),
 						GetRegionMenuItem(ConsoleRegion.Pal),
 						GetRegionMenuItem(ConsoleRegion.Dendy),
+#if !NES_ONLY
 						GetPcEngineModelMenuItem(PceConsoleType.PcEngine),
 						GetPcEngineModelMenuItem(PceConsoleType.SuperGrafx),
 						GetPcEngineModelMenuItem(PceConsoleType.TurboGrafx),
@@ -427,9 +430,11 @@ namespace Mesen.ViewModels
 						GetWsModelMenuItem(WsModel.Color),
 						GetWsModelMenuItem(WsModel.SwanCrystal),
 						GetWsModelMenuItem(WsModel.PocketChallenge),
+#endif
 					}
 				},
 
+#if !NES_ONLY
 				new MainMenuAction() {
 					ActionType = ActionType.Region,
 					DynamicText = () => ResourceHelper.GetEnumText(ActionType.Region) + (MainWindow.RomInfo.ConsoleType != ConsoleType.Gameboy ? " (GB)" : ""),
@@ -445,6 +450,7 @@ namespace Mesen.ViewModels
 						GetGameboyModelMenuItem(GameboyModel.SuperGameboy),
 					}
 				},
+#endif
 
 				new ContextMenuSeparator(),
 
@@ -556,8 +562,9 @@ namespace Mesen.ViewModels
 					};
 				},
 				IsSelected = () => MainWindow.RomInfo.ConsoleType switch {
-					ConsoleType.Snes => ConfigManager.Config.Snes.Region == region,
 					ConsoleType.Nes => ConfigManager.Config.Nes.Region == region,
+#if !NES_ONLY
+					ConsoleType.Snes => ConfigManager.Config.Snes.Region == region,
 					ConsoleType.Sms => (
 						MainWindow.RomInfo.Format switch {
 							RomFormat.ColecoVision => ConfigManager.Config.Cv.Region,
@@ -565,18 +572,20 @@ namespace Mesen.ViewModels
 							_ => ConfigManager.Config.Sms.Region
 						} == region
 					),
+#endif
 					_ => region == ConsoleRegion.Auto
 				},
 				OnClick = () => {
 					switch(MainWindow.RomInfo.ConsoleType) {
-						case ConsoleType.Snes:
-							ConfigManager.Config.Snes.Region = region;
-							ConfigManager.Config.Snes.ApplyConfig();
-							break;
-
 						case ConsoleType.Nes:
 							ConfigManager.Config.Nes.Region = region;
 							ConfigManager.Config.Nes.ApplyConfig();
+							break;
+
+#if !NES_ONLY
+						case ConsoleType.Snes:
+							ConfigManager.Config.Snes.Region = region;
+							ConfigManager.Config.Snes.ApplyConfig();
 							break;
 
 						case ConsoleType.Sms:
@@ -588,6 +597,7 @@ namespace Mesen.ViewModels
 							ConfigManager.Config.Sms.ApplyConfig();
 							ConfigManager.Config.Cv.ApplyConfig();
 							break;
+#endif
 
 						default:
 							break;
@@ -596,6 +606,7 @@ namespace Mesen.ViewModels
 			};
 		}
 
+#if !NES_ONLY
 		private MainMenuAction GetPcEngineModelMenuItem(PceConsoleType model)
 		{
 			return new MainMenuAction() {
@@ -636,6 +647,7 @@ namespace Mesen.ViewModels
 				}
 			};
 		}
+#endif
 
 		private bool AllowFilterType(VideoFilterType filter)
 		{
