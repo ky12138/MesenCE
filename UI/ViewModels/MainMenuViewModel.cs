@@ -696,6 +696,8 @@ namespace Mesen.ViewModels
 			return item;
 		}
 
+#if ENABLE_RECORDER
+
 		private MainMenuAction GetMoviesMenu(MainWindow wnd)
 		{
 			return new MainMenuAction() {
@@ -730,6 +732,8 @@ namespace Mesen.ViewModels
 				}
 			};
 		}
+#endif
+
 
 		private void InitToolMenu(MainWindow wnd)
 		{
@@ -750,17 +754,31 @@ namespace Mesen.ViewModels
 					}
 				},
 
+				#if ENABLE_RECORDER
+
 				GetMoviesMenu(wnd),
+
+				#endif
+				#if ENABLE_NETPLAY
 				GetNetPlayMenu(wnd),
+				#endif
 
 				new ContextMenuSeparator(),
 
+				#if ENABLE_RECORDER
+
 				GetSoundRecorderMenu(wnd),
+
+				#endif
+				#if ENABLE_RECORDER
 				GetVideoRecorderMenu(wnd),
+				#endif
 
 				new ContextMenuSeparator() {
-					IsVisible = () =>  MainWindow.RomInfo.ConsoleType == ConsoleType.Nes && MainWindow.RomInfo.Format != RomFormat.Nsf
-				},
+				IsVisible = () =>  MainWindow.RomInfo.ConsoleType == ConsoleType.Nes && MainWindow.RomInfo.Format != RomFormat.Nsf
+			},
+			#if ENABLE_HDPACK
+
 
 				new MainMenuAction() {
 					ActionType = ActionType.HdPacks,
@@ -778,6 +796,7 @@ namespace Mesen.ViewModels
 						}
 					}
 				},
+			#endif
 
 				new ContextMenuSeparator(),
 
@@ -801,6 +820,8 @@ namespace Mesen.ViewModels
 				},
 			};
 		}
+
+#if ENABLE_RECORDER
 
 		private MainMenuAction GetVideoRecorderMenu(MainWindow wnd)
 		{
@@ -826,6 +847,11 @@ namespace Mesen.ViewModels
 				}
 			};
 		}
+#endif
+
+
+#if ENABLE_RECORDER
+
 
 		private MainMenuAction GetSoundRecorderMenu(MainWindow wnd)
 		{
@@ -852,6 +878,11 @@ namespace Mesen.ViewModels
 				}
 			};
 		}
+#endif
+
+
+#if ENABLE_NETPLAY
+
 
 		private MainMenuAction GetNetPlayMenu(MainWindow wnd)
 		{
@@ -908,6 +939,8 @@ namespace Mesen.ViewModels
 				}
 			};
 		}
+#endif
+
 
 		private void InitDebugMenu(Window wnd)
 		{
@@ -1182,6 +1215,8 @@ namespace Mesen.ViewModels
 			});
 		}
 
+#if ENABLE_HDPACK
+
 		private async void InstallHdPack(Window wnd)
 		{
 			string? filename = await FileDialogHelper.OpenFile(null, wnd, FileDialogHelper.ZipExt);
@@ -1286,6 +1321,11 @@ namespace Mesen.ViewModels
 				await MesenMsgBox.Show(wnd, "InstallHdPackInvalidZipFile", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
+#endif
+
+
+#if ENABLE_NETPLAY
+
 
 		public bool UpdateNetplayMenu()
 		{
@@ -1332,5 +1372,6 @@ namespace Mesen.ViewModels
 
 			return true;
 		}
+#endif
 	}
 }

@@ -87,10 +87,17 @@ namespace Mesen.Utilities
 				case EmulatorShortcut.EnableAllLayers: EnableAllLayers(); break;
 
 				case EmulatorShortcut.ResetLagCounter: InputApi.ResetLagCounter(); break;
+#if ENABLE_RECORDER
 
 				case EmulatorShortcut.ToggleRecordVideo: ToggleRecordVideo(); break;
+
+#endif
+#if ENABLE_RECORDER
 				case EmulatorShortcut.ToggleRecordAudio: ToggleRecordAudio(); break;
+#endif
+#if ENABLE_RECORDER
 				case EmulatorShortcut.ToggleRecordMovie: ToggleRecordMovie(); break;
+#endif
 
 				case EmulatorShortcut.TakeScreenshot: EmuApi.TakeScreenshot(); break;
 
@@ -163,6 +170,8 @@ namespace Mesen.Utilities
 			}
 		}
 
+#if ENABLE_RECORDER
+
 		private static void ToggleRecordVideo()
 		{
 			if(!EmuApi.IsRunning()) {
@@ -181,6 +190,11 @@ namespace Mesen.Utilities
 				});
 			}
 		}
+#endif
+
+
+#if ENABLE_RECORDER
+
 
 		private static void ToggleRecordAudio()
 		{
@@ -195,6 +209,11 @@ namespace Mesen.Utilities
 				RecordApi.WaveRecord(filename);
 			}
 		}
+#endif
+
+
+#if ENABLE_RECORDER
+
 
 		private static void ToggleRecordMovie()
 		{
@@ -216,6 +235,8 @@ namespace Mesen.Utilities
 				}
 			}
 		}
+#endif
+
 
 		private static string GetOutputFilename(string folder, string ext)
 		{

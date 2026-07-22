@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
@@ -28,7 +28,8 @@
 		<RunAnalyzerDuringBuild>true</RunAnalyzerDuringBuild>
     	<RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
 		<RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
-		
+
+		<LessUi>true</LessUi>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<ApplicationIcon>Assets\Icon.ico</ApplicationIcon>
@@ -40,7 +41,7 @@
 		<SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
 		<CheckEolTargetFramework>false</CheckEolTargetFramework>
 		<SelfContained>false</SelfContained>
-		<DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+		<DisableFastUpToDateCheck>false</DisableFastUpToDateCheck>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<WarningsNotAsErrors>IL2026;IL2070;IL2075;IL2104;IL3050;IL3053</WarningsNotAsErrors>
 		<SolutionDir>..</SolutionDir>
@@ -747,4 +748,44 @@
 		<RemoveDir Directories="$(OutDir)Dependencies" />
 		<Delete Files="$(ProjectDir)Dependencies.zip" />
 	</Target>
+
+	<!-- ===== Optional module build toggles (stage 1) ===== -->
+	<!-- Build with -p:LessUi=true to disable optional modules (NES-only build). -->
+	<!-- Override individually, e.g. -p:BuildNetplay=true -p:BuildHdPack=false -->
+	<PropertyGroup>
+		<BuildNetplay   Condition="'$(BuildNetplay)'=='' And '$(LessUi)'=='true'">false</BuildNetplay>
+		<BuildNetplay   Condition="'$(BuildNetplay)'==''">true</BuildNetplay>
+		<BuildHdPack    Condition="'$(BuildHdPack)'=='' And '$(LessUi)'=='true'">false</BuildHdPack>
+		<BuildHdPack    Condition="'$(BuildHdPack)'==''">true</BuildHdPack>
+		<BuildRecorder  Condition="'$(BuildRecorder)'=='' And '$(LessUi)'=='true'">false</BuildRecorder>
+		<BuildRecorder  Condition="'$(BuildRecorder)'==''">true</BuildRecorder>
+	</PropertyGroup>
+	<PropertyGroup>
+		<DefineConstants Condition="'$(LessUi)'=='true'">LESSUI</DefineConstants>
+		<DefineConstants Condition="'$(BuildNetplay)'=='true' And '$(DefineConstants)'==''">ENABLE_NETPLAY</DefineConstants>
+		<DefineConstants Condition="'$(BuildNetplay)'=='true' And '$(DefineConstants)'!=''">$(DefineConstants);ENABLE_NETPLAY</DefineConstants>
+		<DefineConstants Condition="'$(BuildHdPack)'=='true' And '$(DefineConstants)'==''">ENABLE_HDPACK</DefineConstants>
+		<DefineConstants Condition="'$(BuildHdPack)'=='true' And '$(DefineConstants)'!=''">$(DefineConstants);ENABLE_HDPACK</DefineConstants>
+		<DefineConstants Condition="'$(BuildRecorder)'=='true' And '$(DefineConstants)'==''">ENABLE_RECORDER</DefineConstants>
+		<DefineConstants Condition="'$(BuildRecorder)'=='true' And '$(DefineConstants)'!=''">$(DefineConstants);ENABLE_RECORDER</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup Condition="'$(BuildNetplay)'!='true'">
+		<Compile Remove="Windows/NetplayConnectWindow.axaml.cs" />
+		<Compile Remove="Windows/NetplayStartServerWindow.axaml.cs" />
+		<AvaloniaXaml Remove="Windows/NetplayConnectWindow.axaml" />
+		<AvaloniaXaml Remove="Windows/NetplayStartServerWindow.axaml" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(BuildHdPack)'!='true'">
+		<Compile Remove="Windows/HdPackBuilderWindow.axaml.cs" />
+		<Compile Remove="ViewModels/HdPackBuilderViewModel.cs" />
+		<AvaloniaXaml Remove="Windows/HdPackBuilderWindow.axaml" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(BuildRecorder)'!='true'">
+		<Compile Remove="Windows/VideoRecordWindow.axaml.cs" />
+		<Compile Remove="Windows/MovieRecordWindow.axaml.cs" />
+		<Compile Remove="ViewModels/VideoRecordConfigViewModel.cs" />
+		<Compile Remove="ViewModels/MovieRecordConfigViewModel.cs" />
+		<AvaloniaXaml Remove="Windows/VideoRecordWindow.axaml" />
+		<AvaloniaXaml Remove="Windows/MovieRecordWindow.axaml" />
+	</ItemGroup>
 </Project>

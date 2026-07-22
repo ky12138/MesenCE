@@ -1,4 +1,4 @@
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Mesen.Utilities;
@@ -41,6 +41,8 @@ namespace Mesen.Views
 		private void MnuTools_Opened(object sender, RoutedEventArgs e)
 		{
 			if(DataContext is MainMenuViewModel model) {
+#if ENABLE_NETPLAY
+
 				if(model.UpdateNetplayMenu() && e.Source is MenuItem item) {
 					//Force a refresh of the tools menu to ensure
 					//the "Select controller" submenu gets updated
@@ -48,6 +50,7 @@ namespace Mesen.Views
 					item.ItemsSource = null;
 					item.ItemsSource = items;
 				}
+#endif
 			}
 		}
 	}

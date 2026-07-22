@@ -1,4 +1,4 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
@@ -365,10 +365,12 @@ namespace Mesen.Windows
 							}, TimeSpan.FromMilliseconds(50));
 						});
 					}
+#if ENABLE_HDPACK
 
 					Dispatcher.UIThread.Post(() => {
 						ApplicationHelper.GetExistingWindow<HdPackBuilderWindow>()?.Close();
 					});
+#endif
 
 					LoadRomHelper.ResetReloadCounter();
 					break;
@@ -443,9 +445,11 @@ namespace Mesen.Windows
 				}
 
 				case ConsoleNotificationType.BeforeGameLoad:
+#if ENABLE_HDPACK
 					Dispatcher.UIThread.Post(() => {
 						ApplicationHelper.GetExistingWindow<HdPackBuilderWindow>()?.Close();
 					});
+#endif
 					break;
 
 				case ConsoleNotificationType.RefreshSoftwareRenderer:
