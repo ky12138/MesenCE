@@ -5,6 +5,7 @@ using Mesen.ViewModels;
 using Mesen.Debugger.Labels;
 using Mesen.Debugger.Utilities;
 using System;
+using System.Linq;
 
 namespace Mesen.Debugger.ViewModels
 {
@@ -24,7 +25,7 @@ namespace Mesen.Debugger.ViewModels
 		public AddressInfo TargetAddress => new AddressInfo() { Address = TargetOffset, Type = TargetMemory };
 
 		public string AddressDisplay => $"${Address.ToString(TargetMemory.GetFormatString())}";
-		public string TargetAddressDisplay => $"${TargetOffset.ToString(TargetMemory.GetFormatString())}";
+		public string TargetAddressDisplay => MemoryHelper.GetAddrStr(TargetAddress, false, true);
 		public string LengthDisplay => IsRle ? $"RLE x{RleRepeatCount}" : EffectiveLength.ToString();
 		public string TypeDisplay => IsRle ? "RLE" : "Data";
 		public string MemoryDisplay => TargetMemory switch {
@@ -33,6 +34,7 @@ namespace Mesen.Debugger.ViewModels
 			_ => TargetMemory.ToString()
 		};
 		[ObservableProperty] public partial string DataPreview { get; set; }
+		[ObservableProperty] public partial string DisassemblyText { get; set; } = "";
 		[ObservableProperty] public partial string LabelDisplay { get; set; }
 
 		// Size-based highlight color
@@ -54,7 +56,8 @@ namespace Mesen.Debugger.ViewModels
 
 		public IpsRecordViewModel(int index, uint address, ushort length, bool isRle,
 			ushort rleRepeatCount, byte rleValue, byte[] data,
-			MemoryType targetMemory, int targetOffset)
+			MemoryType targetMemory, int targetOffset,
+			string? disassemblyText = null)
 		{
 			Index = index;
 			Address = address;
@@ -65,6 +68,7 @@ namespace Mesen.Debugger.ViewModels
 			Data = data ?? Array.Empty<byte>();
 			TargetMemory = targetMemory;
 			TargetOffset = targetOffset;
+			DisassemblyText = disassemblyText ?? "";
 
 			EffectiveLength = isRle ? rleRepeatCount : length;
 			HighlightColor = isRle ? RleColor : GetColorForSize(EffectiveLength);
@@ -112,6 +116,17 @@ namespace Mesen.Debugger.ViewModels
 				return "";
 			}
 
+			// If we have cached disassembly text, show the first few lines as preview
+			if(!string.IsNullOrEmpty(DisassemblyText)) {
+				var cleanText = DisassemblyText.Replace("\r", "");
+				var lines = cleanText.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+				int show = Math.Min(lines.Length, 3);
+				var preview = string.Join(" | ", lines.Take(show));
+				if(lines.Length > 3) preview += " ...";
+				return preview;
+			}
+
+			// Fallback: raw hex preview
 			int previewLen = Math.Min(Data.Length, 16);
 			var sb = new System.Text.StringBuilder(previewLen * 3);
 			for(int i = 0; i < previewLen; i++) {

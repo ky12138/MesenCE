@@ -47,6 +47,8 @@ namespace Mesen.Utilities
 [JsonSerializable(typeof(ReverseAccessCacheData))]
 [JsonSerializable(typeof(ReverseAccessEntry))]
 [JsonSerializable(typeof(ReverseAccessFunc))]
+[JsonSerializable(typeof(IpsDisassemblyCache))]
+[JsonSerializable(typeof(IpsDisassemblyEntry))]
 [JsonSourceGenerationOptions(
 	WriteIndented = true,
 	IgnoreReadOnlyProperties = true,

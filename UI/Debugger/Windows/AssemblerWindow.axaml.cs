@@ -79,6 +79,16 @@ namespace Mesen.Debugger.Windows
 			DebugWindowManager.OpenDebugWindow(() => new AssemblerWindow(model));
 		}
 
+		/// <summary>
+		/// Open assembler targeting ROM absolute address space (e.g. for IPS patch editing).
+		/// </summary>
+		public static void EditCodeAbsolute(CpuType cpuType, MemoryType targetMemory, int address, string code, int byteCount)
+		{
+			AssemblerWindowViewModel model = new AssemblerWindowViewModel(cpuType, targetMemory, address, code, byteCount);
+
+			DebugWindowManager.OpenDebugWindow(() => new AssemblerWindow(model));
+		}
+
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);

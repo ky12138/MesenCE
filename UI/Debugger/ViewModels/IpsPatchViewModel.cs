@@ -45,6 +45,7 @@ namespace Mesen.Debugger.ViewModels
 		public List<ParsedIpsRecord> ParsedRecords { get; } = new();
 
 		private Window? _ownerWindow;
+		private IpsDisassemblyCache? _disassemblyCache;
 
 		[Obsolete("For designer only")]
 		public IpsPatchViewModel() { }
@@ -156,6 +157,9 @@ namespace Mesen.Debugger.ViewModels
 			TruncateOffset = -1;
 			HasTruncateOffset = false;
 
+			// Load cached disassembly text from <ROM>_ips.json (best-effort)
+			_disassemblyCache = IpsDisassemblyCache.Load(RomFilePath);
+
 			if(ipsData.Length < 5) {
 				StatusText = "Invalid IPS file: too short";
 				return;
@@ -256,7 +260,8 @@ namespace Mesen.Debugger.ViewModels
 						out targetMemory, out targetOffset);
 
 					var vm = new IpsRecordViewModel(recordIndex, address, length, false, 0, 0,
-						data, targetMemory, targetOffset);
+						data, targetMemory, targetOffset,
+						_disassemblyCache?.Get(targetMemory, targetOffset));
 					Records.Add(vm);
 					HighlightRanges.Add(((int)address, length, vm.HighlightColor));
 					ParsedRecords.Add(new ParsedIpsRecord(address, length, false, 0, 0,
@@ -398,20 +403,34 @@ namespace Mesen.Debugger.ViewModels
 		{
 			if(_ownerWindow == null) return;
 
-			// Write current record data to ROM memory so assembler can read it
+			// Write current record data to ROM memory so assembler hex view reads it
 			DebugApi.SetMemoryValues(record.TargetMemory, (uint)record.TargetOffset,
 				record.Data, record.Data.Length);
 
-			// Get CPU bus address from the physical ROM offset
 			CpuType cpuType = record.TargetMemory.ToCpuType();
-			AddressInfo cpuAddr = DebugApi.GetRelativeAddress(record.TargetAddress, cpuType);
-			int address = cpuAddr.Address >= 0 ? cpuAddr.Address : record.TargetOffset;
 
-			// Build assembly preview from the bytes
-			string code = ".db " + string.Join(" ", record.Data.Select(b => "$" + b.ToString("X2")));
+			// Phase 1: try to get cached disassembly text; if not cached, disassemble now
+			string code = _disassemblyCache?.Get(record.TargetMemory, record.TargetOffset) ?? "";
 
-			// Open assembler targeting NesMemory (CPU bus address space)
-			AssemblerWindow.EditCode(cpuType, address, code, record.Data.Length);
+			bool firstTime = string.IsNullOrEmpty(code);
+			if(firstTime) {
+				// First time: disassemble via GetDisassemblyOutputForAbsoluteRange
+				code = BuildDisassemblyForAssembler(cpuType, record);
+
+				// Cache the result for future edits
+				if(!string.IsNullOrEmpty(code)) {
+					_disassemblyCache ??= new IpsDisassemblyCache();
+					_disassemblyCache.Set(record.TargetMemory, record.TargetOffset, code);
+					_disassemblyCache.Save(RomFilePath);
+
+					// Update DataPreview column immediately
+					record.DisassemblyText = code;
+				}
+			}
+
+			// Phase 2: open assembler in ROM absolute address mode
+			AssemblerWindow.EditCodeAbsolute(cpuType, record.TargetMemory,
+				record.TargetOffset, code, record.EffectiveLength);
 
 			// Poll for assembler window closure, then read back changes
 			IpsRecordViewModel trackedRecord = record;
@@ -426,6 +445,15 @@ namespace Mesen.Debugger.ViewModels
 						(uint)(trackedRecord.TargetOffset + trackedRecord.EffectiveLength - 1));
 					if(newBytes != null && newBytes.Length > 0) {
 						trackedRecord.UpdateData(newBytes);
+
+						// Re-disassemble and update cache with new code
+						string newDisasm = BuildDisassemblyForAssembler(cpuType, trackedRecord);
+						if(!string.IsNullOrEmpty(newDisasm)) {
+							_disassemblyCache?.Set(trackedRecord.TargetMemory, trackedRecord.TargetOffset, newDisasm);
+							_disassemblyCache?.Save(RomFilePath);
+							trackedRecord.DisassemblyText = newDisasm;
+						}
+
 						SyncParsedRecord(trackedRecord);
 						UpdateHighlights(trackedRecord);
 						StatusText = $"Record #{trackedRecord.Index} updated via assembler";
@@ -433,6 +461,64 @@ namespace Mesen.Debugger.ViewModels
 				}
 			};
 			timer.Start();
+		}
+
+		/// <summary>
+		/// Uses GetDisassemblyOutputForAbsoluteRange to produce assembly text
+		/// suitable for the assembler editor (ROM-space addresses, mnemonics only).
+		/// Falls back to .db directives for non-code memory types.
+		/// </summary>
+		private static string BuildDisassemblyForAssembler(CpuType cpuType, IpsRecordViewModel record)
+		{
+			bool isCodeMemory = IsCodeMemoryType(record.TargetMemory);
+
+			if(!isCodeMemory || record.EffectiveLength == 0) {
+				return ".db " + string.Join(" ", record.Data.Select(b => "$" + b.ToString("X2")));
+			}
+
+			uint rowCount = Math.Min((uint)record.EffectiveLength, 8192u);
+			InteropCodeLineData[] raw = DebugApi.GetDisassemblyOutputForAbsoluteRange(
+				cpuType, record.TargetMemory, (uint)record.TargetOffset,
+				(uint)record.EffectiveLength, rowCount);
+
+			if(raw.Length == 0) {
+				return ".db " + string.Join(" ", record.Data.Select(b => "$" + b.ToString("X2")));
+			}
+
+			var sb = new StringBuilder();
+			for(int i = 0; i < raw.Length; i++) {
+				CodeLineData lineData = new CodeLineData(raw[i]);
+
+				// Skip non-code lines
+				if(lineData.Flags.HasFlag(LineFlags.BlockStart) ||
+					lineData.Flags.HasFlag(LineFlags.BlockEnd) ||
+					lineData.Flags.HasFlag(LineFlags.Label) ||
+					lineData.Flags.HasFlag(LineFlags.Comment) ||
+					lineData.Flags.HasFlag(LineFlags.Empty)) {
+					continue;
+				}
+
+				string text = lineData.Text.Trim();
+				if(string.IsNullOrEmpty(text)) continue;
+
+				sb.AppendLine(text);
+			}
+
+			string result = sb.ToString().TrimEnd();
+			return string.IsNullOrEmpty(result)
+				? ".db " + string.Join(" ", record.Data.Select(b => "$" + b.ToString("X2")))
+				: result;
+		}
+
+		/// <summary>Checks whether a MemoryType is PRG ROM (executable code memory).</summary>
+		private static bool IsCodeMemoryType(MemoryType memType)
+		{
+			return memType switch {
+				MemoryType.NesPrgRom or MemoryType.SnesPrgRom or MemoryType.GbPrgRom
+					or MemoryType.PcePrgRom or MemoryType.SmsPrgRom or MemoryType.GbaPrgRom
+					or MemoryType.WsPrgRom => true,
+				_ => false
+			};
 		}
 
 		private void SyncParsedRecord(IpsRecordViewModel record)

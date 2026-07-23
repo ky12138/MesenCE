@@ -83,21 +83,21 @@
 						DataType={x:Type vm:IpsRecordViewModel}}" 
 						CanUserResize="True" InitialWidth="70" 
 					/>
-				<DataBoxTextColumn ColumnName="TargetOffset" Header="{l:Translate colTarget}" 
-					Binding="{Binding TargetAddressDisplay, 
-					DataType={x:Type vm:IpsRecordViewModel}}" 
-					CanUserResize="True" InitialWidth="70" 
-				/>
-				<DataBoxTextColumn ColumnName="Label" Header="{l:Translate colLabel}" 
-					Binding="{Binding LabelDisplay, 
-					DataType={x:Type vm:IpsRecordViewModel}}" 
-					CanUserResize="True" InitialWidth="60" 
-				/>
-				<DataBoxTextColumn ColumnName="Length" Header="{l:Translate colLength}" 
-					Binding="{Binding LengthDisplay, 
-					DataType={x:Type vm:IpsRecordViewModel}}" 
-					CanUserResize="True" InitialWidth="50" 
-				/>
+					<DataBoxTextColumn ColumnName="TargetOffset" Header="{l:Translate colTarget}" 
+						Binding="{Binding TargetAddressDisplay, 
+						DataType={x:Type vm:IpsRecordViewModel}}" 
+						CanUserResize="True" InitialWidth="70" 
+					/>
+					<DataBoxTextColumn ColumnName="Label" Header="{l:Translate colLabel}" 
+						Binding="{Binding LabelDisplay, 
+						DataType={x:Type vm:IpsRecordViewModel}}" 
+						CanUserResize="True" InitialWidth="60" 
+					/>
+					<DataBoxTextColumn ColumnName="Length" Header="{l:Translate colLength}" 
+						Binding="{Binding LengthDisplay, 
+						DataType={x:Type vm:IpsRecordViewModel}}" 
+						CanUserResize="True" InitialWidth="50" 
+					/>
 					<DataBoxTextColumn ColumnName="Type" Header="{l:Translate colType}" 
 						Binding="{Binding TypeDisplay, 
 						DataType={x:Type vm:IpsRecordViewModel}}" 

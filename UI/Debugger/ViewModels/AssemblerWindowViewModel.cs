@@ -41,6 +41,9 @@ namespace Mesen.Debugger.ViewModels
 
 		public int? MaxAddress { get; }
 
+		private MemoryType? _targetMemory = null;
+		private MemoryType GetTargetMemory() => _targetMemory ?? CpuType.ToMemoryType();
+
 		private int _originalAddress = -1;
 		private byte[] _originalCode = Array.Empty<byte>();
 		[ObservableProperty] public partial int OriginalByteCount { get; private set; } = 0;
@@ -65,11 +68,41 @@ namespace Mesen.Debugger.ViewModels
 				Code = code;
 
 				if(OriginalByteCount > 0) {
-					_originalCode = DebugApi.GetMemoryValues(CpuType.ToMemoryType(), (uint)StartAddress, (uint)(StartAddress + OriginalByteCount - 1));
+					_originalCode = DebugApi.GetMemoryValues(GetTargetMemory(), (uint)StartAddress, (uint)(StartAddress + OriginalByteCount - 1));
 				}
 			}
 
-			MaxAddress = DebugApi.GetMemorySize(CpuType.ToMemoryType()) - 1;
+			MaxAddress = DebugApi.GetMemorySize(GetTargetMemory()) - 1;
+
+			AddDisposable(this.ObserveProp([nameof(Code), nameof(StartAddress)], () => {
+				UpdateAssembly(Code);
+			}));
+		}
+
+		/// <summary>
+		/// Open assembler targeting a ROM absolute address space (e.g. for IPS patch editing).
+		/// </summary>
+		public AssemblerWindowViewModel(CpuType cpuType, MemoryType targetMemory, int address, string code, int byteCount)
+		{
+			Config = ConfigManager.Config.Debug.Assembler;
+			CpuType = cpuType;
+			_targetMemory = targetMemory;
+
+			if(Design.IsDesignMode) {
+				return;
+			}
+
+			OriginalByteCount = byteCount;
+			_originalAddress = address;
+
+			StartAddress = address;
+			Code = code;
+
+			if(OriginalByteCount > 0) {
+				_originalCode = DebugApi.GetMemoryValues(GetTargetMemory(), (uint)StartAddress, (uint)(StartAddress + OriginalByteCount - 1));
+			}
+
+			MaxAddress = DebugApi.GetMemorySize(GetTargetMemory()) - 1;
 
 			AddDisposable(this.ObserveProp([nameof(Code), nameof(StartAddress)], () => {
 				UpdateAssembly(Code);
@@ -175,7 +208,7 @@ namespace Mesen.Debugger.ViewModels
 
 		public async Task<bool> ApplyChanges(Window assemblerWindow)
 		{
-			MemoryType memType = CpuType.ToMemoryType();
+			MemoryType memType = GetTargetMemory();
 
 			List<byte> bytes = new List<byte>(_bytes);
 			if(OriginalByteCount > 0) {
@@ -213,10 +246,13 @@ namespace Mesen.Debugger.ViewModels
 				IsIdentical = MatchesOriginalCode(bytes);
 			}
 
-			AddressInfo absStart = DebugApi.GetAbsoluteAddress(new AddressInfo() { Address = StartAddress, Type = memType });
-			AddressInfo absEnd = DebugApi.GetAbsoluteAddress(new AddressInfo() { Address = (int)endAddress, Type = memType });
-			if(absStart.Type == absEnd.Type && (absEnd.Address - absStart.Address + 1) == bytes.Count) {
-				DebugApi.MarkBytesAs(absStart.Type, (uint)absStart.Address, (uint)absEnd.Address, CdlFlags.Code);
+			if(_targetMemory == null) {
+				// Only mark CDL for CPU address space mode; ROM absolute mode skips this.
+				AddressInfo absStart = DebugApi.GetAbsoluteAddress(new AddressInfo() { Address = StartAddress, Type = memType });
+				AddressInfo absEnd = DebugApi.GetAbsoluteAddress(new AddressInfo() { Address = (int)endAddress, Type = memType });
+				if(absStart.Type == absEnd.Type && (absEnd.Address - absStart.Address + 1) == bytes.Count) {
+					DebugApi.MarkBytesAs(absStart.Type, (uint)absStart.Address, (uint)absEnd.Address, CdlFlags.Code);
+				}
 			}
 
 			DebuggerWindow? wnd = DebugWindowManager.GetDebugWindow<DebuggerWindow>(wnd => wnd.CpuType == CpuType);
