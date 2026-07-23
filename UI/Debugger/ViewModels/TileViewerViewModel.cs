@@ -148,6 +148,12 @@ namespace Mesen.Debugger.ViewModels
 			DebugShortcutManager.RegisterActions(wnd, DebugMenuItems);
 
 			AddDisposables(DebugShortcutManager.CreateContextMenu(picViewer, scrollViewer, new List<object> {
+				MarkSelectionHelper.GetTileAction(
+					() => Config.Source,
+					() => GetSelectedTileRanges(),
+					() => RefreshData()
+				),
+				new ContextMenuSeparator(),
 				new ContextMenuAction() {
 					ActionType = ActionType.EditTile,
 					HintText = () => $"{GridSizeX}px x {GridSizeY}px",
@@ -525,6 +531,45 @@ namespace Mesen.Debugger.ViewModels
 
 			UpdatePreviewPanel();
 			LoadSelectedPreset(true);
+		}
+
+		private List<(UInt32, UInt32)> GetSelectedTileRanges()
+		{
+			var ranges = new List<(UInt32, UInt32)>();
+			if(SelectionRect == default) {
+				return ranges;
+			}
+
+			PixelSize tileSize = Config.Format.GetTileSize();
+			int bytesPerTile = Config.Format.GetBytesPerTile();
+			int startCol = (int)Math.Floor(SelectionRect.Left / tileSize.Width);
+			int startRow = (int)Math.Floor(SelectionRect.Top / tileSize.Height);
+			int cols = (int)Math.Ceiling(SelectionRect.Right / tileSize.Width) - startCol;
+			int rows = (int)Math.Ceiling(SelectionRect.Bottom / tileSize.Height) - startRow;
+
+			var addrs = new List<int>();
+			for(int r = 0; r < rows; r++) {
+				for(int c = 0; c < cols; c++) {
+					int addr = GetTileAddress(new PixelPoint((startCol + c) * tileSize.Width, (startRow + r) * tileSize.Height));
+					if(addr >= 0) {
+						addrs.Add(addr);
+					}
+				}
+			}
+
+			addrs.Sort();
+			foreach(int a in addrs) {
+				UInt32 s = (UInt32)a, e = (UInt32)(a + bytesPerTile - 1);
+				if(ranges.Count > 0) {
+					var last = ranges[^1];
+					if(s <= last.Item2 + 1) {
+						ranges[^1] = (last.Item1, Math.Max(last.Item2, e));
+						continue;
+					}
+				}
+				ranges.Add((s, e));
+			}
+			return ranges;
 		}
 
 		private int GetTileAddress(PixelPoint pixelPosition)

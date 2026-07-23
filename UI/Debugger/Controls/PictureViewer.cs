@@ -34,6 +34,7 @@ namespace Mesen.Debugger.Controls
 		public static readonly StyledProperty<int> BottomClipSizeProperty = AvaloniaProperty.Register<PictureViewer, int>(nameof(BottomClipSize), 0);
 
 		public static readonly StyledProperty<bool> AllowSelectionProperty = AvaloniaProperty.Register<PictureViewer, bool>(nameof(AllowSelection), true);
+		public static readonly StyledProperty<bool> AllowBoxSelectionProperty = AvaloniaProperty.Register<PictureViewer, bool>(nameof(AllowBoxSelection), false);
 
 		public static readonly StyledProperty<List<GridDefinition>?> CustomGridsProperty = AvaloniaProperty.Register<PictureViewer, List<GridDefinition>?>(nameof(CustomGrids), null);
 
@@ -76,6 +77,16 @@ namespace Mesen.Debugger.Controls
 			get { return GetValue(AllowSelectionProperty); }
 			set { SetValue(AllowSelectionProperty, value); }
 		}
+
+		public bool AllowBoxSelection
+		{
+			get { return GetValue(AllowBoxSelectionProperty); }
+			set { SetValue(AllowBoxSelectionProperty, value); }
+		}
+
+		private bool _selecting = false;
+		private PixelPoint _selectAnchor;
+		public bool IsSelecting => _selecting;
 
 		public bool ShowMousePosition
 		{
@@ -317,6 +328,16 @@ namespace Mesen.Debugger.Controls
 		protected override void OnPointerMoved(PointerEventArgs e)
 		{
 			base.OnPointerMoved(e);
+
+			if(_selecting) {
+				PixelPoint? selPt = GetGridPointFromMousePoint(e.GetCurrentPoint(this).Position);
+				if(selPt != null) {
+					SelectionRect = GetRectFromPoints(_selectAnchor, selPt.Value);
+				}
+				e.Handled = true;
+				return;
+			}
+
 			PixelPoint? p = GetGridPointFromMousePoint(e.GetCurrentPoint(this).Position);
 			if(p == null) {
 				e.Handled = true;
@@ -341,8 +362,26 @@ namespace Mesen.Debugger.Controls
 			MouseOverRect = null;
 		}
 
+		protected override void OnPointerReleased(PointerReleasedEventArgs e)
+		{
+			base.OnPointerReleased(e);
+			_selecting = false;
+		}
+
 		protected override void OnPointerPressed(PointerPressedEventArgs e)
 		{
+			if(AllowBoxSelection && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed &&
+				(e.KeyModifiers & KeyModifiers.Shift) != 0) {
+				PixelPoint? selPt = GetGridPointFromMousePoint(e.GetCurrentPoint(this).Position);
+				if(selPt != null) {
+					_selecting = true;
+					_selectAnchor = selPt.Value;
+					SelectionRect = GetTileRect(selPt.Value);
+					e.Handled = true;
+				}
+				return;
+			}
+
 			PixelPoint? p = GetGridPointFromMousePoint(e.GetCurrentPoint(this).Position);
 			if(p == null) {
 				e.Handled = true;
@@ -352,7 +391,7 @@ namespace Mesen.Debugger.Controls
 			PositionClickedEventArgs args = new(p.Value, e.GetCurrentPoint(this).Properties, e, PositionClickedEvent);
 			RaiseEvent(args);
 
-			if(!args.Handled && AllowSelection) {
+			if(!args.Handled && AllowSelection && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) {
 				SelectionRect = GetTileRect(p.Value);
 			}
 		}
@@ -384,6 +423,21 @@ namespace Mesen.Debugger.Controls
 				GridSizeX,
 				GridSizeY
 			);
+		}
+
+		private Rect GetRectFromPoints(PixelPoint a, PixelPoint b)
+		{
+			int gridX = GridSizeX;
+			int gridY = GridSizeY;
+			int x = Math.Min(a.X, b.X) / gridX * gridX;
+			int y = Math.Min(a.Y, b.Y) / gridY * gridY;
+			int ex = (Math.Max(a.X, b.X) / gridX + 1) * gridX;
+			int ey = (Math.Max(a.Y, b.Y) / gridY + 1) * gridY;
+			x = Math.Max(0, x);
+			y = Math.Max(0, y);
+			int w = Math.Min(ex, (int)Source.Size.Width) - x;
+			int h = Math.Min(ey, (int)Source.Size.Height) - y;
+			return new Rect(x, y, Math.Max(gridX, w), Math.Max(gridY, h));
 		}
 
 		private Rect ToDrawRect(Rect r)

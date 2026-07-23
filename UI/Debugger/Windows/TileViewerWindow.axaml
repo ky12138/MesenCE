@@ -181,6 +181,7 @@
 
 		<dc:ScrollPictureViewer
 			x:Name="picViewer"
+			AllowBoxSelection="True"
 			Source="{Binding ViewerBitmap}"
 			Zoom="{Binding Config.ImageScale}"
 			ShowGrid="{Binding Config.ShowTileGrid}"

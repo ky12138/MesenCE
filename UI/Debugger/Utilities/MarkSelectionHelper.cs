@@ -1,6 +1,7 @@
 ﻿using Mesen.Config;
 using Mesen.Interop;
 using System;
+using System.Collections.Generic;
 
 namespace Mesen.Debugger.Utilities
 {
@@ -73,6 +74,37 @@ namespace Mesen.Debugger.Utilities
 				DebugApi.MarkBytesAs(startMemType, (UInt32)start, (UInt32)end, type);
 				refreshView();
 			}
+		}
+
+		public static ContextMenuAction GetTileAction(
+			Func<MemoryType> getMemType,
+			Func<List<(UInt32 start, UInt32 end)>> getRanges,
+			Action refreshView)
+		{
+			ContextMenuAction MakeSubAction(ActionType actionType, CdlFlags flags, DebuggerShortcut shortcut) => new ContextMenuAction() {
+				ActionType = actionType,
+				IsEnabled = () => {
+					MemoryType mt = getMemType();
+					return mt.SupportsCdl() && !mt.IsPpuMemory() && getRanges().Count > 0;
+				},
+				Shortcut = () => ConfigManager.Config.Debug.Shortcuts.Get(shortcut),
+				OnClick = () => {
+					MemoryType mt = getMemType();
+					foreach(var (start, end) in getRanges()) {
+						DebugApi.MarkBytesAs(mt, start, end, flags);
+					}
+					refreshView();
+				}
+			};
+
+			return new ContextMenuAction() {
+				ActionType = ActionType.MarkSelectionAs,
+				SubActions = new() {
+					MakeSubAction(ActionType.MarkAsCode, CdlFlags.Code, DebuggerShortcut.MarkAsCode),
+					MakeSubAction(ActionType.MarkAsData, CdlFlags.Data, DebuggerShortcut.MarkAsData),
+					MakeSubAction(ActionType.MarkAsUnidentified, CdlFlags.None, DebuggerShortcut.MarkAsUnidentified),
+				}
+			};
 		}
 	}
 }

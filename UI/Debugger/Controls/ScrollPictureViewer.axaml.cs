@@ -34,6 +34,7 @@ namespace Mesen.Debugger.Controls
 
 		public static readonly StyledProperty<bool> AllowSelectionProperty = AvaloniaProperty.Register<ScrollPictureViewer, bool>(nameof(AllowSelection), true);
 		public static readonly StyledProperty<bool> AllowClickDragProperty = AvaloniaProperty.Register<ScrollPictureViewer, bool>(nameof(AllowClickDrag), true);
+		public static readonly StyledProperty<bool> AllowBoxSelectionProperty = AvaloniaProperty.Register<ScrollPictureViewer, bool>(nameof(AllowBoxSelection), false);
 
 		public static readonly StyledProperty<GridRowColumn?> GridHighlightProperty = AvaloniaProperty.Register<ScrollPictureViewer, GridRowColumn?>(nameof(GridHighlight), null);
 
@@ -105,6 +106,12 @@ namespace Mesen.Debugger.Controls
 		{
 			get { return GetValue(AllowClickDragProperty); }
 			set { SetValue(AllowClickDragProperty, value); }
+		}
+
+		public bool AllowBoxSelection
+		{
+			get { return GetValue(AllowBoxSelectionProperty); }
+			set { SetValue(AllowBoxSelectionProperty, value); }
 		}
 
 		public Rect SelectionRect
@@ -231,7 +238,7 @@ namespace Mesen.Debugger.Controls
 
 		private void Viewer_PointerMoved(object? sender, PointerEventArgs e)
 		{
-			if(AllowClickDrag && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) {
+			if(AllowClickDrag && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed && !InnerViewer.IsSelecting) {
 				Vector offset = ScrollOffset;
 				offset -= e.GetPosition(this) - _lastPosition;
 				if(offset.X < 0) {

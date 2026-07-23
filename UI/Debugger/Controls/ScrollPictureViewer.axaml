@@ -25,6 +25,7 @@
 					Source="{Binding Source, ElementName=root}"
 					Zoom="{Binding Zoom, ElementName=root}"
 					AllowSelection="{Binding AllowSelection, ElementName=root}"
+					AllowBoxSelection="{Binding AllowBoxSelection, ElementName=root}"
 					ShowMousePosition="{Binding ShowMousePosition, ElementName=root}"
 					GridSizeX="{Binding GridSizeX, ElementName=root}"
 					GridSizeY="{Binding GridSizeY, ElementName=root}"
