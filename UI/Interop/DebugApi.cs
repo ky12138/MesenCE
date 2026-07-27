@@ -251,7 +251,8 @@ namespace Mesen.Interop
 
 		[DllImport(DllPath)] public static extern void SetBreakpoints([MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] InteropBreakpoint[] breakpoints, UInt32 length);
 
-		[DllImport(DllPath)] public static extern void SetBankSwitchBreakConfig(
+		[DllImport(DllPath)]
+		public static extern void SetBankSwitchBreakConfig(
 			[MarshalAs(UnmanagedType.I1)] bool prgEnabled,
 			[MarshalAs(UnmanagedType.LPArray, SizeConst = 64)] int[] prgPages,
 			[MarshalAs(UnmanagedType.LPArray, SizeConst = 64)] byte[] prgNegated,
@@ -521,6 +522,88 @@ namespace Mesen.Interop
 				record.CalleeCount = (UInt32)Marshal.ReadInt32(ptr);
 
 				return record;
+			} finally {
+				Marshal.FreeHGlobal(buffer);
+			}
+		}
+
+		// ---- NES PRG + CHR Page Mapping tracking (always on, like CallerCallee) ----
+		// CHR mapping only recorded when cartridge has CHR-ROM.
+		[DllImport(DllPath, EntryPoint = "DllResetPrgMappingRecords")] public static extern void ResetPrgMappingRecords();
+		[DllImport(DllPath, EntryPoint = "DllGetPrgMappingRecords")] private static extern void GetPrgMappingRecordsWrapper(CpuType type, AddressInfo funcAddr, out Int32 prgPageSize, IntPtr output, UInt32 maxEntries, out UInt32 outCount);
+		[DllImport(DllPath, EntryPoint = "DllGetChrMappingRecords")] private static extern void GetChrMappingRecordsWrapper(CpuType type, AddressInfo funcAddr, out Int32 chrPageSize, IntPtr output, UInt32 maxEntries, out UInt32 outCount);
+
+		// C++ PrgSlotEntry/ChrSlotEntry are packed(1): int32 PageNumber, uint32 Type (8 bytes)
+		private const int PrgSlotEntrySize = 8;
+		private const int PrgSlotEntryMax = 65536;
+		private const int ChrSlotEntrySize = 8;
+		private const int ChrSlotEntryMax = 65536;
+		// Sentinel value INT32_MIN separates snapshots in the packed output
+		private const int PrgSlotSentinel = Int32.MinValue;
+
+		public static (int PageSize, List<List<int>> Snapshots)? GetPrgMappingRecords(CpuType type, AddressInfo funcAddr)
+		{
+			int bufferSize = PrgSlotEntryMax * PrgSlotEntrySize;
+			IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
+			try {
+				GetPrgMappingRecordsWrapper(type, funcAddr, out Int32 pageSize, buffer, (UInt32)PrgSlotEntryMax, out UInt32 count);
+				if(count == 0 || pageSize <= 0) {
+					return null;
+				}
+
+				var snapshots = new List<List<int>>();
+				var current = new List<int>();
+				for(int i = 0; i < count; i++) {
+					IntPtr ptr = new IntPtr(buffer.ToInt64() + (long)(i * PrgSlotEntrySize));
+					int pageNum = Marshal.ReadInt32(ptr);
+					if(pageNum == PrgSlotSentinel) {
+						// End of snapshot
+						if(current.Count > 0) {
+							snapshots.Add(current);
+							current = new List<int>();
+						}
+					} else {
+						current.Add(pageNum);
+					}
+				}
+				if(current.Count > 0) {
+					snapshots.Add(current);
+				}
+				return snapshots.Count > 0 ? ((int)pageSize, snapshots) : null;
+			} finally {
+				Marshal.FreeHGlobal(buffer);
+			}
+		}
+
+		public static (int PageSize, List<List<int>> Snapshots)? GetChrMappingRecords(CpuType type, AddressInfo funcAddr)
+		{
+			int bufferSize = ChrSlotEntryMax * ChrSlotEntrySize;
+			IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
+			try {
+				GetChrMappingRecordsWrapper(type, funcAddr, out Int32 pageSize, buffer, (UInt32)ChrSlotEntryMax, out UInt32 count);
+				if(count == 0 || pageSize <= 0) {
+					return null;
+				}
+
+				var snapshots = new List<List<int>>();
+				var current = new List<int>();
+				for(int i = 0; i < count; i++) {
+					IntPtr ptr = new IntPtr(buffer.ToInt64() + (long)(i * ChrSlotEntrySize));
+					int pageNum = Marshal.ReadInt32(ptr);
+					if(pageNum == PrgSlotSentinel) {
+						// End of snapshot
+						if(current.Count > 0) {
+							snapshots.Add(current);
+							current = new List<int>();
+						}
+					} else {
+						current.Add(pageNum);
+					}
+				}
+				if(current.Count > 0) {
+					snapshots.Add(current);
+				}
+				return snapshots.Count > 0 ? ((int)pageSize, snapshots) : null;
 			} finally {
 				Marshal.FreeHGlobal(buffer);
 			}

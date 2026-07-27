@@ -21,6 +21,7 @@
 #include "Core/Debugger/CallerCalleeTracker.h"
 #include "Core/Debugger/FunctionMemoryAccessTracker.h"
 #include "Core/Debugger/ReverseMemoryAccessTracker.h"
+#include "Core/Debugger/MappingTracker.h"
 #include "Core/Debugger/DebugBreakHelper.h"
 #include "Core/Debugger/AddressPage.h"
 #include "Core/Debugger/IAssembler.h"
@@ -697,5 +698,34 @@ DllExport int32_t __stdcall GetAbsoluteAddressPage(AddressInfo absAddress, CpuTy
 	DllExport bool __stdcall SaveRomToDisk(char* filename, bool saveIpsFile, CdlStripOption cdlStripOption)
 	{
 		return WithDebugger(bool, SaveRomToDisk(filename, saveIpsFile, cdlStripOption));
+	}
+
+	// ---- PRG+CHR Mapping Tracking (NES only) ----
+	// Always on (like CallerCalleeTracker), no per-function marking needed.
+	// CHR mapping only recorded when cartridge has CHR-ROM.
+
+	DllExport void __stdcall DllResetPrgMappingRecords()
+	{
+		ResetMappingRecords();
+	}
+
+	DllExport void __stdcall DllGetPrgMappingRecords(CpuType cpuType, AddressInfo funcAddr, int32_t* prgPageSize, PrgSlotEntry* output, uint32_t maxEntries, uint32_t* outCount)
+	{
+		*prgPageSize = -1;
+		*outCount = 0;
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
+			DebugBreakHelper helper(dbg);
+			GetPrgMappingRecords(funcAddr, prgPageSize, output, maxEntries, outCount);
+		});
+	}
+
+	DllExport void __stdcall DllGetChrMappingRecords(CpuType cpuType, AddressInfo funcAddr, int32_t* chrPageSize, ChrSlotEntry* output, uint32_t maxEntries, uint32_t* outCount)
+	{
+		*chrPageSize = -1;
+		*outCount = 0;
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
+			DebugBreakHelper helper(dbg);
+			GetChrMappingRecords(funcAddr, chrPageSize, output, maxEntries, outCount);
+		});
 	}
 };

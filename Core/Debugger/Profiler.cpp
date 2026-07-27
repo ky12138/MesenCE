@@ -4,6 +4,7 @@
 #include "Debugger/Debugger.h"
 #include "Debugger/IDebugger.h"
 #include "Debugger/DebugTypes.h"
+#include "Debugger/MappingTracker.h"
 
 static constexpr int32_t ResetFunctionIndex = -1;
 
@@ -45,6 +46,9 @@ void Profiler::StackFunction(AddressInfo& addr, StackFrameFlags stackFlag)
 		if(_currentFunction >= 0 && _functions.find(_currentFunction) != _functions.end()) {
 			_callerCalleeTracker.RecordCall(_functions[_currentFunction].Address, addr);
 		}
+
+		// Record NES PRG+CHR page mapping snapshot for marked functions
+		RecordMappingOnFunctionCall(_debugger, DebugUtilities::ToCpuType(addr.Type), addr);
 
 		ProfiledFunction& func = _functions[key];
 		func.CallCount++;

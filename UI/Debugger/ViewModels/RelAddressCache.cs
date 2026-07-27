@@ -8,6 +8,16 @@ namespace Mesen.Debugger.ViewModels
 {
 	public class RelAddressCacheData
 	{
+		// NES mapper-level PRG page size (0x2000/0x4000 etc.), -1 for non-NES.
+		// Omitted from JSON when -1 (non-NES).
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+		public int PrgPageSize { get; set; } = -1;
+
+		// NES mapper-level CHR page size (0x2000/0x1000 etc.), -1 for non-NES or no CHR-ROM.
+		// Omitted from JSON when -1.
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+		public int ChrPageSize { get; set; } = -1;
+
 		public Dictionary<CpuType, List<RelAddressCacheEntry>> CacheByCpu { get; set; } = new();
 	}
 
@@ -214,6 +224,21 @@ namespace Mesen.Debugger.ViewModels
 		public bool Marked { get; set; }              // 是否特殊标记（监视）
 		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 		public FuncMemoryAccess? MemoryAccess { get; set; } // 标记后采样的读写记录
+
+		// NES 专属：函数被调用时刻的 PRG bank→page 映射快照集合（增量去重）。
+		// 每个元素是一个 int 列表：索引=bank slot，值=PRG ROM page index。
+		// PrgPageSize 决定了 slot 数量 = 0x8000 / PrgPageSize。
+		// 非 NES 时 null，JSON 省略。
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		public List<List<int>>? PrgMapSnapshots { get; set; }
+
+		// NES 专属：函数被调用时刻的 CHR bank→page 映射快照集合（增量去重）。
+		// 仅在卡带含 CHR-ROM 时记录。
+		// 每个元素是一个 int 列表：索引=bank slot，值=CHR ROM page index。
+		// ChrPageSize 决定了 slot 数量 = 0x2000 / ChrPageSize。
+		// 非 NES 或无 CHR-ROM 时 null，JSON 省略。
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		public List<List<int>>? ChrMapSnapshots { get; set; }
 
 		// 调用关系（仅结构，不含次数）：调用本函数的函数 / 本函数调用的函数。
 		// 次数来自运行时 profiler 采样，随每次运行变化，缓存无意义，故不持久化。

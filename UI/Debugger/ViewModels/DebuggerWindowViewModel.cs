@@ -152,6 +152,11 @@ namespace Mesen.Debugger.ViewModels
 		private DateTime _lastCacheSave = DateTime.MinValue;
 		private object _cacheLock = new();
 
+		// NES mapper-level PRG/CHR page size, shared by all functions.
+		// Set by SampleMapping(); persisted as top-level field in RelAddressCacheData.
+		private int _prgPageSize = -1;
+		private int _chrPageSize = -1;
+
 		private bool _autoSwitchToSourceView = false;
 
 		private List<object> _gotoSubActions = new();
@@ -522,6 +527,67 @@ namespace Mesen.Debugger.ViewModels
 			}
 		}
 
+		/// <summary>Sample NES PRG + CHR page mapping snapshots for all known functions.
+		/// Only valid for NES; no-op on other consoles.
+		/// CHR mapping only recorded when cartridge has CHR-ROM.</summary>
+		private void SampleMapping()
+		{
+			if(CpuType != CpuType.Nes) {
+				return;
+			}
+			// Collect all functions that are worth querying (have meta or rel addr)
+			var toQuery = new HashSet<AddressInfo>(FuncMetaCache.Keys);
+			toQuery.UnionWith(RelAddressCache.Keys);
+			toQuery.UnionWith(CallerCalleeCache.Keys);
+			foreach(var key in toQuery) {
+				// ---- PRG ----
+				var prgResult = DebugApi.GetPrgMappingRecords(CpuType, key);
+				if(prgResult.HasValue) {
+					_prgPageSize = prgResult.Value.PageSize;
+					var meta = GetOrAddFuncMeta(key);
+					if(prgResult.Value.Snapshots.Count > 0) {
+						var existing = meta.PrgMapSnapshots;
+						if(existing == null) {
+							meta.PrgMapSnapshots = prgResult.Value.Snapshots;
+						} else {
+							var seen = new HashSet<string>(
+								existing.Select(s => string.Join(",", s))
+							);
+							foreach(var snap in prgResult.Value.Snapshots) {
+								string snapKey = string.Join(",", snap);
+								if(seen.Add(snapKey)) {
+									existing.Add(snap);
+								}
+							}
+						}
+					}
+				}
+
+				// ---- CHR ----
+				var chrResult = DebugApi.GetChrMappingRecords(CpuType, key);
+				if(chrResult.HasValue) {
+					_chrPageSize = chrResult.Value.PageSize;
+					var meta = GetOrAddFuncMeta(key);
+					if(chrResult.Value.Snapshots.Count > 0) {
+						var existing = meta.ChrMapSnapshots;
+						if(existing == null) {
+							meta.ChrMapSnapshots = chrResult.Value.Snapshots;
+						} else {
+							var seen = new HashSet<string>(
+								existing.Select(s => string.Join(",", s))
+							);
+							foreach(var snap in chrResult.Value.Snapshots) {
+								string snapKey = string.Join(",", snap);
+								if(seen.Add(snapKey)) {
+									existing.Add(snap);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
 		public void SaveCache()
 		{
 			// Reverse (Record-breakpoint) data lives only in the C++ tracker; persist
@@ -542,6 +608,9 @@ namespace Mesen.Debugger.ViewModels
 			// CallerCallee's GetLive path) also get their access data persisted.
 			SampleMarkedFunctionMemoryAccess();
 
+			// Sample NES PRG + CHR page mapping snapshots for all known functions.
+			SampleMapping();
+
 			// After Union (inside SampleMarkedFunctionMemoryAccess) the range objects
 			// are new — carry color/block state from the live view-models into them.
 			SyncRangeMetaToCache();
@@ -549,7 +618,7 @@ namespace Mesen.Debugger.ViewModels
 
 			string path = Path.Combine(ConfigManager.DebuggerFolder, romName + "_RelAddr.json");
 
-			var data = new RelAddressCacheData();
+			var data = new RelAddressCacheData { PrgPageSize = _prgPageSize, ChrPageSize = _chrPageSize };
 			var entries = new List<RelAddressCacheEntry>();
 			var allKeys = new HashSet<AddressInfo>(RelAddressCache.Keys);
 			allKeys.UnionWith(CallerCalleeCache.Keys);
@@ -567,6 +636,12 @@ namespace Mesen.Debugger.ViewModels
 					entry.Blocked = meta.Blocked;
 					entry.Marked = meta.Marked;
 					entry.MemoryAccess = meta.MemoryAccess;
+					if(meta.HasPrgMapping) {
+						entry.PrgMapSnapshots = meta.PrgMapSnapshots;
+					}
+					if(meta.HasChrMapping) {
+						entry.ChrMapSnapshots = meta.ChrMapSnapshots;
+					}
 				}
 				if(CallerCalleeCache.TryGetValue(key, out var cc)) {
 					entry.Callers = cc.Callers.Count > 0 ? cc.Callers : null;
@@ -682,6 +757,10 @@ namespace Mesen.Debugger.ViewModels
 					try {
 						string fileData = File.ReadAllText(path);
 						var data = JsonSerializer.Deserialize(fileData, typeof(RelAddressCacheData), MesenSerializerContext.Default) as RelAddressCacheData;
+						if(data != null) {
+							_prgPageSize = data.PrgPageSize;
+							_chrPageSize = data.ChrPageSize;
+						}
 						if(data?.CacheByCpu.TryGetValue(CpuType, out var entries) == true) {
 							foreach(var e in entries) {
 								var key = new AddressInfo { Address = e.Address, Type = e.Type };
@@ -689,12 +768,14 @@ namespace Mesen.Debugger.ViewModels
 									e.RelPage >= 0 ? e.RelPage : (int?)null,
 									e.RelAddress
 								));
-								if(e.FunctionColor != null || e.Blocked || e.Marked || e.MemoryAccess != null) {
+								if(e.FunctionColor != null || e.Blocked || e.Marked || e.MemoryAccess != null || e.PrgMapSnapshots != null || e.ChrMapSnapshots != null) {
 									FuncMetaCache[key] = new FuncMeta {
 										FunctionColor = e.FunctionColor,
 										Blocked = e.Blocked,
 										Marked = e.Marked,
-										MemoryAccess = e.MemoryAccess
+										MemoryAccess = e.MemoryAccess,
+										PrgMapSnapshots = e.PrgMapSnapshots,
+										ChrMapSnapshots = e.ChrMapSnapshots
 									};
 								}
 								if(e.Callers != null || e.Callees != null) {
