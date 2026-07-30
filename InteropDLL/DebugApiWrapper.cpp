@@ -22,6 +22,7 @@
 #include "Core/Debugger/FunctionMemoryAccessTracker.h"
 #include "Core/Debugger/ReverseMemoryAccessTracker.h"
 #include "Core/Debugger/MappingTracker.h"
+#include "Core/Debugger/IndirectTracker.h"
 #include "Core/Debugger/DebugBreakHelper.h"
 #include "Core/Debugger/AddressPage.h"
 #include "Core/Debugger/IAssembler.h"
@@ -727,5 +728,29 @@ DllExport int32_t __stdcall GetAbsoluteAddressPage(AddressInfo absAddress, CpuTy
 			DebugBreakHelper helper(dbg);
 			GetChrMappingRecords(funcAddr, chrPageSize, output, maxEntries, outCount);
 		});
+	}
+
+	// ---- Indirect Access Tracking (NES only) ----
+	// C++ handles all data collection + JSON serialization.
+	// C# only triggers save via DllSaveIndirectRecords.
+
+	DllExport void __stdcall DllSetIndirectTrackerFilter(uint8_t mask)
+	{
+		SetIndirectTrackerFilter(mask);
+	}
+
+	DllExport void __stdcall DllResetIndirectRecords()
+	{
+		ResetIndirectRecords();
+	}
+
+	DllExport int32_t __stdcall DllSaveIndirectRecords(const char* filename)
+	{
+		return SaveIndirectRecordsToFile(string(filename)) ? 1 : 0;
+	}
+
+	DllExport uint32_t __stdcall DllGetIndirectRecordCount()
+	{
+		return GetIndirectRecordCount();
 	}
 };

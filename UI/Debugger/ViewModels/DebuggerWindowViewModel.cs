@@ -687,6 +687,10 @@ namespace Mesen.Debugger.ViewModels
 			} else if(File.Exists(reversePath)) {
 				File.Delete(reversePath);
 			}
+
+			// Persist indirect access tracking data (NES only).
+			// C++ side handles all JSON generation.
+			DebugApi.SaveIndirectRecords(romName);
 		}
 
 		// Fill each range's RelPage/RelAddress once (for marked functions whose

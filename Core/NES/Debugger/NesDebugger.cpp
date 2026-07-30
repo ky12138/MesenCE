@@ -2,6 +2,7 @@
 #include "Debugger/DisassemblyInfo.h"
 #include "Debugger/Disassembler.h"
 #include "Debugger/CallstackManager.h"
+#include "Debugger/Profiler.h"
 #include "Debugger/BreakpointManager.h"
 #include "Debugger/CodeDataLogger.h"
 #include "Debugger/ScriptManager.h"
@@ -27,6 +28,7 @@
 #include "NES/Debugger/NesTraceLogger.h"
 #include "NES/Debugger/NesPpuTools.h"
 #include "NES/Debugger/NesDisUtils.h"
+#include "Debugger/IndirectTracker.h"
 #include "Utilities/HexUtilities.h"
 #include "Utilities/FolderUtilities.h"
 #include "Utilities/Patches/IpsPatcher.h"
@@ -135,6 +137,17 @@ void NesDebugger::ProcessInstruction()
 	_prevOpCode = opCode;
 	_prevProgramCounter = pc;
 	_prevStackPointer = state.SP;
+
+	// Record indirect access details for the previous instruction
+	NesAddrMode prevMode = NesDisUtils::GetOpMode(_prevOpCode);
+	if(prevMode == NesAddrMode::Ind || prevMode == NesAddrMode::IndX ||
+	   prevMode == NesAddrMode::IndY || prevMode == NesAddrMode::IndYW) {
+		if(IsIndirectOpEnabled(_prevOpCode)) {
+			AddressInfo currentFuncAddr = _callstackManager->GetProfiler()->GetCurrentFunctionAddress();
+			RecordIndirectAccessOnInstruction(_debugger, CpuType::Nes,
+				_prevProgramCounter, _prevOpCode, currentFuncAddr);
+		}
+	}
 
 	_step->ProcessCpuExec();
 

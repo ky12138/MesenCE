@@ -12,12 +12,9 @@ namespace Mesen.Debugger.ViewModels
 		public FuncMemoryAccess? MemoryAccess { get; set; }
 
 		// NES PRG page mapping snapshots collected across function calls.
-		// null when not applicable or not yet sampled.
 		public List<List<int>>? PrgMapSnapshots { get; set; }
 
 		// NES CHR page mapping snapshots collected across function calls.
-		// Only populated when the cartridge has CHR-ROM.
-		// null when not applicable or not yet sampled.
 		public List<List<int>>? ChrMapSnapshots { get; set; }
 
 		public bool HasPrgMapping => PrgMapSnapshots?.Count > 0;

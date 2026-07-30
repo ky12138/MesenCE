@@ -112,7 +112,10 @@ namespace Mesen.Debugger.StatusViews
 					nameof(Config.Nes.BreakOnPrgBankSwitchBefore),
 					nameof(Config.Nes.PrgBankSwitchPages),
 					nameof(Config.Nes.BreakOnChrBankSwitchBefore),
-					nameof(Config.Nes.ChrBankSwitchPages)
+					nameof(Config.Nes.ChrBankSwitchPages),
+					nameof(Config.Nes.IndirectTrackerRead),
+					nameof(Config.Nes.IndirectTrackerWrite),
+					nameof(Config.Nes.IndirectTrackerJump)
 				], () => ConfigManager.Config.Debug.ApplyConfig()
 			);
 		}

@@ -1911,6 +1911,10 @@
 			<Control ID="chkSpriteOverflow">精灵溢出</Control>
 			<Control ID="chkVerticalBlank">垂直消隐</Control>
 			<Control ID="chkWriteToggle">写入切换</Control>
+			<Control ID="lblIndirectTracker">间接访问追踪</Control>
+			<Control ID="chkIndirectRead">记录读取</Control>
+			<Control ID="chkIndirectWrite">记录写入</Control>
+			<Control ID="chkIndirectJump">记录跳转</Control>
 			<Control ID="chkLargeSprites">8x16精灵</Control>
 			<Control ID="chkVerticalWrite">垂直写入</Control>
 			<Control ID="chkNmiOnVBlank">VBlank时NMI</Control>
@@ -1938,6 +1942,9 @@
 			<Control ID="chkSpriteOverflowHint">本条扫描线上超过 8 个精灵时置位</Control>
 			<Control ID="chkVerticalBlankHint">垂直消隐期间置位</Control>
 			<Control ID="chkWriteToggleHint">$2005/$2006 寄存器写入交替标志</Control>
+			<Control ID="chkIndirectReadHint">记录 LDA/ORA/AND 等间接寻址读取操作（含 RMW）</Control>
+			<Control ID="chkIndirectWriteHint">记录 STA/SAX/SHA 等间接寻址写入操作</Control>
+			<Control ID="chkIndirectJumpHint">记录 JMP (Ind) 间接跳转操作</Control>
 			<Control ID="chkLargeSpritesHint">开启后精灵为 8x16 像素模式</Control>
 			<Control ID="chkVerticalWriteHint">VRAM 地址增量为 32 而非 1</Control>
 			<Control ID="chkNmiOnVBlankHint">垂直消隐时产生 NMI 中断</Control>

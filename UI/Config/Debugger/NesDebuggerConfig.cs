@@ -21,5 +21,9 @@ namespace Mesen.Config
 		[ObservableProperty] public partial bool BreakOnChrBankSwitchBefore { get; set; } = false;
 		[ObservableProperty] public partial string PrgBankSwitchPages { get; set; } = "";
 		[ObservableProperty] public partial string ChrBankSwitchPages { get; set; } = "";
+
+		[ObservableProperty] public partial bool IndirectTrackerRead { get; set; } = false;
+		[ObservableProperty] public partial bool IndirectTrackerWrite { get; set; } = false;
+		[ObservableProperty] public partial bool IndirectTrackerJump { get; set; } = true;
 	}
 }

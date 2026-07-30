@@ -50,6 +50,12 @@ namespace Mesen.Config
 				Debugger.Nes.BreakOnChrBankSwitchBefore,
 				chrPages, chrNegated, chrCount);
 
+			byte indirectMask = 0;
+			if(Debugger.Nes.IndirectTrackerRead) indirectMask |= 1;
+			if(Debugger.Nes.IndirectTrackerWrite) indirectMask |= 2;
+			if(Debugger.Nes.IndirectTrackerJump) indirectMask |= 4;
+			DebugApi.SetIndirectTrackerFilter(indirectMask);
+
 			ConfigApi.SetDebugConfig(new InteropDebugConfig() {
 				BreakOnUninitRead = Debugger.BreakOnUninitRead,
 				BreakOnUnidentifiedCode = Debugger.BreakOnUnidentifiedCode,

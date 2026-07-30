@@ -609,6 +609,22 @@ namespace Mesen.Interop
 			}
 		}
 
+		// ---- 间接访问追踪（NES only） ----
+		// C++ 端全权负责采集+JSON生成。C# 只触发保存。
+		[DllImport(DllPath, EntryPoint = "DllSetIndirectTrackerFilter")] public static extern void SetIndirectTrackerFilter(byte mask);
+		[DllImport(DllPath, EntryPoint = "DllResetIndirectRecords")] public static extern void ResetIndirectRecords();
+		[DllImport(DllPath, EntryPoint = "DllSaveIndirectRecords")][return: MarshalAs(UnmanagedType.I1)] private static extern bool SaveIndirectRecordsWrapper([MarshalAs(UnmanagedType.LPUTF8Str)] string filename);
+		[DllImport(DllPath, EntryPoint = "DllGetIndirectRecordCount")] public static extern UInt32 GetIndirectRecordCount();
+
+		public static void SaveIndirectRecords(string romName)
+		{
+			string path = Path.Combine(ConfigManager.DebuggerFolder, romName + "_Indirect.json");
+			if(!SaveIndirectRecordsWrapper(path)) {
+				// No data — remove stale file if exists
+				if(File.Exists(path)) File.Delete(path);
+			}
+		}
+
 		// ---- 调用图的批量导出（供 FunctionList 刷新时一次性填充缓存） ----
 		[DllImport(DllPath, EntryPoint = "GetAllCallerCallee")] private static extern void GetAllCallerCalleeWrapper(CpuType type, IntPtr output, UInt32 maxEntries, out UInt32 outCount);
 
@@ -2160,4 +2176,7 @@ namespace Mesen.Interop
 		public MemoryType FuncType;
 		public Byte Flags;
 	}
+
+	/// <summary>解析后的间接访问条目（手动按偏移量解析原始缓冲区，避免 struct marshalling 对齐问题）。</summary>
+
 }
