@@ -252,6 +252,16 @@ extern "C"
 		});
 	}
 
+	DllExport void __stdcall SetCallerCalleeTrackingEnabled(CpuType cpuType, bool enabled)
+	{
+		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
+			if(dbg->GetCallstackManager(cpuType)) {
+				DebugBreakHelper helper(dbg);
+				dbg->GetCallstackManager(cpuType)->GetProfiler()->GetCallerCalleeTracker()->SetEnabled(enabled);
+			}
+		});
+	}
+
 	DllExport void __stdcall SetFunctionMemoryAccessTracked(CpuType cpuType, AddressInfo funcAddr, bool tracked)
 	{
 		WrapDebuggerCall<void>([&](Debugger* dbg) -> void {
@@ -728,6 +738,11 @@ DllExport int32_t __stdcall GetAbsoluteAddressPage(AddressInfo absAddress, CpuTy
 			DebugBreakHelper helper(dbg);
 			GetChrMappingRecords(funcAddr, chrPageSize, output, maxEntries, outCount);
 		});
+	}
+
+	DllExport void __stdcall DllSetMappingTrackingEnabled(bool enabled)
+	{
+		SetMappingTrackingEnabled(enabled);
 	}
 
 	// ---- Indirect Access Tracking (NES only) ----

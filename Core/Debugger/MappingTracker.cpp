@@ -22,6 +22,7 @@ namespace
 	unordered_map<int32_t, int32_t> _funcChrPageSizes;
 	unordered_map<int32_t, unordered_set<uint64_t>> _seenChrFingerprints;
 	bool _hasChrRom = false;
+	bool _mappingTrackingEnabled = true;
 
 	constexpr int MAX_MAPPINGS_PER_FUNC = 32;
 	constexpr int PRG_CPU_START = 0x80;  // $8000
@@ -97,8 +98,17 @@ namespace
 	}
 } // anonymous namespace
 
+void SetMappingTrackingEnabled(bool enabled)
+{
+	_mappingTrackingEnabled = enabled;
+}
+
 void RecordMappingOnFunctionCall(Debugger* debugger, CpuType cpuType, AddressInfo& funcAddr)
 {
+	if(!_mappingTrackingEnabled) {
+		return;
+	}
+
 	if(cpuType != CpuType::Nes) {
 		return;
 	}

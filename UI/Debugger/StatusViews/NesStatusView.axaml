@@ -37,6 +37,7 @@
 						<c:MesenNumericTextBox Grid.Row="3" Grid.Column="1" Value="{Binding RegPC}" Hex="True" Max="0xFFFF" Margin="0 0 4 1" MinHeight="12" Height="16"/>
 					</Grid>
 
+
 					<Rectangle Stroke="{StaticResource MesenGrayBorderColor}" StrokeThickness="1" Margin="2 4 2 4"/>
 
 					<TextBlock Text="{l:Translate lblPpuHeader}" FontWeight="Bold" Margin="0 0 0 2"/>
@@ -54,6 +55,18 @@
 						<TextBlock Grid.Row="5" Text="{l:Translate lblScrollX}" VerticalAlignment="Center"/>
 						<c:MesenNumericTextBox Grid.Row="5" Grid.Column="1" Value="{Binding ScrollX}" Hex="True" Max="7" Margin="0 0 4 1" MinHeight="12" Height="16"/>
 					</Grid>
+
+					<Rectangle Stroke="{StaticResource MesenGrayBorderColor}" StrokeThickness="1" Margin="2 4 2 4"/>
+					
+					<TextBlock Text="{l:Translate lblTracker}" FontWeight="Bold" Margin="0 2 0 0"/>
+					<Grid RowDefinitions="16,16,16,16,16">
+						<CheckBox Grid.Row="0" IsChecked="{Binding Config.Nes.IndirectTrackerRead}" Content="{l:Translate chkIndirectRead}" ToolTip.Tip="{l:Translate chkIndirectReadHint}" FontSize="10"/>
+						<CheckBox Grid.Row="1" IsChecked="{Binding Config.Nes.IndirectTrackerWrite}" Content="{l:Translate chkIndirectWrite}" ToolTip.Tip="{l:Translate chkIndirectWriteHint}" FontSize="10"/>
+						<CheckBox Grid.Row="2" IsChecked="{Binding Config.Nes.IndirectTrackerJump}" Content="{l:Translate chkIndirectJump}" ToolTip.Tip="{l:Translate chkIndirectJumpHint}" FontSize="10"/>
+						<CheckBox Grid.Row="3" IsChecked="{Binding Config.CallerCalleeTrackingEnabled}" Content="{l:Translate chkCallerCalleeTracking}" ToolTip.Tip="{l:Translate chkCallerCalleeTrackingHint}" FontSize="10"/>
+						<CheckBox Grid.Row="4" IsChecked="{Binding Config.MappingTrackingEnabled}" Content="{l:Translate chkMappingTracking}" ToolTip.Tip="{l:Translate chkMappingTrackingHint}" FontSize="10"/>
+					</Grid>
+
 				</StackPanel>
 
 				<StackPanel Grid.Column="1" Margin="4 0 0 0" IsEnabled="{Binding EditAllowed}">
@@ -164,11 +177,6 @@
 					<CheckBox IsChecked="{Binding VerticalBlank}" Content="{l:Translate chkVerticalBlank}" ToolTip.Tip="{l:Translate chkVerticalBlankHint}" FontSize="10"/>
 					<Rectangle Stroke="{StaticResource MesenGrayBorderColor}" StrokeThickness="1" Margin="2 4 2 4"/>
 					<CheckBox IsChecked="{Binding WriteToggle}" Content="{l:Translate chkWriteToggle}" ToolTip.Tip="{l:Translate chkWriteToggleHint}" FontSize="10"/>
-					<Rectangle Stroke="{StaticResource MesenGrayBorderColor}" StrokeThickness="1" Margin="2 4 2 4"/>
-					<TextBlock Text="{l:Translate lblIndirectTracker}" FontWeight="Bold" Margin="0 2 0 0" FontSize="10"/>
-					<CheckBox IsChecked="{Binding Config.Nes.IndirectTrackerRead}" Content="{l:Translate chkIndirectRead}" ToolTip.Tip="{l:Translate chkIndirectReadHint}" FontSize="10"/>
-					<CheckBox IsChecked="{Binding Config.Nes.IndirectTrackerWrite}" Content="{l:Translate chkIndirectWrite}" ToolTip.Tip="{l:Translate chkIndirectWriteHint}" FontSize="10"/>
-					<CheckBox IsChecked="{Binding Config.Nes.IndirectTrackerJump}" Content="{l:Translate chkIndirectJump}" ToolTip.Tip="{l:Translate chkIndirectJumpHint}" FontSize="10"/>
 				</StackPanel>
 			</Grid>
 		</StackPanel>

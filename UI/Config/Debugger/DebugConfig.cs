@@ -56,6 +56,12 @@ namespace Mesen.Config
 			if(Debugger.Nes.IndirectTrackerJump) indirectMask |= 4;
 			DebugApi.SetIndirectTrackerFilter(indirectMask);
 
+			foreach(var cpuType in EmuApi.GetRomInfo().CpuTypes) {
+				DebugApi.SetCallerCalleeTrackingEnabled(cpuType, Debugger.CallerCalleeTrackingEnabled);
+			}
+
+			DebugApi.SetMappingTrackingEnabled(Debugger.MappingTrackingEnabled);
+
 			ConfigApi.SetDebugConfig(new InteropDebugConfig() {
 				BreakOnUninitRead = Debugger.BreakOnUninitRead,
 				BreakOnUnidentifiedCode = Debugger.BreakOnUnidentifiedCode,

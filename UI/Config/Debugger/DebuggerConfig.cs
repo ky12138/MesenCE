@@ -92,6 +92,12 @@ namespace Mesen.Config
 		[ObservableProperty] public partial List<int> FunctionListColumnWidths { get; set; } = new();
 		[ObservableProperty] public partial bool ShowBlockedFunctions { get; set; } = false;
 
+		// 调用关系追踪开关（全 CPU 通用），默认开启以保持向后兼容
+		[ObservableProperty] public partial bool CallerCalleeTrackingEnabled { get; set; } = true;
+
+		// PRG+CHR 页映射追踪开关（NES only），默认开启以保持向后兼容
+		[ObservableProperty] public partial bool MappingTrackingEnabled { get; set; } = true;
+
 		// Bitmask of MemoryOperationType values recorded by the per-function memory
 		// access tracker. Defaults to data R/W + DMA R/W (0x33). Instruction fetch,
 		// dummy and PPU render reads are opt-in via the UI checkboxes.

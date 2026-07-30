@@ -532,6 +532,7 @@ namespace Mesen.Interop
 		[DllImport(DllPath, EntryPoint = "DllResetPrgMappingRecords")] public static extern void ResetPrgMappingRecords();
 		[DllImport(DllPath, EntryPoint = "DllGetPrgMappingRecords")] private static extern void GetPrgMappingRecordsWrapper(CpuType type, AddressInfo funcAddr, out Int32 prgPageSize, IntPtr output, UInt32 maxEntries, out UInt32 outCount);
 		[DllImport(DllPath, EntryPoint = "DllGetChrMappingRecords")] private static extern void GetChrMappingRecordsWrapper(CpuType type, AddressInfo funcAddr, out Int32 chrPageSize, IntPtr output, UInt32 maxEntries, out UInt32 outCount);
+		[DllImport(DllPath, EntryPoint = "DllSetMappingTrackingEnabled")] public static extern void SetMappingTrackingEnabled([MarshalAs(UnmanagedType.I1)] bool enabled);
 
 		// C++ PrgSlotEntry/ChrSlotEntry are packed(1): int32 PageNumber, uint32 Type (8 bytes)
 		private const int PrgSlotEntrySize = 8;
@@ -627,6 +628,7 @@ namespace Mesen.Interop
 
 		// ---- 调用图的批量导出（供 FunctionList 刷新时一次性填充缓存） ----
 		[DllImport(DllPath, EntryPoint = "GetAllCallerCallee")] private static extern void GetAllCallerCalleeWrapper(CpuType type, IntPtr output, UInt32 maxEntries, out UInt32 outCount);
+		[DllImport(DllPath, EntryPoint = "SetCallerCalleeTrackingEnabled")] public static extern void SetCallerCalleeTrackingEnabled(CpuType type, [MarshalAs(UnmanagedType.I1)] bool enabled);
 
 		private const int CallerCalleeEdgeSize = 24; // int32 + MemoryType(4) + int32 + MemoryType(4) + uint64
 		private const int CallerCalleeEdgeMaxEntries = 65536;

@@ -118,6 +118,14 @@ namespace Mesen.Debugger.StatusViews
 					nameof(Config.Nes.IndirectTrackerJump)
 				], () => ConfigManager.Config.Debug.ApplyConfig()
 			);
+
+			Config.ObserveProp(nameof(Config.CallerCalleeTrackingEnabled), () =>
+				DebugApi.SetCallerCalleeTrackingEnabled(CpuType.Nes, Config.CallerCalleeTrackingEnabled)
+			);
+
+			Config.ObserveProp(nameof(Config.MappingTrackingEnabled), () =>
+				DebugApi.SetMappingTrackingEnabled(Config.MappingTrackingEnabled)
+			);
 		}
 
 		protected override void InternalUpdateUiState()

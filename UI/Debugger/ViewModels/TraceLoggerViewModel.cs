@@ -96,7 +96,7 @@ namespace Mesen.Debugger.ViewModels
 				UpdateScrollPosition();
 				UpdateLog();
 			}));
-			
+
 			AddDisposable(this.ObserveProp(nameof(MinScrollPosition), UpdateScrollPosition));
 			AddDisposable(this.ObserveProp(nameof(MaxScrollPosition), UpdateScrollPosition));
 

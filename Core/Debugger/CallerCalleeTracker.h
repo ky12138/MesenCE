@@ -50,5 +50,9 @@ public:
 	// Dump every recorded (caller -> callee, count) edge for JSON persistence /
 	// bulk caller/callee cache population. Capped at maxEdges to avoid pathological blowup.
 	void GetAllEdges(std::vector<CallerCalleeEdge>& out, size_t maxEdges = 65536) const;
+	void SetEnabled(bool enabled) { _enabled = enabled; }
 	void Reset();
+
+private:
+	bool _enabled = true;
 };

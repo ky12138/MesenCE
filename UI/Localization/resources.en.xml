@@ -1911,10 +1911,12 @@
 			<Control ID="chkSpriteOverflow">Sprite Overflow</Control>
 			<Control ID="chkVerticalBlank">Vertical Blank</Control>
 			<Control ID="chkWriteToggle">Write Toggle</Control>
-			<Control ID="lblIndirectTracker">Indirect Tracker</Control>
+			<Control ID="lblTracker">Tracker</Control>
 			<Control ID="chkIndirectRead">Record Reads</Control>
 			<Control ID="chkIndirectWrite">Record Writes</Control>
 			<Control ID="chkIndirectJump">Record Jumps</Control>
+			<Control ID="chkCallerCalleeTracking">Record Caller/Callee</Control>
+			<Control ID="chkMappingTracking">Record PRG/CHR Mappings</Control>
 			<Control ID="chkLargeSprites">Large Sprites</Control>
 			<Control ID="chkVerticalWrite">Vertical Write</Control>
 			<Control ID="chkNmiOnVBlank">NMI on VBlank</Control>
@@ -1945,6 +1947,8 @@
 			<Control ID="chkIndirectReadHint">Record LDA/ORA/AND etc. indirect read operations (including RMW)</Control>
 			<Control ID="chkIndirectWriteHint">Record STA/SAX/SHA etc. indirect write operations</Control>
 			<Control ID="chkIndirectJumpHint">Record JMP (Ind) indirect jump operations</Control>
+			<Control ID="chkCallerCalleeTrackingHint">Record caller-callee relationships during profiling (disabling stops data collection but preserves existing records)</Control>
+			<Control ID="chkMappingTrackingHint">Record PRG/CHR bank mapping snapshots per function call during profiling (disabling stops data collection but preserves existing records)</Control>
 			<Control ID="chkLargeSpritesHint">8x16 sprite mode when enabled</Control>
 			<Control ID="chkVerticalWriteHint">VRAM increment by 32 instead of 1</Control>
 			<Control ID="chkNmiOnVBlankHint">Enable NMI generation on vertical blank</Control>

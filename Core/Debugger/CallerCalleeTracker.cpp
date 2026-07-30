@@ -12,6 +12,8 @@ CallerCalleeTracker::~CallerCalleeTracker()
 
 void CallerCalleeTracker::RecordCall(AddressInfo& caller, AddressInfo& callee)
 {
+	if(!_enabled) return;
+
 	int32_t callerKey = MakeKey(caller);
 	int32_t calleeKey = MakeKey(callee);
 

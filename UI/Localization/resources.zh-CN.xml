@@ -1911,10 +1911,12 @@
 			<Control ID="chkSpriteOverflow">精灵溢出</Control>
 			<Control ID="chkVerticalBlank">垂直消隐</Control>
 			<Control ID="chkWriteToggle">写入切换</Control>
-			<Control ID="lblIndirectTracker">间接访问追踪</Control>
-			<Control ID="chkIndirectRead">记录读取</Control>
-			<Control ID="chkIndirectWrite">记录写入</Control>
-			<Control ID="chkIndirectJump">记录跳转</Control>
+			<Control ID="lblTracker">JSON记录:</Control>
+			<Control ID="chkIndirectRead">记录间接读取</Control>
+			<Control ID="chkIndirectWrite">记录间接写入</Control>
+			<Control ID="chkIndirectJump">记录间接跳转</Control>
+			<Control ID="chkCallerCalleeTracking">记录调用关系</Control>
+			<Control ID="chkMappingTracking">记录Bank映射</Control>
 			<Control ID="chkLargeSprites">8x16精灵</Control>
 			<Control ID="chkVerticalWrite">垂直写入</Control>
 			<Control ID="chkNmiOnVBlank">VBlank时NMI</Control>
@@ -1945,6 +1947,8 @@
 			<Control ID="chkIndirectReadHint">记录 LDA/ORA/AND 等间接寻址读取操作（含 RMW）</Control>
 			<Control ID="chkIndirectWriteHint">记录 STA/SAX/SHA 等间接寻址写入操作</Control>
 			<Control ID="chkIndirectJumpHint">记录 JMP (Ind) 间接跳转操作</Control>
+			<Control ID="chkCallerCalleeTrackingHint">在性能分析期间记录函数的调用者与被调用者关系（关闭后停止收集新数据但保留已有记录）</Control>
+			<Control ID="chkMappingTrackingHint">在性能分析期间记录每个函数调用的 PRG/CHR 页映射快照（关闭后停止收集新数据但保留已有记录）</Control>
 			<Control ID="chkLargeSpritesHint">开启后精灵为 8x16 像素模式</Control>
 			<Control ID="chkVerticalWriteHint">VRAM 地址增量为 32 而非 1</Control>
 			<Control ID="chkNmiOnVBlankHint">垂直消隐时产生 NMI 中断</Control>

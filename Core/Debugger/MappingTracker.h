@@ -34,6 +34,11 @@ void RecordMappingOnFunctionCall(Debugger* debugger, CpuType cpuType, AddressInf
 // Reset all recorded mapping data (PRG + CHR).
 void ResetMappingRecords();
 
+// Enable/disable mapping tracking at runtime. When disabled,
+// RecordMappingOnFunctionCall is a no-op, avoiding mapper state
+// queries and fingerprint computation overhead. Default: enabled.
+void SetMappingTrackingEnabled(bool enabled);
+
 // Copy all recorded PrgSlotEntry lists for a function into the output buffer.
 // prgPageSize returns the page size (0x2000/0x4000 etc), -1 if unknown.
 // outCount returns the number of entries written (capped at maxEntries).
