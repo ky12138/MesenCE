@@ -50,6 +50,7 @@ namespace Mesen.Debugger.ViewModels
 		[ObservableProperty] public partial MemoryMappingViewModel? MemoryMappings { get; private set; }
 		[ObservableProperty] public partial FindResultListViewModel FindResultList { get; private set; }
 		[ObservableProperty] public partial ControllerListViewModel ControllerList { get; private set; }
+		[ObservableProperty] public partial CpuRegisterAccessViewModel RegisterAccess { get; private set; }
 
 		[ObservableProperty] public partial DebuggerDockFactory DockFactory { get; private set; }
 		[ObservableProperty] public partial IRootDock DockLayout { get; private set; }
@@ -205,6 +206,7 @@ namespace Mesen.Debugger.ViewModels
 				CallerCallee = AddDisposable(new CallerCalleeViewModel(CpuType, this));
 			}
 			CallStack = AddDisposable(new CallStackViewModel(CpuType, this));
+			RegisterAccess = AddDisposable(new CpuRegisterAccessViewModel(CpuType, this));
 			WatchList = AddDisposable(new WatchListViewModel(CpuType));
 			ConsoleStatus = CpuType switch {
 				CpuType.Nes => new NesStatusViewModel(),
@@ -239,6 +241,7 @@ namespace Mesen.Debugger.ViewModels
 			DockFactory.WatchListTool.Model = WatchList;
 			DockFactory.FindResultListTool.Model = FindResultList;
 			DockFactory.ControllerListTool.Model = ControllerList;
+			DockFactory.RegisterAccessTool.Model = RegisterAccess;
 			DockFactory.DisassemblyTool.Model = Disassembly;
 			DockFactory.SourceViewTool.Model = null;
 			DockFactory.StatusTool.Model = ConsoleStatus;
@@ -362,6 +365,7 @@ namespace Mesen.Debugger.ViewModels
 		{
 			WatchList.UpdateWatch();
 			CallStack.UpdateCallStack();
+			RegisterAccess.UpdateHistory();
 			LabelList.UpdateLabelList();
 			FunctionList?.UpdateFunctionList();
 			BreakpointList.UpdateBreakpoints();
@@ -921,6 +925,7 @@ namespace Mesen.Debugger.ViewModels
 			CallerCallee?.RefreshCurrent();
 			WatchList.UpdateWatch();
 			CallStack.UpdateCallStack();
+			RegisterAccess.UpdateHistory();
 		}
 
 		public void PartialRefresh(bool refreshWatch)
@@ -1213,6 +1218,11 @@ namespace Mesen.Debugger.ViewModels
 					ActionType = ActionType.ShowCallStack,
 					IsSelected = () => IsToolVisible(DockFactory.CallStackTool),
 					OnClick = () => ToggleTool(DockFactory.CallStackTool)
+				},
+				new ContextMenuAction() {
+					ActionType = ActionType.ShowRegWriteHistory,
+					IsSelected = () => IsToolVisible(DockFactory.RegisterAccessTool),
+					OnClick = () => ToggleTool(DockFactory.RegisterAccessTool)
 				},
 				new ContextMenuAction() {
 					ActionType = ActionType.ShowConsoleStatus,

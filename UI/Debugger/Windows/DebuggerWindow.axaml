@@ -108,6 +108,9 @@
 		<DataTemplate DataType="{x:Type vm:CallStackViewModel}">
 			<v:CallStackView />
 		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:CpuRegisterAccessViewModel}">
+			<v:CpuRegisterAccessView />
+		</DataTemplate>
 		<DataTemplate DataType="{x:Type vm:ControllerInputViewModel}">
 			<v:ControllerInputView />
 		</DataTemplate>

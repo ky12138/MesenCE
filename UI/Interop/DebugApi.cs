@@ -475,6 +475,21 @@ namespace Mesen.Interop
 			return callstack;
 		}
 
+		[DllImport(DllPath, EntryPoint = "GetRegisterWriteHistory")] private static extern void GetRegisterWriteHistoryWrapper(CpuType type, [In, Out] RegisterWriteEntry[] entries, ref UInt32 count);
+		public static RegisterWriteEntry[] GetRegisterWriteHistory(CpuType type)
+		{
+			RegisterWriteEntry[] entries = new RegisterWriteEntry[256];
+			UInt32 count = 0;
+
+			DebugApi.GetRegisterWriteHistoryWrapper(type, entries, ref count);
+			Array.Resize(ref entries, (int)count);
+
+			return entries;
+		}
+
+		[DllImport(DllPath)] public static extern void SetRegisterWriteHistorySize(UInt32 size);
+		[DllImport(DllPath)] public static extern void ResetRegisterWriteHistory();
+
 		[DllImport(DllPath)] public static extern void ResetProfiler(CpuType type);
 		[DllImport(DllPath, EntryPoint = "GetProfilerData")] private static extern void GetProfilerDataWrapper(CpuType type, IntPtr profilerData, ref UInt32 functionCount);
 		public static unsafe int GetProfilerData(CpuType type, ref ProfiledFunction[] profilerData)
@@ -1910,6 +1925,33 @@ namespace Mesen.Interop
 		public AddressInfo AbsReturn;
 		public StackFrameFlags Flags;
 	};
+
+	[StructLayout(LayoutKind.Sequential, Pack = 1)]
+	public struct RegisterWriteEntry
+	{
+		public UInt32 RelativeAddress;
+		public Int32 AbsAddress;
+		public MemoryType AbsMemType;
+		public UInt32 OldValue;
+		public UInt32 NewValue;
+		public UInt64 Sequence;
+		public UInt32 HitCount;
+		public UInt32 RegNameCode;
+		public byte RegisterId;
+		public byte ValueSize;
+
+		public string GetRegisterName()
+		{
+			Span<char> chars = stackalloc char[4];
+			int len = 0;
+			UInt32 code = RegNameCode;
+			while(len < 4 && (code & 0xFF) != 0) {
+				chars[len++] = (char)(code & 0xFF);
+				code >>= 8;
+			}
+			return new string(chars.Slice(0, len));
+		}
+	}
 
 	public struct CallerCalleeEntry
 	{

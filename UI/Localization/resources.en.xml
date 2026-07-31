@@ -1369,6 +1369,15 @@
 			<Control ID="colResult">Result</Control>
 		</Form>
 
+		<Form ID="CpuRegisterAccessView">
+			<Control ID="lblHistorySize">Entries per register:</Control>
+			<Control ID="colRegister">Register</Control>
+			<Control ID="colAddress">Address</Control>
+			<Control ID="colDisassembly">Disassembly</Control>
+			<Control ID="colValueChange">Value Change</Control>
+			<Control ID="colHitCount">Hit Count</Control>
+		</Form>
+
 		<Form ID="FunctionListView">
 			<Control ID="colFunction">Function</Control>
 			<Control ID="colCpuAddr">CPU Addr</Control>
@@ -2544,6 +2553,7 @@ E
 		<Message ID="DockBreakpoints">Breakpoints</Message>
 		<Message ID="DockWatch">Watch</Message>
 		<Message ID="DockCallStack">Call Stack</Message>
+		<Message ID="DockRegWriteHistory">Register Writes</Message>
 		<Message ID="DockLabels">Labels</Message>
 		<Message ID="DockFunctions">Functions</Message>
 		<Message ID="DockCallerCallee">Caller/Callee</Message>
@@ -6177,6 +6187,7 @@ Upload an object to RAM $0200-$02ff. (see object structure on NESdev Wiki)</Mess
 			<Value ID="ShowFunctionList">Show function list</Value>
 			<Value ID="ShowWatchList">Show watch list</Value>
 			<Value ID="ShowCallStack">Show call stack</Value>
+			<Value ID="ShowRegWriteHistory">Show register writes</Value>
 			<Value ID="ShowCallerCallee">Show caller/callee</Value>
 			<Value ID="ShowConsoleStatus">Show console status</Value>
 			<Value ID="ShowControllers">Show controllers</Value>

@@ -106,6 +106,8 @@ namespace Mesen.Config
 		[ObservableProperty] public partial List<int> WatchListColumnWidths { get; set; } = new();
 		[ObservableProperty] public partial List<int> CallStackColumnWidths { get; set; } = new();
 		[ObservableProperty] public partial List<int> FindResultColumnWidths { get; set; } = new();
+		[ObservableProperty] public partial List<int> RegWriteHistoryColumnWidths { get; set; } = new();
+		[ObservableProperty] public partial int RegWriteHistorySize { get; set; } = 3;
 
 		public DebuggerConfig()
 		{

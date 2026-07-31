@@ -27,6 +27,7 @@ namespace Mesen.Debugger
 		public ToolContainerViewModel<CallerCalleeViewModel> CallerCalleeTool { get; private set; }
 		public ToolContainerViewModel<FindResultListViewModel> FindResultListTool { get; private set; }
 		public ToolContainerViewModel<ControllerListViewModel> ControllerListTool { get; private set; }
+		public ToolContainerViewModel<CpuRegisterAccessViewModel> RegisterAccessTool { get; private set; }
 
 		private DockEntryDefinition? _savedRootDef;
 
@@ -46,6 +47,7 @@ namespace Mesen.Debugger
 			CallerCalleeTool = new(ResourceHelper.GetMessage("DockCallerCallee"));
 			FindResultListTool = new(ResourceHelper.GetMessage("DockFindResults"));
 			ControllerListTool = new(ResourceHelper.GetMessage("DockControllers"));
+			RegisterAccessTool = new(ResourceHelper.GetMessage("DockRegWriteHistory"));
 
 			_savedRootDef = savedRootDef;
 		}
@@ -114,7 +116,7 @@ namespace Mesen.Debugger
 							new MesenProportionalDockSplitter(),
 							new ToolDock {
 								Proportion = 0.33,
-								VisibleDockables = CreateList<IDockable>(CallStackTool)
+								VisibleDockables = CreateList<IDockable>(CallStackTool, RegisterAccessTool)
 							}
 						)
 					}
@@ -223,6 +225,7 @@ namespace Mesen.Debugger
 						case nameof(CallerCalleeViewModel): return CallerCalleeTool;
 						case nameof(FindResultListViewModel): return FindResultListTool;
 						case nameof(ControllerListViewModel): return ControllerListTool;
+						case nameof(CpuRegisterAccessViewModel): return RegisterAccessTool;
 						default: throw new Exception("Unexpected tool type name");
 					}
 

@@ -40,6 +40,7 @@
     <ClInclude Include="SMS\Input\ColecoVisionController.h" />
     <ClInclude Include="Debugger\AddressInfo.h" />
     <ClInclude Include="Debugger\AddressPage.h" />
+    <ClInclude Include="Debugger\CpuRegisterAccessTracker.h" />
     <ClInclude Include="Debugger\FunctionMemoryAccessTracker.h" />
     <ClInclude Include="Debugger\IndirectTracker.h" />
     <ClInclude Include="Debugger\MappingTracker.h" />
@@ -843,6 +844,7 @@
     <ClCompile Include="Debugger\ExpressionEvaluator.Spc.cpp" />
     <ClCompile Include="Debugger\StepBackManager.cpp" />
     <ClCompile Include="Debugger\CallerCalleeTracker.cpp" />
+    <ClCompile Include="Debugger\CpuRegisterAccessTracker.cpp" />
     <ClCompile Include="Debugger\FunctionMemoryAccessTracker.cpp" />
     <ClCompile Include="Debugger\IndirectTracker.cpp" />
     <ClCompile Include="Debugger\MappingTracker.cpp" />

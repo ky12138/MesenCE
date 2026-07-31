@@ -405,6 +405,7 @@ namespace Mesen.Debugger.Utilities
 		ShowCallStack,
 		ShowCallerCallee,
 		ShowControllers,
+		ShowRegWriteHistory,
 
 		ShowSettingsPanel,
 		ShowMemoryMappings,

@@ -1,0 +1,69 @@
+<UserControl
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:c="using:Mesen.Controls"
+	xmlns:vm="using:Mesen.Debugger.ViewModels"
+	xmlns:l="using:Mesen.Localization"
+	mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="150"
+	VerticalAlignment="Stretch"
+	HorizontalAlignment="Stretch"
+	Focusable="True"
+	x:DataType="vm:CpuRegisterAccessViewModel"
+	x:Class="Mesen.Debugger.Views.CpuRegisterAccessView"
+>
+	<Design.DataContext>
+		<vm:CpuRegisterAccessViewModel />
+	</Design.DataContext>
+
+	<Border BorderThickness="0 1 0 0" BorderBrush="{StaticResource MesenGrayBorderColor}">
+		<DockPanel>
+			<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="3 2">
+				<TextBlock Text="{l:Translate lblHistorySize}" VerticalAlignment="Center" />
+				<c:MesenNumericUpDown Margin="5 0 0 0" Minimum="1" Maximum="5" Value="{Binding HistorySize}" />
+			</StackPanel>
+			<DataBox
+				Items="{Binding WriteEntries}"
+				Selection="{Binding Selection}"
+				CellDoubleClick="OnCellDoubleClick"
+				SelectionMode="Single"
+				GridLinesVisibility="All"
+				ColumnWidths="{Binding ColumnWidths}"
+			>
+				<DataBox.Columns>
+					<DataBoxTextColumn
+						ColumnName="Register"
+						Header="{l:Translate colRegister}"
+						Binding="{Binding Register, DataType={x:Type vm:RegWriteInfo}}"
+						InitialWidth="40"
+					/>
+					<DataBoxTextColumn
+						ColumnName="Address"
+						Header="{l:Translate colAddress}"
+						Binding="{Binding AddressStr, DataType={x:Type vm:RegWriteInfo}}"
+						InitialWidth="45"
+					/>
+					<DataBoxTextColumn
+						ColumnName="Disassembly"
+						Header="{l:Translate colDisassembly}"
+						Binding="{Binding Disassembly, DataType={x:Type vm:RegWriteInfo}}"
+						InitialWidth="70"
+					/>
+					<DataBoxTextColumn
+						ColumnName="ValueChange"
+						Header="{l:Translate colValueChange}"
+						Binding="{Binding ValueChange, DataType={x:Type vm:RegWriteInfo}}"
+						InitialWidth="50"
+					/>
+					<DataBoxTextColumn
+						ColumnName="HitCount"
+						Header="{l:Translate colHitCount}"
+						Binding="{Binding HitCount, DataType={x:Type vm:RegWriteInfo}}"
+						InitialWidth="30"
+					/>
+				</DataBox.Columns>
+			</DataBox>
+		</DockPanel>
+	</Border>
+</UserControl>

@@ -20,6 +20,7 @@
 #include "Core/Debugger/Profiler.h"
 #include "Core/Debugger/CallerCalleeTracker.h"
 #include "Core/Debugger/FunctionMemoryAccessTracker.h"
+#include "Core/Debugger/CpuRegisterAccessTracker.h"
 #include "Core/Debugger/ReverseMemoryAccessTracker.h"
 #include "Core/Debugger/MappingTracker.h"
 #include "Core/Debugger/IndirectTracker.h"
@@ -302,6 +303,22 @@ extern "C"
 				dbg->GetCallstackManager(cpuType)->GetProfiler()->GetFunctionMemoryAccessTracker()->SetRecordMask(mask);
 			}
 		});
+	}
+
+	DllExport void __stdcall GetRegisterWriteHistory(CpuType cpuType, RegisterWriteEntry* entries, uint32_t& count)
+	{
+		count = 0;
+		GetCpuRegisterWriteHistory(cpuType, entries, count);
+	}
+
+	DllExport void __stdcall SetRegisterWriteHistorySize(uint32_t size)
+	{
+		SetCpuRegisterWriteHistorySize(size);
+	}
+
+	DllExport void __stdcall ResetRegisterWriteHistory()
+	{
+		ResetCpuRegisterWriteHistory();
 	}
 
 	// Clear all recorded access data while keeping the set of marked (tracked) functions,

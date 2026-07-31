@@ -1369,6 +1369,15 @@
 			<Control ID="colResult">结果</Control>
 		</Form>
 
+		<Form ID="CpuRegisterAccessView">
+			<Control ID="lblHistorySize">寄存器记录条数:</Control>
+			<Control ID="colRegister">寄存器</Control>
+			<Control ID="colAddress">地址</Control>
+			<Control ID="colDisassembly">反汇编</Control>
+			<Control ID="colValueChange">变化</Control>
+			<Control ID="colHitCount">次数</Control>
+		</Form>
+
 		<Form ID="FunctionListView">
 			<Control ID="colFunction">标签</Control>
 			<Control ID="colCpuAddr">CPU地址</Control>
@@ -2584,6 +2593,7 @@ E
 		<Message ID="colColorCyan">青</Message>
 		<Message ID="colColorGray">灰</Message>
 		<Message ID="DockCallStack">调用堆栈</Message>
+		<Message ID="DockRegWriteHistory">寄存器写入</Message>
 		<Message ID="DockLabels">标签</Message>
 		<Message ID="DockFunctions">函数列表</Message>
 		<Message ID="DockFindResults">查找结果</Message>
@@ -6142,6 +6152,7 @@ DMC 中断 (I)、帧中断 (F)、DMC 活动 (D)、长度计数器 &gt; 0 (N/T/2/
 			<Value ID="ShowFunctionList">显示函数列表</Value>
 			<Value ID="ShowWatchList">显示监视列表</Value>
 			<Value ID="ShowCallStack">显示调用堆栈</Value>
+			<Value ID="ShowRegWriteHistory">显示寄存器写入</Value>
 			<Value ID="ShowCallerCallee">显示调用记录</Value>
 			<Value ID="ShowConsoleStatus">显示控制台状态</Value>
 			<Value ID="ShowControllers">显示控制器</Value>

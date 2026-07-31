@@ -17,6 +17,7 @@
 #include "Debugger/CallstackManager.h"
 #include "Debugger/Profiler.h"
 #include "Debugger/FunctionMemoryAccessTracker.h"
+#include "Debugger/CpuRegisterAccessTracker.h"
 #include "Debugger/ExpressionEvaluator.h"
 #include "Debugger/MemorySearchExpression.h"
 #include "Debugger/BaseEventManager.h"
@@ -231,6 +232,11 @@ void Debugger::ProcessInstruction()
 
 	debugger->IgnoreBreakpoints = false;
 	debugger->AllowChangeProgramCounter = true;
+
+	//Track cpu register writes by diffing the cpu state before/after each instruction.
+	//Must run before the console-specific ProcessInstruction (which updates the "previous PC").
+	//All logic lives in CpuRegisterAccessTracker.cpp to keep this hot path stable.
+	RecordCpuRegisterAccess(this, type, debugger);
 
 	switch(type) {
 		case CpuType::Snes: GetDebugger<type, SnesDebugger>()->ProcessInstruction(); break;
