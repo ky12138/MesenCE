@@ -252,11 +252,11 @@ namespace Mesen.Debugger.Utilities
 				}
 
 				StackPanel mainPanel = new StackPanel() { Spacing = -4, Margin = new Avalonia.Thickness(0, -1, 0, 0) };
-				mainPanel.Children.Add(GetHexDecPanel(byteValue, "X2", monoFont, fontSize));
-				mainPanel.Children.Add(GetHexDecPanel(wordValue, "X4", monoFont, fontSize));
+				mainPanel.Children.Add(GetHexDecPanel(byteValue, "X2", monoFont, fontSize, showBinary: true));
+				mainPanel.Children.Add(GetHexDecPanel(wordValue, "X4", monoFont, fontSize, showBinary: true));
 				if(cpuType.GetConsoleType() == ConsoleType.Gba || cpuType.GetConsoleType() == ConsoleType.Snes) {
 					//Only show 32-bit values for GBA/SNES since these are the 2 systems that are most likely to be using 32-bit values in memory
-					mainPanel.Children.Add(GetHexDecPanel(dwordValue, "X8", monoFont, fontSize));
+					mainPanel.Children.Add(GetHexDecPanel(dwordValue, "X8", monoFont, fontSize, showBinary: true));
 				}
 
 				items.AddEntry(ResourceHelper.GetMessage("TooltipAddress"), GetAddressField(relAddress, absAddress, cpuType, monoFont, fontSize), true);
@@ -344,12 +344,25 @@ namespace Mesen.Debugger.Utilities
 			return panel;
 		}
 
-		private static StackPanel GetHexDecPanel(int value, string format, FontFamily font, double fontSize)
+		private static StackPanel GetHexDecPanel(int value, string format, FontFamily font, double fontSize, bool showBinary = false)
 		{
 			StackPanel panel = new StackPanel() { Orientation = Avalonia.Layout.Orientation.Horizontal };
 			panel.Children.Add(new TextBlock() { Text = "$" + value.ToString(format), FontFamily = font, FontSize = fontSize });
 			panel.Children.Add(new TextBlock() { Text = "  (" + value.ToString() + ")", FontFamily = font, FontSize = fontSize, Foreground = Brushes.DimGray, VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center });
+			if(showBinary) {
+				int bits = int.Parse(format.TrimStart('X')) * 4;
+				panel.Children.Add(new TextBlock() { Text = "  " + GetBinaryString((uint)value, bits), FontFamily = font, FontSize = fontSize, Foreground = Brushes.DimGray, VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center });
+			}
 			return panel;
+		}
+
+		private static string GetBinaryString(uint value, int bits)
+		{
+			string binary = Convert.ToString(value, 2).PadLeft(bits, '0');
+			for(int i = bits - 4; i > 0; i -= 4) {
+				binary = binary.Insert(i, " ");
+			}
+			return binary;
 		}
 
 		public static string FormatCount(UInt64 value, UInt64 stamp = UInt64.MaxValue)
